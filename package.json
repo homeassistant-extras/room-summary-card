@@ -1,0 +1,27 @@
+{
+  "name": "room-summary-card",
+  "version": "0.1.0",
+  "author": "Patrick Masters",
+  "license": "ISC",
+  "description": "Custom card Home Assistant which can show a summary of room entities.",
+  "source": "src/index.ts",
+  "module": "dist/room-summary-card.js",
+  "targets": {
+    "module": {
+      "includeNodeModules": true
+    }
+  },
+  "scripts": {
+    "watch": "parcel watch",
+    "build": "parcel build"
+  },
+  "devDependencies": {
+    "@parcel/transformer-inline-string": "^2.8.3",
+    "parcel": "^2.8.3"
+  },
+  "dependencies": {
+    "@lit/task": "^1.0.1",
+    "fast-deep-equal": "^3.1.3",
+    "lit": "^3.2.1"
+  }
+}
