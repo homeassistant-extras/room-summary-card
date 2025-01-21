@@ -1,10 +1,19 @@
 {
-  "compilerOptions": {
-    "target": "ES2017",
-    "moduleResolution": "node",
-    "isolatedModules": true,
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "resolveJsonModule": true
-  }
+    "compilerOptions": {
+        /* Base Options: */
+        "skipLibCheck": true,
+        "target": "es2022",
+        "moduleResolution": "node",
+        "isolatedModules": true,
+        "experimentalDecorators": true,
+        "useDefineForClassFields": false,
+        "resolveJsonModule": true,
+        "moduleDetection": "force",
+        "verbatimModuleSyntax": true,
+
+        /* Strictness */
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "noImplicitOverride": true
+    }
 }
