@@ -72,7 +72,7 @@ export const styles = css`
     }
 
     .icon ha-state-icon {
-        width: 45%;
+        width: 50%;
         color: rgba(var(--color-theme), 0.2);
         --mdc-icon-size: 100%;
     }

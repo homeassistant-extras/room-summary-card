@@ -3,10 +3,9 @@ import { CSSResult, LitElement, html } from 'lit';
 import { state } from 'lit/decorators.js';
 
 import { version } from '../package.json';
-import { createStateIcon } from './helpers';
+import { createStateIcon, getDevice, getEntity, getState } from './helpers';
 import { styles } from './styles';
-import type { Config, HomeAssistant } from './types';
-import type { EntityConfig } from './types';
+import type { Config, HomeAssistant, State } from './types';
 
 declare global {
     interface Window {
@@ -18,11 +17,16 @@ class RoomSummaryCard extends LitElement {
     @state()
     private _config!: Config;
 
+    @state()
+    private _states!: State[];
+
     // not state
     private _hass!: HomeAssistant;
 
     constructor() {
         super();
+
+        this._states = [];
 
         console.info(
             `%c🐱 Poat's Tools: room-summary-card - ${version}`,
@@ -30,13 +34,15 @@ class RoomSummaryCard extends LitElement {
         );
     }
 
-    render() {
-        if (!this._hass || !this._config) {
+    override render() {
+        if (!this._states.length) {
             return html``;
         }
 
-        const mainEntity = this._hass.states[`light.${this._config.area}`];
-        const isUnavailable = mainEntity?.state === 'unavailable';
+        const lightEntity = getState(
+            this._hass,
+            `light.${this._config.area}_light`,
+        );
 
         return html`
             <div class="card">
@@ -51,17 +57,19 @@ class RoomSummaryCard extends LitElement {
                         ${this._getLabel()} <br />
                         <span class="stats">${this._getAreaStatistics()}</span>
                     </div>
-                    ${createStateIcon(this._hass, mainEntity, ['room'])}
-                    ${this._renderEntityIcon(this._config.entity_1, 1)}
-                    ${this._renderEntityIcon(this._config.entity_2, 2)}
-                    ${this._renderEntityIcon(this._config.entity_3, 3)}
-                    ${this._renderEntityIcon(this._config.entity_4, 4)}
+                    ${createStateIcon(this._hass, lightEntity, ['room'])}
+                    ${this._states.map((s, i) => {
+                        return createStateIcon(this._hass, s, [
+                            'entity',
+                            `entity-${i + 1}`,
+                        ]);
+                    })}
                 </div>
             </div>
         `;
     }
 
-    static get styles(): CSSResult {
+    static override get styles(): CSSResult {
         return styles;
     }
 
@@ -81,40 +89,30 @@ class RoomSummaryCard extends LitElement {
     // update your content.
     set hass(hass: HomeAssistant) {
         this._hass = hass;
-    }
 
-    private _renderEntityIcon(
-        entity: EntityConfig | undefined,
-        position: number,
-    ) {
-        if (!entity) return null;
+        const baseEntities = [
+            `light.${this._config.area}_light`,
+            `switch.${this._config.area}_fan`,
+        ];
 
-        const state = this._hass.states[entity.entity_id];
-        if (!state) return null;
-
-        return html`
-            <div class="icon entity entity-${position}">
-                <ha-state-icon
-                    .hass=${this._hass}
-                    .stateObj=${state}
-                    .icon=${state.attributes.icon || 'mdi:help-circle'}
-                    id="icon"
-                ></ha-state-icon>
-            </div>
-        `;
+        this._states = Object.values(hass.states).filter((state) =>
+            baseEntities.includes(state.entity_id),
+        );
     }
 
     private _getLabel(): string {
         if (!this._hass || !this._config.area) return '';
 
         const climate = `${
-            this._hass.states[
-                'sensor.' + this._config.area + '_climate_air_temperature'
-            ].state
+            getState(
+                this._hass,
+                'sensor.' + this._config.area + '_climate_air_temperature',
+            ).state
         }°F - ${
-            this._hass.states[
-                'sensor.' + this._config.area + '_climate_humidity'
-            ].state
+            getState(
+                this._hass,
+                'sensor.' + this._config.area + '_climate_humidity',
+            ).state
         }%`;
 
         return climate;
@@ -124,18 +122,17 @@ class RoomSummaryCard extends LitElement {
         if (!this._hass || !this._config.area) return '';
 
         const d = Object.keys(this._hass.devices).filter(
-            (k) => this._hass.devices[k].area_id === this._config.area,
+            (k) => getDevice(this._hass, k).area_id === this._config.area,
         );
-        const e = Object.keys(this._hass.entities).filter(
-            (k) =>
-                this._hass.entities[k].area_id === this._config.area ||
-                d.includes(this._hass.entities[k].device_id),
-        );
+        const e = Object.keys(this._hass.entities).filter((k) => {
+            const e = getEntity(this._hass, k);
+            return e.area_id === this._config.area || d.includes(e.device_id);
+        });
         const counts = [
             [d.length, 'devices'],
             [e.length, 'entities'],
         ]
-            .filter(([count]: [number]) => count > 0)
+            .filter((count) => count.length > 0)
             .map(([count, type]) => `${count} ${type}`)
             .join(' ');
 
