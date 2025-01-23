@@ -1,5 +1,6 @@
 import { type TemplateResult, html } from 'lit';
 
+import { doToggle } from './events';
 import { createStateStyles } from './styles';
 import type { Area, Device, Entity, HomeAssistant, State } from './types';
 
@@ -20,6 +21,9 @@ export const createStateIcon = (
       .icon="${icon}"
       .stateObj=${state}
       style=${iconStyle}
+      @click=${{
+        handleEvent: () => doToggle(hass, state.entity_id),
+      }}
     ></ha-state-icon>
   </div>`;
 };

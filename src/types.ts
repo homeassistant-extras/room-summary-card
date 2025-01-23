@@ -3,7 +3,6 @@
  */
 export interface Config {
   area: string;
-
   entities: EntityConfig[];
 }
 
@@ -17,15 +16,20 @@ export interface EntityConfig {
  */
 export interface HomeAssistant {
   /** Array of all entities registered in Home Assistant */
-  entities: Entity[];
+  entities: Record<string, Entity>;
 
   /** Array of all physical devices registered in Home Assistant */
-  devices: Device[];
+  devices: Record<string, Device>;
 
   /** Object containing the current state of all entities in Home Assistant */
-  states: State[];
+  states: Record<string, State>;
+  areas: Record<string, Area>;
 
-  areas: Area[];
+  callService: (
+    domain: ServiceCallRequest['domain'],
+    service: ServiceCallRequest['service'],
+    serviceData?: ServiceCallRequest['serviceData'],
+  ) => Promise<void>;
 }
 
 export interface Area {
@@ -75,4 +79,10 @@ export interface Entity {
 
   /** ID of the physical device this entity belongs to */
   device_id: string;
+}
+
+export interface ServiceCallRequest {
+  domain: string;
+  service: string;
+  serviceData?: Record<string, any>;
 }
