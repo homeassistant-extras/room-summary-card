@@ -36,9 +36,9 @@ This card is slightly opinionated in how you need to setup things for it to work
 - Mobile-responsive with automatic margin adjustments
 - Real-time updates when entity states change
 - Works with these type of entities
-    - `binary_sensor`
-    - `sensor` which returns a count
-    - any sensor if you customize the `on_state` attribute of it
+  - `binary_sensor`
+  - `sensor` which returns a count
+  - any sensor if you customize the `on_state` attribute of it
 
 ## Installation
 
@@ -52,7 +52,7 @@ This card is slightly opinionated in how you need to setup things for it to work
 1. Open HACS in your Home Assistant instance
 2. Click the menu icon in the top right and select "Custom repositories"
 3. Add this repository URL and select "Dashboard" as the category
-    - `https://github.com/warmfire540/room-summary-card`
+   - `https://github.com/warmfire540/room-summary-card`
 4. Click "Install"
 
 ### Manual Installation
@@ -63,9 +63,9 @@ This card is slightly opinionated in how you need to setup things for it to work
 
 ```yaml
 lovelace:
-    resources:
-        - url: /local/community/room-summary-card/room-summary-card.js
-          type: module
+  resources:
+    - url: /local/community/room-summary-card/room-summary-card.js
+      type: module
 ```
 
 ## Configuration
@@ -91,7 +91,7 @@ For example, see my HA configuration for my dashboard home page: [01-home.yaml](
 title: Home
 path: home
 cards:
-    - type: custom:room-summary-card
+  - type: custom:room-summary-card
 ```
 
 If your status or home page isn't on the path `home`, you can use the following config to override the page it's on.
@@ -128,7 +128,7 @@ For example, see my HA configuration for my dashboard room header card that's us
 title: Living Room
 path: living-room
 cards:
-    - type: custom:room-summary-card
+  - type: custom:room-summary-card
 ```
 
 #### Using `additional_label` property
@@ -177,7 +177,7 @@ area: yard
 3. Entities can specify a place to navigate to using the `navigation_path` attribute (defaults to "more-info" on click)
 4. Entities can specify their active color using the `on_color` attribute (defaults to "red").
 5. Entities with numeric state can specify a pass/warning threshold to show three colors using `numeric_state_pass_threshold` and `numeric_state_warning_threshold`
-    - this is useful for entities where a numeric state is good and actually counts down (like a filter or battery %).
+   - this is useful for entities where a numeric state is good and actually counts down (like a filter or battery %).
 
 You can customize entity attributes several ways.
 
@@ -185,30 +185,30 @@ For entities you don't control, use [customizations](https://www.home-assistant.
 
 ```yaml
 customize:
-    sensor.mfc_7860dw_status:
-        on_state: 'unavailable'
+  sensor.mfc_7860dw_status:
+    on_state: 'unavailable'
 
-    binary_sensor.rolo_error:
-        navigation_path: /the-matrix/living-room
+  binary_sensor.rolo_error:
+    navigation_path: /the-matrix/living-room
 
-    binary_sensor.poat_hole_local:
-        navigation_path: /the-matrix/pi-hole
+  binary_sensor.poat_hole_local:
+    navigation_path: /the-matrix/pi-hole
 
-    counter.homeassistant_warnings:
-        on_color: yellow
+  counter.homeassistant_warnings:
+    on_color: yellow
 ```
 
 For entities you template, just set the attributes then.
 
 ```yaml
 sensor:
-    - name: Printer Left On
-      unique_id: b4081d9f-24f3-4083-9fa6-70c30a432c26
-      state: "{{ not is_state('sensor.mfc_7860dw_page_counter', 'unavailable') and (now() - states.sensor.mfc_7860dw_page_counter.last_updated) > timedelta(minutes=5) }}"
-      icon: mdi:printer-alert
-      attributes:
-          navigation_path: /the-matrix/network?anchor=updates
-          on_state: 'True'
+  - name: Printer Left On
+    unique_id: b4081d9f-24f3-4083-9fa6-70c30a432c26
+    state: "{{ not is_state('sensor.mfc_7860dw_page_counter', 'unavailable') and (now() - states.sensor.mfc_7860dw_page_counter.last_updated) > timedelta(minutes=5) }}"
+    icon: mdi:printer-alert
+    attributes:
+      navigation_path: /the-matrix/network?anchor=updates
+      on_state: 'True'
 ```
 
 #### Numeric State Entities
@@ -221,14 +221,14 @@ Here's an example of my entity customization:
 
 ```yaml
 sensor.cat_noms_desiccant_days_remaining:
-    navigation_path: /the-matrix/cats
-    numeric_state_pass_threshold: 10
-    numeric_state_warning_threshold: 5
+  navigation_path: /the-matrix/cats
+  numeric_state_pass_threshold: 10
+  numeric_state_warning_threshold: 5
 
 sensor.pet_thirst_filter:
-    navigation_path: /the-matrix/cats
-    numeric_state_pass_threshold: 30
-    numeric_state_warning_threshold: 10
+  navigation_path: /the-matrix/cats
+  numeric_state_pass_threshold: 30
+  numeric_state_warning_threshold: 10
 ```
 
 `sensor.pet_thirst_filter` chip will be green when it's above 30, it will be yellow when bove 10, otherwise it will be red (or `on_color`)
@@ -271,14 +271,14 @@ Common issues and solutions:
 
 1. **Chips not appearing:**
 
-    - Verify entities have the "status" label
-    - Check entity states match their `on_state` attribute or `on`
-    - Ensure the card is properly loaded in resources
+   - Verify entities have the "status" label
+   - Check entity states match their `on_state` attribute or `on`
+   - Ensure the card is properly loaded in resources
 
 2. **Mobile layout issues:**
-    - Clear browser cache
-    - Refresh the page
-    - Check for conflicts with other custom cards
+   - Clear browser cache
+   - Refresh the page
+   - Check for conflicts with other custom cards
 
 ## Contributing
 

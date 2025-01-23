@@ -3,8 +3,8 @@ name: Bump & Tag
 on:
   push:
     branches:
-      - "main"
-      - "release"
+      - 'main'
+      - 'release'
 
 jobs:
   check-committer:
@@ -14,14 +14,14 @@ jobs:
     steps:
       - id: check
         run: |
-          if [ "${{ github.event.commits[0].author.email }}" != "gh-action-bump-version@users.noreply.github.com" ]; then
+          if [[ ! "${{ github.event.commits[0].author.email }}" == *"[bot]@users.noreply.github.com"* ]]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
           fi
 
   bump-version:
-    name: "Bump Version or Tag"
+    name: 'Bump Version or Tag'
     needs: check-committer
     runs-on: ubuntu-latest
     permissions:
@@ -32,28 +32,44 @@ jobs:
     if: ${{ needs.check-committer.outputs.should_run == 'true' }}
 
     steps:
-      - name: "Checkout source code"
-        uses: "actions/checkout@v2"
+      - uses: actions/create-github-app-token@v1
+        id: app-token
         with:
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
-          ref: ${{ github.ref }}
+          app-id: ${{ vars.BUILD_APP_ID }}
+          private-key: ${{ secrets.BUILD_PRIVATE_KEY }}
 
-      - name: "Automated Version Bump"
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v2'
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: 'Automated Version Bump'
         id: bump
-        uses: "phips28/gh-action-bump-version@master"
+        uses: 'phips28/gh-action-bump-version@master'
         with:
           version-type: ${{ github.ref == 'refs/heads/release' && 'minor' || 'patch' }}
-          commit-message: "chore: bumps version to {{version}}"
-          bump-policy: "ignore"
-          skip-push: "true"
+          commit-message: 'chore: bumps version to {{version}}'
+          bump-policy: 'ignore'
+          skip-push: 'true'
 
-      - name: "Create Tags and package version"
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - run: |
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+
+      - name: 'Create Tags and package version'
         run: |
           git push --follow-tags
           git push --tags
 
   create-release:
-    name: "Create Release"
+    name: 'Create Release'
     needs: bump-version
     if: github.ref == 'refs/heads/release'
     runs-on: ubuntu-latest
@@ -66,7 +82,7 @@ jobs:
       - name: Run NPM build
         uses: anna-money/github-actions-npm@master
         with:
-          target: "build"
+          target: 'build'
       - uses: johnyherangi/create-release-notes@main
         id: create-release-notes
         env:
@@ -97,14 +113,14 @@ jobs:
           echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "dist/**"
+          artifacts: 'dist/**'
           generateReleaseNotes: true
           tag: ${{ needs.bump-version.outputs.newTag }}
           body: ${{ steps.create-release-notes.outputs.release-notes }}
-          name: "${{ needs.bump-version.outputs.newTag }} - ${{ steps.get-pr-title.outputs.pr_title }}"
+          name: '${{ needs.bump-version.outputs.newTag }} - ${{ steps.get-pr-title.outputs.pr_title }}'
 
   update-main:
-    name: "Update main branch with release changes"
+    name: 'Update main branch with release changes'
     needs: bump-version
     runs-on: ubuntu-latest
     permissions:

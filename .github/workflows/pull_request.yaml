@@ -15,7 +15,7 @@ jobs:
       - name: Run NPM build
         uses: anna-money/github-actions-npm@master
         with:
-          target: "build"
+          target: 'build'
 
   check-fast-forward:
     runs-on: ubuntu-latest
@@ -36,4 +36,4 @@ jobs:
           # to only post a comment when an error occurs, or 'never' to
           # never post a comment.  (In all cases the information is
           # still available in the step's summary.)
-          comment: "on-error"
+          comment: 'on-error'
