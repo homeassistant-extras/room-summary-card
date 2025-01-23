@@ -1,4 +1,41 @@
 import { css } from 'lit';
+import type { DirectiveResult } from 'lit-html/directive';
+import {
+    type StyleMapDirective,
+    styleMap,
+} from 'lit-html/directives/style-map';
+
+import type { State } from './types';
+
+export const createStateStyles = (
+    state: State,
+): {
+    cardStyle: DirectiveResult<typeof StyleMapDirective>;
+    iconStyle: DirectiveResult<typeof StyleMapDirective>;
+    iconDivStyle: DirectiveResult<typeof StyleMapDirective>;
+    textStyle: DirectiveResult<typeof StyleMapDirective>;
+} => {
+    const isActive = state.state === 'on';
+
+    return {
+        cardStyle: styleMap({
+            'background-color': isActive
+                ? 'rgba(var(--color-background-yellow),var(--opacity-bg))'
+                : undefined,
+        }),
+        iconStyle: styleMap({
+            color: isActive ? 'rgba(var(--color-yellow),1)' : undefined,
+        }),
+        iconDivStyle: styleMap({
+            'background-color': isActive
+                ? 'rgba(var(--color-yellow),0.2)'
+                : undefined,
+        }),
+        textStyle: styleMap({
+            color: isActive ? 'rgba(var(--color-yellow-text),1)' : undefined,
+        }),
+    };
+};
 
 export const styles = css`
     .card {

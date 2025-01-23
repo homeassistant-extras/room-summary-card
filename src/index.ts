@@ -3,8 +3,14 @@ import { CSSResult, LitElement, html } from 'lit';
 import { state } from 'lit/decorators.js';
 
 import { version } from '../package.json';
-import { createStateIcon, getDevice, getEntity, getState } from './helpers';
-import { styles } from './styles';
+import {
+    createStateIcon,
+    getArea,
+    getDevice,
+    getEntity,
+    getState,
+} from './helpers';
+import { createStateStyles, styles } from './styles';
 import type { Config, HomeAssistant, State } from './types';
 
 declare global {
@@ -39,25 +45,29 @@ class RoomSummaryCard extends LitElement {
             return html``;
         }
 
-        const lightEntity = getState(
+        const roomEntity = getState(
             this._hass,
             `light.${this._config.area}_light`,
         );
 
+        const icon = getArea(this._hass, this._config.area).icon;
+
+        const { cardStyle, textStyle } = createStateStyles(roomEntity);
+
         return html`
-            <div class="card">
+            <div class="card" style=${cardStyle}>
                 <div class="grid">
-                    <div class="name text">
+                    <div class="name text" style=${textStyle}>
                         ${this._config.area
                             .split('_')
                             .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
                             .join(' ')}
                     </div>
-                    <div class="label text">
+                    <div class="label text" style=${textStyle}>
                         ${this._getLabel()} <br />
                         <span class="stats">${this._getAreaStatistics()}</span>
                     </div>
-                    ${createStateIcon(this._hass, lightEntity, ['room'])}
+                    ${createStateIcon(this._hass, roomEntity, ['room'], icon)}
                     ${this._states.map((s, i) => {
                         return createStateIcon(this._hass, s, [
                             'entity',
@@ -95,9 +105,11 @@ class RoomSummaryCard extends LitElement {
             `switch.${this._config.area}_fan`,
         ];
 
-        this._states = Object.values(hass.states).filter((state) =>
-            baseEntities.includes(state.entity_id),
-        );
+        const states = baseEntities.map((entity) => getState(hass, entity));
+
+        if (!equal(states, this._states)) {
+            this._states = states;
+        }
     }
 
     private _getLabel(): string {

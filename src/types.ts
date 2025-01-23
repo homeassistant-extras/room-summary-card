@@ -24,6 +24,13 @@ export interface HomeAssistant {
 
     /** Object containing the current state of all entities in Home Assistant */
     states: State[];
+
+    areas: Area[];
+}
+
+export interface Area {
+    area_id: string;
+    icon: string;
 }
 
 /**
