@@ -11,14 +11,19 @@ import {
   getState,
 } from './helpers';
 import { createStateStyles, styles } from './styles';
-import type { Config, HomeAssistant, State } from './types';
+import type {
+  Config,
+  EntityConfig,
+  EntityInformation,
+  HomeAssistant,
+} from './types';
 
 export class RoomSummaryCard extends LitElement {
   @state()
   private _config!: Config;
 
   @state()
-  private _states!: State[];
+  private _states!: EntityInformation[];
 
   // not state
   private _hass!: HomeAssistant;
@@ -39,11 +44,21 @@ export class RoomSummaryCard extends LitElement {
       return html``;
     }
 
-    const roomEntity = getState(this._hass, `light.${this._config.area}_light`);
+    const roomEntityId = `light.${this._config.area}_light`;
+    const roomEntity = {
+      config: {
+        entity_id: roomEntityId,
+        tap_action: {
+          action: 'navigate',
+          navigation_path: this._config.area.replace('_', '-'),
+        },
+      } as EntityConfig,
+      state: getState(this._hass, roomEntityId),
+    } as EntityInformation;
 
     const icon = getArea(this._hass, this._config.area).icon;
 
-    const { cardStyle, textStyle } = createStateStyles(roomEntity);
+    const { cardStyle, textStyle } = createStateStyles(roomEntity.state);
 
     return html`
       <div class="card" style=${cardStyle}>
@@ -96,7 +111,15 @@ export class RoomSummaryCard extends LitElement {
       `switch.${this._config.area}_fan`,
     ];
 
-    const states = baseEntities.map((entity) => getState(hass, entity));
+    const states = baseEntities.map((entity) => {
+      return {
+        config: {
+          entity_id: entity,
+          tap_action: { action: 'toggle' },
+        } as EntityConfig,
+        state: getState(hass, entity),
+      } as EntityInformation;
+    });
 
     if (!equal(states, this._states)) {
       this._states = states;

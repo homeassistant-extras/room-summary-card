@@ -3,11 +3,33 @@
  */
 export interface Config {
   area: string;
+  entity: EntityConfig;
   entities: EntityConfig[];
 }
 
 export interface EntityConfig {
   entity_id: string;
+  tap_action?: ActionConfig;
+}
+
+export interface NavigateActionConfig extends BaseActionConfig {
+  action: 'navigate';
+  navigation_path: string;
+}
+
+export interface ToggleActionConfig extends BaseActionConfig {
+  action: 'toggle';
+}
+
+export interface BaseActionConfig {
+  action: string;
+}
+
+export type ActionConfig = ToggleActionConfig | NavigateActionConfig;
+
+export interface EntityInformation {
+  config: EntityConfig;
+  state: State;
 }
 
 /**

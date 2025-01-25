@@ -92,6 +92,7 @@ export const styles = css`
 
   .room {
     grid-area: r;
+    cursor: pointer;
   }
 
   .icon {

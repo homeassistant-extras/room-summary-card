@@ -8,6 +8,7 @@ import type {
   Area,
   Device,
   Entity,
+  EntityInformation,
   HomeAssistant,
   State,
 } from './types';
@@ -15,10 +16,11 @@ import type {
 export const createStateIcon = (
   element: HTMLElement,
   hass: HomeAssistant,
-  state: State,
+  entity: EntityInformation,
   classes: String[],
   icon: string | undefined = undefined,
 ): TemplateResult => {
+  const { state } = entity;
   const { iconStyle, iconDivStyle } = createStateStyles(state);
 
   return html`<div
@@ -35,7 +37,16 @@ export const createStateIcon = (
           if (ev.detail?.action) {
             switch (ev.detail.action) {
               case 'tap':
-                doToggle(hass, state.entity_id);
+                switch (entity.config.tap_action?.action) {
+                  case 'navigate':
+                    window.location.href =
+                      entity.config.tap_action.navigation_path;
+                    break;
+                  case 'toggle':
+                  default:
+                    doToggle(hass, state.entity_id);
+                    break;
+                }
                 break;
               case 'hold':
                 moreInfo(element, state.entity_id);
