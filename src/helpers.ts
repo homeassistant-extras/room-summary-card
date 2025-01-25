@@ -1,10 +1,19 @@
 import { type TemplateResult, html } from 'lit';
 
-import { doToggle } from './events';
+import { actionHandler } from './action-handler';
+import { doToggle, moreInfo } from './events';
 import { createStateStyles } from './styles';
-import type { Area, Device, Entity, HomeAssistant, State } from './types';
+import type {
+  ActionHandlerEvent,
+  Area,
+  Device,
+  Entity,
+  HomeAssistant,
+  State,
+} from './types';
 
 export const createStateIcon = (
+  element: HTMLElement,
   hass: HomeAssistant,
   state: State,
   classes: String[],
@@ -21,9 +30,28 @@ export const createStateIcon = (
       .icon="${icon}"
       .stateObj=${state}
       style=${iconStyle}
-      @click=${{
-        handleEvent: () => doToggle(hass, state.entity_id),
+      @action=${{
+        handleEvent: (ev: ActionHandlerEvent) => {
+          if (ev.detail?.action) {
+            switch (ev.detail.action) {
+              case 'tap':
+                doToggle(hass, state.entity_id);
+                break;
+              case 'hold':
+                moreInfo(element, state.entity_id);
+                break;
+              case 'double_tap':
+              default:
+                break;
+            }
+          }
+        },
       }}
+      .actionHandler=${actionHandler({
+        hasDoubleClick: false,
+        hasHold: true,
+        disabled: false,
+      })}
     ></ha-state-icon>
   </div>`;
 };

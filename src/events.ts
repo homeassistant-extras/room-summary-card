@@ -5,3 +5,13 @@ export const doToggle = (hass: HomeAssistant, entity_id: string) => {
     entity_id: entity_id,
   });
 };
+
+export const moreInfo = (element: HTMLElement, entity_id: string) => {
+  const event = new CustomEvent('hass-more-info', {
+    bubbles: true,
+    composed: true,
+    detail: { entityId: entity_id },
+  });
+
+  element.dispatchEvent(event);
+};

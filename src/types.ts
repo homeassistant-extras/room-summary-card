@@ -86,3 +86,17 @@ export interface ServiceCallRequest {
   service: string;
   serviceData?: Record<string, any>;
 }
+
+export interface ActionHandlerDetail {
+  action: 'hold' | 'tap' | 'double_tap';
+}
+
+export interface HASSDomEvent<T> extends Event {
+  detail: T;
+}
+
+export type ActionHandlerEvent = HASSDomEvent<ActionHandlerDetail>;
+
+export interface HASSDomEvent<T> extends Event {
+  detail: T;
+}

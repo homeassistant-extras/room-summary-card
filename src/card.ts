@@ -58,9 +58,9 @@ export class RoomSummaryCard extends LitElement {
             ${this._getLabel()} <br />
             <span class="stats">${this._getAreaStatistics()}</span>
           </div>
-          ${createStateIcon(this._hass, roomEntity, ['room'], icon)}
+          ${createStateIcon(this, this._hass, roomEntity, ['room'], icon)}
           ${this._states.map((s, i) => {
-            return createStateIcon(this._hass, s, [
+            return createStateIcon(this, this._hass, s, [
               'entity',
               `entity-${i + 1}`,
             ]);

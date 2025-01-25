@@ -16,23 +16,24 @@ export const createStateStyles = (
   textStyle: DirectiveResult<typeof StyleMapDirective>;
 } => {
   const isActive = state.state === 'on';
+  const color = state.attributes.on_color || 'yellow';
 
   return {
     cardStyle: styleMap({
       'background-color': isActive
-        ? 'rgba(var(--color-background-yellow),var(--opacity-bg))'
+        ? `rgba(var(--color-background-${color}),var(--opacity-bg))`
         : undefined,
     }),
     iconStyle: styleMap({
-      color: isActive ? 'rgba(var(--color-yellow),1)' : undefined,
+      color: isActive ? `rgba(var(--color-${color}),1)` : undefined,
     }),
     iconDivStyle: styleMap({
       'background-color': isActive
-        ? 'rgba(var(--color-yellow),0.2)'
+        ? `rgba(var(--color-${color}),0.2)`
         : undefined,
     }),
     textStyle: styleMap({
-      color: isActive ? 'rgba(var(--color-yellow-text),1)' : undefined,
+      color: isActive ? `rgba(var(--color-${color}-text),1)` : undefined,
     }),
   };
 };
