@@ -1,11 +1,5 @@
 import { RoomSummaryCard } from './card';
 
-declare global {
-  interface Window {
-    customCards: Array<Object>;
-  }
-}
-
 // Register our custom card
 customElements.define('room-summary-card', RoomSummaryCard);
 

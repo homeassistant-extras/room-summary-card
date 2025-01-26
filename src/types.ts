@@ -5,6 +5,8 @@ export interface Config {
   area: string;
   entity: EntityConfig;
   entities: EntityConfig[];
+  remove_fan: boolean;
+  skip_climate_colors: boolean;
 }
 
 export interface EntityConfig {
@@ -67,6 +69,7 @@ export interface Device {
   area_id: string;
 }
 
+// this.substring(0, this.indexOf('.'));?
 /**
  * Represents the current state and attributes of a Home Assistant entity.
  * Used to track an entity's status and properties at a given moment.
@@ -90,6 +93,8 @@ export type State = {
    * Keys are strings, values can be any type
    */
   attributes: Record<string, any>;
+
+  getDomain: () => string;
 };
 
 /**
@@ -121,4 +126,10 @@ export type ActionHandlerEvent = HASSDomEvent<ActionHandlerDetail>;
 
 export interface HASSDomEvent<T> extends Event {
   detail: T;
+}
+
+declare global {
+  interface Window {
+    customCards: Array<Object>;
+  }
 }

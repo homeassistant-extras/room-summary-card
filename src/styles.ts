@@ -7,34 +7,64 @@ import {
 
 import type { State } from './types';
 
+export const getClimateStyles = (): {
+  climateStyles: Record<string, string>;
+  climateIcons: Record<string, string>;
+} => {
+  return {
+    climateStyles: {
+      auto: 'green',
+      cool: 'blue',
+      heat: 'red',
+      dry: 'yellow',
+      heat_cool: 'purple',
+      fan_only: 'green',
+      off: 'grey',
+    },
+    climateIcons: {
+      auto: 'mdi:autorenew',
+      cool: 'mdi:snowflake',
+      heat: 'mdi:fire',
+      dry: 'mdi:water',
+      heat_cool: 'mdi:sun-snowflake',
+      fan_only: 'mdi:fan',
+      off: 'mdi:snowflake-off',
+    },
+  };
+};
+
 export const createStateStyles = (
   state: State,
 ): {
   cardStyle: DirectiveResult<typeof StyleMapDirective>;
   iconStyle: DirectiveResult<typeof StyleMapDirective>;
-  iconDivStyle: DirectiveResult<typeof StyleMapDirective>;
+  iconContainerStyle: DirectiveResult<typeof StyleMapDirective>;
   textStyle: DirectiveResult<typeof StyleMapDirective>;
 } => {
   const isActive = state.state === 'on';
   const color = state.attributes.on_color || 'yellow';
 
   return {
-    cardStyle: styleMap({
-      'background-color': isActive
-        ? `rgba(var(--color-background-${color}),var(--opacity-bg))`
-        : undefined,
-    }),
-    iconStyle: styleMap({
-      color: isActive ? `rgba(var(--color-${color}),1)` : undefined,
-    }),
-    iconDivStyle: styleMap({
-      'background-color': isActive
-        ? `rgba(var(--color-${color}),0.2)`
-        : undefined,
-    }),
-    textStyle: styleMap({
-      color: isActive ? `rgba(var(--color-${color}-text),1)` : undefined,
-    }),
+    cardStyle:
+      isActive &&
+      styleMap({
+        'background-color': `rgba(var(--color-background-${color}),var(--opacity-bg))`,
+      }),
+    iconStyle:
+      isActive &&
+      styleMap({
+        color: `rgba(var(--color-${color}),1)`,
+      }),
+    iconContainerStyle:
+      isActive &&
+      styleMap({
+        'background-color': `rgba(var(--color-${color}),0.2)`,
+      }),
+    textStyle:
+      isActive &&
+      styleMap({
+        color: `rgba(var(--color-${color}-text),1)`,
+      }),
   };
 };
 

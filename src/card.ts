@@ -10,7 +10,7 @@ import {
   getEntity,
   getState,
 } from './helpers';
-import { createStateStyles, styles } from './styles';
+import { createStateStyles, getClimateStyles, styles } from './styles';
 import type {
   Config,
   EntityConfig,
@@ -48,6 +48,7 @@ export class RoomSummaryCard extends LitElement {
     const roomEntity = {
       config: {
         entity_id: roomEntityId,
+        icon: getArea(this._hass, this._config.area).icon,
         tap_action: {
           action: 'navigate',
           navigation_path: this._config.area.replace('_', '-'),
@@ -55,8 +56,6 @@ export class RoomSummaryCard extends LitElement {
       } as EntityConfig,
       state: getState(this._hass, roomEntityId),
     } as EntityInformation;
-
-    const icon = getArea(this._hass, this._config.area).icon;
 
     const { cardStyle, textStyle } = createStateStyles(roomEntity.state);
 
@@ -73,7 +72,7 @@ export class RoomSummaryCard extends LitElement {
             ${this._getLabel()} <br />
             <span class="stats">${this._getAreaStatistics()}</span>
           </div>
-          ${createStateIcon(this, this._hass, roomEntity, ['room'], icon)}
+          ${createStateIcon(this, this._hass, roomEntity, ['room'])}
           ${this._states.map((s, i) => {
             return createStateIcon(this, this._hass, s, [
               'entity',
@@ -107,17 +106,35 @@ export class RoomSummaryCard extends LitElement {
     this._hass = hass;
 
     const baseEntities = [
-      `light.${this._config.area}_light`,
-      `switch.${this._config.area}_fan`,
-    ];
+      { entity_id: `light.${this._config.area}_light` },
+      { entity_id: `switch.${this._config.area}_fan` },
+    ] as EntityConfig[];
 
-    const states = baseEntities.map((entity) => {
+    const entities = this._config.remove_fan
+      ? this._config.entities
+      : baseEntities.concat(this._config.entities);
+
+    const states = entities.map((entity) => {
+      const state = getState(hass, entity.entity_id);
+      const useClimateColors =
+        !this._config.skip_climate_colors && state.getDomain() === 'climate';
+
+      const { climateStyles, climateIcons } = getClimateStyles();
+
       return {
         config: {
-          entity_id: entity,
           tap_action: { action: 'toggle' },
+          ...entity,
         } as EntityConfig,
-        state: getState(hass, entity),
+        state: {
+          ...state,
+          state: useClimateColors ? 'on' : state.state,
+          attributes: {
+            icon: useClimateColors ? climateIcons[state.state] : undefined,
+            on_color: useClimateColors ? climateStyles[state.state] : undefined,
+            ...state.attributes,
+          },
+        },
       } as EntityInformation;
     });
 

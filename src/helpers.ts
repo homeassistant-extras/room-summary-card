@@ -18,18 +18,16 @@ export const createStateIcon = (
   hass: HomeAssistant,
   entity: EntityInformation,
   classes: String[],
-  icon: string | undefined = undefined,
 ): TemplateResult => {
   const { state } = entity;
-  const { iconStyle, iconDivStyle } = createStateStyles(state);
+  const { iconStyle, iconContainerStyle } = createStateStyles(state);
 
   return html`<div
     class="${['icon', ...classes].join(' ')}"
-    style=${iconDivStyle}
+    style=${iconContainerStyle}
   >
     <ha-state-icon
       .hass=${hass}
-      .icon="${icon}"
       .stateObj=${state}
       style=${iconStyle}
       @action=${{
@@ -44,7 +42,7 @@ export const createStateIcon = (
                     break;
                   case 'toggle':
                   default:
-                    doToggle(hass, state.entity_id);
+                    doToggle(hass, state);
                     break;
                 }
                 break;
@@ -67,8 +65,10 @@ export const createStateIcon = (
   </div>`;
 };
 
-export const getState = (hass: HomeAssistant, entityId: string): State =>
-  (hass.states as { [key: string]: any })[entityId];
+export const getState = (hass: HomeAssistant, entityId: string): State => {
+  const state = (hass.states as { [key: string]: any })[entityId];
+  return { ...state, getDomain: () => state.entity_id.split('.')[0] };
+};
 
 export const getEntity = (hass: HomeAssistant, entityId: string): Entity =>
   (hass.entities as { [key: string]: any })[entityId];
