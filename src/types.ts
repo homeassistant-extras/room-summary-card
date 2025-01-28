@@ -3,8 +3,8 @@
  */
 export interface Config {
   area: string;
-  entity: EntityConfig;
-  entities: EntityConfig[];
+  entity: EntityConfig | string;
+  entities: (EntityConfig | string)[];
   problem_entities: string[];
   remove_fan: boolean;
   skip_climate_colors: boolean;
@@ -12,7 +12,7 @@ export interface Config {
 
 export interface EntityConfig {
   entity_id: string;
-  icon: string;
+  icon?: string;
   tap_action?: ActionConfig;
 }
 
@@ -33,7 +33,7 @@ export type ActionConfig = ToggleActionConfig | NavigateActionConfig;
 
 export interface EntityInformation {
   config: EntityConfig;
-  state: State;
+  state: State | undefined;
 }
 
 /**

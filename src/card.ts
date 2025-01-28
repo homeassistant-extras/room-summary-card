@@ -10,6 +10,7 @@ import {
   getEntity,
   getIconEntities,
   getProblemEntities,
+  getRoomEntity,
   getState,
 } from './helpers';
 import { createStateStyles, styles } from './styles';
@@ -26,6 +27,9 @@ export class RoomSummaryCard extends LitElement {
 
   @state()
   private _states!: EntityInformation[];
+
+  @state()
+  private _roomEntity!: EntityInformation;
 
   @state()
   private _problemEntities: string[] = [];
@@ -50,20 +54,7 @@ export class RoomSummaryCard extends LitElement {
       return html``;
     }
 
-    const roomEntityId = `light.${this._config.area}_light`;
-    const roomEntity = {
-      config: {
-        entity_id: roomEntityId,
-        icon: getArea(this._hass, this._config.area).icon,
-        tap_action: {
-          action: 'navigate',
-          navigation_path: this._config.area.replace('_', '-'),
-        },
-      } as EntityConfig,
-      state: getState(this._hass, roomEntityId),
-    } as EntityInformation;
-
-    const { cardStyle, textStyle } = createStateStyles(roomEntity.state);
+    const { cardStyle, textStyle } = createStateStyles(this._roomEntity.state);
 
     return html`
       <div class="card" style=${cardStyle}>
@@ -78,7 +69,7 @@ export class RoomSummaryCard extends LitElement {
             ${this._getLabel()} <br />
             <span class="stats">${this._getAreaStatistics()}</span>
           </div>
-          ${createStateIcon(this, this._hass, roomEntity, ['room'])}
+          ${createStateIcon(this, this._hass, this._roomEntity, ['room'])}
           ${this._states.map((s, i) => {
             return createStateIcon(this, this._hass, s, [
               'entity',
@@ -121,12 +112,16 @@ export class RoomSummaryCard extends LitElement {
     this._hass = hass;
 
     const states = getIconEntities(hass, this._config);
+    const roomEntity = getRoomEntity(hass, this._config);
     const { problemEntities, problemExists } = getProblemEntities(
       hass,
       this._config.area,
     );
     this._problemExists = problemExists;
 
+    if (!equal(roomEntity, this._roomEntity)) {
+      this._roomEntity = roomEntity;
+    }
     if (!equal(states, this._states)) {
       this._states = states;
     }

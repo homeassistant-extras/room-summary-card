@@ -22,6 +22,8 @@ export const createStateIcon = (
   classes: String[],
 ): TemplateResult => {
   const { state } = entity;
+  if (!state) return html``;
+
   const { iconStyle, iconContainerStyle } = createStateStyles(state);
 
   return html`<div
@@ -83,8 +85,10 @@ export const getEntity = (hass: HomeAssistant, entityId: string): Entity =>
 export const getDevice = (hass: HomeAssistant, deviceId: string): Device =>
   (hass.devices as { [key: string]: any })[deviceId];
 
-export const getArea = (hass: HomeAssistant, deviceId: string): Area =>
-  (hass.areas as { [key: string]: any })[deviceId];
+export const getArea = (
+  hass: HomeAssistant,
+  deviceId: string,
+): Area | undefined => (hass.areas as { [key: string]: any })[deviceId];
 
 export const getProblemEntities = (
   hass: HomeAssistant,
@@ -115,9 +119,9 @@ export const getProblemEntities = (
 
 export const getIconEntities = (hass: HomeAssistant, config: Config) => {
   const baseEntities = [
-    { entity_id: `light.${config.area}_light` },
-    { entity_id: `switch.${config.area}_fan` },
-  ] as EntityConfig[];
+    `light.${config.area}_light`,
+    `switch.${config.area}_fan`,
+  ] as (EntityConfig | string)[];
 
   const configEntities = config.entities || [];
 
@@ -127,6 +131,11 @@ export const getIconEntities = (hass: HomeAssistant, config: Config) => {
 
   const states = entities
     .map((entity) => {
+      // handle the convenience string format
+      if (typeof entity === 'string') {
+        entity = { entity_id: entity };
+      }
+
       const state = getState(hass, entity.entity_id);
       if (!state) return undefined;
       const useClimateColors =
@@ -152,4 +161,32 @@ export const getIconEntities = (hass: HomeAssistant, config: Config) => {
     })
     .filter((entity) => entity !== undefined);
   return states;
+};
+
+export const getRoomEntity = (hass: HomeAssistant, config: Config) => {
+  const roomEntityId = `light.${config.area}_light`;
+  const roomEntity: EntityInformation | undefined = config.entity
+    ? typeof config.entity === 'string'
+      ? // convenience transform - use their entity
+        {
+          config: { entity_id: config.entity },
+          state: getState(hass, config.entity),
+        }
+      : {
+          config: config.entity,
+          state: getState(hass, config.entity.entity_id),
+        }
+    : // else use the room light
+      {
+        config: {
+          entity_id: roomEntityId,
+          icon: getArea(hass, config.area)?.icon,
+          tap_action: {
+            action: 'navigate',
+            navigation_path: config.area.replace('_', '-'),
+          },
+        } as EntityConfig,
+        state: getState(hass, roomEntityId),
+      };
+  return roomEntity;
 };

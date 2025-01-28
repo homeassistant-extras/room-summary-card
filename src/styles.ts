@@ -34,7 +34,7 @@ export const getClimateStyles = (): {
 };
 
 export const createStateStyles = (
-  state: State,
+  state?: State,
 ): {
   cardStyle: DirectiveResult<typeof StyleMapDirective>;
   iconStyle: DirectiveResult<typeof StyleMapDirective>;
@@ -42,28 +42,35 @@ export const createStateStyles = (
   textStyle: DirectiveResult<typeof StyleMapDirective>;
 } => {
   const isActive = state?.state === 'on';
-  const color = state?.attributes?.on_color || 'yellow';
+  const onColor = state?.attributes?.on_color || 'yellow';
+  const offColor = state?.attributes?.off_color;
 
   return {
     cardStyle:
       isActive &&
       styleMap({
-        'background-color': `rgba(var(--color-background-${color}),var(--opacity-bg))`,
+        'background-color': `rgba(var(--color-background-${onColor}),var(--opacity-bg))`,
       }),
-    iconStyle:
-      isActive &&
-      styleMap({
-        color: `rgba(var(--color-${color}),1)`,
-      }),
-    iconContainerStyle:
-      isActive &&
-      styleMap({
-        'background-color': `rgba(var(--color-${color}),0.2)`,
-      }),
+    iconStyle: isActive
+      ? styleMap({
+          color: `rgba(var(--color-${onColor}),1)`,
+        })
+      : offColor &&
+        styleMap({
+          color: `rgba(var(--color-${offColor}),1)`,
+        }),
+    iconContainerStyle: isActive
+      ? styleMap({
+          'background-color': `rgba(var(--color-${onColor}),0.2)`,
+        })
+      : offColor &&
+        styleMap({
+          'background-color': `rgba(var(--color-${offColor}),0.2)`,
+        }),
     textStyle:
       isActive &&
       styleMap({
-        color: `rgba(var(--color-${color}-text),1)`,
+        color: `rgba(var(--color-${onColor}-text),1)`,
       }),
   };
 };
