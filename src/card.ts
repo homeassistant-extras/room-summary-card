@@ -8,9 +8,9 @@ import {
   getArea,
   getDevice,
   getEntity,
+  getIconEntities,
   getProblemEntities,
   getState,
-  getStateIcons,
 } from './helpers';
 import { createStateStyles, styles } from './styles';
 import type {
@@ -25,7 +25,7 @@ export class RoomSummaryCard extends LitElement {
   private _config!: Config;
 
   @state()
-  private _states!: EntityInformation[] = [];
+  private _states!: EntityInformation[];
 
   @state()
   private _problemEntities: string[] = [];
@@ -46,7 +46,7 @@ export class RoomSummaryCard extends LitElement {
   }
 
   override render() {
-    if (!this._states.length) {
+    if (!this._states) {
       return html``;
     }
 
@@ -120,7 +120,7 @@ export class RoomSummaryCard extends LitElement {
   set hass(hass: HomeAssistant) {
     this._hass = hass;
 
-    const states = getStateIcons(hass, this._config);
+    const states = getIconEntities(hass, this._config);
     const { problemEntities, problemExists } = getProblemEntities(
       hass,
       this._config.area,
@@ -142,10 +142,10 @@ export class RoomSummaryCard extends LitElement {
       getState(
         this._hass,
         'sensor.' + this._config.area + '_climate_air_temperature',
-      ).state
+      )?.state
     }°F - ${
       getState(this._hass, 'sensor.' + this._config.area + '_climate_humidity')
-        .state
+        ?.state
     }%`;
 
     return climate;

@@ -68,8 +68,12 @@ export const createStateIcon = (
   </div>`;
 };
 
-export const getState = (hass: HomeAssistant, entityId: string): State => {
+export const getState = (
+  hass: HomeAssistant,
+  entityId: string,
+): State | undefined => {
   const state = (hass.states as { [key: string]: any })[entityId];
+  if (!state) return undefined;
   return { ...state, getDomain: () => state.entity_id.split('.')[0] };
 };
 
@@ -109,7 +113,7 @@ export const getProblemEntities = (
   };
 };
 
-export const getStateIcons = (hass: HomeAssistant, config: Config) => {
+export const getIconEntities = (hass: HomeAssistant, config: Config) => {
   const baseEntities = [
     { entity_id: `light.${config.area}_light` },
     { entity_id: `switch.${config.area}_fan` },
@@ -121,28 +125,31 @@ export const getStateIcons = (hass: HomeAssistant, config: Config) => {
     ? configEntities
     : baseEntities.concat(configEntities);
 
-  const states = entities.map((entity) => {
-    const state = getState(hass, entity.entity_id);
-    const useClimateColors =
-      !config.skip_climate_colors && state.getDomain() === 'climate';
+  const states = entities
+    .map((entity) => {
+      const state = getState(hass, entity.entity_id);
+      if (!state) return undefined;
+      const useClimateColors =
+        !config.skip_climate_colors && state.getDomain() === 'climate';
 
-    const { climateStyles, climateIcons } = getClimateStyles();
+      const { climateStyles, climateIcons } = getClimateStyles();
 
-    return {
-      config: {
-        tap_action: { action: 'toggle' },
-        ...entity,
-      } as EntityConfig,
-      state: {
-        ...state,
-        state: useClimateColors ? 'on' : state.state,
-        attributes: {
-          icon: useClimateColors ? climateIcons[state.state] : undefined,
-          on_color: useClimateColors ? climateStyles[state.state] : undefined,
-          ...state.attributes,
+      return {
+        config: {
+          tap_action: { action: 'toggle' },
+          ...entity,
+        } as EntityConfig,
+        state: {
+          ...state,
+          state: useClimateColors ? 'on' : state.state,
+          attributes: {
+            icon: useClimateColors ? climateIcons[state.state] : undefined,
+            on_color: useClimateColors ? climateStyles[state.state] : undefined,
+            ...state.attributes,
+          },
         },
-      },
-    } as EntityInformation;
-  });
+      } as EntityInformation;
+    })
+    .filter((entity) => entity !== undefined);
   return states;
 };

@@ -41,8 +41,8 @@ export const createStateStyles = (
   iconContainerStyle: DirectiveResult<typeof StyleMapDirective>;
   textStyle: DirectiveResult<typeof StyleMapDirective>;
 } => {
-  const isActive = state.state === 'on';
-  const color = state.attributes.on_color || 'yellow';
+  const isActive = state?.state === 'on';
+  const color = state?.attributes?.on_color || 'yellow';
 
   return {
     cardStyle:
@@ -169,9 +169,9 @@ export const styles = css`
   }
 
   .status-entities {
-    position: relative;
-    right: 220%;
-    top: 130%;
+    grid-area: 4 / 1 / 4 / 1;
+    align-self: end;
+    justify-self: start;
     width: 26px;
     height: 26px;
     border-radius: 50%;
