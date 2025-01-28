@@ -2,12 +2,14 @@ import { type TemplateResult, html } from 'lit';
 
 import { actionHandler } from './action-handler';
 import { doToggle, moreInfo } from './events';
-import { createStateStyles } from './styles';
+import { createStateStyles, getClimateStyles } from './styles';
 import type {
   ActionHandlerEvent,
   Area,
+  Config,
   Device,
   Entity,
+  EntityConfig,
   EntityInformation,
   HomeAssistant,
   State,
@@ -29,6 +31,7 @@ export const createStateIcon = (
     <ha-state-icon
       .hass=${hass}
       .stateObj=${state}
+      .icon=${entity.config.icon}
       style=${iconStyle}
       @action=${{
         handleEvent: (ev: ActionHandlerEvent) => {
@@ -78,3 +81,68 @@ export const getDevice = (hass: HomeAssistant, deviceId: string): Device =>
 
 export const getArea = (hass: HomeAssistant, deviceId: string): Area =>
   (hass.areas as { [key: string]: any })[deviceId];
+
+export const getProblemEntities = (
+  hass: HomeAssistant,
+  area: string,
+): {
+  problemEntities: string[];
+  problemExists: boolean;
+} => {
+  const problemEntities = Object.keys(hass.entities).filter((entityId) => {
+    const entity = hass.entities[entityId];
+    if (!entity?.labels?.includes('problem')) return false;
+
+    const device = hass.devices?.[entity.device_id];
+    return [entity.area_id, device?.area_id].includes(area);
+  });
+
+  const problemExists = problemEntities.some((entityId) => {
+    const entityState = hass.states[entityId];
+    if (!entityState) return false;
+    return entityState.state === 'on' || Number(entityState.state) > 0;
+  });
+
+  return {
+    problemEntities,
+    problemExists,
+  };
+};
+
+export const getStateIcons = (hass: HomeAssistant, config: Config) => {
+  const baseEntities = [
+    { entity_id: `light.${config.area}_light` },
+    { entity_id: `switch.${config.area}_fan` },
+  ] as EntityConfig[];
+
+  const configEntities = config.entities || [];
+
+  const entities = config.remove_fan
+    ? configEntities
+    : baseEntities.concat(configEntities);
+
+  const states = entities.map((entity) => {
+    const state = getState(hass, entity.entity_id);
+    const useClimateColors =
+      !config.skip_climate_colors && state.getDomain() === 'climate';
+
+    const { climateStyles, climateIcons } = getClimateStyles();
+
+    return {
+      config: {
+        tap_action: { action: 'toggle' },
+        ...entity,
+      } as EntityConfig,
+      state: {
+        ...state,
+        state: useClimateColors ? 'on' : state.state,
+        attributes: {
+          icon: useClimateColors ? climateIcons[state.state] : undefined,
+          on_color: useClimateColors ? climateStyles[state.state] : undefined,
+          ...state.attributes,
+        },
+      },
+    } as EntityInformation;
+  });
+  return states;
+};

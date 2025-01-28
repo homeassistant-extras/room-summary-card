@@ -1,5 +1,5 @@
 import * as equal from 'fast-deep-equal';
-import { CSSResult, LitElement, html } from 'lit';
+import { CSSResult, LitElement, html, nothing } from 'lit';
 import { state } from 'lit/decorators.js';
 
 import { version } from '../package.json';
@@ -8,9 +8,11 @@ import {
   getArea,
   getDevice,
   getEntity,
+  getProblemEntities,
   getState,
+  getStateIcons,
 } from './helpers';
-import { createStateStyles, getClimateStyles, styles } from './styles';
+import { createStateStyles, styles } from './styles';
 import type {
   Config,
   EntityConfig,
@@ -23,15 +25,19 @@ export class RoomSummaryCard extends LitElement {
   private _config!: Config;
 
   @state()
-  private _states!: EntityInformation[];
+  private _states!: EntityInformation[] = [];
+
+  @state()
+  private _problemEntities: string[] = [];
+
+  @state()
+  private _problemExists: boolean = false;
 
   // not state
   private _hass!: HomeAssistant;
 
   constructor() {
     super();
-
-    this._states = [];
 
     console.info(
       `%c🐱 Poat's Tools: room-summary-card - ${version}`,
@@ -62,13 +68,13 @@ export class RoomSummaryCard extends LitElement {
     return html`
       <div class="card" style=${cardStyle}>
         <div class="grid">
-          <div class="name text" style=${textStyle}>
+          <div class="name text" style=${textStyle} @click=${this._navigate}>
             ${this._config.area
               .split('_')
               .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
               .join(' ')}
           </div>
-          <div class="label text" style=${textStyle}>
+          <div class="label text" style=${textStyle} @click=${this._navigate}>
             ${this._getLabel()} <br />
             <span class="stats">${this._getAreaStatistics()}</span>
           </div>
@@ -79,6 +85,15 @@ export class RoomSummaryCard extends LitElement {
               `entity-${i + 1}`,
             ]);
           })}
+          ${this._problemEntities.length > 0
+            ? html`<ha-icon
+                .icon=${`mdi:numeric-${this._problemEntities.length}`}
+                class="status-entities"
+                style="background-color: ${this._problemExists
+                  ? 'rgba(var(--color-red), 0.8)'
+                  : 'rgba(var(--color-green), 0.6)'}"
+              />`
+            : nothing}
         </div>
       </div>
     `;
@@ -105,41 +120,18 @@ export class RoomSummaryCard extends LitElement {
   set hass(hass: HomeAssistant) {
     this._hass = hass;
 
-    const baseEntities = [
-      { entity_id: `light.${this._config.area}_light` },
-      { entity_id: `switch.${this._config.area}_fan` },
-    ] as EntityConfig[];
-
-    const entities = this._config.remove_fan
-      ? this._config.entities
-      : baseEntities.concat(this._config.entities);
-
-    const states = entities.map((entity) => {
-      const state = getState(hass, entity.entity_id);
-      const useClimateColors =
-        !this._config.skip_climate_colors && state.getDomain() === 'climate';
-
-      const { climateStyles, climateIcons } = getClimateStyles();
-
-      return {
-        config: {
-          tap_action: { action: 'toggle' },
-          ...entity,
-        } as EntityConfig,
-        state: {
-          ...state,
-          state: useClimateColors ? 'on' : state.state,
-          attributes: {
-            icon: useClimateColors ? climateIcons[state.state] : undefined,
-            on_color: useClimateColors ? climateStyles[state.state] : undefined,
-            ...state.attributes,
-          },
-        },
-      } as EntityInformation;
-    });
+    const states = getStateIcons(hass, this._config);
+    const { problemEntities, problemExists } = getProblemEntities(
+      hass,
+      this._config.area,
+    );
+    this._problemExists = problemExists;
 
     if (!equal(states, this._states)) {
       this._states = states;
+    }
+    if (!equal(problemEntities, this._problemEntities)) {
+      this._problemEntities = problemEntities;
     }
   }
 
@@ -178,5 +170,9 @@ export class RoomSummaryCard extends LitElement {
       .join(' ');
 
     return counts;
+  }
+
+  private _navigate(ev: Event): void {
+    window.location.href = this._config.area.replace('_', '-');
   }
 }

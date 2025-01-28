@@ -96,6 +96,7 @@ export const styles = css`
     align-self: end;
     font-size: 18px;
     margin-bottom: 10%;
+    cursor: pointer;
   }
 
   .label {
@@ -104,6 +105,7 @@ export const styles = css`
     font-size: 14px;
     margin-top: -10%;
     filter: opacity(40%);
+    cursor: pointer;
   }
 
   .stats {
@@ -164,5 +166,18 @@ export const styles = css`
 
   .entity-4 {
     grid-area: e4;
+  }
+
+  .status-entities {
+    position: relative;
+    right: 220%;
+    top: 130%;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--card-background-color);
+    display: grid;
+    place-items: center;
+    color: var(--card-background-color);
   }
 `;

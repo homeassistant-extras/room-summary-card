@@ -14,7 +14,7 @@ jobs:
     steps:
       - id: check
         run: |
-          if [[ ! "${{ github.event.commits[0].author.email }}" == *"[bot]@users.noreply.github.com"* ]]; then
+          if [[ ! "${{ github.event.commits[0].author.email }}" == *"@users.noreply.github.com"* ]]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
             echo "should_run=false" >> $GITHUB_OUTPUT

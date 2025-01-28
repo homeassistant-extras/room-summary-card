@@ -5,12 +5,14 @@ export interface Config {
   area: string;
   entity: EntityConfig;
   entities: EntityConfig[];
+  problem_entities: string[];
   remove_fan: boolean;
   skip_climate_colors: boolean;
 }
 
 export interface EntityConfig {
   entity_id: string;
+  icon: string;
   tap_action?: ActionConfig;
 }
 
@@ -106,6 +108,8 @@ export interface Entity {
 
   /** ID of the physical device this entity belongs to */
   device_id: string;
+
+  labels: string[];
 }
 
 export interface ServiceCallRequest {
