@@ -2,7 +2,7 @@ import { type TemplateResult, html } from 'lit';
 
 import { actionHandler } from './action-handler';
 import { doToggle, moreInfo } from './events';
-import { createStateStyles, getClimateStyles } from './styles';
+import { getClimateStyles, getEntityIconStyles } from './styles';
 import type {
   ActionHandlerEvent,
   Area,
@@ -24,7 +24,7 @@ export const createStateIcon = (
   const { state } = entity;
   if (!state) return html``;
 
-  const { iconStyle, iconContainerStyle } = createStateStyles(state);
+  const { iconStyle, iconContainerStyle } = getEntityIconStyles(state);
 
   return html`<div
     class="${['icon', ...classes].join(' ')}"
@@ -73,8 +73,11 @@ export const createStateIcon = (
 export const getState = (
   hass: HomeAssistant,
   entityId: string,
+  fakeState: boolean = false,
 ): State | undefined => {
-  const state = (hass.states as { [key: string]: any })[entityId];
+  const state =
+    (hass.states as { [key: string]: any })[entityId] ||
+    (fakeState ? { entity_id: entityId } : undefined);
   if (!state) return undefined;
   return { ...state, getDomain: () => state.entity_id.split('.')[0] };
 };
@@ -186,7 +189,8 @@ export const getRoomEntity = (hass: HomeAssistant, config: Config) => {
             navigation_path: config.area.replace('_', '-'),
           },
         } as EntityConfig,
-        state: getState(hass, roomEntityId),
+        // fake state in case room entity doesn't exist
+        state: getState(hass, roomEntityId, true),
       };
   return roomEntity;
 };

@@ -3,9 +3,8 @@ import { CSSResult, LitElement, html, nothing } from 'lit';
 import { state } from 'lit/decorators.js';
 
 import { version } from '../package.json';
+import { createStateIcon } from './action-handler';
 import {
-  createStateIcon,
-  getArea,
   getDevice,
   getEntity,
   getIconEntities,
@@ -13,13 +12,8 @@ import {
   getRoomEntity,
   getState,
 } from './helpers';
-import { createStateStyles, styles } from './styles';
-import type {
-  Config,
-  EntityConfig,
-  EntityInformation,
-  HomeAssistant,
-} from './types';
+import { getCardStyles, getEntityIconStyles, styles } from './styles';
+import type { Config, EntityInformation, HomeAssistant } from './types';
 
 export class RoomSummaryCard extends LitElement {
   @state()
@@ -54,10 +48,15 @@ export class RoomSummaryCard extends LitElement {
       return html``;
     }
 
-    const { cardStyle, textStyle } = createStateStyles(this._roomEntity.state);
+    const { textStyle } = getEntityIconStyles(this._roomEntity.state);
+    const cardStyle = getCardStyles(
+      this._hass,
+      this._config,
+      this._roomEntity.state,
+    );
 
     return html`
-      <div class="card" style=${cardStyle}>
+      <div class="card" style="${cardStyle}">
         <div class="grid">
           <div class="name text" style=${textStyle} @click=${this._navigate}>
             ${this._config.area

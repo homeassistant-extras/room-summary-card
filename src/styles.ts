@@ -5,7 +5,57 @@ import {
   styleMap,
 } from 'lit-html/directives/style-map';
 
-import type { State } from './types';
+import { getState } from './helpers';
+import type { Config, HomeAssistant, State } from './types';
+
+export const getCardStyles = (
+  hass: HomeAssistant,
+  config: Config,
+  state?: State,
+): DirectiveResult<typeof StyleMapDirective> => {
+  const isActive = state?.state === 'on';
+  const onColor = state?.attributes?.on_color || 'yellow';
+  const tempSensor = `sensor.${config.area}_climate_air_temperature`;
+  const humiditySensor = `sensor.${config.area}_climate_humidity`;
+
+  // Get sensor states
+  const tempState = getState(hass, tempSensor);
+  const humidState = getState(hass, humiditySensor);
+
+  if (!tempState || !humidState) return ``;
+
+  const tempThreshold = tempState.attributes.temperature_threshold || 80;
+  const humidThreshold = tempState.attributes.humidity_threshold || 60;
+
+  const temp = Number(tempState.state);
+  const humidity = Number(humidState.state);
+
+  // Determine border styles
+  let border1 = '';
+  let border2 = '';
+
+  if (temp > tempThreshold) {
+    border1 = '2px solid rgba(var(--color-red-text),1)';
+  } else if (humidity > humidThreshold) {
+    border1 = '2px solid rgba(var(--color-blue-text),1)';
+  }
+
+  if (humidity > humidThreshold) {
+    border2 = '2px solid rgba(var(--color-blue-text),1)';
+  } else if (temp > tempThreshold) {
+    border2 = '2px solid rgba(var(--color-red-text),1)';
+  }
+
+  return styleMap({
+    'background-color': isActive
+      ? `rgba(var(--color-background-${onColor}),var(--opacity-bg))`
+      : undefined,
+    borderLeft: border1,
+    borderTop: border1,
+    borderRight: border2,
+    borderBottom: border2,
+  });
+};
 
 export const getClimateStyles = (): {
   climateStyles: Record<string, string>;
@@ -33,10 +83,9 @@ export const getClimateStyles = (): {
   };
 };
 
-export const createStateStyles = (
+export const getEntityIconStyles = (
   state?: State,
 ): {
-  cardStyle: DirectiveResult<typeof StyleMapDirective>;
   iconStyle: DirectiveResult<typeof StyleMapDirective>;
   iconContainerStyle: DirectiveResult<typeof StyleMapDirective>;
   textStyle: DirectiveResult<typeof StyleMapDirective>;
@@ -46,11 +95,6 @@ export const createStateStyles = (
   const offColor = state?.attributes?.off_color;
 
   return {
-    cardStyle:
-      isActive &&
-      styleMap({
-        'background-color': `rgba(var(--color-background-${onColor}),var(--opacity-bg))`,
-      }),
     iconStyle: isActive
       ? styleMap({
           color: `rgba(var(--color-${onColor}),1)`,
