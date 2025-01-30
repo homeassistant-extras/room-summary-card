@@ -10,7 +10,6 @@ import type {
   ActionHandlerElement,
   ActionHandlerOptions,
   ActionHandlerType,
-  EntityConfig,
   EntityInformation,
 } from './types';
 

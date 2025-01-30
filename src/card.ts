@@ -5,8 +5,8 @@ import { state } from 'lit/decorators.js';
 import { version } from '../package.json';
 import { actionHandler } from './action-handler';
 import { handleClickAction } from './handle-action';
-import { createStateIcon } from './helpers';
 import {
+  createStateIcon,
   getDevice,
   getEntity,
   getIconEntities,

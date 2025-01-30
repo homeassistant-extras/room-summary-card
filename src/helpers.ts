@@ -166,7 +166,7 @@ export const getRoomEntity = (hass: HomeAssistant, config: Config) => {
           icon: getArea(hass, config.area)?.icon,
           tap_action: {
             action: 'navigate',
-            navigation_path: config.area.replace('_', '-'),
+            navigation_path: config.navigate ?? config.area.replace('_', '-'),
           },
           hold_action: { action: 'more-info' },
           double_tap_action: { action: 'none' },

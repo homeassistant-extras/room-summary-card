@@ -3,11 +3,12 @@
  */
 export interface Config {
   area: string;
-  entity: EntityConfig | string;
-  entities: (EntityConfig | string)[];
-  problem_entities: string[];
-  remove_fan: boolean;
-  skip_climate_colors: boolean;
+  entity?: EntityConfig | string;
+  entities?: (EntityConfig | string)[];
+  problem_entities?: string[];
+  remove_fan?: boolean;
+  skip_climate_colors?: boolean;
+  navigate?: string;
 }
 
 export interface EntityConfig {
