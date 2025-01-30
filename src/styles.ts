@@ -1,3 +1,11 @@
+/**
+ * Room Summary Card Styles Module
+ *
+ * Handles all styling logic and CSS definitions for the Room Summary Card.
+ * Includes functions for generating dynamic styles based on state and
+ * configuration, as well as static CSS styles for the card layout.
+ */
+
 import { css } from 'lit';
 import type { DirectiveResult } from 'lit-html/directive';
 import {
@@ -6,13 +14,23 @@ import {
 } from 'lit-html/directives/style-map';
 
 import { getState } from './helpers';
-import type { Config, HomeAssistant, State } from './types';
+import type { Config } from './types/config';
+import type { HomeAssistant, State } from './types/homeassistant';
 
+/**
+ * Generates dynamic card styles based on state and sensor readings
+ *
+ * @param {HomeAssistant} hass - The Home Assistant instance
+ * @param {Config} config - Card configuration
+ * @param {State} [state] - Current entity state
+ * @returns {DirectiveResult<typeof StyleMapDirective>} Style map for the card
+ */
 export const getCardStyles = (
   hass: HomeAssistant,
   config: Config,
   state?: State,
 ): DirectiveResult<typeof StyleMapDirective> => {
+  // Extract basic state information
   const isActive = state?.state === 'on';
   const onColor = state?.attributes?.on_color || 'yellow';
   const tempSensor = config.temperature_sensor;
@@ -24,13 +42,15 @@ export const getCardStyles = (
 
   if (!tempState || !humidState) return ``;
 
+  // Get thresholds with defaults
   const tempThreshold = tempState.attributes.temperature_threshold || 80;
   const humidThreshold = tempState.attributes.humidity_threshold || 60;
 
+  // Parse current values
   const temp = Number(tempState.state);
   const humidity = Number(humidState.state);
 
-  // Determine border styles
+  // Calculate border styles based on temperature and humidity
   const border1 =
     temp > tempThreshold
       ? '2px solid rgba(var(--color-red-text),1)'
@@ -45,6 +65,7 @@ export const getCardStyles = (
         ? '2px solid rgba(var(--color-red-text),1)'
         : '';
 
+  // Return complete style map
   return styleMap({
     'background-color': isActive
       ? `rgba(var(--color-background-${onColor}),var(--opacity-bg))`
@@ -56,6 +77,11 @@ export const getCardStyles = (
   });
 };
 
+/**
+ * Provides climate-specific styles and icons
+ *
+ * @returns {Object} Object containing style and icon mappings for climate states
+ */
 export const getClimateStyles = (): {
   climateStyles: Record<string, string>;
   climateIcons: Record<string, string>;
@@ -82,6 +108,12 @@ export const getClimateStyles = (): {
   };
 };
 
+/**
+ * Generates styles for entity icons based on their state
+ *
+ * @param {State} [state] - Current entity state
+ * @returns {Object} Style maps for icon, container, and text
+ */
 export const getEntityIconStyles = (
   state?: State,
 ): {
@@ -94,6 +126,7 @@ export const getEntityIconStyles = (
   const offColor = state?.attributes?.off_color;
 
   return {
+    // Icon color styles
     iconStyle: isActive
       ? styleMap({
           color: `rgba(var(--color-${onColor}),1)`,
@@ -102,6 +135,8 @@ export const getEntityIconStyles = (
         styleMap({
           color: `rgba(var(--color-${offColor}),1)`,
         }),
+
+    // Icon container background styles
     iconContainerStyle: isActive
       ? styleMap({
           'background-color': `rgba(var(--color-${onColor}),0.2)`,
@@ -110,6 +145,8 @@ export const getEntityIconStyles = (
         styleMap({
           'background-color': `rgba(var(--color-${offColor}),0.2)`,
         }),
+
+    // Text color styles
     textStyle:
       isActive &&
       styleMap({
@@ -118,7 +155,12 @@ export const getEntityIconStyles = (
   };
 };
 
+/**
+ * Static CSS styles for the Room Summary Card
+ * Defines the grid layout and styling for all card elements
+ */
 export const styles = css`
+  /* Card container */
   .card {
     padding: 5px;
     border-radius: 20px;
@@ -128,6 +170,7 @@ export const styles = css`
     overflow: hidden;
   }
 
+  /* Grid layout */
   .grid {
     display: grid;
     grid-template-areas:
@@ -141,6 +184,7 @@ export const styles = css`
     aspect-ratio: 1/1;
   }
 
+  /* Room name styling */
   .name {
     grid-area: n;
     align-self: end;
@@ -149,6 +193,7 @@ export const styles = css`
     cursor: pointer;
   }
 
+  /* Label styling */
   .label {
     grid-area: l;
     align-self: start;
@@ -158,10 +203,12 @@ export const styles = css`
     cursor: pointer;
   }
 
+  /* Statistics text */
   .stats {
     font-size: 0.8em;
   }
 
+  /* Common text styles */
   .text {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -172,11 +219,13 @@ export const styles = css`
     max-width: calc(100% - 12px);
   }
 
+  /* Room area styling */
   .room {
     grid-area: r;
     cursor: pointer;
   }
 
+  /* Icon container styling */
   .icon {
     background-color: rgba(var(--color-theme), 0.05);
     height: 150%;
@@ -189,12 +238,14 @@ export const styles = css`
     justify-content: center;
   }
 
+  /* State icon styling */
   .icon ha-state-icon {
     width: 50%;
     color: rgba(var(--color-theme), 0.2);
     --mdc-icon-size: 100%;
   }
 
+  /* Entity styling */
   .entity {
     width: 80%;
     height: 80%;
@@ -202,22 +253,21 @@ export const styles = css`
     cursor: pointer;
   }
 
+  /* Entity position classes */
   .entity-1 {
     grid-area: e1;
   }
-
   .entity-2 {
     grid-area: e2;
   }
-
   .entity-3 {
     grid-area: e3;
   }
-
   .entity-4 {
     grid-area: e4;
   }
 
+  /* Status entities indicator */
   .status-entities {
     grid-area: 4 / 1 / 4 / 1;
     align-self: end;

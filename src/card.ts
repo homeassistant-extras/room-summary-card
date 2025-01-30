@@ -1,10 +1,19 @@
+/**
+ * Room Summary Card Component
+ *
+ * A custom element that displays a summary of room information in Home Assistant.
+ * This card shows room state, climate information, and various entity states in a
+ * grid layout with interactive elements.
+ *
+ * @version See package.json
+ */
+
 import * as equal from 'fast-deep-equal';
 import { CSSResult, LitElement, html, nothing } from 'lit';
 import { state } from 'lit/decorators.js';
 
 import { version } from '../package.json';
-import { actionHandler } from './action-handler';
-import { handleClickAction } from './handle-action';
+import { actionHandler, handleClickAction } from './action-handler';
 import {
   createStateIcon,
   getDevice,
@@ -15,36 +24,58 @@ import {
   getState,
 } from './helpers';
 import { getCardStyles, getEntityIconStyles, styles } from './styles';
-import type { Config, EntityInformation, HomeAssistant } from './types';
+import type { Config, EntityInformation } from './types/config';
+import type { HomeAssistant } from './types/homeassistant';
 
 export class RoomSummaryCard extends LitElement {
+  /**
+   * Card configuration object
+   */
   @state()
   private _config!: Config;
 
+  /**
+   * Array of entity states to display in the card
+   */
   @state()
   private _states!: EntityInformation[];
 
+  /**
+   * Information about the room entity
+   */
   @state()
   private _roomEntity!: EntityInformation;
 
+  /**
+   * List of entity IDs that have problems
+   */
   @state()
   private _problemEntities: string[] = [];
 
+  /**
+   * Indicates if any problems exist in the room
+   */
   @state()
   private _problemExists: boolean = false;
 
-  // not state
+  /**
+   * Home Assistant instance
+   * Not marked as @state as it's handled differently
+   */
   private _hass!: HomeAssistant;
 
   constructor() {
     super();
-
     console.info(
       `%c🐱 Poat's Tools: room-summary-card - ${version}`,
       'color: #CFC493;',
     );
   }
 
+  /**
+   * Renders the room summary card
+   * @returns {TemplateResult} The rendered HTML template
+   */
   override render() {
     if (!this._states) {
       return html``;
@@ -60,17 +91,17 @@ export class RoomSummaryCard extends LitElement {
     return html`
       <div class="card" style="${cardStyle}">
         <div class="grid">
+          <!-- Room Name -->
           <div
             class="name text"
             style=${textStyle}
             @action=${handleClickAction(this, this._roomEntity)}
             .actionHandler=${actionHandler(this._roomEntity)}
           >
-            ${this._config.area
-              .split('_')
-              .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-              .join(' ')}
+            ${this._formatAreaName()}
           </div>
+
+          <!-- Climate Information -->
           <div
             class="label text"
             style=${textStyle}
@@ -80,37 +111,31 @@ export class RoomSummaryCard extends LitElement {
             ${this._getLabel()} <br />
             <span class="stats">${this._getAreaStatistics()}</span>
           </div>
+
+          <!-- State Icons -->
           ${createStateIcon(this, this._hass, this._roomEntity, ['room'])}
-          ${this._states.map((s, i) => {
-            return createStateIcon(this, this._hass, s, [
-              'entity',
-              `entity-${i + 1}`,
-            ]);
-          })}
-          ${this._problemEntities.length > 0
-            ? html`<ha-icon
-                .icon=${`mdi:numeric-${this._problemEntities.length}`}
-                class="status-entities"
-                style="background-color: ${this._problemExists
-                  ? 'rgba(var(--color-red), 0.8)'
-                  : 'rgba(var(--color-green), 0.6)'}"
-              />`
-            : nothing}
+          ${this._states.map((s, i) =>
+            createStateIcon(this, this._hass, s, ['entity', `entity-${i + 1}`]),
+          )}
+
+          <!-- Problem Indicator -->
+          ${this._renderProblemIndicator()}
         </div>
       </div>
     `;
   }
 
+  /**
+   * Returns the component's styles
+   */
   static override get styles(): CSSResult {
     return styles;
   }
 
-  /*
-   * HASS setup
+  /**
+   * Sets up the card configuration
+   * @param {Config} config - The card configuration
    */
-
-  // The user supplied configuration. Throw an exception and Home Assistant
-  // will render an error card.
   setConfig(config: Config) {
     const cardConfig = {
       humidity_sensor: `sensor.${config.area}_climate_humidity`,
@@ -122,8 +147,10 @@ export class RoomSummaryCard extends LitElement {
     }
   }
 
-  // Whenever the state changes, a new `hass` object is set. Use this to
-  // update your content.
+  /**
+   * Updates the card's state when Home Assistant state changes
+   * @param {HomeAssistant} hass - The Home Assistant instance
+   */
   set hass(hass: HomeAssistant) {
     this._hass = hass;
 
@@ -133,8 +160,8 @@ export class RoomSummaryCard extends LitElement {
       hass,
       this._config.area,
     );
-    this._problemExists = problemExists;
 
+    // Update states only if they've changed
     if (!equal(roomEntity, this._roomEntity)) {
       this._roomEntity = roomEntity;
     }
@@ -143,37 +170,79 @@ export class RoomSummaryCard extends LitElement {
     }
     if (!equal(problemEntities, this._problemEntities)) {
       this._problemEntities = problemEntities;
+      this._problemExists = problemExists;
     }
   }
 
+  /**
+   * Formats the area name with proper capitalization
+   * @returns {string} Formatted area name
+   */
+  private _formatAreaName(): string {
+    return this._config.area
+      .split('_')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  }
+
+  /**
+   * Gets the climate label (temperature and humidity)
+   * @returns {string} Formatted climate information
+   */
   private _getLabel(): string {
     if (!this._hass || !this._config.area) return '';
 
-    const climate = `${
-      getState(this._hass, this._config.temperature_sensor)?.state
-    }°F - ${getState(this._hass, this._config.humidity_sensor)?.state}%`;
+    const temp = getState(this._hass, this._config.temperature_sensor)?.state;
+    const humidity = getState(this._hass, this._config.humidity_sensor)?.state;
 
-    return climate;
+    return `${temp}°F - ${humidity}%`;
   }
 
+  /**
+   * Gets statistics about devices and entities in the area
+   * @returns {string} Formatted statistics
+   */
   private _getAreaStatistics(): string {
     if (!this._hass || !this._config.area) return '';
 
-    const d = Object.keys(this._hass.devices).filter(
+    const devices = Object.keys(this._hass.devices).filter(
       (k) => getDevice(this._hass, k).area_id === this._config.area,
     );
-    const e = Object.keys(this._hass.entities).filter((k) => {
-      const e = getEntity(this._hass, k);
-      return e.area_id === this._config.area || d.includes(e.device_id);
+
+    const entities = Object.keys(this._hass.entities).filter((k) => {
+      const entity = getEntity(this._hass, k);
+      return (
+        entity.area_id === this._config.area ||
+        devices.includes(entity.device_id)
+      );
     });
-    const counts = [
-      [d.length, 'devices'],
-      [e.length, 'entities'],
+
+    return [
+      [devices.length, 'devices'],
+      [entities.length, 'entities'],
     ]
       .filter((count) => count.length > 0)
       .map(([count, type]) => `${count} ${type}`)
       .join(' ');
+  }
 
-    return counts;
+  /**
+   * Renders the problem indicator icon if problems exist
+   * @returns {TemplateResult | typeof nothing} The rendered problem indicator or nothing
+   */
+  private _renderProblemIndicator() {
+    if (this._problemEntities.length === 0) {
+      return nothing;
+    }
+
+    return html`
+      <ha-icon
+        .icon=${`mdi:numeric-${this._problemEntities.length}`}
+        class="status-entities"
+        style="background-color: ${this._problemExists
+          ? 'rgba(var(--color-red), 0.8)'
+          : 'rgba(var(--color-green), 0.6)'}"
+      />
+    `;
   }
 }
