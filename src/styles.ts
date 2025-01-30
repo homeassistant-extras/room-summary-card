@@ -15,8 +15,8 @@ export const getCardStyles = (
 ): DirectiveResult<typeof StyleMapDirective> => {
   const isActive = state?.state === 'on';
   const onColor = state?.attributes?.on_color || 'yellow';
-  const tempSensor = `sensor.${config.area}_climate_air_temperature`;
-  const humiditySensor = `sensor.${config.area}_climate_humidity`;
+  const tempSensor = config.temperature_sensor;
+  const humiditySensor = config!.humidity_sensor;
 
   // Get sensor states
   const tempState = getState(hass, tempSensor);
@@ -31,20 +31,19 @@ export const getCardStyles = (
   const humidity = Number(humidState.state);
 
   // Determine border styles
-  let border1 = '';
-  let border2 = '';
+  const border1 =
+    temp > tempThreshold
+      ? '2px solid rgba(var(--color-red-text),1)'
+      : humidity > humidThreshold
+        ? '2px solid rgba(var(--color-blue-text),1)'
+        : '';
 
-  if (temp > tempThreshold) {
-    border1 = '2px solid rgba(var(--color-red-text),1)';
-  } else if (humidity > humidThreshold) {
-    border1 = '2px solid rgba(var(--color-blue-text),1)';
-  }
-
-  if (humidity > humidThreshold) {
-    border2 = '2px solid rgba(var(--color-blue-text),1)';
-  } else if (temp > tempThreshold) {
-    border2 = '2px solid rgba(var(--color-red-text),1)';
-  }
+  const border2 =
+    humidity > humidThreshold
+      ? '2px solid rgba(var(--color-blue-text),1)'
+      : temp > tempThreshold
+        ? '2px solid rgba(var(--color-red-text),1)'
+        : '';
 
   return styleMap({
     'background-color': isActive

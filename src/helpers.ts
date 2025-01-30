@@ -42,9 +42,10 @@ export const createStateIcon = (
 
 export const getState = (
   hass: HomeAssistant,
-  entityId: string,
+  entityId?: string,
   fakeState: boolean = false,
 ): State | undefined => {
+  if (!entityId) return undefined;
   const state =
     (hass.states as { [key: string]: any })[entityId] ||
     (fakeState ? { entity_id: entityId } : undefined);

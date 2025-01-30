@@ -9,6 +9,8 @@ export interface Config {
   remove_fan?: boolean;
   skip_climate_colors?: boolean;
   navigate?: string;
+  humidity_sensor?: string;
+  temperature_sensor?: string;
 }
 
 export interface EntityConfig {

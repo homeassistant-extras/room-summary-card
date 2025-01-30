@@ -112,8 +112,13 @@ export class RoomSummaryCard extends LitElement {
   // The user supplied configuration. Throw an exception and Home Assistant
   // will render an error card.
   setConfig(config: Config) {
-    if (!equal(config, this._config)) {
-      this._config = config;
+    const cardConfig = {
+      humidity_sensor: `sensor.${config.area}_climate_humidity`,
+      temperature_sensor: `sensor.${config.area}_climate_air_temperature`,
+      ...config,
+    };
+    if (!equal(cardConfig, this._config)) {
+      this._config = cardConfig;
     }
   }
 
@@ -145,14 +150,8 @@ export class RoomSummaryCard extends LitElement {
     if (!this._hass || !this._config.area) return '';
 
     const climate = `${
-      getState(
-        this._hass,
-        'sensor.' + this._config.area + '_climate_air_temperature',
-      )?.state
-    }°F - ${
-      getState(this._hass, 'sensor.' + this._config.area + '_climate_humidity')
-        ?.state
-    }%`;
+      getState(this._hass, this._config.temperature_sensor)?.state
+    }°F - ${getState(this._hass, this._config.humidity_sensor)?.state}%`;
 
     return climate;
   }
