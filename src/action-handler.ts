@@ -6,19 +6,13 @@ import {
   directive,
 } from 'lit/directive';
 
-interface ActionHandlerType extends HTMLElement {
-  holdTime: number;
-  bind(element: Element, options?: ActionHandlerOptions): void;
-}
-
-interface ActionHandlerElement extends HTMLElement {
-  actionHandler?: {
-    options: ActionHandlerOptions;
-    start?: (ev: Event) => void;
-    end?: (ev: Event) => void;
-    handleKeyDown?: (ev: KeyboardEvent) => void;
-  };
-}
+import type {
+  ActionHandlerElement,
+  ActionHandlerOptions,
+  ActionHandlerType,
+  EntityConfig,
+  EntityInformation,
+} from './types';
 
 const getActionHandler = (): ActionHandlerType => {
   const body = document.body;
@@ -32,13 +26,7 @@ const getActionHandler = (): ActionHandlerType => {
   return actionhandler as ActionHandlerType;
 };
 
-export interface ActionHandlerOptions {
-  hasHold?: boolean;
-  hasDoubleClick?: boolean;
-  disabled?: boolean;
-}
-
-export const actionHandlerBind = (
+const actionHandlerBind = (
   element: ActionHandlerElement,
   options?: ActionHandlerOptions,
 ) => {
@@ -49,7 +37,7 @@ export const actionHandlerBind = (
   actionhandler.bind(element, options);
 };
 
-export const actionHandler = directive(
+const _actionHandler = directive(
   class extends Directive {
     override update(part: AttributePart, [options]: DirectiveParameters<this>) {
       actionHandlerBind(part.element as ActionHandlerElement, options);
@@ -59,3 +47,9 @@ export const actionHandler = directive(
     render(_options?: ActionHandlerOptions) {}
   },
 );
+
+export const actionHandler = (entity: EntityInformation) =>
+  _actionHandler({
+    hasDoubleClick: entity.config!.double_tap_action!.action !== 'none',
+    hasHold: entity.config!.hold_action!.action !== 'none',
+  });

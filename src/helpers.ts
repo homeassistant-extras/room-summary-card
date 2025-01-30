@@ -1,10 +1,9 @@
 import { type TemplateResult, html } from 'lit';
 
 import { actionHandler } from './action-handler';
-import { doToggle, moreInfo } from './events';
+import { handleClickAction } from './handle-action';
 import { getClimateStyles, getEntityIconStyles } from './styles';
 import type {
-  ActionHandlerEvent,
   Area,
   Config,
   Device,
@@ -35,37 +34,8 @@ export const createStateIcon = (
       .stateObj=${state}
       .icon=${entity.config.icon}
       style=${iconStyle}
-      @action=${{
-        handleEvent: (ev: ActionHandlerEvent) => {
-          if (ev.detail?.action) {
-            switch (ev.detail.action) {
-              case 'tap':
-                switch (entity.config.tap_action?.action) {
-                  case 'navigate':
-                    window.location.href =
-                      entity.config.tap_action.navigation_path;
-                    break;
-                  case 'toggle':
-                  default:
-                    doToggle(hass, state);
-                    break;
-                }
-                break;
-              case 'hold':
-                moreInfo(element, state.entity_id);
-                break;
-              case 'double_tap':
-              default:
-                break;
-            }
-          }
-        },
-      }}
-      .actionHandler=${actionHandler({
-        hasDoubleClick: false,
-        hasHold: true,
-        disabled: false,
-      })}
+      @action=${handleClickAction(element, entity)}
+      .actionHandler=${actionHandler(entity)}
     ></ha-state-icon>
   </div>`;
 };
@@ -149,6 +119,8 @@ export const getIconEntities = (hass: HomeAssistant, config: Config) => {
       return {
         config: {
           tap_action: { action: 'toggle' },
+          hold_action: { action: 'more-info' },
+          double_tap_action: { action: 'none' },
           ...entity,
         } as EntityConfig,
         state: {
@@ -172,11 +144,19 @@ export const getRoomEntity = (hass: HomeAssistant, config: Config) => {
     ? typeof config.entity === 'string'
       ? // convenience transform - use their entity
         {
-          config: { entity_id: config.entity },
+          config: {
+            entity_id: config.entity,
+            hold_action: { action: 'more-info' },
+            double_tap_action: { action: 'none' },
+          },
           state: getState(hass, config.entity),
         }
       : {
-          config: config.entity,
+          config: {
+            hold_action: { action: 'more-info' },
+            double_tap_action: { action: 'none' },
+            ...config.entity,
+          },
           state: getState(hass, config.entity.entity_id),
         }
     : // else use the room light
@@ -188,6 +168,8 @@ export const getRoomEntity = (hass: HomeAssistant, config: Config) => {
             action: 'navigate',
             navigation_path: config.area.replace('_', '-'),
           },
+          hold_action: { action: 'more-info' },
+          double_tap_action: { action: 'none' },
         } as EntityConfig,
         // fake state in case room entity doesn't exist
         state: getState(hass, roomEntityId, true),

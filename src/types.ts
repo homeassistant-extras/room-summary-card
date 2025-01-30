@@ -14,6 +14,8 @@ export interface EntityConfig {
   entity_id: string;
   icon?: string;
   tap_action?: ActionConfig;
+  hold_action?: ActionConfig;
+  double_tap_action?: ActionConfig;
 }
 
 export interface NavigateActionConfig extends BaseActionConfig {
@@ -25,11 +27,30 @@ export interface ToggleActionConfig extends BaseActionConfig {
   action: 'toggle';
 }
 
+export interface MoreInfoActionConfig extends BaseActionConfig {
+  action: 'more-info';
+}
+
+export interface NoActionConfig extends BaseActionConfig {
+  action: 'none';
+}
+
 export interface BaseActionConfig {
   action: string;
 }
 
-export type ActionConfig = ToggleActionConfig | NavigateActionConfig;
+export type ActionConfig =
+  | ToggleActionConfig
+  | NavigateActionConfig
+  | NoActionConfig
+  | MoreInfoActionConfig;
+
+export type ActionConfigParams = {
+  entity?: string;
+  tap_action?: ActionConfig;
+  hold_action?: ActionConfig;
+  double_tap_action?: ActionConfig;
+};
 
 export interface EntityInformation {
   config: EntityConfig;
@@ -136,4 +157,24 @@ declare global {
   interface Window {
     customCards: Array<Object>;
   }
+}
+
+export interface ActionHandlerType extends HTMLElement {
+  holdTime: number;
+  bind(element: Element, options?: ActionHandlerOptions): void;
+}
+
+export interface ActionHandlerElement extends HTMLElement {
+  actionHandler?: {
+    options: ActionHandlerOptions;
+    start?: (ev: Event) => void;
+    end?: (ev: Event) => void;
+    handleKeyDown?: (ev: KeyboardEvent) => void;
+  };
+}
+
+export interface ActionHandlerOptions {
+  hasHold?: boolean;
+  hasDoubleClick?: boolean;
+  disabled?: boolean;
 }

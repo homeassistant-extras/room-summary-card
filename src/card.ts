@@ -3,7 +3,9 @@ import { CSSResult, LitElement, html, nothing } from 'lit';
 import { state } from 'lit/decorators.js';
 
 import { version } from '../package.json';
-import { createStateIcon } from './action-handler';
+import { actionHandler } from './action-handler';
+import { handleClickAction } from './handle-action';
+import { createStateIcon } from './helpers';
 import {
   getDevice,
   getEntity,
@@ -58,13 +60,23 @@ export class RoomSummaryCard extends LitElement {
     return html`
       <div class="card" style="${cardStyle}">
         <div class="grid">
-          <div class="name text" style=${textStyle} @click=${this._navigate}>
+          <div
+            class="name text"
+            style=${textStyle}
+            @action=${handleClickAction(this, this._roomEntity)}
+            .actionHandler=${actionHandler(this._roomEntity)}
+          >
             ${this._config.area
               .split('_')
               .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
               .join(' ')}
           </div>
-          <div class="label text" style=${textStyle} @click=${this._navigate}>
+          <div
+            class="label text"
+            style=${textStyle}
+            @action=${handleClickAction(this, this._roomEntity)}
+            .actionHandler=${actionHandler(this._roomEntity)}
+          >
             ${this._getLabel()} <br />
             <span class="stats">${this._getAreaStatistics()}</span>
           </div>
@@ -164,9 +176,5 @@ export class RoomSummaryCard extends LitElement {
       .join(' ');
 
     return counts;
-  }
-
-  private _navigate(ev: Event): void {
-    window.location.href = this._config.area.replace('_', '-');
   }
 }
