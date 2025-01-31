@@ -14,6 +14,7 @@
 !.github/**
 !.gitignore
 !*.md
+!LICENSE
 
 # Ignore folders.
 node_modules
