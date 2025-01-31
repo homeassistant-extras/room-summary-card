@@ -161,6 +161,8 @@ export class RoomSummaryCard extends LitElement {
       this._config.area,
     );
 
+    this._problemExists = problemExists;
+
     // Update states only if they've changed
     if (!equal(roomEntity, this._roomEntity)) {
       this._roomEntity = roomEntity;
@@ -170,7 +172,6 @@ export class RoomSummaryCard extends LitElement {
     }
     if (!equal(problemEntities, this._problemEntities)) {
       this._problemEntities = problemEntities;
-      this._problemExists = problemExists;
     }
   }
 
