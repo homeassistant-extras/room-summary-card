@@ -5,12 +5,20 @@
 <p align="center">
 	<em>Room Data at Your Fingertips</em>
 </p>
-<p align="center">
-	<img src="https://img.shields.io/github/license/homeassistant-extras/room-summary-card?style=for-the-badge&logo=opensourceinitiative&logoColor=white&color=0080ff" alt="license">
-	<img src="https://img.shields.io/github/last-commit/homeassistant-extras/room-summary-card?style=for-the-badge&logo=git&logoColor=white&color=0080ff" alt="last-commit">
-	<img src="https://img.shields.io/github/languages/top/homeassistant-extras/room-summary-card?style=for-the-badge&color=0080ff" alt="repo-top-language">
-	<img src="https://img.shields.io/github/languages/count/homeassistant-extras/room-summary-card?style=for-the-badge&color=0080ff" alt="repo-language-count">
-</p>
+
+![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
+
+![GitHub Release](https://img.shields.io/github/v/release/homeassistant-extras/room-summary-card?style=for-the-badge&logo=github)
+![GitHub Pre-Release](https://img.shields.io/github/v/release/homeassistant-extras/room-summary-card?include_prereleases&style=for-the-badge&logo=github&label=PRERELEASE)
+![GitHub Tag](https://img.shields.io/github/v/tag/homeassistant-extras/room-summary-card?style=for-the-badge&color=yellow)
+![GitHub branch status](https://img.shields.io/github/checks-status/homeassistant-extras/room-summary-card/main?style=for-the-badge)
+
+![stars](https://img.shields.io/github/stars/homeassistant-extras/room-summary-card.svg?style=for-the-badge)
+![home](https://img.shields.io/github/last-commit/homeassistant-extras/room-summary-card.svg?style=for-the-badge)
+![commits](https://img.shields.io/github/commit-activity/y/homeassistant-extras/room-summary-card?style=for-the-badge)
+![license](https://img.shields.io/github/license/homeassistant-extras/room-summary-card?style=for-the-badge&logo=opensourceinitiative&logoColor=white&color=0080ff)
+
 <p align="center">Built with the tools and technologies:</p>
 <p align="center">
 	<img src="https://img.shields.io/badge/npm-CB3837.svg?style=for-the-badge&logo=npm&logoColor=white" alt="npm">
@@ -28,16 +36,17 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 ## Features
 
 ### Climate Information
+
 - Displays room temperature and humidity
 - Visual indicators for temperature and humidity thresholds
 - Border colors indicate climate status:
   - Red: Temperature above threshold (default: 80°F)
   - Blue: Humidity above threshold (default: 60%)
 
-
 ![climate](assets/climate.png)
 
 ### Entity Status
+
 - Color-coded icons indicating entity states
 - Interactive icons with tap/hold actions
 - Climate entity colors:
@@ -52,6 +61,7 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 ![icons](assets/icons.png)
 
 ### Problem Detection
+
 - Automatically detects entities labeled as "problem" in the area based on area and labels
 - Shows count of problem entities
 - Color-coded indicator:
@@ -61,6 +71,7 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 ![problems](assets/problems.png)
 
 ### Room Statistics
+
 - Shows total number of devices in the room
 - Shows total number of entities in the room
 - Automatic entity discovery based on area
@@ -105,24 +116,25 @@ The card will automatically:
 
 ## Configuration Options
 
-Most of these are optional if you setup the entities a certain way using labels and attributes.  For example, see my HA configuration for my dashboard home page: [01-home.yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml)
+Most of these are optional if you setup the entities a certain way using labels and attributes. For example, see my HA configuration for my dashboard home page: [01-home.yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml)
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| area | string | **Required** | The area identifier for the room (e.g., 'living_room', 'kitchen') |
-| entity | string \| object | `light.<area>_light` | Main entity for the room |
-| entities | array | See below | Additional entities to display |
-| temperature_sensor | string | `sensor.<area>_climate_air_temperature` | Temperature sensor entity ID |
-| humidity_sensor | string | `sensor.<area>_climate_humidity` | Humidity sensor entity ID |
-| remove_fan | boolean | false | Remove the default light and fan entities if found |
-| skip_climate_colors | boolean | false | Disable climate-based color coding |
-| navigate | string | area name (dash-separated) | Custom navigation path when clicking the room name / icon |
+| Name                | Type             | Default                                 | Description                                                       |
+| ------------------- | ---------------- | --------------------------------------- | ----------------------------------------------------------------- |
+| area                | string           | **Required**                            | The area identifier for the room (e.g., 'living_room', 'kitchen') |
+| entity              | string \| object | `light.<area>_light`                    | Main entity for the room                                          |
+| entities            | array            | See below                               | Additional entities to display                                    |
+| temperature_sensor  | string           | `sensor.<area>_climate_air_temperature` | Temperature sensor entity ID                                      |
+| humidity_sensor     | string           | `sensor.<area>_climate_humidity`        | Humidity sensor entity ID                                         |
+| remove_fan          | boolean          | false                                   | Remove the default light and fan entities if found                |
+| skip_climate_colors | boolean          | false                                   | Disable climate-based color coding                                |
+| navigate            | string           | area name (dash-separated)              | Custom navigation path when clicking the room name / icon         |
 
 ### Default Entities
 
 By default, the card will include (if found):
+
 - Room light (`light.<area>_light`)
-	- this is also the main entity of the card by default for coloring
+  - this is also the main entity of the card by default for coloring
 - Room fan (`switch.<area>_fan`) unless `remove_fan` is true
 
 ### Entity Configuration
@@ -130,6 +142,7 @@ By default, the card will include (if found):
 Entities can be specified in two ways:
 
 1. Simple string format:
+
 ```yaml
 entities:
   - light.living_room_lamp
@@ -137,6 +150,7 @@ entities:
 ```
 
 2. Detailed configuration object:
+
 ```yaml
 entities:
   - entity_id: light.living_room_lamp
@@ -151,26 +165,27 @@ entities:
 
 ### Entity Configuration Options
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| entity_id | string | **Required** | Entity ID in Home Assistant |
-| icon | string | entity default | Custom MDI icon |
-| tap_action | object | `{action: "toggle"}` | Action on single tap |
-| hold_action | object | `{action: "more-info"}` | Action on hold |
-| double_tap_action | object | `{action: "none"}` | Action on double tap |
+| Name              | Type   | Default                 | Description                 |
+| ----------------- | ------ | ----------------------- | --------------------------- |
+| entity_id         | string | **Required**            | Entity ID in Home Assistant |
+| icon              | string | entity default          | Custom MDI icon             |
+| tap_action        | object | `{action: "toggle"}`    | Action on single tap        |
+| hold_action       | object | `{action: "more-info"}` | Action on hold              |
+| double_tap_action | object | `{action: "none"}`      | Action on double tap        |
 
 ### Action Configuration
 
 Available actions for `tap_action`, `hold_action`, and `double_tap_action`:
 
-| Action | Parameters | Description |
-|--------|------------|-------------|
-| toggle | none | Toggle entity state |
-| more-info | none | Show more info dialog |
-| navigate | navigation_path | Navigate to a different view |
-| none | none | Disable the action |
+| Action    | Parameters      | Description                  |
+| --------- | --------------- | ---------------------------- |
+| toggle    | none            | Toggle entity state          |
+| more-info | none            | Show more info dialog        |
+| navigate  | navigation_path | Navigate to a different view |
+| none      | none            | Disable the action           |
 
 Example action configuration:
+
 ```yaml
 tap_action:
   action: navigate
@@ -181,14 +196,13 @@ tap_action:
 
 You can add attributes to entities to customize the functionality further.
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| on_color | string | yellow | Color when the entity is on or positive |
-| off_color | string | theme off color | Color when the entity is off or 0 |
-| temperature_threshold | number | 80 | Threshold to show red border. |
-| humidity_threshold | number | 60 | Threshold to show blue border. |
-| icon | string | entity default | Custom MDI icon |
-
+| Name                  | Type   | Default         | Description                             |
+| --------------------- | ------ | --------------- | --------------------------------------- |
+| on_color              | string | yellow          | Color when the entity is on or positive |
+| off_color             | string | theme off color | Color when the entity is off or 0       |
+| temperature_threshold | number | 80              | Threshold to show red border.           |
+| humidity_threshold    | number | 60              | Threshold to show blue border.          |
+| icon                  | string | entity default  | Custom MDI icon                         |
 
 You can customize entity attributes several ways.
 
@@ -230,17 +244,19 @@ sensor:
 > [!IMPORTANT]  
 > Using this setting requires a label.
 
-Give entities a label of "Status".  These entities will be tracked and the icon will show red if any are "on" or have a positive state.
+Give entities a label of "Status". These entities will be tracked and the icon will show red if any are "on" or have a positive state.
 
 ## Example Configurations
 
 ### Basic Configuration
+
 ```yaml
 type: custom:room-summary-card
 area: living_room
 ```
 
 ### Full Configuration
+
 ```yaml
 type: custom:room-summary-card
 area: living_room
@@ -263,6 +279,7 @@ navigate: /lovelace/living-room
 ```
 
 ### Custom Entities Only
+
 ```yaml
 type: custom:room-summary-card
 area: office
@@ -280,9 +297,8 @@ For examples, see my HA configuration for my dashboard home page: [01-home.yaml]
 
 ## Project Roadmap
 
-- [X] **`Initial design`**: <strike>create initial room card based on button-card template in UI minimialist theme.</strike>
+- [x] **`Initial design`**: <strike>create initial room card based on button-card template in UI minimialist theme.</strike>
 - [ ] **`Test on other themes`**: make sure it works elsewhere.
-
 
 ## Contributing
 
@@ -325,13 +341,10 @@ For examples, see my HA configuration for my dashboard home page: [01-home.yaml]
 </p>
 </details>
 
-
 ## 🎗 License
 
 This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
 
-
 ## 🙌 Acknowledgments
 
 - List any resources, contributors, inspiration, etc. here.
-
