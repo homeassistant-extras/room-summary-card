@@ -331,20 +331,27 @@ For examples, see my HA configuration for my dashboard home page: [01-home.yaml]
 8. **Review**: Once your PR is reviewed and approved, it will be merged into the main branch. Congratulations on your contribution!
 </details>
 
-<details closed>
-<summary>Contributor Graph</summary>
-<br>
-<p align="left">
-   <a href="https://github.com{/homeassistant-extras/room-summary-card/}graphs/contributors">
-      <img src="https://contrib.rocks/image?repo=homeassistant-extras/room-summary-card">
-   </a>
-</p>
-</details>
+## License
 
-## 🎗 License
+This project is protected under the MIT License. For more details, refer to the [LICENSE](LICENSE) file.
 
-This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
+## Acknowledgments
 
-## 🙌 Acknowledgments
+- Built using [LitElement](https://lit.dev/)
+- Inspired by Home Assistant's chip design
+- Button-Card was a huge inspo
+- Thanks to all contributors!
 
-- List any resources, contributors, inspiration, etc. here.
+[![contributors](https://contrib.rocks/image?repo=homeassistant-extras/room-summary-card)](https://github.com{/homeassistant-extras/room-summary-card/}graphs/contributors)
+
+## Build Status
+
+### Main
+
+[![Bump & Tag](https://github.com/homeassistant-extras/room-summary-card/actions/workflows/push.yml/badge.svg?branch=main)](https://github.com/homeassistant-extras/room-summary-card/actions/workflows/push.yml)
+[![Fast Forward Check](https://github.com/homeassistant-extras/room-summary-card/actions/workflows/pull_request.yaml/badge.svg?branch=main)](https://github.com/homeassistant-extras/room-summary-card/actions/workflows/pull_request.yaml)
+
+### Release
+
+[![Bump & Tag](https://github.com/homeassistant-extras/room-summary-card/actions/workflows/push.yml/badge.svg?branch=release)](https://github.com/homeassistant-extras/room-summary-card/actions/workflows/push.yml)
+[![Merge](https://github.com/homeassistant-extras/room-summary-card/actions/workflows/merge.yaml/badge.svg)](https://github.com/homeassistant-extras/room-summary-card/actions/workflows/merge.yaml)

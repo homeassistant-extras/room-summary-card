@@ -52,7 +52,6 @@ Before getting started with room-summary-card, ensure your runtime environment m
 - **Programming Language:** TypeScript
 - **Package Manager:** Npm
 
-
 ### Installation
 
 Install room-summary-card using one of the following methods:
@@ -60,17 +59,18 @@ Install room-summary-card using one of the following methods:
 **Build from source:**
 
 1. Clone the room-summary-card repository:
+
 ```sh
 ❯ git clone https://github.com/homeassistant-extras/room-summary-card
 ```
 
 2. Navigate to the project directory:
+
 ```sh
 ❯ cd room-summary-card
 ```
 
 3. Install the project dependencies:
-
 
 **Using `npm`** &nbsp; [<img align="center" src="https://img.shields.io/badge/npm-CB3837.svg?style={badge_style}&logo=npm&logoColor=white" />](https://www.npmjs.com/)
 
@@ -78,8 +78,8 @@ Install room-summary-card using one of the following methods:
 ❯ npm install
 ```
 
-
 ### Usage
+
 Run parcel using the following command:
 **Using `npm`** &nbsp; [<img align="center" src="https://img.shields.io/badge/npm-CB3837.svg?style={badge_style}&logo=npm&logoColor=white" />](https://www.npmjs.com/)
 
@@ -88,6 +88,7 @@ Run parcel using the following command:
 ```
 
 Or to do a single build
+
 ```sh
 ❯ npm run build
 ```
@@ -102,8 +103,11 @@ Or to do a single build
 ## Questions?
 
 If you have any questions, please feel free to:
+
 - Open an issue with the question label
 - Contact me here on GitHub
+
+<!-- prettier-ignore-start -->
 
 ## Features
 
@@ -257,6 +261,7 @@ By referencing this file, developers can quickly understand the project's depend
 	</details>
 </details>
 
+<!-- prettier-ignore-end -->
 
 ## License
 
