@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["mocha", "chai", "sinon", "node"],
+    "esModuleInterop": true,
+    "allowJs": true,
+    "checkJs": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2018",
+    "strict": false,
+    "noImplicitAny": false,
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["test/**/*.ts", "test/**/*.spec.ts", "src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

@@ -16,11 +16,15 @@ import {
   Directive,
   type DirectiveParameters,
   directive,
-} from 'lit/directive';
+} from 'lit/directive.js';
 
-
-import type { EntityInformation, ActionConfigParams } from './types/config';
-import type { ActionHandlerType, ActionHandlerElement, ActionHandlerEvent, ActionHandlerOptions } from './types';
+import type {
+  ActionHandlerElement,
+  ActionHandlerEvent,
+  ActionHandlerOptions,
+  ActionHandlerType,
+} from './types';
+import type { ActionConfigParams, EntityInformation } from './types/config';
 
 /**
  * Retrieves or creates the global action handler element.
@@ -94,11 +98,12 @@ const _actionHandler = directive(
  * @param {EntityInformation} entity - The entity to create an action handler for
  * @returns {Directive} A directive configured with the entity's action options
  */
-export const actionHandler = (entity: EntityInformation) =>
-  _actionHandler({
+export const actionHandler = (entity: EntityInformation) => {
+  return _actionHandler({
     hasDoubleClick: entity.config?.double_tap_action?.action !== 'none',
     hasHold: entity.config?.hold_action?.action !== 'none',
   });
+};
 
 /**
  * Creates a click action handler for a given element and entity.

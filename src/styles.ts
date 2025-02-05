@@ -11,7 +11,7 @@ import type { DirectiveResult } from 'lit-html/directive';
 import {
   type StyleMapDirective,
   styleMap,
-} from 'lit-html/directives/style-map';
+} from 'lit-html/directives/style-map.js';
 
 import { getState } from './helpers';
 import type { Config } from './types/config';
@@ -33,7 +33,7 @@ export const getCardStyles = (
   // Extract basic state information
   const isActive = state?.state === 'on';
   const onColor = state?.attributes?.on_color || 'yellow';
-  const tempSensor = config.temperature_sensor;
+  const tempSensor = config!.temperature_sensor;
   const humiditySensor = config!.humidity_sensor;
 
   // Get sensor states

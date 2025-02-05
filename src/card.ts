@@ -8,7 +8,6 @@
  * @version See package.json
  */
 
-import * as equal from 'fast-deep-equal';
 import { CSSResult, LitElement, html, nothing } from 'lit';
 import { state } from 'lit/decorators.js';
 
@@ -26,6 +25,7 @@ import {
 import { getCardStyles, getEntityIconStyles, styles } from './styles';
 import type { Config, EntityInformation } from './types/config';
 import type { HomeAssistant } from './types/homeassistant';
+const equal = require('fast-deep-equal');
 
 export class RoomSummaryCard extends LitElement {
   /**
