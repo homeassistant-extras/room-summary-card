@@ -42,14 +42,14 @@ export const createStateIcon = (
   return html`<div
     class="${['icon', ...classes].join(' ')}"
     style=${iconContainerStyle}
+    @action=${handleClickAction(element, entity)}
+    .actionHandler=${actionHandler(entity)}
   >
     <ha-state-icon
       .hass=${hass}
       .stateObj=${state}
       .icon=${entity.config.icon}
       style=${iconStyle}
-      @action=${handleClickAction(element, entity)}
-      .actionHandler=${actionHandler(entity)}
     ></ha-state-icon>
   </div>`;
 };

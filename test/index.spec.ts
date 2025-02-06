@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { stub, type SinonStub } from 'sinon';
 
-describe('index.ts - Custom Element Registration', () => {
+describe('index.ts', () => {
   let customElementsStub: SinonStub;
   let customCardsStub: Array<Object> | undefined;
 
