@@ -31,7 +31,7 @@ export const getCardStyles = (
   state?: State,
 ): DirectiveResult<typeof StyleMapDirective> => {
   // Extract basic state information
-  const isActive = state?.state === 'on';
+  const isActive = state?.isActive();
   const onColor = state?.attributes?.on_color || 'yellow';
   const tempSensor = config!.temperature_sensor;
   const humiditySensor = config!.humidity_sensor;
@@ -121,7 +121,8 @@ export const getEntityIconStyles = (
   iconContainerStyle: DirectiveResult<typeof StyleMapDirective>;
   textStyle: DirectiveResult<typeof StyleMapDirective>;
 } => {
-  const isActive = state?.state === 'on';
+  // on state?
+  const isActive = state?.isActive();
   const onColor = state?.attributes?.on_color || 'yellow';
   const offColor = state?.attributes?.off_color;
 
@@ -147,11 +148,11 @@ export const getEntityIconStyles = (
         }),
 
     // Text color styles
-    textStyle:
-      isActive &&
-      styleMap({
-        color: `rgba(var(--color-${onColor}-text),1)`,
-      }),
+    textStyle: isActive
+      ? styleMap({
+          color: `rgba(var(--color-${onColor}-text),1)`,
+        })
+      : '',
   };
 };
 

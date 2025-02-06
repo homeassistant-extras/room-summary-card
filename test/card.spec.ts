@@ -1,46 +1,41 @@
 import { expect } from 'chai';
+import { stub } from 'sinon';
 import { RoomSummaryCard } from '../src/card';
 import { type HomeAssistant } from '../src/types/homeassistant';
+import { createStateEntity as s } from './helpers';
 
 describe('card.ts', () => {
   let card: RoomSummaryCard;
   let mockHass: Partial<HomeAssistant>;
+  let consoleInfoStub: sinon.SinonStub;
 
   beforeEach(() => {
+    consoleInfoStub = stub(console, 'info');
     card = new RoomSummaryCard();
     mockHass = {
       states: {
-        'light.living_room': {
-          entity_id: 'light.living_room',
-          state: 'on',
-          attributes: {
-            friendly_name: 'Living Room Light',
-          },
-          getDomain() {
-            return 'light';
-          },
-        },
-        'sensor.living_room_climate_humidity': {
-          entity_id: 'sensor.living_room_climate_humidity',
-          state: '50',
-          attributes: {},
-          getDomain() {
-            return 'sensor';
-          },
-        },
-        'sensor.living_room_climate_air_temperature': {
-          entity_id: 'sensor.living_room_climate_air_temperature',
-          state: '72',
-          attributes: {},
-          getDomain() {
-            return 'sensor';
-          },
-        },
+        'light.living_room': s('light', 'living_room', 'on', {
+          friendly_name: 'Living Room Light',
+        }),
+        'sensor.living_room_climate_humidity': s(
+          'sensor',
+          'living_room_climate_humidity',
+          '50',
+        ),
+        'sensor.living_room_climate_air_temperature': s(
+          'sensor',
+          'living_room_climate_air_temperature',
+          '72',
+        ),
       },
       devices: {},
       entities: {},
       areas: {},
     };
+  });
+
+  afterEach(() => {
+    consoleInfoStub.restore();
   });
 
   describe('setConfig', () => {
@@ -90,12 +85,11 @@ describe('card.ts', () => {
           device_id: 'device_1',
         },
       };
-      mockHass.states!['binary_sensor.problem'] = {
-        state: 'on',
-        attributes: {},
-        getDomain: () => 'binary_sensor',
-        entity_id: 'binary_sensor.problem',
-      };
+      mockHass.states!['binary_sensor.problem'] = s(
+        'binary_sensor',
+        'problem',
+        'on',
+      );
 
       card.hass = mockHass as HomeAssistant;
       expect(card['_problemEntities']).to.have.length.above(0);

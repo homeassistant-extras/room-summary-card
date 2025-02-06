@@ -10,9 +10,14 @@ import { type TemplateResult, html } from 'lit';
 
 import { actionHandler, handleClickAction } from './action-handler';
 import { getClimateStyles, getEntityIconStyles } from './styles';
-import type { EntityInformation, Config, EntityConfig } from './types/config';
-import type { HomeAssistant, State, Entity, Device, Area } from './types/homeassistant';
-
+import type { Config, EntityConfig, EntityInformation } from './types/config';
+import type {
+  Area,
+  Device,
+  Entity,
+  HomeAssistant,
+  State,
+} from './types/homeassistant';
 
 /**
  * Creates a state icon element for an entity
@@ -73,6 +78,9 @@ export const getState = (
   return {
     ...state,
     getDomain: () => state.entity_id.split('.')[0],
+    isActive: () =>
+      ['on', 'true'].includes(state.state?.toLowerCase()) ||
+      Number(state.state) > 0,
   };
 };
 
@@ -133,9 +141,9 @@ export const getProblemEntities = (
 
   // Check if any problem entities are currently active
   const problemExists = problemEntities.some((entityId) => {
-    const entityState = hass.states[entityId];
+    const entityState = getState(hass, entityId);
     if (!entityState) return false;
-    return entityState.state === 'on' || Number(entityState.state) > 0;
+    return entityState.isActive();
   });
 
   return {

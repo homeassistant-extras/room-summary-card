@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { spy, stub } from 'sinon';
+import { stub } from 'sinon';
 import { handleClickAction } from '../src/action-handler';
 import type { ActionHandlerElement, ActionHandlerEvent } from '../src/types';
 import type { EntityInformation } from '../src/types/config';
@@ -30,63 +30,72 @@ const { actionHandler } = proxyquire('../src/action-handler', {
   },
 });
 
-// Your test suite
-describe('Action Handler Module', () => {
-  it('should call the directive function', () => {
-    // Your test logic here
-    expect(directiveStub.called).to.be.true;
-  });
-});
-
-describe('actionHandler directive', () => {
-  it('should call _actionHandler which binds', () => {
-    const element = document.createElement('div') as ActionHandlerElement;
-    const result = actionHandler({
-      config: {
-        entity_id: 'light.test',
-        tap_action: { action: 'toggle' },
-      },
-      state: undefined,
+describe('action-handler.ts', () => {
+  describe('actionHandler directive', () => {
+    it('should call the directive function', () => {
+      // Your test logic here
+      expect(directiveStub.called).to.be.true;
     });
-    expect(result).to.equal('mock directive result');
+
+    it('should call _actionHandler which binds', () => {
+      const element = document.createElement('div') as ActionHandlerElement;
+      const result = actionHandler({
+        config: {
+          entity_id: 'light.test',
+          tap_action: { action: 'toggle' },
+        },
+        state: undefined,
+      });
+      expect(result).to.equal('mock directive result');
+    });
   });
-});
 
-describe('handleClickAction', () => {
-  let element: HTMLElement;
-  let mockEvent: ActionHandlerEvent;
-  let entityInfo: EntityInformation;
+  describe('handleClickAction', () => {
+    let element: HTMLElement;
+    let mockEvent: ActionHandlerEvent;
+    let entityInfo: EntityInformation;
+    let dispatchStub: sinon.SinonStub;
 
-  beforeEach(() => {
-    element = document.createElement('div');
-    mockEvent = {
-      detail: { action: 'tap' },
-    } as ActionHandlerEvent;
-    entityInfo = {
-      config: {
-        entity_id: 'light.test',
-        tap_action: { action: 'toggle' },
-      },
-      state: undefined,
-    };
+    beforeEach(() => {
+      element = document.createElement('div');
+      dispatchStub = stub(element, 'dispatchEvent');
+      mockEvent = {
+        detail: { action: 'hold' },
+      } as ActionHandlerEvent;
+      entityInfo = {
+        config: {
+          entity_id: 'light.test',
+          tap_action: { action: 'toggle' },
+        },
+        state: undefined,
+      };
+    });
+
+    afterEach(() => {
+      dispatchStub.restore();
+    });
 
     it('should dispatch hass-action event with correct config', () => {
-      const dispatchSpy = spy(element, 'dispatchEvent');
       const handler = handleClickAction(element, entityInfo);
       handler.handleEvent(mockEvent);
 
-      expect(dispatchSpy.calledOnce).to.be.true;
-      const event = dispatchSpy.firstCall.args[0] as CustomEvent;
+      // Ensure the stub was called once
+      expect(dispatchStub.calledOnce).to.be.true;
+
+      // Retrieve the event argument passed to dispatchEvent
+      const event = dispatchStub.firstCall.args[0] as CustomEvent;
       expect(event.type).to.equal('hass-action');
       expect(event.detail.config.entity).to.equal('light.test');
+
+      // Restore the original method
+      dispatchStub.restore();
     });
 
     it('should not dispatch event if no action in event detail', () => {
-      const dispatchSpy = spy(element, 'dispatchEvent');
       const handler = handleClickAction(element, entityInfo);
       handler.handleEvent({} as ActionHandlerEvent);
 
-      expect(dispatchSpy.called).to.be.false;
+      expect(dispatchStub.called).to.be.false;
     });
   });
 });

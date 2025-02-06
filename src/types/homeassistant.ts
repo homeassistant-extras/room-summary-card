@@ -1,6 +1,6 @@
 /**
  * @file Home Assistant TypeScript type definitions
- * @description Core type definitions for Home Assistant integration, including entities, 
+ * @description Core type definitions for Home Assistant integration, including entities,
  * devices, states, and action handlers.
  */
 
@@ -61,6 +61,9 @@ export interface State {
 
   /** Returns the domain portion of the entity_id */
   getDomain: () => string;
+
+  /** Returns whether the entity is currently active */
+  isActive: () => boolean;
 }
 
 /**
