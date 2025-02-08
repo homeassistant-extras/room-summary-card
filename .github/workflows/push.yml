@@ -64,6 +64,10 @@ jobs:
           op: decode
           in: ${{ needs.create-token.outputs.token }}
 
+      - run: |
+          git config --global user.name '${{ needs.create-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ needs.create-token.outputs.user-id }}+${{ needs.create-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+
       - name: 'Checkout source code'
         uses: 'actions/checkout@v2'
         with:
@@ -78,10 +82,6 @@ jobs:
           commit-message: 'chore: bumps version to {{version}}'
           bump-policy: 'ignore'
           skip-push: 'true'
-
-      - run: |
-          git config --global user.name '${{ needs.create-token.outputs.app-slug }}[bot]'
-          git config --global user.email '${{ needs.create-token.outputs.user-id }}+${{ needs.create-token.outputs.app-slug }}[bot]@users.noreply.github.com'
 
       - name: 'Create Tags and package version'
         run: |
