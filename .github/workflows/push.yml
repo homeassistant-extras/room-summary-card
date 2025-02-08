@@ -20,15 +20,17 @@ jobs:
             echo "should_run=false" >> $GITHUB_OUTPUT
           fi
 
-  create-token:
-    name: 'Create GitHub App Token'
+  bump-version:
+    name: 'Bump Version or Tag'
     needs: check-committer
     runs-on: ubuntu-latest
-    if: ${{ needs.check-committer.outputs.should_run == 'true' }}
+    permissions:
+      contents: write
     outputs:
-      token: ${{ steps.encode-token.outputs.out }}
-      app-slug: ${{ steps.app-token.outputs.app-slug }}
-      user-id: ${{ steps.get-user-id.outputs.user-id }}
+      newTag: ${{ steps.bump.outputs.newTag }}
+
+    if: ${{ needs.check-committer.outputs.should_run == 'true' }}
+
     steps:
       - uses: actions/create-github-app-token@v1
         id: app-token
@@ -36,43 +38,11 @@ jobs:
           app-id: ${{ vars.BUILD_APP_ID }}
           private-key: ${{ secrets.BUILD_PRIVATE_KEY }}
 
-      - uses: cloudposse/github-action-secret-outputs@main
-        id: encode-token
-        with:
-          secret: ${{ secrets.GPG_PASSPHRASE }}
-          op: encode
-          in: ${{ steps.app-token.outputs.token }}
-
-      - name: Get GitHub App User ID
-        id: get-user-id
-        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-
-  bump-version:
-    name: 'Bump Version or Tag'
-    needs: [check-committer, create-token]
-    runs-on: ubuntu-latest
-    if: ${{ needs.check-committer.outputs.should_run == 'true' }}
-    outputs:
-      newTag: ${{ steps.bump.outputs.newTag }}
-    steps:
-      - uses: cloudposse/github-action-secret-outputs@main
-        id: decode-token
-        with:
-          secret: ${{ secrets.GPG_PASSPHRASE }}
-          op: decode
-          in: ${{ needs.create-token.outputs.token }}
-
-      - run: |
-          git config --global user.name '${{ needs.create-token.outputs.app-slug }}[bot]'
-          git config --global user.email '${{ needs.create-token.outputs.user-id }}+${{ needs.create-token.outputs.app-slug }}[bot]@users.noreply.github.com'
-
       - name: 'Checkout source code'
         uses: 'actions/checkout@v2'
         with:
           ref: ${{ github.ref }}
-          token: ${{ steps.decode-token.outputs.out }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: 'Automated Version Bump'
         id: bump
@@ -83,6 +53,16 @@ jobs:
           bump-policy: 'ignore'
           skip-push: 'true'
 
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - run: |
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+
       - name: 'Create Tags and package version'
         run: |
           git push --follow-tags
@@ -90,29 +70,19 @@ jobs:
 
   create-release:
     name: 'Create Release'
-    needs: [bump-version, create-token]
+    needs: bump-version
     if: github.ref == 'refs/heads/release'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: cloudposse/github-action-secret-outputs@main
-        id: decode-token
-        with:
-          secret: ${{ secrets.GPG_PASSPHRASE }}
-          op: decode
-          in: ${{ needs.create-token.outputs.token }}
-
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: ${{ steps.decode-token.outputs.out }}
-
       - name: Run NPM build
         uses: anna-money/github-actions-npm@master
         with:
           target: 'build'
-
       - uses: johnyherangi/create-release-notes@main
         id: create-release-notes
         env:
@@ -141,7 +111,6 @@ jobs:
             }
           ' --jq '.data.repository.commit.associatedPullRequests.edges[0].node.title')
           echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
-
       - uses: ncipollo/release-action@v1
         with:
           artifacts: 'dist/**'
@@ -152,30 +121,35 @@ jobs:
 
   update-main:
     name: 'Update main branch with release changes'
-    needs: [bump-version, create-token]
+    needs: bump-version
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     if: github.ref == 'refs/heads/release'
+
     steps:
-      - uses: cloudposse/github-action-secret-outputs@main
-        id: decode-token
+      - uses: actions/create-github-app-token@v1
+        id: app-token
         with:
-          secret: ${{ secrets.GPG_PASSPHRASE }}
-          op: decode
-          in: ${{ needs.create-token.outputs.token }}
+          app-id: ${{ vars.BUILD_APP_ID }}
+          private-key: ${{ secrets.BUILD_PRIVATE_KEY }}
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v2'
         with:
-          token: ${{ steps.decode-token.outputs.out }}
-          fetch-depth: 0
-          ref: main
+          ref: ${{ github.ref }}
+          token: ${{ steps.app-token.outputs.token }}
 
-      - name: Configure Git
-        run: |
-          git config user.name 'GitHub Actions Bot'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - run: |
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
 
       - name: Merge release into main
         run: |
