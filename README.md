@@ -113,6 +113,7 @@ The card will automatically:
 - Display count + status for any entity labeled with "status" that is in the area
 - Display fan/light entities based on area naming
 - Update in real-time as entity states change
+- Light up icons when entities are in 'on' state, 'True', or a positive numeric state
 
 ## Configuration Options
 
