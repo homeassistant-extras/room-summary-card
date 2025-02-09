@@ -8,7 +8,7 @@
  * @version See package.json
  */
 
-import { CSSResult, LitElement, html, nothing } from 'lit';
+import { CSSResult, LitElement, html, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 
 import { version } from '../package.json';
@@ -20,8 +20,8 @@ import {
   getIconEntities,
   getProblemEntities,
   getRoomEntity,
-  getState,
 } from './helpers';
+import { renderLabel } from './render';
 import { getCardStyles, getEntityIconStyles, styles } from './styles';
 import type { Config, EntityInformation } from './types/config';
 import type { HomeAssistant } from './types/homeassistant';
@@ -76,18 +76,31 @@ export class RoomSummaryCard extends LitElement {
    * Renders the room summary card
    * @returns {TemplateResult} The rendered HTML template
    */
-  override render() {
+  override render(): TemplateResult {
     if (!this._states) {
       return html``;
     }
 
+    const area = this._formatAreaName();
+    const stats = this._getAreaStatistics();
+    const problems = this._renderProblemIndicator();
+    const handler = actionHandler(this._roomEntity);
+    const label = renderLabel(this._hass, this._config);
+    const action = handleClickAction(this, this._roomEntity);
     const { textStyle } = getEntityIconStyles(this._roomEntity.state);
+    const roomEntity = createStateIcon(this, this._hass, this._roomEntity, [
+      'room',
+    ]);
+    const stateIcons = this._states.map((s, i) =>
+      createStateIcon(this, this._hass, s, ['entity', `entity-${i + 1}`]),
+    );
     const cardStyle = getCardStyles(
       this._hass,
       this._config,
       this._roomEntity.state,
     );
 
+    console.log('here!', area);
     return html`
       <div class="card" style="${cardStyle}">
         <div class="grid">
@@ -95,31 +108,28 @@ export class RoomSummaryCard extends LitElement {
           <div
             class="name text"
             style=${textStyle}
-            @action=${handleClickAction(this, this._roomEntity)}
-            .actionHandler=${actionHandler(this._roomEntity)}
+            @action=${action}
+            .actionHandler=${handler}
           >
-            ${this._formatAreaName()}
+            ${area}
           </div>
 
           <!-- Climate Information -->
           <div
             class="label text"
             style=${textStyle}
-            @action=${handleClickAction(this, this._roomEntity)}
-            .actionHandler=${actionHandler(this._roomEntity)}
+            @action=${action}
+            .actionHandler=${handler}
           >
-            ${this._getLabel()} <br />
-            <span class="stats">${this._getAreaStatistics()}</span>
+            ${label}
+            <span class="stats">${stats}</span>
           </div>
 
           <!-- State Icons -->
-          ${createStateIcon(this, this._hass, this._roomEntity, ['room'])}
-          ${this._states.map((s, i) =>
-            createStateIcon(this, this._hass, s, ['entity', `entity-${i + 1}`]),
-          )}
+          ${roomEntity} ${stateIcons}
 
           <!-- Problem Indicator -->
-          ${this._renderProblemIndicator()}
+          ${problems}
         </div>
       </div>
     `;
@@ -141,6 +151,10 @@ export class RoomSummaryCard extends LitElement {
       humidity_sensor: `sensor.${config.area}_climate_humidity`,
       temperature_sensor: `sensor.${config.area}_climate_air_temperature`,
       ...config,
+      options: {
+        label: true,
+        ...config.options,
+      },
     };
     if (!equal(cardConfig, this._config)) {
       this._config = cardConfig;
@@ -187,19 +201,6 @@ export class RoomSummaryCard extends LitElement {
   }
 
   /**
-   * Gets the climate label (temperature and humidity)
-   * @returns {string} Formatted climate information
-   */
-  private _getLabel(): string {
-    if (!this._hass || !this._config.area) return '';
-
-    const temp = getState(this._hass, this._config.temperature_sensor)?.state;
-    const humidity = getState(this._hass, this._config.humidity_sensor)?.state;
-
-    return `${temp}°F - ${humidity}%`;
-  }
-
-  /**
    * Gets statistics about devices and entities in the area
    * @returns {string} Formatted statistics
    */
@@ -231,9 +232,9 @@ export class RoomSummaryCard extends LitElement {
    * Renders the problem indicator icon if problems exist
    * @returns {TemplateResult | typeof nothing} The rendered problem indicator or nothing
    */
-  private _renderProblemIndicator() {
+  private _renderProblemIndicator(): TemplateResult {
     if (this._problemEntities.length === 0) {
-      return nothing;
+      return html``;
     }
 
     return html`

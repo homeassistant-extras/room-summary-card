@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { getIconEntities, getProblemEntities, getState } from '../src/helpers';
 import type { HomeAssistant } from '../src/types/homeassistant';
-import { createStateEntity as s } from './helpers';
+import { createStateEntity as s } from './test-helpers';
 
 describe('helpers.ts', () => {
   let mockHass: HomeAssistant;

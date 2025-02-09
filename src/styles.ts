@@ -56,14 +56,14 @@ export const getCardStyles = (
       ? '2px solid rgba(var(--color-red-text),1)'
       : humidity > humidThreshold
         ? '2px solid rgba(var(--color-blue-text),1)'
-        : '';
+        : undefined;
 
   const border2 =
     humidity > humidThreshold
       ? '2px solid rgba(var(--color-blue-text),1)'
       : temp > tempThreshold
         ? '2px solid rgba(var(--color-red-text),1)'
-        : '';
+        : undefined;
 
   // Return complete style map
   return styleMap({
@@ -202,6 +202,10 @@ export const styles = css`
     margin-top: -10%;
     filter: opacity(40%);
     cursor: pointer;
+  }
+
+  .label p {
+    margin: 0;
   }
 
   /* Statistics text */

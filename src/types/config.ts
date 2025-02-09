@@ -3,7 +3,7 @@
  * @description Core type definitions for card configuration.
  */
 
-import type { State } from "./homeassistant";
+import type { State } from './homeassistant';
 
 /**
  * Configuration settings for entity display and behavior within Home Assistant.
@@ -27,6 +27,8 @@ export interface Config {
   humidity_sensor?: string;
   /** Entity ID for temperature sensor */
   temperature_sensor?: string;
+  /** Options to enable disable featurs **/
+  options?: OptionsConfig;
 }
 
 /**
@@ -43,6 +45,11 @@ export interface EntityConfig {
   hold_action?: ActionConfig;
   /** Action to perform on double tap */
   double_tap_action?: ActionConfig;
+}
+
+export interface OptionsConfig {
+  /** Flag to show the climate labels or not */
+  label?: boolean;
 }
 
 /**

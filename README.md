@@ -38,6 +38,7 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 ### Climate Information
 
 - Displays room temperature and humidity
+  - this can be turned off with an optional flag
 - Visual indicators for temperature and humidity thresholds
 - Border colors indicate climate status:
   - Red: Temperature above threshold (default: 80°F)
@@ -129,6 +130,13 @@ Most of these are optional if you setup the entities a certain way using labels 
 | remove_fan          | boolean          | false                                   | Remove the default light and fan entities if found                |
 | skip_climate_colors | boolean          | false                                   | Disable climate-based color coding                                |
 | navigate            | string           | area name (dash-separated)              | Custom navigation path when clicking the room name / icon         |
+| options             | list             | See below                               | Optional options to toggle different features                     |
+
+### Feature Options
+
+| Name  | Type    | Default | Description                   |
+| ----- | ------- | ------- | ----------------------------- |
+| label | boolean | true    | Show the climate label or not |
 
 ### Default Entities
 
@@ -299,7 +307,10 @@ For examples, see my HA configuration for my dashboard home page: [01-home.yaml]
 ## Project Roadmap
 
 - [x] **`Initial design`**: <strike>create initial room card based on button-card template in UI minimialist theme.</strike>
+- [x] **`Temperature`**: <strike>use uom from the device.</strike>
 - [ ] **`Test on other themes`**: make sure it works elsewhere.
+- [ ] **`Flags`**: ability to disable features.
+- [ ] **`Sizing`**: ability to fit different size squares.
 
 ## Contributing
 

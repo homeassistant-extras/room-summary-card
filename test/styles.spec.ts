@@ -8,7 +8,7 @@ import {
 } from '../src/styles';
 import type { Config } from '../src/types/config';
 import type { HomeAssistant } from '../src/types/homeassistant';
-import { createStateEntity as s } from './helpers';
+import { createStateEntity as s } from './test-helpers';
 
 describe('styles.ts', () => {
   let mockHass: HomeAssistant;
@@ -81,10 +81,10 @@ describe('styles.ts', () => {
         styleMap({
           'background-color':
             'rgba(var(--color-background-yellow),var(--opacity-bg))',
-          borderLeft: '',
-          borderTop: '',
-          borderRight: '',
-          borderBottom: '',
+          borderLeft: undefined,
+          borderTop: undefined,
+          borderRight: undefined,
+          borderBottom: undefined,
         }),
       );
     });
@@ -98,10 +98,10 @@ describe('styles.ts', () => {
         styleMap({
           'background-color':
             'rgba(var(--color-background-yellow),var(--opacity-bg))',
-          borderLeft: '',
-          borderTop: '',
-          borderRight: '',
-          borderBottom: '',
+          borderLeft: undefined,
+          borderTop: undefined,
+          borderRight: undefined,
+          borderBottom: undefined,
         }),
       );
     });
@@ -115,10 +115,10 @@ describe('styles.ts', () => {
         styleMap({
           'background-color':
             'rgba(var(--color-background-yellow),var(--opacity-bg))',
-          borderLeft: '',
-          borderTop: '',
-          borderRight: '',
-          borderBottom: '',
+          borderLeft: undefined,
+          borderTop: undefined,
+          borderRight: undefined,
+          borderBottom: undefined,
         }),
       );
     });
@@ -131,10 +131,10 @@ describe('styles.ts', () => {
       expect(result).to.deep.equal(
         styleMap({
           'background-color': undefined,
-          borderLeft: '',
-          borderTop: '',
-          borderRight: '',
-          borderBottom: '',
+          borderLeft: undefined,
+          borderTop: undefined,
+          borderRight: undefined,
+          borderBottom: undefined,
         }),
       );
     });
@@ -147,10 +147,10 @@ describe('styles.ts', () => {
       expect(result).to.deep.equal(
         styleMap({
           'background-color': undefined,
-          borderLeft: '',
-          borderTop: '',
-          borderRight: '',
-          borderBottom: '',
+          borderLeft: undefined,
+          borderTop: undefined,
+          borderRight: undefined,
+          borderBottom: undefined,
         }),
       );
     });
@@ -163,10 +163,10 @@ describe('styles.ts', () => {
       expect(result).to.deep.equal(
         styleMap({
           'background-color': undefined,
-          borderLeft: '',
-          borderTop: '',
-          borderRight: '',
-          borderBottom: '',
+          borderLeft: undefined,
+          borderTop: undefined,
+          borderRight: undefined,
+          borderBottom: undefined,
         }),
       );
     });
