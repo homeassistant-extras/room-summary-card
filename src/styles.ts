@@ -13,9 +13,9 @@ import {
   styleMap,
 } from 'lit-html/directives/style-map.js';
 
+import type { Config } from '@type/config';
+import type { HomeAssistant, State } from '@type/homeassistant';
 import { getState } from './helpers';
-import type { Config } from './types/config';
-import type { HomeAssistant, State } from './types/homeassistant';
 
 /**
  * Generates dynamic card styles based on state and sensor readings

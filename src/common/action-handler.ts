@@ -18,15 +18,15 @@ import {
   directive,
 } from 'lit/directive.js';
 
+import { fireEvent } from '@common/fire-event';
 import type {
+  ActionConfigParams,
   ActionHandlerElement,
   ActionHandlerEvent,
   ActionHandlerOptions,
   ActionHandlerType,
-} from '../types';
-import type { ActionConfigParams } from '../types/action';
-import type { EntityInformation } from '../types/config';
-import { fireEvent } from './fire-event';
+} from '@type/action';
+import type { EntityInformation } from '@type/config';
 
 /**
  * Retrieves or creates the global action handler element.

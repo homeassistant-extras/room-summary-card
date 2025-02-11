@@ -28,8 +28,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import type { ActionParams } from '../types/action';
-import type { ConfigChangedEvent } from '../types/editor';
+import type { ActionParams } from '@type/action';
+import type { ConfigChangedEvent } from '@type/editor';
 
 declare global {
   // eslint-disable-next-line

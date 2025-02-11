@@ -1,10 +1,10 @@
+import { RoomSummaryCardEditor } from '@/editor';
 import { fixture } from '@open-wc/testing-helpers';
+import type { Config } from '@type/config';
+import type { HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { RoomSummaryCardEditor } from '../src/editor';
-import type { Config } from '../src/types/config';
-import type { HomeAssistant } from '../src/types/homeassistant';
 
 describe('editor.ts', () => {
   let card: RoomSummaryCardEditor;
@@ -95,6 +95,11 @@ describe('editor.ts', () => {
               mode: 'list',
               options: [
                 { label: 'Hide Climate Label', value: 'hide_climate_label' },
+                { label: 'Hide Area Stats', value: 'hide_area_stats' },
+                {
+                  label: 'Exclude Default Entities',
+                  value: 'exclude_default_entities',
+                },
               ],
             },
           },

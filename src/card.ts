@@ -11,20 +11,18 @@
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 
+import type { Config, EntityInformation } from '@type/config';
+import type { HomeAssistant } from '@type/homeassistant';
 import { version } from '../package.json';
 import { actionHandler, handleClickAction } from './common/action-handler';
 import {
   createStateIcon,
-  getDevice,
-  getEntity,
   getIconEntities,
   getProblemEntities,
   getRoomEntity,
 } from './helpers';
-import { renderLabel } from './render';
+import { renderAreaStatistics, renderLabel } from './render';
 import { getCardStyles, getEntityIconStyles, styles } from './styles';
-import type { Config, EntityInformation } from './types/config';
-import type { HomeAssistant } from './types/homeassistant';
 const equal = require('fast-deep-equal');
 
 export class RoomSummaryCard extends LitElement {
@@ -82,11 +80,11 @@ export class RoomSummaryCard extends LitElement {
     }
 
     const area = this._formatAreaName();
-    const stats = this._getAreaStatistics();
     const problems = this._renderProblemIndicator();
     const handler = actionHandler(this._roomEntity);
     const label = renderLabel(this._hass, this._config);
     const action = handleClickAction(this, this._roomEntity);
+    const stats = renderAreaStatistics(this._hass, this._config);
     const { textStyle } = getEntityIconStyles(this._roomEntity.state);
     const roomEntity = createStateIcon(this, this._hass, this._roomEntity, [
       'room',
@@ -120,8 +118,7 @@ export class RoomSummaryCard extends LitElement {
             @action=${action}
             .actionHandler=${handler}
           >
-            ${label}
-            <span class="stats">${stats}</span>
+            ${label} ${stats}
           </div>
 
           <!-- State Icons -->
@@ -189,9 +186,25 @@ export class RoomSummaryCard extends LitElement {
     return document.createElement('room-summary-card-editor');
   }
 
-  static getStubConfig() {
+  public static async getStubConfig(hass: HomeAssistant): Promise<Config> {
+    // Get all area IDs and their friendly names
+    const areas = Object.entries(hass.areas);
+
+    // Find the first area that has matching entities
+    const matchingArea = areas.find(([areaId, area]) => {
+      const areaName = area.area_id.toLowerCase().replace(/\s+/g, '_');
+
+      // Check if either entity exists for this area
+      const hasLight = `light.${areaName}_light` in hass.entities;
+      const hasFan = `switch.${areaName}_fan` in hass.entities;
+
+      // Return true if either entity exists
+      return hasLight || hasFan;
+    });
+
+    // Return the matching area ID or empty string if none found
     return {
-      area: 'living_room',
+      area: matchingArea ? matchingArea[0] : '',
     };
   }
 
@@ -203,34 +216,6 @@ export class RoomSummaryCard extends LitElement {
     return this._config.area
       .split('_')
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ');
-  }
-
-  /**
-   * Gets statistics about devices and entities in the area
-   * @returns {string} Formatted statistics
-   */
-  private _getAreaStatistics(): string {
-    if (!this._hass || !this._config.area) return '';
-
-    const devices = Object.keys(this._hass.devices).filter(
-      (k) => getDevice(this._hass, k).area_id === this._config.area,
-    );
-
-    const entities = Object.keys(this._hass.entities).filter((k) => {
-      const entity = getEntity(this._hass, k);
-      return (
-        entity.area_id === this._config.area ||
-        devices.includes(entity.device_id)
-      );
-    });
-
-    return [
-      [devices.length, 'devices'],
-      [entities.length, 'entities'],
-    ]
-      .filter((count) => count.length > 0)
-      .map(([count, type]) => `${count} ${type}`)
       .join(' ');
   }
 

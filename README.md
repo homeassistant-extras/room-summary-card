@@ -110,9 +110,11 @@ Add the card to your dashboard using the UI editor or YAML:
 
 Slowly I'm enabling all the features in the card editor. Note that as things get converted to there some yaml settings may move / rename.
 
+![editor](assets/editor.png)
+
 ### YAML
 
-This is the most minimal configuarion needed to get started.
+This is the most minimal configuarion needed to get started. See below for advanced usage.
 
 ```yaml
 type: custom:room-summary-card
@@ -137,16 +139,17 @@ Most of these are optional if you setup the entities a certain way using labels 
 | entities            | array            | See below                               | Additional entities to display                                    |
 | temperature_sensor  | string           | `sensor.<area>_climate_air_temperature` | Temperature sensor entity ID                                      |
 | humidity_sensor     | string           | `sensor.<area>_climate_humidity`        | Humidity sensor entity ID                                         |
-| remove_fan          | boolean          | false                                   | Remove the default light and fan entities if found                |
 | skip_climate_colors | boolean          | false                                   | Disable climate-based color coding                                |
 | navigate            | string           | area name (dash-separated)              | Custom navigation path when clicking the room name / icon         |
 | features            | list             | See below                               | Optional flags to toggle different features                       |
 
 ### Feature Options
 
-| Name               | Type    | Description                   |
-| ------------------ | ------- | ----------------------------- |
-| hide_climate_label | boolean | Show the climate label or not |
+| Name                     | Type | Description                            |
+| ------------------------ | ---- | -------------------------------------- |
+| hide_climate_label       | flag | Show the climate label or not          |
+| hide_area_stats          | flag | Show the area statistics label or not  |
+| exclude_default_entities | flag | Exclude the default light/fan entities |
 
 ### Default Entities
 

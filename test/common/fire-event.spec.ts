@@ -1,7 +1,7 @@
+import { fireEvent } from '@common/fire-event';
+import { type ConfigChangedEvent } from '@type/editor';
 import { expect } from 'chai';
 import { stub } from 'sinon';
-import { fireEvent } from '../src/common/fire-event';
-import { type ConfigChangedEvent } from '../src/types/editor';
 
 describe('fire-event.ts', () => {
   let element: HTMLElement;

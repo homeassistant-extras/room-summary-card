@@ -1,14 +1,10 @@
+import { getState } from '@/helpers';
+import { getCardStyles, getClimateStyles, getEntityIconStyles } from '@/styles';
+import { createStateEntity as s } from '@test/test-helpers';
+import type { Config } from '@type/config';
+import type { HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
 import { styleMap } from 'lit-html/directives/style-map.js';
-import { getState } from '../src/helpers';
-import {
-  getCardStyles,
-  getClimateStyles,
-  getEntityIconStyles,
-} from '../src/styles';
-import type { Config } from '../src/types/config';
-import type { HomeAssistant } from '../src/types/homeassistant';
-import { createStateEntity as s } from './test-helpers';
 
 describe('styles.ts', () => {
   let mockHass: HomeAssistant;

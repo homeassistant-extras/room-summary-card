@@ -11,11 +11,7 @@
     "strict": false,
     "noImplicitAny": false,
     "verbatimModuleSyntax": false,
-    "noEmit": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "noEmit": true
   },
   "include": ["test/**/*.ts", "test/**/*.spec.ts", "src/**/*.ts"],
   "exclude": ["node_modules"]

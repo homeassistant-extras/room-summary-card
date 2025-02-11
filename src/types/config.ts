@@ -18,8 +18,6 @@ export interface Config {
   entities?: (EntityConfig | string)[];
   /** List of entity IDs that are experiencing issues */
   problem_entities?: string[];
-  /** Flag to disable fan functionality */
-  remove_fan?: boolean;
   /** Flag to disable climate-based color coding */
   skip_climate_colors?: boolean;
   /** Navigation path for the entity */
@@ -32,7 +30,10 @@ export interface Config {
   features?: Features[];
 }
 
-type Features = 'hide_climate_label';
+export type Features =
+  | 'hide_climate_label'
+  | 'hide_area_stats'
+  | 'exclude_default_entities';
 
 /**
  * Configuration for an individual entity including display and interaction options.

@@ -1,15 +1,15 @@
+import { RoomSummaryCard } from '@/card';
+import * as actionHandlerModule from '@common/action-handler';
 import { fixture } from '@open-wc/testing-helpers';
+import { type HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
 import type { TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { RoomSummaryCard } from '../src/card';
-import * as actionHandlerModule from '../src/common/action-handler';
-import { type HomeAssistant } from '../src/types/homeassistant';
 import { createStateEntity as s } from './test-helpers';
 
 describe('card.ts', () => {
   let card: RoomSummaryCard;
-  let mockHass: Partial<HomeAssistant>;
+  let mockHass: HomeAssistant;
   let consoleInfoStub: sinon.SinonStub;
   let actionHandlerStub: sinon.SinonStub;
 
@@ -25,6 +25,9 @@ describe('card.ts', () => {
         'light.living_room': s('light', 'living_room', 'on', {
           friendly_name: 'Living Room Light',
         }),
+        'switch.living_room_fan': s('switch', 'living_room_fan', 'off', {
+          friendly_name: 'Living Room Fan',
+        }),
         'sensor.living_room_climate_humidity': s(
           'sensor',
           'living_room_climate_humidity',
@@ -36,9 +39,32 @@ describe('card.ts', () => {
           '72',
         ),
       },
-      devices: {},
-      entities: {},
-      areas: {},
+      devices: {
+        device_1: { area_id: 'living_room' },
+        device_2: { area_id: 'living_room' },
+      },
+      entities: {
+        'light.living_room': {
+          device_id: 'device_1',
+          area_id: 'living_room',
+          labels: [],
+        },
+        'switch.living_room_fan': {
+          device_id: 'device_2',
+          area_id: 'living_room',
+          labels: [],
+        },
+      },
+      areas: {
+        living_room: {
+          area_id: 'living_room',
+          icon: '',
+        },
+        bedroom: {
+          area_id: 'bedroom',
+          icon: '',
+        },
+      },
     };
     card.setConfig({ area: 'living_room' });
     card.hass = mockHass as HomeAssistant;
@@ -157,6 +183,8 @@ describe('card.ts', () => {
     });
 
     it('should handle empty device and entity lists', async () => {
+      mockHass.devices = {};
+      mockHass.entities = {};
       const el = await fixture(card.render() as TemplateResult);
       const stats = el.querySelector('.stats');
       expect(stats!.textContent).to.include('0 devices');
@@ -176,6 +204,53 @@ describe('card.ts', () => {
       expect(el.parentNode).to.exist;
       expect(el.querySelector('.grid')).to.exist;
       // Should still render without errors
+    });
+
+    it('should render area statistics by default', async () => {
+      const el = await fixture(card.render() as TemplateResult);
+      const stats = el.querySelector('.stats');
+      expect(stats).to.exist;
+      expect(stats!.textContent).to.include('2 devices');
+      expect(stats!.textContent).to.include('2 entities');
+    });
+
+    it('should not render area statistics when hide_area_stats is set', async () => {
+      card.setConfig({
+        area: 'living_room',
+        features: ['hide_area_stats'],
+      });
+      const el = await fixture(card.render() as TemplateResult);
+      const stats = el.querySelector('.stats');
+      expect(stats).to.not.exist;
+    });
+
+    it('should render correct device and entity counts', async () => {
+      // Add more devices and entities
+      mockHass.devices.device_3 = { area_id: 'living_room' };
+      mockHass.entities['sensor.living_room_motion'] = {
+        device_id: 'device_3',
+        area_id: 'living_room',
+        labels: [],
+      };
+
+      card.hass = mockHass as HomeAssistant;
+      const el = await fixture(card.render() as TemplateResult);
+      const stats = el.querySelector('.stats');
+      expect(stats!.textContent).to.include('3 devices');
+      expect(stats!.textContent).to.include('3 entities');
+    });
+
+    it('should handle areas with no devices or entities', async () => {
+      const emptyAreaHass = {
+        ...mockHass,
+        devices: {},
+        entities: {},
+      };
+      card.hass = emptyAreaHass as HomeAssistant;
+      const el = await fixture(card.render() as TemplateResult);
+      const stats = el.querySelector('.stats');
+      expect(stats!.textContent).to.include('0 devices');
+      expect(stats!.textContent).to.include('0 entities');
     });
   });
 
@@ -198,28 +273,58 @@ describe('card.ts', () => {
   });
 
   describe('getStubConfig()', () => {
-    it('should return default configuration object', () => {
-      const config = RoomSummaryCard.getStubConfig();
-
+    it('should return first area with matching entities', async () => {
+      const config = await RoomSummaryCard.getStubConfig(mockHass);
       expect(config).to.be.an('object');
       expect(config).to.have.property('area');
       expect(config.area).to.equal('living_room');
     });
 
-    it('should return a new object instance each time', () => {
-      const config1 = RoomSummaryCard.getStubConfig();
-      const config2 = RoomSummaryCard.getStubConfig();
-
-      expect(config1).to.not.equal(config2);
-      expect(config1).to.deep.equal(config2);
+    it('should return empty string if no areas have matching entities', async () => {
+      const emptyHass = {
+        ...mockHass,
+        entities: {},
+        areas: {
+          kitchen: {
+            area_id: 'kitchen',
+            name: 'Kitchen',
+          },
+        },
+      };
+      const config = await RoomSummaryCard.getStubConfig(
+        emptyHass as any as HomeAssistant,
+      );
+      expect(config.area).to.equal('');
     });
 
-    it('should not allow modification of default area', () => {
-      const config = RoomSummaryCard.getStubConfig();
-      config.area = 'bedroom';
+    it('should find area with only light entity', async () => {
+      const lightOnlyHass = {
+        ...mockHass,
+        entities: {
+          'light.bedroom_light': {
+            area_id: 'bedroom',
+          },
+        },
+      };
+      const config = await RoomSummaryCard.getStubConfig(
+        lightOnlyHass as any as HomeAssistant,
+      );
+      expect(config.area).to.equal('bedroom');
+    });
 
-      const newConfig = RoomSummaryCard.getStubConfig();
-      expect(newConfig.area).to.equal('living_room');
+    it('should find area with only fan entity', async () => {
+      const fanOnlyHass = {
+        ...mockHass,
+        entities: {
+          'switch.bedroom_fan': {
+            area_id: 'bedroom',
+          },
+        },
+      };
+      const config = await RoomSummaryCard.getStubConfig(
+        fanOnlyHass as any as HomeAssistant,
+      );
+      expect(config.area).to.equal('bedroom');
     });
   });
 });

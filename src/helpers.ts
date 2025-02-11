@@ -8,16 +8,17 @@
 
 import { type TemplateResult, html } from 'lit';
 
-import { actionHandler, handleClickAction } from './common/action-handler';
-import { getClimateStyles, getEntityIconStyles } from './styles';
-import type { Config, EntityConfig, EntityInformation } from './types/config';
+import type { Config, EntityConfig, EntityInformation } from '@type/config';
 import type {
   Area,
   Device,
   Entity,
   HomeAssistant,
   State,
-} from './types/homeassistant';
+} from '@type/homeassistant';
+import { actionHandler, handleClickAction } from './common/action-handler';
+import { feature } from './common/feature';
+import { getClimateStyles, getEntityIconStyles } from './styles';
 
 /**
  * Creates a state icon element for an entity
@@ -172,7 +173,7 @@ export const getIconEntities = (
   const configEntities = config.entities || [];
 
   // Combine base and config entities unless fan is removed
-  const entities = config.remove_fan
+  const entities = feature(config, 'exclude_default_entities')
     ? configEntities
     : baseEntities.concat(configEntities);
 
