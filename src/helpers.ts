@@ -8,7 +8,7 @@
 
 import { type TemplateResult, html } from 'lit';
 
-import { actionHandler, handleClickAction } from './action-handler';
+import { actionHandler, handleClickAction } from './common/action-handler';
 import { getClimateStyles, getEntityIconStyles } from './styles';
 import type { Config, EntityConfig, EntityInformation } from './types/config';
 import type {

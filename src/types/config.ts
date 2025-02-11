@@ -3,6 +3,7 @@
  * @description Core type definitions for card configuration.
  */
 
+import type { ActionConfig } from './action';
 import type { State } from './homeassistant';
 
 /**
@@ -28,8 +29,10 @@ export interface Config {
   /** Entity ID for temperature sensor */
   temperature_sensor?: string;
   /** Options to enable disable featurs **/
-  options?: OptionsConfig;
+  features?: Features[];
 }
+
+type Features = 'hide_climate_label';
 
 /**
  * Configuration for an individual entity including display and interaction options.
@@ -46,67 +49,6 @@ export interface EntityConfig {
   /** Action to perform on double tap */
   double_tap_action?: ActionConfig;
 }
-
-export interface OptionsConfig {
-  /** Flag to show the climate labels or not */
-  label?: boolean;
-}
-
-/**
- * Action configuration for navigation events.
- */
-export interface NavigateActionConfig extends BaseActionConfig {
-  action: 'navigate';
-  /** Path to navigate to when action is triggered */
-  navigation_path: string;
-}
-
-/**
- * Action configuration for toggle events.
- */
-export interface ToggleActionConfig extends BaseActionConfig {
-  action: 'toggle';
-}
-
-/**
- * Action configuration for displaying more information.
- */
-export interface MoreInfoActionConfig extends BaseActionConfig {
-  action: 'more-info';
-}
-
-/**
- * Action configuration for no-operation events.
- */
-export interface NoActionConfig extends BaseActionConfig {
-  action: 'none';
-}
-
-/**
- * Base configuration for all action types.
- */
-export interface BaseActionConfig {
-  action: string;
-}
-
-/**
- * Union type of all possible action configurations.
- */
-export type ActionConfig =
-  | ToggleActionConfig
-  | NavigateActionConfig
-  | NoActionConfig
-  | MoreInfoActionConfig;
-
-/**
- * Parameters for configuring entity actions.
- */
-export type ActionConfigParams = {
-  entity?: string;
-  tap_action?: ActionConfig;
-  hold_action?: ActionConfig;
-  double_tap_action?: ActionConfig;
-};
 
 /**
  * Combined entity configuration and state information.

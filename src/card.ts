@@ -8,11 +8,11 @@
  * @version See package.json
  */
 
-import { CSSResult, LitElement, html, type TemplateResult } from 'lit';
+import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 
 import { version } from '../package.json';
-import { actionHandler, handleClickAction } from './action-handler';
+import { actionHandler, handleClickAction } from './common/action-handler';
 import {
   createStateIcon,
   getDevice,
@@ -76,9 +76,9 @@ export class RoomSummaryCard extends LitElement {
    * Renders the room summary card
    * @returns {TemplateResult} The rendered HTML template
    */
-  override render(): TemplateResult {
+  override render(): TemplateResult | typeof nothing {
     if (!this._states) {
-      return html``;
+      return nothing;
     }
 
     const area = this._formatAreaName();
@@ -100,7 +100,6 @@ export class RoomSummaryCard extends LitElement {
       this._roomEntity.state,
     );
 
-    console.log('here!', area);
     return html`
       <div class="card" style="${cardStyle}">
         <div class="grid">
@@ -151,10 +150,6 @@ export class RoomSummaryCard extends LitElement {
       humidity_sensor: `sensor.${config.area}_climate_humidity`,
       temperature_sensor: `sensor.${config.area}_climate_air_temperature`,
       ...config,
-      options: {
-        label: true,
-        ...config.options,
-      },
     };
     if (!equal(cardConfig, this._config)) {
       this._config = cardConfig;
@@ -187,6 +182,17 @@ export class RoomSummaryCard extends LitElement {
     if (!equal(problemEntities, this._problemEntities)) {
       this._problemEntities = problemEntities;
     }
+  }
+
+  // card configuration
+  static getConfigElement() {
+    return document.createElement('room-summary-card-editor');
+  }
+
+  static getStubConfig() {
+    return {
+      area: 'living_room',
+    };
   }
 
   /**

@@ -27,11 +27,13 @@ describe('index.ts', () => {
     delete require.cache[require.resolve('../src/index.ts')];
   });
 
-  it('should register the room-summary-card custom element', () => {
+  it('should register both room-summary-card and editor custom elements', () => {
     require('../src/index.ts');
-
-    expect(customElementsStub.calledOnce).to.be.true;
+    expect(customElementsStub.calledTwice).to.be.true;
     expect(customElementsStub.firstCall.args[0]).to.equal('room-summary-card');
+    expect(customElementsStub.secondCall.args[0]).to.equal(
+      'room-summary-card-editor',
+    );
   });
 
   it('should initialize window.customCards if undefined', () => {
@@ -41,7 +43,7 @@ describe('index.ts', () => {
     expect(window.customCards).to.be.an('array');
   });
 
-  it('should add card configuration to window.customCards', () => {
+  it('should add card configuration with all fields to window.customCards', () => {
     require('../src/index.ts');
 
     expect(window.customCards).to.have.lengthOf(1);
@@ -50,6 +52,9 @@ describe('index.ts', () => {
       name: 'Room Summary Card',
       description:
         'A card to summarize the status of a room, including temperature, humidity, and any problem entities.',
+      preview: true,
+      documentationURL:
+        'https://github.com/homeassistant-extras/room-summary-card',
     });
   });
 
@@ -76,6 +81,6 @@ describe('index.ts', () => {
     require('../src/index.ts');
 
     expect(window.customCards).to.have.lengthOf(1);
-    expect(customElementsStub.calledOnce).to.be.true;
+    expect(customElementsStub.callCount).to.equal(2); // Called twice for initial registration only
   });
 });

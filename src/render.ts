@@ -1,4 +1,4 @@
-import { html, type TemplateResult } from 'lit';
+import { html, nothing, type TemplateResult } from 'lit';
 import { getState } from './helpers';
 import type { Config } from './types/config';
 import type { HomeAssistant } from './types/homeassistant';
@@ -10,13 +10,14 @@ import type { HomeAssistant } from './types/homeassistant';
 export const renderLabel = (
   hass: HomeAssistant,
   config: Config,
-): TemplateResult => {
-  if (!hass || !config || !config.options!.label) return html``;
+): TemplateResult | typeof nothing => {
+  if (!hass || !config || config.features?.includes('hide_climate_label'))
+    return nothing;
 
   const temp = getState(hass, config.temperature_sensor);
   const humidity = getState(hass, config.humidity_sensor);
 
-  if (!temp && !humidity) return html``;
+  if (!temp && !humidity) return nothing;
 
   const parts: string[] = [];
   if (temp?.state) {
@@ -29,7 +30,7 @@ export const renderLabel = (
     );
   }
 
-  if (!parts.length) return html``;
+  if (!parts.length) return nothing;
 
   return html`<p>${parts.join(' - ')}</p>`;
 };

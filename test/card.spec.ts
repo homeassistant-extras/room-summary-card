@@ -1,8 +1,9 @@
-import { fixture } from '@open-wc/testing';
+import { fixture } from '@open-wc/testing-helpers';
 import { expect } from 'chai';
+import type { TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import * as actionHandlerModule from '../src/action-handler';
 import { RoomSummaryCard } from '../src/card';
+import * as actionHandlerModule from '../src/common/action-handler';
 import { type HomeAssistant } from '../src/types/homeassistant';
 import { createStateEntity as s } from './test-helpers';
 
@@ -69,10 +70,6 @@ describe('card.ts', () => {
       );
       expect(card['_config'].temperature_sensor).to.equal('sensor.custom_temp');
     });
-
-    it('should set labels as true by default', () => {
-      expect(card['_config'].options!.label).to.equal(true);
-    });
   });
 
   describe('hass property setter', () => {
@@ -108,17 +105,30 @@ describe('card.ts', () => {
     beforeEach(() => {
       card.setConfig({
         area: 'living_room',
-        options: {
-          label: true,
-        },
       });
+    });
+
+    it('should render climate label', async () => {
+      const el = await fixture(card.render() as TemplateResult);
+      const label = el.querySelector('.label p');
+      expect(label).to.exist;
+    });
+
+    it('should not render label if `hide_climate_label` set', async () => {
+      card.setConfig({
+        area: 'living_room',
+        features: ['hide_climate_label'],
+      });
+      const el = await fixture(card.render() as TemplateResult);
+      const label = el.querySelector('.label p');
+      expect(label).to.not.exist;
     });
 
     it('should handle missing climate sensors gracefully', async () => {
       delete mockHass.states!['sensor.living_room_climate_humidity'];
       delete mockHass.states!['sensor.living_room_climate_air_temperature'];
 
-      const el = await fixture(card.render());
+      const el = await fixture(card.render() as TemplateResult);
       const label = el.querySelector('.label');
       expect(label).to.exist;
       expect(label!.textContent).to.not.include('°C');
@@ -131,7 +141,7 @@ describe('card.ts', () => {
         'sensor.living_room_climate_humidity',
       ];
       card['_problemExists'] = true;
-      const el = await fixture(card.render());
+      const el = await fixture(card.render() as TemplateResult);
       const problemIcon = el.querySelector('.status-entities')!;
       expect(problemIcon).to.exist;
       expect((problemIcon as any).icon).to.equal('mdi:numeric-2');
@@ -140,22 +150,21 @@ describe('card.ts', () => {
     it('should handle area names with multiple underscores', async () => {
       card.setConfig({
         area: 'second_floor_living_room',
-        options: { label: true },
       });
-      const el = await fixture(card.render());
+      const el = await fixture(card.render() as TemplateResult);
       const nameDiv = el.querySelector('.name');
       expect(nameDiv!.textContent!.trim()).to.equal('Second Floor Living Room');
     });
 
     it('should handle empty device and entity lists', async () => {
-      const el = await fixture(card.render());
+      const el = await fixture(card.render() as TemplateResult);
       const stats = el.querySelector('.stats');
       expect(stats!.textContent).to.include('0 devices');
       expect(stats!.textContent).to.include('0 entities');
     });
 
     it('should render correctly with minimal configuration', async () => {
-      const el = await fixture(card.render());
+      const el = await fixture(card.render() as TemplateResult);
       expect(el.parentNode).to.exist;
       expect(el.querySelector('.grid')).to.exist;
       expect(el.querySelector('.name')).to.exist;
@@ -163,10 +172,54 @@ describe('card.ts', () => {
 
     it('should handle entities with undefined states', async () => {
       mockHass.states!['light.living_room']!.state = '';
-      const el = await fixture(card.render());
+      const el = await fixture(card.render() as TemplateResult);
       expect(el.parentNode).to.exist;
       expect(el.querySelector('.grid')).to.exist;
       // Should still render without errors
+    });
+  });
+
+  describe('getConfigElement()', () => {
+    it('should return a room-summary-card-editor element', () => {
+      const element = RoomSummaryCard.getConfigElement();
+
+      expect(element).to.be.an('HTMLElement');
+      expect(element.tagName.toLowerCase()).to.equal(
+        'room-summary-card-editor',
+      );
+    });
+
+    it('should return a new element instance each time', () => {
+      const element1 = RoomSummaryCard.getConfigElement();
+      const element2 = RoomSummaryCard.getConfigElement();
+
+      expect(element1).to.not.equal(element2);
+    });
+  });
+
+  describe('getStubConfig()', () => {
+    it('should return default configuration object', () => {
+      const config = RoomSummaryCard.getStubConfig();
+
+      expect(config).to.be.an('object');
+      expect(config).to.have.property('area');
+      expect(config.area).to.equal('living_room');
+    });
+
+    it('should return a new object instance each time', () => {
+      const config1 = RoomSummaryCard.getStubConfig();
+      const config2 = RoomSummaryCard.getStubConfig();
+
+      expect(config1).to.not.equal(config2);
+      expect(config1).to.deep.equal(config2);
+    });
+
+    it('should not allow modification of default area', () => {
+      const config = RoomSummaryCard.getStubConfig();
+      config.area = 'bedroom';
+
+      const newConfig = RoomSummaryCard.getStubConfig();
+      expect(newConfig.area).to.equal('living_room');
     });
   });
 });

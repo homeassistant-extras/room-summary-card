@@ -23,8 +23,10 @@ import type {
   ActionHandlerEvent,
   ActionHandlerOptions,
   ActionHandlerType,
-} from './types';
-import type { ActionConfigParams, EntityInformation } from './types/config';
+} from '../types';
+import type { ActionConfigParams } from '../types/action';
+import type { EntityInformation } from '../types/config';
+import { fireEvent } from './fire-event';
 
 /**
  * Retrieves or creates the global action handler element.
@@ -142,17 +144,10 @@ export const handleClickAction = (
         ...entity.config,
       };
 
-      // Create and dispatch custom event for Home Assistant
-      const hassEvent = new CustomEvent('hass-action', {
-        bubbles: true, // Event bubbles up through the DOM
-        composed: true, // Event can cross shadow DOM boundaries
-        detail: {
-          config,
-          action,
-        },
+      fireEvent(element, 'hass-action', {
+        config,
+        action,
       });
-
-      element.dispatchEvent(hassEvent);
     },
   };
 };

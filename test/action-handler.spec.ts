@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { stub } from 'sinon';
-import { handleClickAction } from '../src/action-handler';
+import { handleClickAction } from '../src/common/action-handler';
 import type { ActionHandlerElement, ActionHandlerEvent } from '../src/types';
 import type { EntityInformation } from '../src/types/config';
 const proxyquire = require('proxyquire');
@@ -15,7 +15,7 @@ const directiveStub = stub().returns(mockDirectiveFunction); // Now returns a fu
 const noChangeStub = Symbol('noChange');
 
 // Use proxyquire to replace both the lit and lit/directive modules
-const { actionHandler } = proxyquire('../src/action-handler', {
+const { actionHandler } = proxyquire('../src/common/action-handler', {
   lit: {
     noChange: noChangeStub,
   },

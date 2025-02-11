@@ -102,7 +102,17 @@ lovelace:
 
 ## Usage
 
+![WIP](https://img.shields.io/badge/Work%20In%20Progress-gold?style=for-the-badge&logo=internetcomputer)
+
 Add the card to your dashboard using the UI editor or YAML:
+
+### Card Editor
+
+Slowly I'm enabling all the features in the card editor. Note that as things get converted to there some yaml settings may move / rename.
+
+### YAML
+
+This is the most minimal configuarion needed to get started.
 
 ```yaml
 type: custom:room-summary-card
@@ -130,13 +140,13 @@ Most of these are optional if you setup the entities a certain way using labels 
 | remove_fan          | boolean          | false                                   | Remove the default light and fan entities if found                |
 | skip_climate_colors | boolean          | false                                   | Disable climate-based color coding                                |
 | navigate            | string           | area name (dash-separated)              | Custom navigation path when clicking the room name / icon         |
-| options             | list             | See below                               | Optional options to toggle different features                     |
+| features            | list             | See below                               | Optional flags to toggle different features                       |
 
 ### Feature Options
 
-| Name  | Type    | Default | Description                   |
-| ----- | ------- | ------- | ----------------------------- |
-| label | boolean | true    | Show the climate label or not |
+| Name               | Type    | Description                   |
+| ------------------ | ------- | ----------------------------- |
+| hide_climate_label | boolean | Show the climate label or not |
 
 ### Default Entities
 
@@ -285,6 +295,8 @@ temperature_sensor: sensor.living_room_temperature
 humidity_sensor: sensor.living_room_humidity
 skip_climate_colors: false
 navigate: /lovelace/living-room
+features:
+  - hide_climate_label
 ```
 
 ### Custom Entities Only
@@ -308,6 +320,7 @@ For examples, see my HA configuration for my dashboard home page: [01-home.yaml]
 
 - [x] **`Initial design`**: <strike>create initial room card based on button-card template in UI minimialist theme.</strike>
 - [x] **`Temperature`**: <strike>use uom from the device.</strike>
+- [x] **`Card Editor`**: <strike>ability to use the HA card editor.</strike>
 - [ ] **`Test on other themes`**: make sure it works elsewhere.
 - [ ] **`Flags`**: ability to disable features.
 - [ ] **`Sizing`**: ability to fit different size squares.

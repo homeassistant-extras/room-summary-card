@@ -7,9 +7,11 @@
  */
 
 import { RoomSummaryCard } from './card';
+import { RoomSummaryCardEditor } from './editor';
 
 // Register the custom element with the browser
 customElements.define('room-summary-card', RoomSummaryCard);
+customElements.define('room-summary-card-editor', RoomSummaryCardEditor);
 
 // Ensure the customCards array exists on the window object
 window.customCards = window.customCards || [];
@@ -25,4 +27,10 @@ window.customCards.push({
   // Card description for the UI
   description:
     'A card to summarize the status of a room, including temperature, humidity, and any problem entities.',
+
+  // Show a preview of the card in the UI
+  preview: true,
+
+  // URL for the card's documentation
+  documentationURL: 'https://github.com/homeassistant-extras/room-summary-card',
 });
