@@ -75,7 +75,7 @@ export class RoomSummaryCardEditor extends LitElement {
     }
 
     fireEvent(this, 'config-changed', {
-      config: ev.detail.value as Config,
+      config,
     });
   }
 }

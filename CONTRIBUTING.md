@@ -150,6 +150,7 @@ If you have any questions, please feel free to:
     ├── README.md
     ├── assets
     │   ├── climate.png
+    │   ├── editor.png
     │   ├── icons.png
     │   ├── problems.png
     │   └── room-cards.png
@@ -161,6 +162,7 @@ If you have any questions, please feel free to:
     │   ├── card.ts
     │   ├── common
     │   │   ├── action-handler.ts
+    │   │   ├── feature.ts
     │   │   └── fire-event.ts
     │   ├── editor.ts
     │   ├── helpers.ts
@@ -172,13 +174,14 @@ If you have any questions, please feel free to:
     │       ├── config.ts
     │       ├── editor.ts
     │       ├── ha-form.ts
-    │       ├── homeassistant.ts
-    │       └── index.ts
+    │       └── homeassistant.ts
     ├── test
-    │   ├── action-handler.spec.ts
     │   ├── card.spec.ts
+    │   ├── common
+    │   │   ├── action-handler.spec.ts
+    │   │   ├── feature.spec.ts
+    │   │   └── fire-event.spec.ts
     │   ├── editor.spec.ts
-    │   ├── fire-event.spec.ts
     │   ├── helpers.spec.ts
     │   ├── index.spec.ts
     │   ├── renderers.spec.ts
@@ -198,39 +201,39 @@ If you have any questions, please feel free to:
 			<table>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/mocha.setup.ts'>mocha.setup.ts</a></b></td>
-				<td>- Establishes a mock browser environment for testing purposes, allowing developers to simulate real-world interactions with custom cards and media queries<br>- Enables the use of `customCards` and `matchMedia` in tests, providing a consistent and controlled setting for development and debugging<br>- Facilitates seamless integration of frontend code with backend applications, ensuring accurate and reliable test results.</td>
+				<td>- Establishes a mock browser environment for testing purposes, allowing developers to simulate real-world interactions with custom cards and media queries<br>- The setup enables the project's test suite to run efficiently, ensuring accurate results and faster development cycles<br>- It provides a foundation for testing various scenarios, including card rendering and media query responsiveness.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/tsconfig.test.json'>tsconfig.test.json</a></b></td>
-				<td>- Optimize project configuration for testing and development<br>- The tsconfig.test.json file extends the base configuration from tsconfig.json, setting up the compiler options to support testing frameworks like Mocha, Chai, and Sinon<br>- It also specifies the target JavaScript version and enables commonJS module resolution<br>- This configuration ensures a consistent build process across the project's test and source code directories.</td>
+				<td>- Optimize project configuration by defining test and source file paths<br>- The tsconfig.test.json file extends the main tsconfig.json file, specifying compiler options such as types, module resolution, and target version<br>- It also includes and excludes specific files, ensuring a consistent build process across the entire codebase, which is part of a larger open-source project with multiple modules and test suites.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/package-lock.json'>package-lock.json</a></b></td>
 				<td>- **Summary**
 
-The `package-lock.json` file serves as the central configuration file for the `room-summary-card` project, which is a part of a larger codebase architecture<br>- This file ensures that all dependencies required by the project are properly locked and managed.
+The `package-lock.json` file serves as the central configuration file for the `room-summary-card` project, which is a part of a larger codebase architecture<br>- This file ensures that all dependencies required by the project are properly locked in place, allowing for predictable and reproducible builds.
 
-In essence, this file achieves the following:
+In essence, this code achieves the following:
 
-* Provides a clear dependency graph for the project
+* Establishes a clear dependency graph for the project
 * Ensures consistency across different environments (e.g., development, production)
-* Facilitates efficient updates and maintenance of the project's dependencies
+* Facilitates efficient package management and updates
 
-By referencing the `package-lock.json` file, we can infer that the entire codebase architecture is centered around building and maintaining a suite of web components, with a focus on open-source best practices<br>- The presence of tools like `@open-wc/testing` suggests a commitment to testing and quality assurance, while the use of `lit` and `fast-deep-equal` implies a focus on performance and data integrity.</td>
+By referencing the `package-lock.json` file, we can infer that the entire codebase architecture is centered around building and maintaining a robust and scalable web application, likely utilizing modern web technologies such as Lit and Parcel.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/package.json'>package.json</a></b></td>
 				<td>- Summarizes the purpose of the room-summary-card package.
 
-The room-summary-card package provides a custom card component for Home Assistant that displays a summary of room entities<br>- It enables users to visualize and manage their room data in a user-friendly interface, enhancing the overall Home Assistant experience<br>- The package is designed to be modular and adaptable, allowing users to easily integrate it into their existing setup.</td>
+The room-summary-card package provides a custom card for Home Assistant that displays a summary of room entities<br>- It enables users to visualize key information about their rooms in a concise and easily digestible format, enhancing their overall home automation experience<br>- The package is designed to be modular and adaptable, allowing users to customize the display to suit their specific needs.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/tsconfig.json'>tsconfig.json</a></b></td>
-				<td>- Optimizes project configuration by defining compiler options for the TypeScript compiler<br>- Ensures compatibility with modern JavaScript features and adheres to strict coding standards<br>- Aligns with the project's overall architecture, which emphasizes modular development and isolation of modules<br>- Facilitates efficient compilation and error handling, ultimately contributing to a stable and maintainable codebase.</td>
+				<td>- Optimizes project configuration by setting compiler options for a TypeScript-based codebase<br>- Ensures compatibility with modern JavaScript features and enables strict type checking<br>- Configures module resolution, isolated modules, and experimental decorators to support complex project structures<br>- Facilitates efficient compilation and error reporting, allowing developers to focus on writing high-quality code.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/hacs.json'>hacs.json</a></b></td>
-				<td>- Summarizes the Room Summary Card file<br>- The card provides a high-level overview of room data, enabling users to quickly grasp key information at a glance<br>- It serves as a crucial component in the project's architecture, facilitating easy access and understanding of room details<br>- By rendering a README, it also supports user documentation and onboarding processes.</td>
+				<td>- Summarizes the Room Summary Card component, highlighting its purpose as a key visual representation of project data<br>- It enables users to quickly grasp essential information about rooms, such as occupancy rates and maintenance schedules<br>- The card's design facilitates easy navigation through the project structure, providing an intuitive overview of room details.</td>
 			</tr>
 			</table>
 		</blockquote>
@@ -241,41 +244,52 @@ The room-summary-card package provides a custom card component for Home Assistan
 			<table>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/index.spec.ts'>index.spec.ts</a></b></td>
-				<td>- The provided test file showcases the functionality of the `index.ts` file within the project's architecture<br>- It demonstrates how the code registers custom elements, initializes and populates the `window.customCards` array, and handles multiple imports without duplicating registration<br>- The tests verify that the code achieves its intended purpose, ensuring a robust and reliable implementation.</td>
+				<td>- The provided test file showcases the functionality of the `index.ts` file within the project's architecture<br>- It demonstrates how the file registers custom elements with the browser, initializes and populates the `window.customCards` array, and handles multiple imports without duplicating registration<br>- The tests verify that the custom elements are registered correctly, and the `customCards` array is populated with the expected data.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/test-helpers.ts'>test-helpers.ts</a></b></td>
-				<td>- Creates a reusable function `createStateEntity` that generates a mock state entity for testing purposes<br>- It constructs an object with domain, name, and initial state, allowing for easy creation of entities with customizable attributes<br>- This utility enables efficient setup of test data, facilitating comprehensive testing of the home assistant project's functionality.</td>
+				<td>- Creates a reusable function `createStateEntity` that generates a mock state entity for testing purposes<br>- It constructs an object with domain, name, state, and attributes, providing methods to access these properties<br>- This utility helps simplify test setup by creating consistent, easily controllable entities for testing Home Assistant-related functionality, facilitating faster and more reliable testing cycles.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/editor.spec.ts'>editor.spec.ts</a></b></td>
-				<td>- The provided test file editor.spec.ts serves as a comprehensive testing framework for the RoomSummaryCardEditor component, ensuring its functionality and behavior align with project requirements<br>- It covers initialization, configuration, rendering, and form behavior, providing a robust foundation for the entire codebase architecture.</td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/action-handler.spec.ts'>action-handler.spec.ts</a></b></td>
-				<td>- The test suite for the action handler module ensures that the `handleClickAction` function behaves as expected when handling events and dispatching actions<br>- It verifies that the correct event is dispatched with the correct configuration, and that no event is dispatched if there is no action in the event detail<br>- The tests validate the functionality of the action handler, providing confidence in its correctness.</td>
+				<td>- The test/editor.spec.ts file provides comprehensive testing coverage for the RoomSummaryCardEditor component, ensuring its functionality and behavior align with expected outcomes<br>- It validates initialization, configuration settings, rendering, and form behavior, providing a solid foundation for the component's overall architecture<br>- The tests verify correct data propagation, event dispatching, and computed label calculations, ultimately guaranteeing the editor's reliability and accuracy in displaying room summary information.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/renderers.spec.ts'>renderers.spec.ts</a></b></td>
-				<td>- Validate the rendering of temperature and humidity labels in the Home Assistant UI<br>- The test file ensures that the `renderLabel` function correctly handles various scenarios, including empty labels, undefined sensors, and missing unit_of_measurement attributes<br>- It verifies that the correct label is rendered based on the presence or absence of temperature and humidity values.</td>
+				<td>- The test file rendersAreaStatistics achieves the functionality of displaying area statistics, such as device and entity counts, within a specified area<br>- It handles various scenarios, including areas with no devices or entities, entities belonging to devices without direct area IDs, and entities with missing device IDs<br>- The test ensures that the rendered HTML accurately reflects these conditions.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/styles.spec.ts'>styles.spec.ts</a></b></td>
-				<td>- The test file `styles.spec.ts` validates the functionality of styles-related functions within the project's architecture<br>- It ensures that various conditions are met when retrieving card styles based on temperature, humidity, and light states, as well as climate styles and entity icon styles<br>- The tests verify that styles are correctly applied under different scenarios, providing a comprehensive validation of the codebase's styling logic.</td>
+				<td>- The test file `styles.spec.ts` validates the functionality of styles-related functions within the codebase architecture<br>- It ensures that various conditions are met when retrieving card styles and climate styles, as well as styling entity icons based on their states<br>- The tests cover different scenarios to guarantee accurate results for the entire codebase.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/helpers.spec.ts'>helpers.spec.ts</a></b></td>
-				<td>- The main purpose of the `helpers.spec.ts` file is to test the functionality of helper functions within the project's architecture<br>- The tests cover various scenarios and edge cases, ensuring that the helper functions behave as expected in different situations<br>- The file provides valuable insights into how the project's core components interact with each other, ultimately contributing to a robust and reliable overall system.</td>
+				<td>- The test/helpers.spec.ts file serves as a comprehensive testing ground for the helpers module, ensuring its functionality and accuracy across various scenarios<br>- It validates the correctness of functions like getIconEntities, getProblemEntities, and getState, providing robust coverage for the entire codebase architecture<br>- The tests verify the module's ability to handle different configurations, edge cases, and entity types, ultimately guaranteeing a stable and reliable experience for users.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/card.spec.ts'>card.spec.ts</a></b></td>
-				<td>- The test suite for the RoomSummaryCard component thoroughly covers its functionality, including rendering climate labels, handling problem entities, and configuration options<br>- The tests ensure that the card renders correctly with various configurations and edge cases, providing a solid foundation for the component's behavior.</td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/fire-event.spec.ts'>fire-event.spec.ts</a></b></td>
-				<td>- The test file `fire-event.spec.ts` validates the functionality of the `fireEvent` function, which creates and dispatches custom events to elements or the window object<br>- It ensures that events are created with correct types, details, and properties, and that they can be composed and bubbled through the DOM<br>- The tests cover various scenarios, including config-changed events and different targets.</td>
+				<td>- The test suite for the `RoomSummaryCard` component thoroughly covers its functionality, including configuration settings, rendering, and interaction with Home Assistant data<br>- It ensures that the card accurately displays room statistics, handles various scenarios, and provides a stable user experience<br>- The tests also validate the component's ability to adapt to different configurations and edge cases.</td>
 			</tr>
 			</table>
+			<details>
+				<summary><b>common</b></summary>
+				<blockquote>
+					<table>
+					<tr>
+						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/common/feature.spec.ts'>feature.spec.ts</a></b></td>
+						<td>- The feature.spec.ts file validates the functionality of the feature function within the project's common module<br>- It tests various scenarios to ensure the function behaves correctly under different configurations and edge cases, including null or undefined config values, empty features lists, and case-sensitive feature names<br>- The test suite verifies that the feature function returns expected results based on the provided configuration and feature name.</td>
+					</tr>
+					<tr>
+						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/common/action-handler.spec.ts'>action-handler.spec.ts</a></b></td>
+						<td>- The action-handler.spec.ts file tests the functionality of the actionHandler module, verifying that it correctly calls the directive function and dispatches a hass-action event with the correct configuration when an event is handled<br>- The test suite ensures that the handler behaves as expected in various scenarios, including successful event handling and no-change events.</td>
+					</tr>
+					<tr>
+						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/test/common/fire-event.spec.ts'>fire-event.spec.ts</a></b></td>
+						<td>- The test file `fire-event.spec.ts` validates the functionality of the `fireEvent` function, which creates and dispatches custom events with various details<br>- The tests ensure that the function works correctly with different event types, detail objects, and targets (element or window)<br>- It verifies that the dispatched events are properly created and passed to the target's `dispatchEvent` method.</td>
+					</tr>
+					</table>
+				</blockquote>
+			</details>
 		</blockquote>
 	</details>
 	<details> <!-- src Submodule -->
@@ -284,27 +298,27 @@ The room-summary-card package provides a custom card component for Home Assistan
 			<table>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/helpers.ts'>helpers.ts</a></b></td>
-				<td>- The main purpose of the `helpers.ts` file is to provide a collection of utility functions for working with Home Assistant entities, states, and configurations<br>- It achieves this by offering functions such as entity management, state retrieval, UI element creation, and more, ultimately enhancing the overall functionality and user experience of the Home Assistant application.</td>
+				<td>- The provided file, `helpers.ts`, serves as a utility library for Home Assistant entities, states, and configurations<br>- It offers functions to create state icon elements, retrieve entity information, get problem entities in a specific area, and process entities with climate handling<br>- The code enables efficient management of Home Assistant data, streamlining interactions between entities and the user interface.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/editor.ts'>editor.ts</a></b></td>
-				<td>- The RoomSummaryCardEditor class serves as the core component of a Home Assistant editor, responsible for rendering and editing room summary card configurations<br>- It achieves this by utilizing a form-based interface to input and validate user data, ultimately updating the associated configuration object<br>- The component integrates with Home Assistant's state management system, enabling seamless data synchronization.</td>
+				<td>- The RoomSummaryCardEditor class serves as the core component for editing room summary cards within the Home Assistant project<br>- It renders a form with predefined schema and updates the card configuration when values change, triggering a 'config-changed' event to notify other parts of the system<br>- The editor provides a user interface for configuring room features and area settings.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/styles.ts'>styles.ts</a></b></td>
-				<td>- The Room Summary Card Styles Module provides dynamic styling logic and CSS definitions for the card layout, handling state and configuration changes to generate adaptive styles<br>- It enables climate-specific styles and icons, as well as entity icon styles based on their state, resulting in a visually appealing and interactive room summary card<br>- The module integrates with Home Assistant's state and configuration data.</td>
+				<td>- The Room Summary Card Styles Module provides dynamic styling logic and CSS definitions for the card layout, generating styles based on state and configuration<br>- It enables climate-specific styles and icons, as well as entity icon styles, to enhance user experience<br>- The module contributes to the overall project's architecture by providing a consistent design language for room summaries.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/card.ts'>card.ts</a></b></td>
-				<td>- The RoomSummaryCard component displays a summary of room information in Home Assistant, showcasing state, climate data, and entity states in a grid layout with interactive elements<br>- It provides an overview of the room's devices, entities, and problems, allowing users to access detailed information at their fingertips<br>- The card is designed to be customizable through its configuration object.</td>
+				<td>- The RoomSummaryCard component displays a summary of room information in Home Assistant, showcasing state, climate information, and entity states in a grid layout with interactive elements<br>- It achieves this by rendering a card with various sections, including the room name, climate information, and state icons, while also indicating any problems that exist in the room.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/render.ts'>render.ts</a></b></td>
-				<td>- The renderLabel function generates a formatted climate label combining temperature and humidity information when available<br>- It retrieves state data from Home Assistant using the getState helper function and constructs a string with the relevant parts, including unit of measurement if applicable<br>- The resulting template is returned as a TemplateResult or nothing if no valid states are found.</td>
+				<td>- The main purpose of the `render.ts` file is to generate dynamic content for a Home Assistant dashboard<br>- It provides two functions, `renderLabel` and `renderAreaStatistics`, which combine data from sensors and entities to display climate information and area statistics, respectively<br>- These functions are used to render templates that provide users with valuable insights into their home's environment.</td>
 			</tr>
 			<tr>
 				<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/index.ts'>index.ts</a></b></td>
-				<td>- Registers the Room Summary Card custom element with the browser and Home Assistant's custom card registry, making it available for use in dashboards<br>- Ensures compatibility by defining two custom elements and registering a card with the custom card registry, providing a unique identifier, display name, description, preview, and documentation URL.</td>
+				<td>- Registers the Room Summary Card custom element with the browser and Home Assistant's custom card registry, making it available for use in dashboards<br>- Ensures compatibility by defining the customCards array on the window object<br>- Provides a unique identifier, display name, description, and documentation URL for the card, enabling users to easily discover and integrate the feature into their Home Assistant setup.</td>
 			</tr>
 			</table>
 			<details>
@@ -313,27 +327,23 @@ The room-summary-card package provides a custom card component for Home Assistan
 					<table>
 					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/types/ha-form.ts'>ha-form.ts</a></b></td>
-						<td>- Defines the structure of forms within the project, establishing a common interface for different form types<br>- The HaFormBaseSchema serves as a foundation, while HaFormSelector extends it to include additional properties specific to each form type<br>- This enables uniform data handling and validation across various form implementations, ensuring consistency throughout the codebase.</td>
+						<td>- Documenting the project structure reveals that the `ha-form.ts` file serves as a foundation for form schema definitions<br>- It establishes a set of reusable interfaces and types to describe various form elements, such as selectors and options<br>- The codebase architecture relies on this module to provide a standardized framework for building dynamic forms, enabling flexibility and maintainability across different components.</td>
 					</tr>
 					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/types/editor.ts'>editor.ts</a></b></td>
-						<td>- Exposes the ConfigChangedEvent interface, defining a type that represents an event triggered when configuration changes occur within the project<br>- The interface includes a single property, config, which conforms to the Config type imported from the config module<br>- This event is likely used to notify other parts of the application about configuration updates, enabling reactive behavior and ensuring data consistency throughout the system.</td>
+						<td>- Exposes the ConfigChangedEvent interface, defining a type that represents an event triggered when configuration changes occur within the application<br>- The event carries a Config object as its payload, enabling the system to react to updates and maintain consistency across different components<br>- It plays a crucial role in handling configuration changes throughout the codebase architecture.</td>
 					</tr>
 					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/types/action.ts'>action.ts</a></b></td>
-						<td>- The action configuration file defines the structure for handling various navigation events within the project's architecture<br>- It establishes a set of standardized configurations for different types of actions, including navigation, toggle, more information, and no-operation events<br>- This enables consistent and efficient event handling across the codebase, facilitating a scalable and maintainable application.</td>
+						<td>- The main purpose of the `action.ts` file is to define a unified set of types and interfaces for handling actions across the entire codebase architecture<br>- It establishes a foundation for action handlers, event interfaces, and configuration options, enabling a standardized approach to managing user interactions within the application<br>- This enables more efficient development and maintenance of the project's core functionality.</td>
 					</tr>
 					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/types/homeassistant.ts'>homeassistant.ts</a></b></td>
 						<td>- Defines the core structure of Home Assistant integration, providing a unified interface for entities, devices, states, and areas<br>- Establishes a common language for interacting with Home Assistant, enabling seamless data exchange between different components of the system<br>- Facilitates standardized access to entity attributes, device information, and area relationships, ultimately enhancing the overall functionality and maintainability of the project.</td>
 					</tr>
 					<tr>
-						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/types/index.ts'>index.ts</a></b></td>
-						<td>- Defines the core type definitions and action handlers for the project's architecture, extending the global window interface to include a custom cards array<br>- Establishes interfaces for action handler events, HTML elements, and configuration options, enabling the integration of custom card functionality with Home Assistant DOM events<br>- Provides a foundation for handling various actions, such as hold, tap, and double-tap events.</td>
-					</tr>
-					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/types/config.ts'>config.ts</a></b></td>
-						<td>- Defines the core configuration structure for card display and behavior within Home Assistant, encompassing entity settings, navigation paths, and feature options<br>- The Config interface serves as a central hub for entity configurations, state information, and problem entities, enabling flexible customization of card layouts and interactions.</td>
+						<td>- Defines the core configuration structure for card display and behavior within Home Assistant, encompassing entity settings, navigation paths, and feature options<br>- The Config interface serves as a central hub for entity-specific configurations, while the EntityConfig and Features types provide detailed information on individual entities and features to be enabled or disabled.</td>
 					</tr>
 					</table>
 				</blockquote>
@@ -344,11 +354,15 @@ The room-summary-card package provides a custom card component for Home Assistan
 					<table>
 					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/common/action-handler.ts'>action-handler.ts</a></b></td>
-						<td>- The action handler module enables custom click action handling for web components using the Lit library<br>- It creates a global singleton element that processes click events and dispatches them as Home Assistant actions with specified configuration, supporting features like double-click and hold actions<br>- The module is designed to be used by consumers of this project, providing an action handler for entities with configured options.</td>
+						<td>- The action handler module enables custom click action handling for web components using the Lit library<br>- It manages action handlers for elements and supports features like double-click and hold actions<br>- The module creates a handler that processes click events and dispatches them as Home Assistant actions with the appropriate configuration, specifically designed to implement custom click action handling for Home Assistant entities.</td>
 					</tr>
 					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/common/fire-event.ts'>fire-event.ts</a></b></td>
-						<td>- Dispatches custom events for Home Assistant, enabling communication between components within the application<br>- It allows for the creation of a standardized event system, facilitating seamless interaction and data exchange among different parts of the codebase<br>- This enables a more modular and maintainable architecture.</td>
+						<td>- Dispatches custom events for Home Assistant, enabling communication between components within the application<br>- It allows for event-driven programming and facilitates the exchange of data between different parts of the codebase<br>- The provided file is a key component in the overall architecture, providing a standardized way to handle events and interact with the application's UI.</td>
+					</tr>
+					<tr>
+						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/src/common/feature.ts'>feature.ts</a></b></td>
+						<td>- The feature checker utility enables configuration management by verifying if specific features are enabled in a given configuration object<br>- It provides a fallback mechanism when the config is null/undefined, allowing it to return true for certain cases<br>- The code achieves this functionality, making it an essential component of the project's overall architecture.</td>
 					</tr>
 					</table>
 				</blockquote>
@@ -364,15 +378,15 @@ The room-summary-card package provides a custom card component for Home Assistan
 					<table>
 					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/.github/workflows/push.yml'>push.yml</a></b></td>
-						<td>- The main purpose of this code file is to automate the process of releasing a new version of a project<br>- It checks for commits from authorized users, bumps the version number and creates a release, generates release notes, and updates the main branch with the changes<br>- The workflow ensures that releases are created only by approved users and maintains consistency across different branches.</td>
+						<td>- The main purpose of this code file is to automate the process of releasing a new version of a project<br>- It checks for commits from authorized users, bumps the version number and creates a tag, generates release notes, and creates a GitHub release with a draft title based on the last PR title<br>- The script also updates the main branch with the release changes.</td>
 					</tr>
 					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/.github/workflows/pull_request.yaml'>pull_request.yaml</a></b></td>
-						<td>- Validate Pull Request Fast Forward<br>- The .github/workflows/pull_request.yaml file ensures the project's integrity by checking if a pull request is fast-forwarded when it's opened, reopened, or synchronized<br>- It verifies the merge history to prevent unwanted changes and maintains the repository's consistency<br>- This validation helps maintain the project's stability and prevents potential issues that could arise from fast-forwarded merges.</td>
+						<td>- The main purpose of the `pull_request.yaml` file is to automate a fast-forward check on pull requests<br>- It ensures that when a new merge request is opened, reopened, or synchronized, the workflow checks if it's a fast forward merge and posts a comment accordingly<br>- This helps maintain the integrity of the project by preventing unwanted changes from being merged.</td>
 					</tr>
 					<tr>
 						<td><b><a href='https://github.com/homeassistant-extras/room-summary-card/blob/master/.github/workflows/merge.yaml'>merge.yaml</a></b></td>
-						<td>- Merge workflow automates the fast-forward merge process by detecting new issue comments containing the `/merge` command and triggering a GitHub Actions job<br>- The workflow uses a GitHub app token to authenticate and runs on an Ubuntu-based environment, utilizing the `sequoia-pgp/fast-forward` action to perform the merge<br>- It also posts a comment with error information if any issues occur during the process.</td>
+						<td>- The merge.yaml file enables automated fast-forward merges on pull requests by triggering a workflow when an issue comment contains the "/merge" command and is associated with a pull request<br>- The workflow authenticates using a GitHub app token, then uses the Sequoia PGP fast-forward action to initiate the merge process.</td>
 					</tr>
 					</table>
 				</blockquote>
