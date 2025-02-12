@@ -24,11 +24,11 @@ describe('index.ts', () => {
     // Restore the original customElements.define
     customElementsStub.restore();
     customCardsStub = undefined;
-    delete require.cache[require.resolve('../src/index.ts')];
+    delete require.cache[require.resolve('@/index.ts')];
   });
 
   it('should register both room-summary-card and editor custom elements', () => {
-    require('../src/index.ts');
+    require('@/index.ts');
     expect(customElementsStub.calledTwice).to.be.true;
     expect(customElementsStub.firstCall.args[0]).to.equal('room-summary-card');
     expect(customElementsStub.secondCall.args[0]).to.equal(
@@ -38,13 +38,13 @@ describe('index.ts', () => {
 
   it('should initialize window.customCards if undefined', () => {
     customCardsStub = undefined;
-    require('../src/index.ts');
+    require('@/index.ts');
 
     expect(window.customCards).to.be.an('array');
   });
 
   it('should add card configuration with all fields to window.customCards', () => {
-    require('../src/index.ts');
+    require('@/index.ts');
 
     expect(window.customCards).to.have.lengthOf(1);
     expect(window.customCards[0]).to.deep.equal({
@@ -67,7 +67,7 @@ describe('index.ts', () => {
       },
     ];
 
-    require('../src/index.ts');
+    require('@/index.ts');
 
     expect(window.customCards).to.have.lengthOf(2);
     expect(window.customCards[0]).to.deep.equal({
@@ -77,8 +77,8 @@ describe('index.ts', () => {
   });
 
   it('should handle multiple imports without duplicating registration', () => {
-    require('../src/index.ts');
-    require('../src/index.ts');
+    require('@/index.ts');
+    require('@/index.ts');
 
     expect(window.customCards).to.have.lengthOf(1);
     expect(customElementsStub.callCount).to.equal(2); // Called twice for initial registration only

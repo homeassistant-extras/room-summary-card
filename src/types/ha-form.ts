@@ -7,6 +7,7 @@ export type HaFormSchema = HaFormSelector;
 
 export interface HaFormSelector extends HaFormBaseSchema {
   type?: never;
+  required?: boolean;
   selector: Selector;
 }
 

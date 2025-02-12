@@ -12,21 +12,29 @@ import type { State } from './homeassistant';
 export interface Config {
   /** The area identifier where the entity is located */
   area: string;
+
   /** Single entity configuration or entity ID */
   entity?: EntityConfig | string;
+
   /** Array of entity configurations or entity IDs */
   entities?: (EntityConfig | string)[];
+
   /** List of entity IDs that are experiencing issues */
   problem_entities?: string[];
+
   /** Flag to disable climate-based color coding */
   skip_climate_colors?: boolean;
+
   /** Navigation path for the entity */
   navigate?: string;
+
   /** Entity ID for humidity sensor */
   humidity_sensor?: string;
+
   /** Entity ID for temperature sensor */
   temperature_sensor?: string;
-  /** Options to enable disable featurs **/
+
+  /** Options to enable disable features **/
   features?: Features[];
 }
 

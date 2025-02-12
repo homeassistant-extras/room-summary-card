@@ -11,10 +11,13 @@
 export interface HomeAssistant {
   /** Map of entity IDs to their corresponding entities */
   entities: Record<string, Entity>;
+
   /** Map of device IDs to their corresponding devices */
   devices: Record<string, Device>;
+
   /** Map of entity IDs to their current states */
   states: Record<string, State>;
+
   /** Map of area IDs to their corresponding areas */
   areas: Record<string, Area>;
 }
@@ -25,6 +28,7 @@ export interface HomeAssistant {
 export interface Area {
   /** Unique identifier for the area */
   area_id: string;
+
   /** Icon associated with the area */
   icon: string;
 }
@@ -72,8 +76,10 @@ export interface State {
 export interface Entity {
   /** ID of the area where this entity is located */
   area_id: string;
+
   /** ID of the physical device this entity belongs to */
   device_id: string;
+
   /** Array of labels associated with the entity */
   labels: string[];
 }

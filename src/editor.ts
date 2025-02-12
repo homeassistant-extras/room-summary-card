@@ -6,16 +6,20 @@ import { state } from 'lit/decorators.js';
 import { fireEvent } from './common/fire-event';
 
 const SCHEMA: HaFormSchema[] = [
-  { name: 'area', label: 'Area', selector: { area: {} } },
+  { name: 'area', label: 'Area', required: true, selector: { area: {} } },
   {
     name: 'features',
     label: 'Features',
+    required: false,
     selector: {
       select: {
         multiple: true,
         mode: 'list',
         options: [
-          { label: 'Hide Climate Label', value: 'hide_climate_label' },
+          {
+            label: 'Hide Climate Label',
+            value: 'hide_climate_label',
+          },
           { label: 'Hide Area Stats', value: 'hide_area_stats' },
           {
             label: 'Exclude Default Entities',
