@@ -85,16 +85,20 @@ describe('editor.ts', () => {
       expect((el as any).hass).to.deep.equal(hass);
       expect((el as any).data).to.deep.equal(testConfig);
       expect((el as any).schema).to.deep.equal([
-        { name: 'area', label: 'Area', selector: { area: {} } },
+        { name: 'area', label: 'Area', required: true, selector: { area: {} } },
         {
           name: 'features',
           label: 'Features',
+          required: false,
           selector: {
             select: {
               multiple: true,
               mode: 'list',
               options: [
-                { label: 'Hide Climate Label', value: 'hide_climate_label' },
+                {
+                  label: 'Hide Climate Label',
+                  value: 'hide_climate_label',
+                },
                 { label: 'Hide Area Stats', value: 'hide_area_stats' },
                 {
                   label: 'Exclude Default Entities',

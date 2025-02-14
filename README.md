@@ -319,6 +319,62 @@ entities:
 
 For examples, see my HA configuration for my dashboard home page: [01-home.yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml)
 
+## Themes and coloring
+
+The card will match the default styling of Home Assistant.
+
+### Active Colors by Domain
+
+Active entities will be colored based on their domain unless overriden.
+
+| Domain Category              | Domains                                           | Active Color |
+| ---------------------------- | ------------------------------------------------- | ------------ |
+| **Lighting**                 | `light`, `switch_as_x`                            | Amber        |
+| **Switches & Electric**      | `switch`, `input_boolean`, `automation`, `script` | Blue         |
+| **Climate & Environment**    | `climate`, `fan`                                  | Teal         |
+| **Security & Safety**        | `alarm_control_panel`, `lock`                     | Red          |
+| **Covers & Doors**           | `cover`, `garage_door`, `door`                    | Green        |
+| **Media**                    | `media_player`                                    | Indigo       |
+| **Sensors & Binary Sensors** | `binary_sensor`, `sensor`                         | Cyan         |
+| **Person & Presence**        | `person`, `device_tracker`                        | Purple       |
+| **Weather**                  | `weather`                                         | Orange       |
+| **Vacuum**                   | `vacuum`                                          | Deep Purple  |
+| **Timer & Schedule**         | `timer`, `schedule`                               | Pink         |
+| **Unknown Domains**          | Any other domain                                  | Amber        |
+
+Each domain has a predefined color to indicate its active status.
+
+### Available color codes
+
+The `on_color` and `off_color` attributes support these color stylings from the theme.
+
+- primary
+- accent
+- red
+- pink
+- purple
+- deep-purple
+- indigo
+- blue
+- light-blue
+- cyan
+- teal
+- green
+- light-green
+- lime
+- yellow
+- amber
+- orange
+- deep-orange
+- brown
+- light-grey
+- grey
+- dark-grey
+- blue-grey
+- black
+- white
+- disabled
+
 ## Project Roadmap
 
 - [x] **`Initial design`**: <strike>create initial room card based on button-card template in UI minimialist theme.</strike>

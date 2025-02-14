@@ -4,6 +4,7 @@ import { createStateEntity as s } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
+import { nothing } from 'lit';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
 describe('styles.ts', () => {
@@ -44,7 +45,7 @@ describe('styles.ts', () => {
       const styles = getCardStyles(mockHass as HomeAssistant, config, state);
       expect(styles).to.deep.equal(
         styleMap({
-          'background-color': `rgba(var(--color-background-${state.attributes.on_color}),var(--opacity-bg))`,
+          'background-color': `rgba(var(--rgb-${state.attributes.on_color}), 0.1)`,
           borderLeft: '2px solid rgba(var(--color-red-text),1)',
           borderTop: '2px solid rgba(var(--color-red-text),1)',
           borderRight: '2px solid rgba(var(--color-blue-text),1)',
@@ -75,8 +76,7 @@ describe('styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
-          'background-color':
-            'rgba(var(--color-background-yellow),var(--opacity-bg))',
+          'background-color': 'rgba(var(--rgb-amber), 0.1)',
           borderLeft: undefined,
           borderTop: undefined,
           borderRight: undefined,
@@ -92,8 +92,7 @@ describe('styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
-          'background-color':
-            'rgba(var(--color-background-yellow),var(--opacity-bg))',
+          'background-color': 'rgba(var(--rgb-amber), 0.1)',
           borderLeft: undefined,
           borderTop: undefined,
           borderRight: undefined,
@@ -109,8 +108,7 @@ describe('styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
-          'background-color':
-            'rgba(var(--color-background-yellow),var(--opacity-bg))',
+          'background-color': 'rgba(var(--rgb-amber), 0.1)',
           borderLeft: undefined,
           borderTop: undefined,
           borderRight: undefined,
@@ -183,43 +181,47 @@ describe('styles.ts', () => {
     it('should style active state', () => {
       const state = s('light', 'test', 'on', { on_color: 'yellow' });
 
-      const { iconStyle, iconContainerStyle, textStyle } =
-        getEntityIconStyles(state);
+      const { iconStyle, textStyle } = getEntityIconStyles(state);
 
       expect(iconStyle).to.deep.equal(
         styleMap({
-          color: `rgba(var(--color-${state.attributes.on_color}),1)`,
-        }),
-      );
-      expect(iconContainerStyle).to.deep.equal(
-        styleMap({
-          'background-color': `rgba(var(--color-${state.attributes.on_color}),0.2)`,
+          '--background-color': `rgba(var(--rgb-${state.attributes.on_color}), 0.2)`,
+          '--icon-color': `rgba(var(--rgb-${state.attributes.on_color}), 1)`,
         }),
       );
       expect(textStyle).to.deep.equal(
         styleMap({
-          color: `rgba(var(--color-${state.attributes.on_color}-text),1)`,
+          '--text-color': `rgba(var(--rgb-${state.attributes.on_color}), 1)`,
         }),
       );
     });
 
     it('should handle inactive state', () => {
-      const state = s('light', 'test', 'off', { off_color: 'gray' });
+      const state = s('light', 'test', 'off', { off_color: 'grey' });
 
-      const { iconStyle, iconContainerStyle, textStyle } =
-        getEntityIconStyles(state);
+      const { iconStyle, textStyle } = getEntityIconStyles(state);
 
       expect(iconStyle).to.deep.equal(
         styleMap({
-          color: `rgba(var(--color-${state.attributes.off_color}),1)`,
+          '--background-color': `rgba(var(--rgb-${state.attributes.off_color}), 0.2)`,
+          '--icon-color': `rgba(var(--rgb-${state.attributes.off_color}), 1)`,
         }),
       );
-      expect(iconContainerStyle).to.deep.equal(
+      expect(textStyle).to.equal(nothing);
+    });
+
+    it('should handle bad color', () => {
+      const state = s('light', 'test', 'off', { off_color: 'blurple' });
+
+      const { iconStyle, textStyle } = getEntityIconStyles(state);
+
+      expect(iconStyle).to.deep.equal(
         styleMap({
-          'background-color': `rgba(var(--color-${state.attributes.off_color}),0.2)`,
+          '--background-color': '',
+          '--icon-color': '',
         }),
       );
-      expect(textStyle).to.be.empty;
+      expect(textStyle).to.equal(nothing);
     });
   });
 });

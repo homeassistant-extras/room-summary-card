@@ -1,9 +1,9 @@
+import { fireEvent } from '@common/fire-event';
 import type { Config } from '@type/config';
 import type { HaFormSchema } from '@type/ha-form';
 import type { HomeAssistant } from '@type/homeassistant';
 import { html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
-import { fireEvent } from './common/fire-event';
 
 const SCHEMA: HaFormSchema[] = [
   { name: 'area', label: 'Area', required: true, selector: { area: {} } },

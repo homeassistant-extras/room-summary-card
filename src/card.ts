@@ -11,17 +11,17 @@
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 
+import { actionHandler, handleClickAction } from '@common/action-handler';
 import type { Config, EntityInformation } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
-import { version } from '../package.json';
-import { actionHandler, handleClickAction } from './common/action-handler';
 import {
-  createStateIcon,
-  getIconEntities,
-  getProblemEntities,
-  getRoomEntity,
-} from './helpers';
-import { renderAreaStatistics, renderLabel } from './render';
+  renderAreaStatistics,
+  renderLabel,
+  renderProblemIndicator,
+  renderStateIcon,
+} from '@util/render';
+import { version } from '../package.json';
+import { getIconEntities, getProblemEntities, getRoomEntity } from './helpers';
 import { getCardStyles, getEntityIconStyles, styles } from './styles';
 const equal = require('fast-deep-equal');
 
@@ -80,22 +80,25 @@ export class RoomSummaryCard extends LitElement {
     }
 
     const area = this._formatAreaName();
-    const problems = this._renderProblemIndicator();
     const handler = actionHandler(this._roomEntity);
     const label = renderLabel(this._hass, this._config);
     const action = handleClickAction(this, this._roomEntity);
     const stats = renderAreaStatistics(this._hass, this._config);
     const { textStyle } = getEntityIconStyles(this._roomEntity.state);
-    const roomEntity = createStateIcon(this, this._hass, this._roomEntity, [
+    const roomEntity = renderStateIcon(this, this._hass, this._roomEntity, [
       'room',
     ]);
     const stateIcons = this._states.map((s, i) =>
-      createStateIcon(this, this._hass, s, ['entity', `entity-${i + 1}`]),
+      renderStateIcon(this, this._hass, s, ['entity', `entity-${i + 1}`]),
     );
     const cardStyle = getCardStyles(
       this._hass,
       this._config,
       this._roomEntity.state,
+    );
+    const problems = renderProblemIndicator(
+      this._problemEntities,
+      this._problemExists,
     );
 
     return html`
@@ -217,25 +220,5 @@ export class RoomSummaryCard extends LitElement {
       .split('_')
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ');
-  }
-
-  /**
-   * Renders the problem indicator icon if problems exist
-   * @returns {TemplateResult | typeof nothing} The rendered problem indicator or nothing
-   */
-  private _renderProblemIndicator(): TemplateResult {
-    if (this._problemEntities.length === 0) {
-      return html``;
-    }
-
-    return html`
-      <ha-icon
-        .icon=${`mdi:numeric-${this._problemEntities.length}`}
-        class="status-entities"
-        style="background-color: ${this._problemExists
-          ? 'rgba(var(--color-red), 0.8)'
-          : 'rgba(var(--color-green), 0.6)'}"
-      />
-    `;
   }
 }

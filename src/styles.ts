@@ -6,7 +6,7 @@
  * configuration, as well as static CSS styles for the card layout.
  */
 
-import { css } from 'lit';
+import { css, nothing } from 'lit';
 import type { DirectiveResult } from 'lit-html/directive';
 import {
   type StyleMapDirective,
@@ -15,7 +15,122 @@ import {
 
 import type { Config } from '@type/config';
 import type { HomeAssistant, State } from '@type/homeassistant';
+import { homeAssistantRgbColors, themeColors } from '@util/theme';
 import { getState } from './helpers';
+
+const HA_COLORS = [
+  'primary',
+  'accent',
+  'red',
+  'pink',
+  'purple',
+  'deep-purple',
+  'indigo',
+  'blue',
+  'light-blue',
+  'cyan',
+  'teal',
+  'green',
+  'light-green',
+  'lime',
+  'yellow',
+  'amber',
+  'orange',
+  'deep-orange',
+  'brown',
+  'light-grey',
+  'grey',
+  'dark-grey',
+  'blue-grey',
+  'black',
+  'white',
+  'disabled',
+];
+
+const translateColorToRgb = (color: string, alpha: number = 1): string => {
+  // use the primary or accent color from HA default theme
+  if (color === 'primary' || color === 'accent') {
+    // this will be a HA theme variable already in rgb format
+    return `rgba(var(--rgb-${color}-color), ${alpha})`;
+  }
+
+  // use a supported HA theme color
+  if (HA_COLORS.includes(color)) {
+    return `rgba(var(--rgb-${color}), ${alpha})`;
+  }
+
+  return '';
+};
+
+/**
+ * Maps Home Assistant domains to their conventional active state colors
+ * Returns a color name from the standard HA_COLORS list
+ *
+ * @param domain - The Home Assistant domain (e.g., 'light', 'switch', 'cover')
+ * @returns Color name from HA_COLORS (e.g., 'amber', 'blue')
+ */
+const activeColorFromDomain = (domain: string | undefined) => {
+  switch (domain) {
+    // Lighting
+    case 'light':
+    case 'switch_as_x':
+      return 'amber';
+
+    // Switches & Electric
+    case 'switch':
+    case 'input_boolean':
+    case 'automation':
+    case 'script':
+      return 'blue';
+
+    // Climate & Environment
+    case 'climate':
+    case 'fan':
+      return 'teal';
+
+    // Security & Safety
+    case 'alarm_control_panel':
+    case 'lock':
+      return 'red';
+
+    // Covers & Doors
+    case 'cover':
+    case 'garage_door':
+    case 'door':
+      return 'green';
+
+    // Media
+    case 'media_player':
+      return 'indigo';
+
+    // Sensors & Binary Sensors
+    case 'binary_sensor':
+    case 'sensor':
+      return 'cyan';
+
+    // Person & Presence
+    case 'person':
+    case 'device_tracker':
+      return 'purple';
+
+    // Weather
+    case 'weather':
+      return 'orange';
+
+    // Vacuum
+    case 'vacuum':
+      return 'deep-purple';
+
+    // Timer & Schedule
+    case 'timer':
+    case 'schedule':
+      return 'pink';
+
+    // Default for unknown domains
+    default:
+      return 'amber';
+  }
+};
 
 /**
  * Generates dynamic card styles based on state and sensor readings
@@ -32,7 +147,8 @@ export const getCardStyles = (
 ): DirectiveResult<typeof StyleMapDirective> => {
   // Extract basic state information
   const isActive = state?.isActive();
-  const onColor = state?.attributes?.on_color || 'yellow';
+  const onColor =
+    state?.attributes?.on_color || activeColorFromDomain(state?.getDomain());
   const tempSensor = config!.temperature_sensor;
   const humiditySensor = config!.humidity_sensor;
 
@@ -68,7 +184,7 @@ export const getCardStyles = (
   // Return complete style map
   return styleMap({
     'background-color': isActive
-      ? `rgba(var(--color-background-${onColor}),var(--opacity-bg))`
+      ? translateColorToRgb(onColor, 0.1)
       : undefined,
     borderLeft: border1,
     borderTop: border1,
@@ -118,41 +234,27 @@ export const getEntityIconStyles = (
   state?: State,
 ): {
   iconStyle: DirectiveResult<typeof StyleMapDirective>;
-  iconContainerStyle: DirectiveResult<typeof StyleMapDirective>;
   textStyle: DirectiveResult<typeof StyleMapDirective>;
 } => {
-  // on state?
-  const isActive = state?.isActive();
-  const onColor = state?.attributes?.on_color || 'yellow';
-  const offColor = state?.attributes?.off_color;
+  const isActive = state?.isActive() || false;
+  const onColor =
+    state?.attributes?.on_color || activeColorFromDomain(state?.getDomain());
+  const offColor = state?.attributes?.off_color || 'grey';
+  const iconColor = isActive ? onColor : offColor;
 
   return {
     // Icon color styles
-    iconStyle: isActive
-      ? styleMap({
-          color: `rgba(var(--color-${onColor}),1)`,
-        })
-      : offColor &&
-        styleMap({
-          color: `rgba(var(--color-${offColor}),1)`,
-        }),
-
-    // Icon container background styles
-    iconContainerStyle: isActive
-      ? styleMap({
-          'background-color': `rgba(var(--color-${onColor}),0.2)`,
-        })
-      : offColor &&
-        styleMap({
-          'background-color': `rgba(var(--color-${offColor}),0.2)`,
-        }),
+    iconStyle: styleMap({
+      '--icon-color': translateColorToRgb(iconColor, 1),
+      '--background-color': translateColorToRgb(iconColor, 0.2),
+    }),
 
     // Text color styles
     textStyle: isActive
       ? styleMap({
-          color: `rgba(var(--color-${onColor}-text),1)`,
+          '--text-color': translateColorToRgb(iconColor, 1),
         })
-      : '',
+      : nothing,
   };
 };
 
@@ -161,12 +263,23 @@ export const getEntityIconStyles = (
  * Defines the grid layout and styling for all card elements
  */
 export const styles = css`
+  /* Card Themes and Colors */
+  :host {
+    ${homeAssistantRgbColors}
+    ${themeColors}
+  }
+
+  :host {
+    --icon-color: var(--primary-text-color);
+    --text-color: var(--primary-text-color);
+    --background-color: rgba(var(--rgb-primary-text-color), 0.05);
+  }
+
   /* Card container */
   .card {
+    background: var(--background-color);
     padding: 5px;
     border-radius: 20px;
-    box-shadow: var(--box-shadow);
-    background: var(--ha-card-background, var(--card-background-color, white));
     line-height: normal;
     overflow: hidden;
   }
@@ -215,6 +328,7 @@ export const styles = css`
 
   /* Common text styles */
   .text {
+    color: var(--text-color);
     text-overflow: ellipsis;
     white-space: nowrap;
     justify-self: start;
@@ -232,7 +346,7 @@ export const styles = css`
 
   /* Icon container styling */
   .icon {
-    background-color: rgba(var(--color-theme), 0.05);
+    background-color: var(--background-color);
     height: 150%;
     width: 150%;
     align-self: center;
@@ -246,7 +360,7 @@ export const styles = css`
   /* State icon styling */
   .icon ha-state-icon {
     width: 50%;
-    color: rgba(var(--color-theme), 0.2);
+    color: var(--icon-color);
     --mdc-icon-size: 100%;
   }
 
@@ -280,9 +394,8 @@ export const styles = css`
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    border: 2px solid var(--card-background-color);
     display: grid;
     place-items: center;
-    color: var(--card-background-color);
+    color: rgb(var(--rgb-black));
   }
 `;

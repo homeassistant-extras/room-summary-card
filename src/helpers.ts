@@ -6,8 +6,7 @@
  * state retrieval, and UI element creation.
  */
 
-import { type TemplateResult, html } from 'lit';
-
+import { feature } from '@common/feature';
 import type { Config, EntityConfig, EntityInformation } from '@type/config';
 import type {
   Area,
@@ -16,44 +15,7 @@ import type {
   HomeAssistant,
   State,
 } from '@type/homeassistant';
-import { actionHandler, handleClickAction } from './common/action-handler';
-import { feature } from './common/feature';
-import { getClimateStyles, getEntityIconStyles } from './styles';
-
-/**
- * Creates a state icon element for an entity
- *
- * @param {HTMLElement} element - The parent element that will contain the icon
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {EntityInformation} entity - Information about the entity
- * @param {String[]} classes - CSS classes to apply to the icon container
- * @returns {TemplateResult} A Lit template containing the icon element
- */
-export const createStateIcon = (
-  element: HTMLElement,
-  hass: HomeAssistant,
-  entity: EntityInformation,
-  classes: String[],
-): TemplateResult => {
-  const { state } = entity;
-  if (!state) return html``;
-
-  const { iconStyle, iconContainerStyle } = getEntityIconStyles(state);
-
-  return html`<div
-    class="${['icon', ...classes].join(' ')}"
-    style=${iconContainerStyle}
-    @action=${handleClickAction(element, entity)}
-    .actionHandler=${actionHandler(entity)}
-  >
-    <ha-state-icon
-      .hass=${hass}
-      .stateObj=${state}
-      .icon=${entity.config.icon}
-      style=${iconStyle}
-    ></ha-state-icon>
-  </div>`;
-};
+import { getClimateStyles } from './styles';
 
 /**
  * Retrieves the state of an entity
