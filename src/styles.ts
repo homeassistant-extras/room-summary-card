@@ -15,7 +15,11 @@ import {
 
 import type { Config } from '@type/config';
 import type { HomeAssistant, State } from '@type/homeassistant';
-import { homeAssistantRgbColors, themeColors } from '@util/theme';
+import {
+  homeAssistantRgbColors,
+  minimalistRgbColors,
+  themeColors,
+} from '@util/theme';
 import { getState } from './helpers';
 
 const HA_COLORS = [
@@ -169,21 +173,21 @@ export const getCardStyles = (
   // Calculate border styles based on temperature and humidity
   const border1 =
     temp > tempThreshold
-      ? '2px solid rgba(var(--color-red-text),1)'
+      ? '2px solid rgba(var(--rgb-red),1)'
       : humidity > humidThreshold
-        ? '2px solid rgba(var(--color-blue-text),1)'
+        ? '2px solid rgba(var(--rgb-blue),1)'
         : undefined;
 
   const border2 =
     humidity > humidThreshold
-      ? '2px solid rgba(var(--color-blue-text),1)'
+      ? '2px solid rgba(var(--rgb-blue),1)'
       : temp > tempThreshold
-        ? '2px solid rgba(var(--color-red-text),1)'
+        ? '2px solid rgba(var(--rgb-red),1)'
         : undefined;
 
   // Return complete style map
   return styleMap({
-    'background-color': isActive
+    '--background-color-card': isActive
       ? translateColorToRgb(onColor, 0.1)
       : undefined,
     borderLeft: border1,
@@ -239,15 +243,17 @@ export const getEntityIconStyles = (
   const isActive = state?.isActive() || false;
   const onColor =
     state?.attributes?.on_color || activeColorFromDomain(state?.getDomain());
-  const offColor = state?.attributes?.off_color || 'grey';
+  const offColor = state?.attributes?.off_color;
   const iconColor = isActive ? onColor : offColor;
 
   return {
     // Icon color styles
-    iconStyle: styleMap({
-      '--icon-color': translateColorToRgb(iconColor, 1),
-      '--background-color': translateColorToRgb(iconColor, 0.2),
-    }),
+    iconStyle: iconColor
+      ? styleMap({
+          '--icon-color': translateColorToRgb(iconColor, 1),
+          '--background-color': translateColorToRgb(iconColor, 0.2),
+        })
+      : nothing,
 
     // Text color styles
     textStyle: isActive
@@ -266,18 +272,20 @@ export const styles = css`
   /* Card Themes and Colors */
   :host {
     ${homeAssistantRgbColors}
+    ${minimalistRgbColors}
     ${themeColors}
   }
 
   :host {
-    --icon-color: var(--primary-text-color);
-    --text-color: var(--primary-text-color);
-    --background-color: rgba(var(--rgb-primary-text-color), 0.05);
+    --icon-color: rgba(var(--rgb-icon), 0.2);
+    --text-color: var(--rgb-text);
+    --background-color-card: rgba(var(--rgb-card-background), 1);
+    --background-color: rgba(var(--rgb-icon-background), 0.05);
   }
 
   /* Card container */
   .card {
-    background: var(--background-color);
+    background: var(--background-color-card);
     padding: 5px;
     border-radius: 20px;
     line-height: normal;

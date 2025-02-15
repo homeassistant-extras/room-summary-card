@@ -321,7 +321,18 @@ For examples, see my HA configuration for my dashboard home page: [01-home.yaml]
 
 ## Themes and coloring
 
-The card will match the default styling of Home Assistant.
+The card will match the following themes
+
+- [default styling of Home Assistant](https://github.com/home-assistant/frontend/blob/master/src/resources/ha-style.ts)
+- [UI Minimalist](https://ui-lovelace-minimalist.github.io/UI/)
+
+Default HA Example
+
+![ha-theme](assets/ha-theme.png)
+
+UI Minimalist Example
+
+![minimalist-theme](assets/minimalist-theme.png)
 
 ### Active Colors by Domain
 

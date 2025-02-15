@@ -45,11 +45,11 @@ describe('styles.ts', () => {
       const styles = getCardStyles(mockHass as HomeAssistant, config, state);
       expect(styles).to.deep.equal(
         styleMap({
-          'background-color': `rgba(var(--rgb-${state.attributes.on_color}), 0.1)`,
-          borderLeft: '2px solid rgba(var(--color-red-text),1)',
-          borderTop: '2px solid rgba(var(--color-red-text),1)',
-          borderRight: '2px solid rgba(var(--color-blue-text),1)',
-          borderBottom: '2px solid rgba(var(--color-blue-text),1)',
+          '--background-color-card': `rgba(var(--rgb-${state.attributes.on_color}), 0.1)`,
+          borderLeft: '2px solid rgba(var(--rgb-red),1)',
+          borderTop: '2px solid rgba(var(--rgb-red),1)',
+          borderRight: '2px solid rgba(var(--rgb-blue),1)',
+          borderBottom: '2px solid rgba(var(--rgb-blue),1)',
         }),
       );
     });
@@ -60,11 +60,11 @@ describe('styles.ts', () => {
       const styles = getCardStyles(mockHass as HomeAssistant, config);
       expect(styles).to.deep.equal(
         styleMap({
-          'background-color': undefined,
-          borderLeft: '2px solid rgba(var(--color-red-text),1)',
-          borderTop: '2px solid rgba(var(--color-red-text),1)',
-          borderRight: '2px solid rgba(var(--color-red-text),1)',
-          borderBottom: '2px solid rgba(var(--color-red-text),1)',
+          '--background-color-card': undefined,
+          borderLeft: '2px solid rgba(var(--rgb-red),1)',
+          borderTop: '2px solid rgba(var(--rgb-red),1)',
+          borderRight: '2px solid rgba(var(--rgb-red),1)',
+          borderBottom: '2px solid rgba(var(--rgb-red),1)',
         }),
       );
     });
@@ -76,7 +76,7 @@ describe('styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
-          'background-color': 'rgba(var(--rgb-amber), 0.1)',
+          '--background-color-card': 'rgba(var(--rgb-amber), 0.1)',
           borderLeft: undefined,
           borderTop: undefined,
           borderRight: undefined,
@@ -92,7 +92,7 @@ describe('styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
-          'background-color': 'rgba(var(--rgb-amber), 0.1)',
+          '--background-color-card': 'rgba(var(--rgb-amber), 0.1)',
           borderLeft: undefined,
           borderTop: undefined,
           borderRight: undefined,
@@ -108,7 +108,7 @@ describe('styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
-          'background-color': 'rgba(var(--rgb-amber), 0.1)',
+          '--background-color-card': 'rgba(var(--rgb-amber), 0.1)',
           borderLeft: undefined,
           borderTop: undefined,
           borderRight: undefined,
@@ -124,7 +124,7 @@ describe('styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
-          'background-color': undefined,
+          '--background-color-card': undefined,
           borderLeft: undefined,
           borderTop: undefined,
           borderRight: undefined,
@@ -140,7 +140,7 @@ describe('styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
-          'background-color': undefined,
+          '--background-color-card': undefined,
           borderLeft: undefined,
           borderTop: undefined,
           borderRight: undefined,
@@ -156,7 +156,7 @@ describe('styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
-          'background-color': undefined,
+          '--background-color-card': undefined,
           borderLeft: undefined,
           borderTop: undefined,
           borderRight: undefined,
