@@ -38,10 +38,12 @@ export const getState = (
 
   if (!state) return undefined;
 
+  const domain = state.entity_id.split('.')[0];
   return {
     ...state,
-    getDomain: () => state.entity_id.split('.')[0],
+    getDomain: () => domain,
     isActive: () =>
+      domain === 'climate' ||
       ['on', 'true'].includes(state.state?.toLowerCase()) ||
       Number(state.state) > 0,
   };
@@ -165,7 +167,6 @@ export const getIconEntities = (
         } as EntityConfig,
         state: {
           ...state,
-          state: useClimateColors ? 'on' : state.state,
           attributes: {
             icon: useClimateColors ? climateIcons[state.state] : undefined,
             on_color: useClimateColors ? climateStyles[state.state] : undefined,
