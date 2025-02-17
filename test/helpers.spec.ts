@@ -175,7 +175,6 @@ describe('helpers.ts', () => {
       const configWithColors = {
         area: 'test_room',
         entities: ['climate.test'],
-        skip_climate_colors: false,
       };
 
       const entitiesWithColors = getIconEntities(
@@ -187,12 +186,12 @@ describe('helpers.ts', () => {
       const configWithoutColors = {
         area: 'test_room',
         entities: ['climate.test'],
-        skip_climate_colors: true,
+        features: ['skip_climate_colors'],
       };
 
       const entitiesWithoutColors = getIconEntities(
         mockHass as HomeAssistant,
-        configWithoutColors,
+        configWithoutColors as Config,
       );
       expect(entitiesWithoutColors[2]!.state!.attributes.on_color).to.be
         .undefined;

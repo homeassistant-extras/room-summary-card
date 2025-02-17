@@ -153,7 +153,8 @@ export const getIconEntities = (
       if (!state) return undefined;
 
       const useClimateColors =
-        !config.skip_climate_colors && state.getDomain() === 'climate';
+        !config.features?.includes('skip_climate_colors') &&
+        state.getDomain() === 'climate';
 
       const { climateStyles, climateIcons } = getClimateStyles();
 

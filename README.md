@@ -132,16 +132,15 @@ The card will automatically:
 
 Most of these are optional if you setup the entities a certain way using labels and attributes. For example, see my HA configuration for my dashboard home page: [01-home.yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml)
 
-| Name                | Type             | Default                                 | Description                                                       |
-| ------------------- | ---------------- | --------------------------------------- | ----------------------------------------------------------------- |
-| area                | string           | **Required**                            | The area identifier for the room (e.g., 'living_room', 'kitchen') |
-| entity              | string \| object | `light.<area>_light`                    | Main entity for the room                                          |
-| entities            | array            | See below                               | Additional entities to display                                    |
-| temperature_sensor  | string           | `sensor.<area>_climate_air_temperature` | Temperature sensor entity ID                                      |
-| humidity_sensor     | string           | `sensor.<area>_climate_humidity`        | Humidity sensor entity ID                                         |
-| skip_climate_colors | boolean          | false                                   | Disable climate-based color coding                                |
-| navigate            | string           | area name (dash-separated)              | Custom navigation path when clicking the room name / icon         |
-| features            | list             | See below                               | Optional flags to toggle different features                       |
+| Name               | Type             | Default                                 | Description                                                       |
+| ------------------ | ---------------- | --------------------------------------- | ----------------------------------------------------------------- |
+| area               | string           | **Required**                            | The area identifier for the room (e.g., 'living_room', 'kitchen') |
+| entity             | string \| object | `light.<area>_light`                    | Main entity for the room                                          |
+| entities           | array            | See below                               | Additional entities to display                                    |
+| temperature_sensor | string           | `sensor.<area>_climate_air_temperature` | Temperature sensor entity ID                                      |
+| humidity_sensor    | string           | `sensor.<area>_climate_humidity`        | Humidity sensor entity ID                                         |
+| navigate           | string           | area name (dash-separated)              | Custom navigation path when clicking the room name / icon         |
+| features           | list             | See below                               | Optional flags to toggle different features                       |
 
 ### Feature Options
 
@@ -150,6 +149,7 @@ Most of these are optional if you setup the entities a certain way using labels 
 | hide_climate_label       | flag | Show the climate label or not          |
 | hide_area_stats          | flag | Show the area statistics label or not  |
 | exclude_default_entities | flag | Exclude the default light/fan entities |
+| skip_climate_colors      | flag | Disable climate-based color coding     |
 
 ### Default Entities
 

@@ -32,7 +32,11 @@ export interface HaFormSelector extends HaFormBaseSchema {
  * Union type for supported selector types
  * This simplified version only supports area and select selectors
  */
-export type Selector = AreaSelector | SelectSelector;
+export type Selector =
+  | AreaSelector
+  | EntitySelector
+  | SelectSelector
+  | StringSelector;
 
 /**
  * Selector for choosing an area from the Home Assistant areas registry
@@ -40,6 +44,27 @@ export type Selector = AreaSelector | SelectSelector;
 export interface AreaSelector {
   /** Empty object as this selector currently takes no additional configuration */
   area: {};
+}
+
+/**
+ * Selector for choosing an entity from the Home Assistant entities registry
+ */
+interface EntitySelectorFilter {
+  /** Filter by a specific domain */
+  domain?: string | readonly string[];
+}
+
+/**
+ * Selector for choosing an entity from the Home Assistant entities registry
+ * Can be filtered by domain or entity ID
+ */
+export interface EntitySelector {
+  entity: {
+    /** When true, allows selecting multiple entities */
+    multiple?: boolean;
+    /** A filter for certain entities */
+    filter?: EntitySelectorFilter | readonly EntitySelectorFilter[];
+  } | null;
 }
 
 /**
@@ -52,7 +77,7 @@ export interface SelectSelector {
     /** When true, allows entering custom values not in the options list */
     custom_value?: boolean;
     /** Defines the display mode for the options */
-    mode?: 'list';
+    mode?: 'list' | 'dropdown';
     /** Available options, either as simple strings or as value-label pairs */
     options: string[] | SelectOption[];
   };
@@ -66,4 +91,31 @@ export interface SelectOption {
   value: string;
   /** The human-readable text shown for this option in the UI */
   label: string;
+}
+
+/**
+ * Selector for text-based inputs with various formats
+ */
+export interface StringSelector {
+  text: {
+    /** When true, allows entering multiple lines of text */
+    multiline?: boolean;
+    /** Specifies the HTML input type, affecting validation and keyboard on mobile devices */
+    type?:
+      | 'number'
+      | 'text'
+      | 'search'
+      | 'tel'
+      | 'url'
+      | 'email'
+      | 'password'
+      | 'date'
+      | 'month'
+      | 'week'
+      | 'time'
+      | 'datetime-local'
+      | 'color';
+    /** Text to display after the input field (e.g., units like "°C" or "%") */
+    suffix?: string;
+  };
 }
