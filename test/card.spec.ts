@@ -5,6 +5,7 @@ import { type HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
 import type { TemplateResult } from 'lit';
 import { stub } from 'sinon';
+import { version } from '../package.json';
 import { createStateEntity as s } from './test-helpers';
 
 describe('card.ts', () => {
@@ -73,6 +74,21 @@ describe('card.ts', () => {
   afterEach(() => {
     consoleInfoStub.restore();
     actionHandlerStub.restore();
+  });
+
+  describe('constructor', () => {
+    it('should log the version with proper formatting', () => {
+      // Assert that console.info was called once
+      expect(consoleInfoStub.calledOnce).to.be.true;
+
+      // Assert that it was called with the expected arguments
+      expect(
+        consoleInfoStub.calledWithExactly(
+          `%c🐱 Poat's Tools: room-summary-card - ${version}`,
+          'color: #CFC493;',
+        ),
+      ).to.be.true;
+    });
   });
 
   describe('setConfig', () => {

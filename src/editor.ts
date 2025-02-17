@@ -66,7 +66,7 @@ export class RoomSummaryCardEditor extends LitElement {
 
   /**
    * Sets up the card configuration
-   * @param {EditorConfig} config - The card configuration
+   * @param {Config} config - The card configuration
    */
   setConfig(config: Config) {
     this._config = config;
