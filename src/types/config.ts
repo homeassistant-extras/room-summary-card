@@ -35,6 +35,7 @@ export interface Config {
   features?: Features[];
 }
 
+/** Features to enable or disable functionality */
 export type Features =
   | 'hide_climate_label'
   | 'hide_area_stats'

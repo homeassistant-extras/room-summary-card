@@ -48,7 +48,7 @@ jobs:
         id: bump
         uses: 'phips28/gh-action-bump-version@master'
         with:
-          version-type: ${{ github.ref == 'refs/heads/release' && 'minor' || 'patch' }}
+          version-type: ${{ github.ref == 'refs/heads/release' && 'minor' || '' }}
           commit-message: 'chore: bumps version to {{version}}'
           bump-policy: 'ignore'
           skip-push: 'true'
