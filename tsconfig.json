@@ -19,11 +19,11 @@
     /* Paths */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
       "@type/*": ["./src/types/*"],
       "@common/*": ["./src/common/*"],
       "@util/*": ["./src/util/*"],
-      "@test/*": ["./test/*"]
+      "@test/*": ["./test/*"],
+      "@/*": ["./src/*"]
     }
   }
 }

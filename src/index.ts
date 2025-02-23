@@ -22,7 +22,7 @@ window.customCards.push({
   type: 'room-summary-card',
 
   // Display name in the UI
-  name: 'Room Summary Card',
+  name: 'Room Summary',
 
   // Card description for the UI
   description:

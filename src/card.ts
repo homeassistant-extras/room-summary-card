@@ -71,7 +71,7 @@ export class RoomSummaryCard extends LitElement {
   }
 
   /**
-   * Renders the room summary card
+   * renders the lit element card
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
@@ -172,6 +172,7 @@ export class RoomSummaryCard extends LitElement {
 
     this._problemExists = problemExists;
 
+    // todo - don't set raw objects to properties of this...
     // Update states only if they've changed
     if (!equal(roomEntity, this._roomEntity)) {
       this._roomEntity = roomEntity;

@@ -76,7 +76,7 @@ export class RoomSummaryCardEditor extends LitElement {
   public hass!: HomeAssistant;
 
   /**
-   * Renders the room summary card
+   * renders the lit element card
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
