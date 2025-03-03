@@ -1,6 +1,6 @@
 import { getIconEntities, getProblemEntities, getState } from '@/helpers';
 import type { Config } from '@/types/config';
-import { createStateEntity as s } from '@test/test-helpers';
+import { createState as s } from '@test/test-helpers';
 import type { HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
 
@@ -75,48 +75,48 @@ describe('helpers.ts', () => {
     it('should return state with getDomain and isActive functions', () => {
       const result = getState(mockHass, 'light.test');
       expect(result).to.include.keys('getDomain', 'isActive');
-      expect(result?.getDomain()).to.equal('light');
-      expect(result?.isActive()).to.be.true;
+      expect(result?.domain).to.equal('light');
+      expect(result?.isActive).to.be.true;
     });
 
     it('should return correct domain from getDomain function', () => {
       const result = getState(mockHass, 'light.test');
-      expect(result?.getDomain()).to.equal('light');
+      expect(result?.domain).to.equal('light');
     });
 
     it('should return true from isActive function if state is "on"', () => {
       const result = getState(mockHass, 'light.test');
-      expect(result?.isActive()).to.be.true;
+      expect(result?.isActive).to.be.true;
     });
 
     it('should return true from isActive function if state is "true"', () => {
       mockHass.states!['light.test']!.state = 'true';
       const result = getState(mockHass, 'light.test');
-      expect(result?.isActive()).to.be.true;
+      expect(result?.isActive).to.be.true;
     });
 
     it('should return true from isActive function if state is "True" case insensitive', () => {
       mockHass.states!['light.test']!.state = 'TruE';
       const result = getState(mockHass, 'light.test');
-      expect(result?.isActive()).to.be.true;
+      expect(result?.isActive).to.be.true;
     });
 
     it('should return false from isActive function if state is "off"', () => {
       mockHass.states!['light.test']!.state = 'off';
       const result = getState(mockHass, 'light.test');
-      expect(result?.isActive()).to.be.false;
+      expect(result?.isActive).to.be.false;
     });
 
     it('should return true from isActive function if state is a positive number', () => {
       mockHass.states!['light.test']!.state = '1';
       const result = getState(mockHass, 'light.test');
-      expect(result?.isActive()).to.be.true;
+      expect(result?.isActive).to.be.true;
     });
 
     it('should return false from isActive function if state is a negative number', () => {
       mockHass.states!['light.test']!.state = '-1';
       const result = getState(mockHass, 'light.test');
-      expect(result?.isActive()).to.be.false;
+      expect(result?.isActive).to.be.false;
     });
   });
 
@@ -181,7 +181,7 @@ describe('helpers.ts', () => {
         mockHass as HomeAssistant,
         configWithColors,
       );
-      expect(entitiesWithColors[2]!.state!.attributes.on_color).to.exist;
+      expect(entitiesWithColors[2]!.state!.attributes!.on_color).to.exist;
 
       const configWithoutColors = {
         area: 'test_room',
@@ -193,7 +193,7 @@ describe('helpers.ts', () => {
         mockHass as HomeAssistant,
         configWithoutColors as Config,
       );
-      expect(entitiesWithoutColors[2]!.state!.attributes.on_color).to.be
+      expect(entitiesWithoutColors[2]!.state!.attributes!.on_color).to.be
         .undefined;
     });
 

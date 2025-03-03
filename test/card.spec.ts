@@ -6,7 +6,7 @@ import { expect } from 'chai';
 import type { TemplateResult } from 'lit';
 import { stub } from 'sinon';
 import { version } from '../package.json';
-import { createStateEntity as s } from './test-helpers';
+import { createState as s } from './test-helpers';
 
 describe('card.ts', () => {
   let card: RoomSummaryCard;

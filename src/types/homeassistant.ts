@@ -62,12 +62,6 @@ export interface State {
    * Can include properties like brightness, color, temperature, etc.
    */
   attributes: Record<string, any>;
-
-  /** Returns the domain portion of the entity_id */
-  getDomain: () => string;
-
-  /** Returns whether the entity is currently active */
-  isActive: () => boolean;
 }
 
 /**

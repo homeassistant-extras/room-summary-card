@@ -1,6 +1,6 @@
 import { getState } from '@/helpers';
 import { getCardStyles, getClimateStyles, getEntityIconStyles } from '@/styles';
-import { createStateEntity as s } from '@test/test-helpers';
+import { createStateEntity as e } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
@@ -19,13 +19,13 @@ describe('styles.ts', () => {
     };
     mockHass = {
       states: {
-        'sensor.test_temp': s('sensor', 'test_temp', '75', {
+        'sensor.test_temp': e('sensor', 'test_temp', '75', {
           temperature_threshold: 80,
         }),
-        'sensor.test_humidity': s('sensor', 'test_humidity', '50', {
+        'sensor.test_humidity': e('sensor', 'test_humidity', '50', {
           humidity_threshold: 60,
         }),
-        'light.test': s('light', 'test'),
+        'light.test': e('light', 'test'),
       },
       entities: {},
       devices: {},
@@ -38,7 +38,7 @@ describe('styles.ts', () => {
       mockHass.states!['sensor.test_temp']!.state = '85';
       mockHass.states!['sensor.test_humidity']!.state = '85';
 
-      const state = s('light', 'test_light', 'on', {
+      const state = e('light', 'test_light', 'on', {
         on_color: 'yellow',
       });
 
@@ -179,7 +179,7 @@ describe('styles.ts', () => {
 
   describe('getEntityIconStyles', () => {
     it('should style active state', () => {
-      const state = s('light', 'test', 'on', { on_color: 'yellow' });
+      const state = e('light', 'test', 'on', { on_color: 'yellow' });
 
       const { iconStyle, textStyle } = getEntityIconStyles(state);
 
@@ -197,7 +197,7 @@ describe('styles.ts', () => {
     });
 
     it('should handle inactive state', () => {
-      const state = s('light', 'test', 'off', { off_color: 'grey' });
+      const state = e('light', 'test', 'off', { off_color: 'grey' });
 
       const { iconStyle, textStyle } = getEntityIconStyles(state);
 
@@ -211,7 +211,7 @@ describe('styles.ts', () => {
     });
 
     it('should handle bad color', () => {
-      const state = s('light', 'test', 'off', { off_color: 'blurple' });
+      const state = e('light', 'test', 'off', { off_color: 'blurple' });
 
       const { iconStyle, textStyle } = getEntityIconStyles(state);
 

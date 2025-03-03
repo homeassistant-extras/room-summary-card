@@ -4,7 +4,6 @@
  */
 
 import type { ActionConfig } from './action';
-import type { State } from './homeassistant';
 
 /**
  * Configuration settings for entity display and behavior within Home Assistant.
@@ -48,20 +47,47 @@ export type Features =
 export interface EntityConfig {
   /** Unique identifier for the entity */
   entity_id: string;
+
   /** Custom icon to display for the entity */
   icon?: string;
+
   /** Action to perform on tap */
   tap_action?: ActionConfig;
+
   /** Action to perform on hold */
   hold_action?: ActionConfig;
+
   /** Action to perform on double tap */
   double_tap_action?: ActionConfig;
+
+  /** Custom name to display for the entity */
+  card?: Record<string, string | unknown>;
 }
 
 /**
  * Combined entity configuration and state information.
  */
 export interface EntityInformation {
+  /** The entity configuration */
   config: EntityConfig;
-  state: State | undefined;
+
+  /** The entity state */
+  state: EntityState | undefined;
+}
+
+export interface EntityState {
+  /** ID of the entity this state belongs to */
+  entity_id: string;
+
+  /** Current state value as a string (e.g., "on", "off", "25.5") */
+  state: string;
+
+  /** Additional attributes associated with the state */
+  attributes: Record<string, any>;
+
+  /** Returns the domain portion of the entity_id */
+  domain: string;
+
+  /** Returns if it's active or not */
+  isActive: boolean;
 }

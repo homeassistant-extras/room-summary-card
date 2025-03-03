@@ -13,7 +13,7 @@ import {
   styleMap,
 } from 'lit-html/directives/style-map.js';
 
-import type { Config } from '@type/config';
+import type { Config, EntityState } from '@type/config';
 import type { HomeAssistant, State } from '@type/homeassistant';
 import {
   homeAssistantRgbColors,
@@ -148,12 +148,12 @@ const activeColorFromDomain = (domain: string | undefined) => {
 export const getCardStyles = (
   hass: HomeAssistant,
   config: Config,
-  state?: State,
+  state?: EntityState,
 ): DirectiveResult<typeof StyleMapDirective> => {
   // Extract basic state information
-  const isActive = state?.isActive();
+  const isActive = state?.isActive;
   const onColor =
-    state?.attributes?.on_color || activeColorFromDomain(state?.getDomain());
+    state?.attributes.on_color || activeColorFromDomain(state?.domain);
   const tempSensor = config!.temperature_sensor;
   const humiditySensor = config!.humidity_sensor;
 
@@ -164,8 +164,8 @@ export const getCardStyles = (
   if (!tempState || !humidState) return ``;
 
   // Get thresholds with defaults
-  const tempThreshold = tempState.attributes?.temperature_threshold || 80;
-  const humidThreshold = tempState.attributes?.humidity_threshold || 60;
+  const tempThreshold = tempState.attributes.temperature_threshold || 80;
+  const humidThreshold = tempState.attributes.humidity_threshold || 60;
 
   // Parse current values
   const temp = Number(tempState.state);
@@ -236,15 +236,15 @@ export const getClimateStyles = (): {
  * @returns {Object} Style maps for icon, container, and text
  */
 export const getEntityIconStyles = (
-  state?: State,
+  state?: EntityState,
 ): {
   iconStyle: DirectiveResult<typeof StyleMapDirective>;
   textStyle: DirectiveResult<typeof StyleMapDirective>;
 } => {
-  const isActive = state?.isActive() || false;
+  const isActive = state?.isActive || false;
   const onColor =
-    state?.attributes?.on_color || activeColorFromDomain(state?.getDomain());
-  const offColor = state?.attributes?.off_color;
+    state?.attributes.on_color || activeColorFromDomain(state?.domain);
+  const offColor = state?.attributes.off_color;
   const iconColor = isActive ? onColor : offColor;
 
   return {

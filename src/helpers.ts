@@ -7,7 +7,12 @@
  */
 
 import { feature } from '@common/feature';
-import type { Config, EntityConfig, EntityInformation } from '@type/config';
+import type {
+  Config,
+  EntityConfig,
+  EntityInformation,
+  EntityState,
+} from '@type/config';
 import type {
   Area,
   Device,
@@ -29,7 +34,7 @@ export const getState = (
   hass: HomeAssistant,
   entityId?: string,
   fakeState: boolean = false,
-): State | undefined => {
+): EntityState | undefined => {
   if (!entityId) return undefined;
 
   const state =
@@ -40,9 +45,11 @@ export const getState = (
 
   const domain = state.entity_id.split('.')[0];
   return {
-    ...state,
-    getDomain: () => domain,
-    isActive: () =>
+    state: state.state,
+    attributes: state.attributes,
+    entity_id: state.entity_id,
+    domain,
+    isActive:
       domain === 'climate' ||
       ['on', 'true'].includes(state.state?.toLowerCase()) ||
       Number(state.state) > 0,
@@ -108,7 +115,7 @@ export const getProblemEntities = (
   const problemExists = problemEntities.some((entityId) => {
     const entityState = getState(hass, entityId);
     if (!entityState) return false;
-    return entityState.isActive();
+    return entityState.isActive;
   });
 
   return {
@@ -144,7 +151,7 @@ export const getIconEntities = (
   // Process and transform entities
   const states = entities
     .map((entity) => {
-      // Transform string format to entity config
+      // Transform string format to entity config for convenience
       if (typeof entity === 'string') {
         entity = { entity_id: entity };
       }
@@ -154,7 +161,7 @@ export const getIconEntities = (
 
       const useClimateColors =
         !config.features?.includes('skip_climate_colors') &&
-        state.getDomain() === 'climate';
+        state.domain === 'climate';
 
       const { climateStyles, climateIcons } = getClimateStyles();
 
