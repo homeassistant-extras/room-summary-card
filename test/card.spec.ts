@@ -1,4 +1,5 @@
 import { RoomSummaryCard } from '@/card';
+import { styles } from '@/styles';
 import * as actionHandlerModule from '@common/action-handler';
 import { fixture } from '@open-wc/testing-helpers';
 import { type HomeAssistant } from '@type/homeassistant';
@@ -145,8 +146,8 @@ describe('card.ts', () => {
 
   describe('styles', () => {
     it('should return expected styles', () => {
-      const styles = RoomSummaryCard.styles;
-      expect(styles).to.deep.equal(styles);
+      const actual = RoomSummaryCard.styles;
+      expect(actual).to.deep.equal(styles);
     });
   });
 
