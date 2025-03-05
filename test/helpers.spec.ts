@@ -1,6 +1,11 @@
-import { getIconEntities, getProblemEntities, getState } from '@/helpers';
+import {
+  getIconEntities,
+  getProblemEntities,
+  getRoomEntity,
+  getState,
+} from '@/helpers';
 import type { Config } from '@/types/config';
-import { createState as s } from '@test/test-helpers';
+import { createStateEntity as e } from '@test/test-helpers';
 import type { HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
 
@@ -10,9 +15,9 @@ describe('helpers.ts', () => {
   beforeEach(() => {
     mockHass = {
       states: {
-        'light.test': s('light', 'test'),
-        'light.test_room_light': s('light', 'test_room_light', 'on'),
-        'switch.test_room_fan': s('switch', 'test_room_fan', 'off'),
+        'light.test': e('light', 'test'),
+        'light.test_room_light': e('light', 'test_room_light', 'on'),
+        'switch.test_room_fan': e('switch', 'test_room_fan', 'off'),
       },
       entities: {
         'light.test': {
@@ -72,14 +77,14 @@ describe('helpers.ts', () => {
       expect(state?.entity_id).to.equal('light.fake');
     });
 
-    it('should return state with getDomain and isActive functions', () => {
+    it('should return state with domain and isActive functions', () => {
       const result = getState(mockHass, 'light.test');
-      expect(result).to.include.keys('getDomain', 'isActive');
+      expect(result).to.include.keys('domain', 'isActive');
       expect(result?.domain).to.equal('light');
       expect(result?.isActive).to.be.true;
     });
 
-    it('should return correct domain from getDomain function', () => {
+    it('should return correct domain from domain function', () => {
       const result = getState(mockHass, 'light.test');
       expect(result?.domain).to.equal('light');
     });
@@ -165,7 +170,7 @@ describe('helpers.ts', () => {
     });
 
     it('should handle climate entities and skip_climate_colors', () => {
-      mockHass.states!['climate.test'] = s('climate', 'test', 'heat');
+      mockHass.states!['climate.test'] = e('climate', 'test', 'heat');
       mockHass.entities!['climate.test'] = {
         device_id: 'device_1',
         area_id: 'area_1',
@@ -241,7 +246,7 @@ describe('helpers.ts', () => {
         labels: ['problem'],
         device_id: 'device_1',
       };
-      mockHass.states!['sensor.problem'] = s('sensor', 'problem');
+      mockHass.states!['sensor.problem'] = e('sensor', 'problem');
 
       const { problemEntities, problemExists } = getProblemEntities(
         mockHass as HomeAssistant,
@@ -249,6 +254,147 @@ describe('helpers.ts', () => {
       );
       expect(problemEntities).to.include('sensor.problem');
       expect(problemExists).to.be.true;
+    });
+  });
+
+  describe('getRoomEntity', () => {
+    let mockHass: HomeAssistant;
+
+    beforeEach(() => {
+      mockHass = {
+        states: {
+          'light.test_room_light': e('light', 'test_room_light', 'on'),
+          'light.custom_entity': e('light', 'custom_entity', 'off'),
+        },
+        entities: {
+          'light.test_room_light': {
+            device_id: 'device_1',
+            area_id: 'test_room',
+            labels: [],
+          },
+          'light.custom_entity': {
+            device_id: 'device_2',
+            area_id: 'custom_area',
+            labels: [],
+          },
+        },
+        devices: {
+          device_1: {
+            area_id: 'test_room',
+          },
+          device_2: {
+            area_id: 'custom_area',
+          },
+        },
+        areas: {
+          test_room: {
+            area_id: 'test_room',
+            icon: 'mdi:room',
+          },
+          custom_area: {
+            area_id: 'custom_area',
+            icon: 'mdi:custom',
+          },
+        },
+      };
+    });
+
+    it('should return default room entity when no custom entity specified', () => {
+      const config: Config = {
+        area: 'test_room',
+      };
+
+      const roomEntity = getRoomEntity(mockHass, config);
+
+      expect(roomEntity.config.entity_id).to.equal('light.test_room_light');
+      expect(roomEntity.config.icon).to.equal('mdi:room');
+      expect(roomEntity.config.tap_action?.action).to.equal('navigate');
+      expect(roomEntity.config.hold_action?.action).to.equal('more-info');
+      expect(roomEntity.config.double_tap_action?.action).to.equal('none');
+      expect(roomEntity.state?.state).to.equal('on');
+    });
+
+    it('should use custom navigation path when specified', () => {
+      const config: Config = {
+        area: 'test_room',
+        navigate: 'custom-path',
+      };
+
+      const roomEntity = getRoomEntity(mockHass, config);
+
+      expect(roomEntity.config.tap_action?.action).to.equal('navigate');
+    });
+
+    it('should return room entity with string entity configuration', () => {
+      const config: Config = {
+        area: 'test_room',
+        entity: 'light.custom_entity',
+      };
+
+      const roomEntity = getRoomEntity(mockHass, config);
+
+      expect(roomEntity.config.entity_id).to.equal('light.custom_entity');
+      expect(roomEntity.state?.state).to.equal('off');
+      expect(roomEntity.config.hold_action?.action).to.equal('more-info');
+      expect(roomEntity.config.double_tap_action?.action).to.equal('none');
+    });
+
+    it('should return room entity with object entity configuration', () => {
+      const config: Config = {
+        area: 'test_room',
+        entity: {
+          entity_id: 'light.custom_entity',
+          icon: 'mdi:override',
+          tap_action: {
+            action: 'toggle',
+          },
+        },
+      };
+
+      const roomEntity = getRoomEntity(mockHass, config);
+
+      expect(roomEntity.config.entity_id).to.equal('light.custom_entity');
+      expect(roomEntity.config.icon).to.equal('mdi:override');
+      expect(roomEntity.config.tap_action?.action).to.equal('toggle');
+      expect(roomEntity.config.hold_action?.action).to.equal('more-info');
+      expect(roomEntity.config.double_tap_action?.action).to.equal('none');
+      expect(roomEntity.state?.state).to.equal('off');
+    });
+
+    it('should handle non-existent entity gracefully by creating fake state', () => {
+      const config: Config = {
+        area: 'non_existent_room',
+      };
+
+      const roomEntity = getRoomEntity(mockHass, config);
+
+      expect(roomEntity.config.entity_id).to.equal(
+        'light.non_existent_room_light',
+      );
+      expect(roomEntity.state?.entity_id).to.equal(
+        'light.non_existent_room_light',
+      );
+      // Verify it's a fake state by checking if attributes is undefined
+      expect(roomEntity.state?.attributes).to.be.undefined;
+    });
+
+    it('should preserve custom entity config with defaults', () => {
+      const config: Config = {
+        area: 'test_room',
+        entity: {
+          entity_id: 'light.custom_entity',
+          icon: 'icon',
+          // Intentionally omitting hold_action and double_tap_action
+        },
+      };
+
+      const roomEntity = getRoomEntity(mockHass, config);
+
+      expect(roomEntity.config.entity_id).to.equal('light.custom_entity');
+      expect(roomEntity.config.icon).to.equal('icon');
+      // Should have defaults for these
+      expect(roomEntity.config.hold_action?.action).to.equal('more-info');
+      expect(roomEntity.config.double_tap_action?.action).to.equal('none');
     });
   });
 });

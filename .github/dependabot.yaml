@@ -1,0 +1,12 @@
+# Dependabot configuration for your TypeScript project
+version: 2
+updates:
+  - package-ecosystem: 'npm' # For Node.js/JavaScript/TypeScript projects using npm or yarn
+    directory: '/' # Location of your package.json
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+    commit-message:
+      prefix: 'chore: npm' # Optional: prefix for commit messages
+      include: 'scope'

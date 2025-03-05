@@ -6,6 +6,9 @@ on:
       - 'main'
       - 'release'
 
+permissions:
+  contents: read
+
 jobs:
   check-committer:
     runs-on: ubuntu-latest
@@ -68,13 +71,51 @@ jobs:
           git push --follow-tags
           git push --tags
 
+  sonarqube:
+    name: 'Sonar Qube Scan'
+    needs: check-committer
+    runs-on: ubuntu-latest
+
+    if: ${{ needs.check-committer.outputs.should_run == 'true' && github.ref == 'refs/heads/main' }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Run NPM coverage
+        uses: anna-money/github-actions-npm@master
+        with:
+          target: 'test:coverage'
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  hacs-validation:
+    name: 'HACS Validation'
+    needs: check-committer
+    runs-on: 'ubuntu-latest'
+
+    if: ${{ needs.check-committer.outputs.should_run == 'true' }}
+
+    steps:
+      - name: 'Checkout the repository'
+        uses: 'actions/checkout@v4'
+
+      - name: 'Run HACS validation'
+        uses: 'hacs/action@main'
+        with:
+          category: 'plugin'
+
   create-release:
     name: 'Create Release'
     needs: bump-version
-    if: github.ref == 'refs/heads/release'
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
+    if: github.ref == 'refs/heads/release'
+
     steps:
       - uses: actions/checkout@v3
         with:

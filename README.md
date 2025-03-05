@@ -81,6 +81,8 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 
 ### HACS (Recommended)
 
+[![HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=homeassistant-extras&repository=room-summary-card&category=dashboard)
+
 1. Open HACS in your Home Assistant instance
 2. Click the menu icon in the top right and select "Custom repositories"
 3. Add this repository URL and select "Dashboard" as the category
@@ -441,6 +443,27 @@ This project is protected under the MIT License. For more details, refer to the 
 [![contributors](https://contrib.rocks/image?repo=homeassistant-extras/room-summary-card)](https://github.com{/homeassistant-extras/room-summary-card/}graphs/contributors)
 
 [![ko-fi](https://img.shields.io/badge/buy%20me%20a%20coffee-72A5F2?style=for-the-badge&logo=kofi&logoColor=white)](https://ko-fi.com/N4N71AQZQG)
+
+## Code Quality
+
+Forgive me and my badges..
+
+Stats
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=bugs)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=coverage)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+
+Ratings
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=homeassistant-extras_room-summary-card&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=homeassistant-extras_room-summary-card)
 
 ## Build Status
 

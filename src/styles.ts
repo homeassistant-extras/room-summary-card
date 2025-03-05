@@ -153,7 +153,7 @@ export const getCardStyles = (
   // Extract basic state information
   const isActive = state?.isActive;
   const onColor =
-    state?.attributes.on_color || activeColorFromDomain(state?.domain);
+    state?.attributes?.on_color || activeColorFromDomain(state?.domain);
   const tempSensor = config!.temperature_sensor;
   const humiditySensor = config!.humidity_sensor;
 
@@ -243,8 +243,8 @@ export const getEntityIconStyles = (
 } => {
   const isActive = state?.isActive || false;
   const onColor =
-    state?.attributes.on_color || activeColorFromDomain(state?.domain);
-  const offColor = state?.attributes.off_color;
+    state?.attributes?.on_color || activeColorFromDomain(state?.domain);
+  const offColor = state?.attributes?.off_color;
   const iconColor = isActive ? onColor : offColor;
 
   return {

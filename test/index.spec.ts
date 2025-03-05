@@ -49,7 +49,7 @@ describe('index.ts', () => {
     expect(window.customCards).to.have.lengthOf(1);
     expect(window.customCards[0]).to.deep.equal({
       type: 'room-summary-card',
-      name: 'Room Summary Card',
+      name: 'Room Summary',
       description:
         'A card to summarize the status of a room, including temperature, humidity, and any problem entities.',
       preview: true,

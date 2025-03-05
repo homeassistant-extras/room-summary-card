@@ -3,7 +3,7 @@ import * as actionHandlerModule from '@common/action-handler';
 import { fixture } from '@open-wc/testing-helpers';
 import { type HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
-import type { TemplateResult } from 'lit';
+import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
 import { version } from '../package.json';
 import { createState as s } from './test-helpers';
@@ -143,6 +143,13 @@ describe('card.ts', () => {
     });
   });
 
+  describe('styles', () => {
+    it('should return expected styles', () => {
+      const styles = RoomSummaryCard.styles;
+      expect(styles).to.deep.equal(styles);
+    });
+  });
+
   describe('rendering', () => {
     beforeEach(() => {
       card.setConfig({
@@ -154,6 +161,12 @@ describe('card.ts', () => {
       const el = await fixture(card.render() as TemplateResult);
       const label = el.querySelector('.label p');
       expect(label).to.exist;
+    });
+
+    it('should render nothing if no state', async () => {
+      (card as any)._states = undefined;
+      const el = card.render();
+      expect(el).to.equal(nothing);
     });
 
     it('should not render label if `hide_climate_label` set', async () => {
