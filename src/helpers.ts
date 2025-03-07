@@ -7,20 +7,15 @@
  */
 
 import { feature } from '@common/feature';
+import { computeDomain } from '@hass/common/entity/compute_domain';
+import { getClimateStyles } from '@theme/render-styles';
 import type {
   Config,
   EntityConfig,
   EntityInformation,
   EntityState,
 } from '@type/config';
-import type {
-  Area,
-  Device,
-  Entity,
-  HomeAssistant,
-  State,
-} from '@type/homeassistant';
-import { getClimateStyles } from './styles';
+import type { Area, Device, Entity, HomeAssistant } from '@type/homeassistant';
 
 /**
  * Retrieves the state of an entity
@@ -39,11 +34,13 @@ export const getState = (
 
   const state =
     (hass.states as { [key: string]: any })[entityId] ||
-    (fakeState ? { entity_id: entityId } : undefined);
+    (fakeState
+      ? { entity_id: entityId, state: '', attributes: {} }
+      : undefined);
 
   if (!state) return undefined;
 
-  const domain = state.entity_id.split('.')[0];
+  const domain = computeDomain(state.entity_id);
   return {
     state: state.state,
     attributes: state.attributes,

@@ -21,7 +21,9 @@
     "paths": {
       "@type/*": ["./src/types/*"],
       "@common/*": ["./src/common/*"],
+      "@hass/*": ["./src/hass/*"],
       "@util/*": ["./src/util/*"],
+      "@theme/*": ["./src/theme/*"],
       "@test/*": ["./test/*"],
       "@/*": ["./src/*"]
     }

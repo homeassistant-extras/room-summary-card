@@ -9,9 +9,11 @@
  */
 
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
-import { state } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 
 import { actionHandler, handleClickAction } from '@common/action-handler';
+import { getCardStyles, getEntityIconStyles } from '@theme/render-styles';
+import { styles } from '@theme/styles';
 import type { Config, EntityInformation } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
 import {
@@ -22,7 +24,6 @@ import {
 } from '@util/render';
 import { version } from '../package.json';
 import { getIconEntities, getProblemEntities, getRoomEntity } from './helpers';
-import { getCardStyles, getEntityIconStyles, styles } from './styles';
 const equal = require('fast-deep-equal');
 
 export class RoomSummaryCard extends LitElement {
@@ -57,6 +58,12 @@ export class RoomSummaryCard extends LitElement {
   private _problemExists: boolean = false;
 
   /**
+   * Indicates if the card is in dark mode
+   */
+  @property({ type: Boolean, reflect: true })
+  private isDarkMode!: Boolean;
+
+  /**
    * Home Assistant instance
    * Not marked as @state as it's handled differently
    */
@@ -84,7 +91,10 @@ export class RoomSummaryCard extends LitElement {
     const label = renderLabel(this._hass, this._config);
     const action = handleClickAction(this, this._roomEntity);
     const stats = renderAreaStatistics(this._hass, this._config);
-    const { textStyle } = getEntityIconStyles(this._roomEntity.state);
+    const { textStyle } = getEntityIconStyles(
+      this._hass,
+      this._roomEntity.state,
+    );
     const roomEntity = renderStateIcon(this, this._hass, this._roomEntity, [
       'room',
     ]);
@@ -111,7 +121,7 @@ export class RoomSummaryCard extends LitElement {
             @action=${action}
             .actionHandler=${handler}
           >
-            ${area}
+            <p>${area}</p>
           </div>
 
           <!-- Climate Information -->
@@ -162,6 +172,7 @@ export class RoomSummaryCard extends LitElement {
    */
   set hass(hass: HomeAssistant) {
     this._hass = hass;
+    this.isDarkMode = hass.themes.darkMode;
 
     const states = getIconEntities(hass, this._config);
     const roomEntity = getRoomEntity(hass, this._config);

@@ -20,6 +20,9 @@ export interface HomeAssistant {
 
   /** Map of area IDs to their corresponding areas */
   areas: Record<string, Area>;
+
+  /** Theme settings for the Home Assistant instance */
+  themes: Themes;
 }
 
 /**
@@ -76,4 +79,15 @@ export interface Entity {
 
   /** Array of labels associated with the entity */
   labels: string[];
+}
+
+/**
+ * Represents theme settings.
+ */
+export interface Themes {
+  /** If Dark Mode is active */
+  darkMode: boolean;
+
+  /** Current theme name */
+  theme: string;
 }

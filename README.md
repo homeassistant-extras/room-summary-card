@@ -342,7 +342,7 @@ Active entities will be colored based on their domain unless overriden.
 
 | Domain Category              | Domains                                           | Active Color |
 | ---------------------------- | ------------------------------------------------- | ------------ |
-| **Lighting**                 | `light`, `switch_as_x`                            | Amber        |
+| **Lighting**                 | `light`, `switch_as_x`                            | Yellow       |
 | **Switches & Electric**      | `switch`, `input_boolean`, `automation`, `script` | Blue         |
 | **Climate & Environment**    | `climate`, `fan`                                  | Teal         |
 | **Security & Safety**        | `alarm_control_panel`, `lock`                     | Red          |
@@ -353,7 +353,7 @@ Active entities will be colored based on their domain unless overriden.
 | **Weather**                  | `weather`                                         | Orange       |
 | **Vacuum**                   | `vacuum`                                          | Deep Purple  |
 | **Timer & Schedule**         | `timer`, `schedule`                               | Pink         |
-| **Unknown Domains**          | Any other domain                                  | Amber        |
+| **Unknown Domains**          | Any other domain                                  | Yellow       |
 
 Each domain has a predefined color to indicate its active status.
 

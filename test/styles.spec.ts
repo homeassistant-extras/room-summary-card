@@ -1,6 +1,10 @@
 import { getState } from '@/helpers';
-import { getCardStyles, getClimateStyles, getEntityIconStyles } from '@/styles';
 import { createStateEntity as e } from '@test/test-helpers';
+import {
+  getCardStyles,
+  getClimateStyles,
+  getEntityIconStyles,
+} from '@theme/render-styles';
 import type { Config } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';

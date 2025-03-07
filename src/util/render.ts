@@ -1,10 +1,10 @@
 import { actionHandler, handleClickAction } from '@common/action-handler';
 import { feature } from '@common/feature';
+import { getEntityIconStyles } from '@theme/render-styles';
 import type { Config, EntityInformation } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
 import { html, nothing, type TemplateResult } from 'lit';
 import { getDevice, getEntity, getState } from '../helpers';
-import { getEntityIconStyles } from '../styles';
 
 /**
  * Gets the climate label combining temperature and humidity when available
@@ -86,7 +86,7 @@ export const renderStateIcon = (
   const { state } = entity;
   if (!state) return nothing;
 
-  const { iconStyle } = getEntityIconStyles(state);
+  const { iconStyle } = getEntityIconStyles(hass, state);
 
   return html`<div
     class="${['icon', ...classes].join(' ')}"
