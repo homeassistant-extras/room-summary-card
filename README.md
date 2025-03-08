@@ -61,6 +61,10 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 
 ![icons](assets/icons.png)
 
+Entity Off Color attribute. Shows lightly in a different color than the default.
+
+![icons](assets/off-color.png)
+
 ### Problem Detection
 
 - Automatically detects entities labeled as "problem" in the area based on area and labels
@@ -220,13 +224,13 @@ tap_action:
 
 You can add attributes to entities to customize the functionality further.
 
-| Name                  | Type   | Default         | Description                             |
-| --------------------- | ------ | --------------- | --------------------------------------- |
-| on_color              | string | yellow          | Color when the entity is on or positive |
-| off_color             | string | theme off color | Color when the entity is off or 0       |
-| temperature_threshold | number | 80              | Threshold to show red border.           |
-| humidity_threshold    | number | 60              | Threshold to show blue border.          |
-| icon                  | string | entity default  | Custom MDI icon                         |
+| Name                  | Type   | Default         | Description                         |
+| --------------------- | ------ | --------------- | ----------------------------------- |
+| on_color              | string | yellow          | Color when the entity is active     |
+| off_color             | string | theme off color | Color when the entity is not active |
+| temperature_threshold | number | 80              | Threshold to show red border.       |
+| humidity_threshold    | number | 60              | Threshold to show blue border.      |
+| icon                  | string | entity default  | Custom MDI icon                     |
 
 You can customize entity attributes several ways.
 
@@ -330,11 +334,13 @@ The card will match the following themes
 
 Default HA Example
 
-![ha-theme](assets/ha-theme.png)
+![ha-dark](assets/default-dark.png)
+![ha-light](assets/default-light.png)
 
 UI Minimalist Example
 
-![minimalist-theme](assets/minimalist-theme.png)
+![minimalist-dark](assets/minimalist-dark.png)
+![minimalist-light](assets/minimalist-light.png)
 
 ### Active Colors by Domain
 
