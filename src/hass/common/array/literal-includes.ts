@@ -1,6 +1,8 @@
 /**
  * https://github.com/home-assistant/frontend/blob/dev/src/common/array/literal-includes.ts#L6
- *
+ */
+
+/**
  * Creates a type predicate function for determining if an array literal includes a given value
  * @param array - The array to check
  * @returns A type predicate function

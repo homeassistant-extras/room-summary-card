@@ -1,3 +1,7 @@
+/**
+ * https://github.com/home-assistant/frontend/blob/dev/src/data/group.ts
+ */
+
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HassEntityAttributeBase, HassEntityBase } from '@hass/ws/types';
 

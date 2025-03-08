@@ -109,6 +109,7 @@ export class RoomSummaryCardEditor extends LitElement {
       delete config.features;
     }
 
+    // @ts-ignore
     fireEvent(this, 'config-changed', {
       config,
     });
