@@ -31,7 +31,6 @@ export const styles = css`
     --background-color-card: var(--theme-background-color-card);
     --background-opacity-card: var(--opacity-background-inactive);
 
-    --icon-opacity: 0.2;
     --icon-color: var(--theme-color-icon);
     --background-color-icon: var(--theme-background-color-icon);
     --background-opacity-icon: var(--opacity-icon-fill-inactive);
@@ -181,9 +180,22 @@ export const styles = css`
     justify-self: start;
     width: 26px;
     height: 26px;
-    border-radius: 50%;
     display: grid;
     place-items: center;
-    color: rgb(var(--rgb-black));
+    color: var(--black-color);
+    position: relative;
+  }
+
+  .status-entities::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background-color: var(--background-color-icon);
+    opacity: var(--background-opacity-icon);
+    z-index: -1;
   }
 `;

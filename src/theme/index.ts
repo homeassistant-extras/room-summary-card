@@ -5,6 +5,35 @@
 
 import { css } from 'lit';
 
+export const homeAssistantColors = [
+  'primary',
+  'accent',
+  'red',
+  'pink',
+  'purple',
+  'deep-purple',
+  'indigo',
+  'blue',
+  'light-blue',
+  'cyan',
+  'teal',
+  'green',
+  'light-green',
+  'lime',
+  'yellow',
+  'amber',
+  'orange',
+  'deep-orange',
+  'brown',
+  'light-grey',
+  'grey',
+  'dark-grey',
+  'blue-grey',
+  'black',
+  'white',
+  'disabled',
+];
+
 export const minimalistColors = [
   'red',
   'green',
@@ -34,6 +63,9 @@ export const themeColors = css`
     --theme-color-minimalist,
     var(--state-icon-color, white)
   );
+
+  --opacity-icon-active: 1;
+  --opacity-icon-inactive: 0.2;
 `;
 
 export const colorsLight = css`

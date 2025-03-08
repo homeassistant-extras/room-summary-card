@@ -5,18 +5,17 @@ import {
   styleMap,
 } from 'lit-html/directives/style-map.js';
 
-import { getState } from '@/helpers';
 import { stateActive } from '@hass/common/entity/state_active';
 import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HassEntity } from '@hass/types';
 import type { Config, EntityState } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
-import { getThemeColorOverride } from './custom-theme';
+import { getThemeColorOverride as getColorOverride } from './custom-theme';
 
-const getTemperatureBorders = (hass: HomeAssistant, config: Config) => {
-  const tempState = getState(hass, config!.temperature_sensor);
-  const humidState = getState(hass, config!.humidity_sensor);
-
+const getTemperatureBorders = (
+  tempState: EntityState | undefined,
+  humidState: EntityState | undefined,
+) => {
   if (!tempState || !humidState)
     return { border1: undefined, border2: undefined };
 
@@ -28,20 +27,19 @@ const getTemperatureBorders = (hass: HomeAssistant, config: Config) => {
   const temp = Number(tempState.state);
   const humidity = Number(humidState.state);
 
-  // todo - these colors don't work now
   // Calculate border styles based on temperature and humidity
   const border1 =
     temp > tempThreshold
-      ? '2px solid rgba(var(--rgb-red),1)'
+      ? '5px solid var(--error-color)'
       : humidity > humidThreshold
-        ? '2px solid rgba(var(--rgb-blue),1)'
+        ? '5px solid var(--info-color)'
         : undefined;
 
   const border2 =
     humidity > humidThreshold
-      ? '2px solid rgba(var(--rgb-blue),1)'
+      ? '5px solid var(--info-color)'
       : temp > tempThreshold
-        ? '2px solid rgba(var(--rgb-red),1)'
+        ? '5px solid var(--error-color)'
         : undefined;
 
   return { border1, border2 };
@@ -58,15 +56,17 @@ const getTemperatureBorders = (hass: HomeAssistant, config: Config) => {
 export const getCardStyles = (
   hass: HomeAssistant,
   config: Config,
+  tempState: EntityState | undefined,
+  humidState: EntityState | undefined,
   state?: EntityState,
 ): DirectiveResult<typeof StyleMapDirective> => {
   // as of now, only dark mode handles background coloring
   const stateObj = state as any as HassEntity;
   const active = hass.themes.darkMode && stateActive(stateObj);
   const cssColor = hass.themes.darkMode ? stateColorCss(stateObj) : undefined;
-  const themeOverride = getThemeColorOverride(hass, state);
+  const themeOverride = getColorOverride(hass, state);
 
-  const { border1, border2 } = getTemperatureBorders(hass, config);
+  const { border1, border2 } = getTemperatureBorders(tempState, humidState);
 
   // Return complete style map
   return styleMap({
@@ -111,6 +111,15 @@ export const getClimateStyles = (): {
   };
 };
 
+export const getProblemEntitiesStyle = (problemExists: boolean) => {
+  return styleMap({
+    '--background-color-icon': `${
+      problemExists ? 'var(--error-color)' : 'var(--success-color)'
+    }`,
+    '--background-opacity-icon': `${problemExists ? '0.8' : '0.6'}`,
+  });
+};
+
 /**
  * Generates styles for entity icons based on their state
  *
@@ -129,22 +138,18 @@ export const getEntityIconStyles = (
   const stateObj = state as any as HassEntity;
   const active = stateActive(stateObj);
   const cssColor = stateColorCss(stateObj);
-  const themeOverride = getThemeColorOverride(hass, state);
-
-  // const onColor = state?.attributes?.on_color; // || activeColorFromDomain(state?.domain);
-  // const offColor = state?.attributes?.off_color;
-  // const iconColor = isActive ? onColor : offColor;
+  const themeOverride = getColorOverride(hass, state, active);
+  const activeClass = active ? 'active' : 'inactive';
 
   return {
     // Icon color styles
-    iconStyle: active
-      ? styleMap({
-          '--icon-color': cssColor,
-          '--icon-opacity': '1',
-          '--background-color-icon': cssColor,
-          '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
-        })
-      : nothing,
+    iconStyle: styleMap({
+      '--icon-color': cssColor,
+      '--icon-opacity': `var(--opacity-icon-${activeClass})`,
+      '--background-color-icon': cssColor,
+      '--background-opacity-icon': `var(--opacity-icon-fill-${activeClass})`,
+      '--state-color-theme-override': themeOverride,
+    }),
 
     // Text color styles
     textStyle: active

@@ -1,6 +1,9 @@
 import { actionHandler, handleClickAction } from '@common/action-handler';
 import { feature } from '@common/feature';
-import { getEntityIconStyles } from '@theme/render-styles';
+import {
+  getEntityIconStyles,
+  getProblemEntitiesStyle,
+} from '@theme/render-styles';
 import type { Config, EntityInformation } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
 import { html, nothing, type TemplateResult } from 'lit';
@@ -114,13 +117,13 @@ export const renderProblemIndicator = (
     return nothing;
   }
 
+  const styles = getProblemEntitiesStyle(problemExists);
+
   return html`
     <ha-icon
       .icon=${`mdi:numeric-${problemEntities.length}`}
       class="status-entities"
-      style="background-color: ${problemExists
-        ? 'rgba(var(--rgb-red), 0.8)'
-        : 'rgba(var(--rgb-green), 0.6)'}"
+      style=${styles}
     />
   `;
 };

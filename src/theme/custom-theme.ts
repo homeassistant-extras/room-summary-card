@@ -1,6 +1,6 @@
 import type { EntityState } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
-import { minimalistColors } from '.';
+import { homeAssistantColors, minimalistColors } from '.';
 
 /**
  * Maps Home Assistant domains to their conventional active state colors
@@ -76,15 +76,27 @@ const activeColorFromDomain = (domain: string | undefined) => {
 export const getThemeColorOverride = (
   hass: HomeAssistant,
   state?: EntityState,
+  active?: boolean,
 ) => {
   if (!state) return undefined;
+  const onColor = state.attributes.on_color;
+  const offColor = state?.attributes?.off_color;
 
-  if (hass.themes.theme.startsWith('minimalist-')) {
-    const onColor =
-      state?.attributes?.on_color || activeColorFromDomain(state?.domain);
-
-    if (minimalistColors.includes(onColor)) {
-      return `rgb(var(--color-${onColor}))`;
+  if (hass.themes.theme === 'default') {
+    // only overwrite default theme if explicitly set
+    if (active && onColor && homeAssistantColors.includes(onColor)) {
+      return `var(--${onColor}-color)`;
+    }
+    if (!active && offColor && homeAssistantColors.includes(offColor)) {
+      return `var(--${offColor}-color)`;
+    }
+  } else if (hass.themes.theme.startsWith('minimalist-')) {
+    // for minimalist - try and match a color based on domain
+    const color = active
+      ? onColor || activeColorFromDomain(state.domain)
+      : offColor;
+    if (minimalistColors.includes(color)) {
+      return `rgb(var(--color-${color}))`;
     }
   }
 

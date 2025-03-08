@@ -35,7 +35,7 @@ export const getState = (
   const state =
     (hass.states as { [key: string]: any })[entityId] ||
     (fakeState
-      ? { entity_id: entityId, state: '', attributes: {} }
+      ? { entity_id: entityId, state: 'off', attributes: {} }
       : undefined);
 
   if (!state) return undefined;

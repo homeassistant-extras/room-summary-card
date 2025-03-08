@@ -393,8 +393,9 @@ The `on_color` and `off_color` attributes support these color stylings from the 
 - [x] **`Initial design`**: <strike>create initial room card based on button-card template in UI minimialist theme.</strike>
 - [x] **`Temperature`**: <strike>use uom from the device.</strike>
 - [x] **`Card Editor`**: <strike>ability to use the HA card editor.</strike>
-- [ ] **`Test on other themes`**: make sure it works elsewhere.
-- [ ] **`Flags`**: ability to disable features.
+- [x] **`Test on other themes`**: <strike>make sure it works elsewhere.</strike>
+- [x] **`Flags`**: <strike>ability to disable features.</strike>
+- [ ] **`Test on iOS theme`**: another theme to consider
 - [ ] **`Sizing`**: ability to fit different size squares.
 
 ## Contributing

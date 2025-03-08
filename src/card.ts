@@ -14,7 +14,7 @@ import { property, state } from 'lit/decorators.js';
 import { actionHandler, handleClickAction } from '@common/action-handler';
 import { getCardStyles, getEntityIconStyles } from '@theme/render-styles';
 import { styles } from '@theme/styles';
-import type { Config, EntityInformation } from '@type/config';
+import type { Config, EntityInformation, EntityState } from '@type/config';
 import type { HomeAssistant } from '@type/homeassistant';
 import {
   renderAreaStatistics,
@@ -23,7 +23,12 @@ import {
   renderStateIcon,
 } from '@util/render';
 import { version } from '../package.json';
-import { getIconEntities, getProblemEntities, getRoomEntity } from './helpers';
+import {
+  getIconEntities,
+  getProblemEntities,
+  getRoomEntity,
+  getState,
+} from './helpers';
 const equal = require('fast-deep-equal');
 
 export class RoomSummaryCard extends LitElement {
@@ -56,6 +61,12 @@ export class RoomSummaryCard extends LitElement {
    */
   @state()
   private _problemExists: boolean = false;
+
+  @state()
+  private _temperature!: EntityState | undefined;
+
+  @state()
+  private _humidity!: EntityState | undefined;
 
   /**
    * Indicates if the card is in dark mode
@@ -104,6 +115,8 @@ export class RoomSummaryCard extends LitElement {
     const cardStyle = getCardStyles(
       this._hass,
       this._config,
+      this._temperature,
+      this._humidity,
       this._roomEntity.state,
     );
     const problems = renderProblemIndicator(
@@ -121,7 +134,7 @@ export class RoomSummaryCard extends LitElement {
             @action=${action}
             .actionHandler=${handler}
           >
-            <p>${area}</p>
+            ${area}
           </div>
 
           <!-- Climate Information -->
@@ -180,10 +193,11 @@ export class RoomSummaryCard extends LitElement {
       hass,
       this._config.area,
     );
+    const tempState = getState(hass, this._config!.temperature_sensor);
+    const humidState = getState(hass, this._config!.humidity_sensor);
 
     this._problemExists = problemExists;
 
-    // todo - don't set raw objects to properties of this...
     // Update states only if they've changed
     if (!equal(roomEntity, this._roomEntity)) {
       this._roomEntity = roomEntity;
@@ -193,6 +207,12 @@ export class RoomSummaryCard extends LitElement {
     }
     if (!equal(problemEntities, this._problemEntities)) {
       this._problemEntities = problemEntities;
+    }
+    if (!equal(tempState, this._temperature)) {
+      this._temperature = tempState;
+    }
+    if (!equal(humidState, this._humidity)) {
+      this._humidity = humidState;
     }
   }
 
