@@ -7,7 +7,12 @@
  */
 
 import { css } from 'lit';
-import { colorsDark, colorsLight, minimalistThemeColors, themeColors } from '.';
+import {
+  colorsDark,
+  colorsLight,
+  minimalistThemeColors,
+  themeColors,
+} from './themes';
 
 /**
  * Static CSS styles for the Room Summary Card

@@ -16,7 +16,8 @@ import {
   handleClickAction,
 } from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
-import { getCardStyles, getEntityIconStyles } from '@theme/render-styles';
+import { renderCardStyles } from '@theme/render/card-styles';
+import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { styles } from '@theme/styles';
 import type { Config, EntityInformation, EntityState } from '@type/config';
 import {
@@ -105,7 +106,7 @@ export class RoomSummaryCard extends LitElement {
     const label = renderLabel(this._hass, this._config);
     const action = handleClickAction(this, this._roomEntity);
     const stats = renderAreaStatistics(this._hass, this._config);
-    const { textStyle } = getEntityIconStyles(
+    const { textStyle } = renderEntityIconStyles(
       this._hass,
       this._roomEntity.state,
     );
@@ -115,9 +116,8 @@ export class RoomSummaryCard extends LitElement {
     const stateIcons = this._states.map((s, i) =>
       renderStateIcon(this, this._hass, s, ['entity', `entity-${i + 1}`]),
     );
-    const cardStyle = getCardStyles(
+    const cardStyle = renderCardStyles(
       this._hass,
-      this._config,
       this._temperature,
       this._humidity,
       this._roomEntity.state,

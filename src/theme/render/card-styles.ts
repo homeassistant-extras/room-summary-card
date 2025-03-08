@@ -1,0 +1,87 @@
+import type { DirectiveResult } from 'lit-html/directive';
+import {
+  type StyleMapDirective,
+  styleMap,
+} from 'lit-html/directives/style-map.js';
+
+import { stateActive } from '@hass/common/entity/state_active';
+import { stateColorCss } from '@hass/common/entity/state_color';
+import type { HomeAssistant } from '@hass/types';
+import type { HassEntity } from '@hass/ws/types';
+import type { EntityState } from '@type/config';
+import { getThemeColorOverride as getColorOverride } from '../custom-theme';
+
+/**
+ * Generates border styles based on temperature and humidity thresholds
+ *
+ * @param {EntityState | undefined} tempState - Temperature sensor state
+ * @param {EntityState | undefined} humidState - Humidity sensor state
+ * @returns {Object} Border style configuration with border1 and border2 properties
+ */
+const renderCardBorderStyles = (
+  tempState: EntityState | undefined,
+  humidState: EntityState | undefined,
+) => {
+  if (!tempState || !humidState)
+    return { border1: undefined, border2: undefined };
+
+  // Get thresholds with defaults
+  const tempThreshold = tempState.attributes.temperature_threshold || 80;
+  const humidThreshold = tempState.attributes.humidity_threshold || 60;
+
+  // Parse current values
+  const temp = Number(tempState.state);
+  const humidity = Number(humidState.state);
+
+  // Calculate border styles based on temperature and humidity
+  const border1 =
+    temp > tempThreshold
+      ? '5px solid var(--error-color)'
+      : humidity > humidThreshold
+        ? '5px solid var(--info-color)'
+        : undefined;
+
+  const border2 =
+    humidity > humidThreshold
+      ? '5px solid var(--info-color)'
+      : temp > tempThreshold
+        ? '5px solid var(--error-color)'
+        : undefined;
+
+  return { border1, border2 };
+};
+
+/**
+ * Generates dynamic card styles based on state and sensor readings
+ *
+ * @param {HomeAssistant} hass - The Home Assistant instance
+ * @param {EntityState | undefined} tempState - Temperature sensor state
+ * @param {EntityState | undefined} humidState - Humidity sensor state
+ * @param {EntityState} [state] - Current entity state
+ * @returns {DirectiveResult<typeof StyleMapDirective>} Style map for the card
+ */
+export const renderCardStyles = (
+  hass: HomeAssistant,
+  tempState: EntityState | undefined,
+  humidState: EntityState | undefined,
+  state?: EntityState,
+): DirectiveResult<typeof StyleMapDirective> => {
+  // as of now, only dark mode handles background coloring
+  const stateObj = state as any as HassEntity;
+  const active = hass.themes.darkMode && stateActive(stateObj);
+  const cssColor = hass.themes.darkMode ? stateColorCss(stateObj) : undefined;
+  const themeOverride = getColorOverride(hass, state);
+
+  const { border1, border2 } = renderCardBorderStyles(tempState, humidState);
+
+  // Return complete style map
+  return styleMap({
+    '--background-color-card': active ? cssColor : undefined,
+    '--background-opacity-card': `var(--opacity-background-${active ? 'active' : 'inactive'})`,
+    '--state-color-theme-override': themeOverride,
+    borderLeft: border1,
+    borderTop: border1,
+    borderRight: border2,
+    borderBottom: border2,
+  });
+};

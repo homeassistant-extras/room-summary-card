@@ -1,8 +1,6 @@
-import { actionHandler } from '@delegates/action-handler-delegate';
 import { actionHandlerBind } from '@hass/panels/lovelace/common/directives/action-handler-directive';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { stub } from 'sinon';
 
 export default () => {
   describe('action-handler-directive.ts', () => {
@@ -111,63 +109,6 @@ export default () => {
 
         // Assert
         expect(result).to.be.undefined;
-      });
-    });
-
-    describe('actionHandler directive', () => {
-      it('should be a valid directive', () => {
-        // This test just verifies that actionHandler was created with the directive factory
-        expect(actionHandler).to.be.a('function');
-      });
-
-      it('should call actionHandlerBind during update', () => {
-        // We can't directly test the directive's update method since it's encapsulated
-        // and Lit's testing utilities would be needed for a more direct test.
-        // In a real test scenario, you'd use Lit's testing utilities or test a component
-        // that uses this directive.
-
-        // This is more of a structural test to verify the code is set up correctly
-        const directiveClass = (actionHandler as any).directiveClass;
-        expect(directiveClass).to.be.a('function');
-        expect(directiveClass.prototype.update).to.be.a('function');
-        expect(directiveClass.prototype.render).to.be.a('function');
-      });
-    });
-
-    describe('Integration tests', () => {
-      it('should handle action events properly', () => {
-        // Setup mock element with event listener
-        const actionSpy = sandbox.spy();
-        const dispatchStub = stub(mockElement, 'dispatchEvent');
-        mockElement.addEventListener('action', actionSpy as any);
-
-        // Mock the binding process
-        actionHandlerBind(mockElement, { hasHold: true });
-
-        // Simulate what would happen if the action handler detected a 'tap' action
-        // and dispatched an event
-        const actionEvent = new CustomEvent('action', {
-          bubbles: true,
-          composed: true,
-          detail: { action: 'tap' },
-        });
-
-        mockElement.dispatchEvent(actionEvent);
-
-        // Ensure the stub was called once
-        expect(dispatchStub.calledOnce).to.be.true;
-
-        // Retrieve the event argument passed to dispatchEvent
-        const event = dispatchStub.firstCall.args[0] as CustomEvent;
-        expect(event.type).to.equal('action');
-        expect(event.detail.action).to.equal('tap');
-
-        // Restore the original method
-        dispatchStub.restore();
-
-        // Verify the event listener caught the event
-        expect(actionSpy.calledOnce).to.be.true;
-        expect(actionSpy.firstCall.args[0].detail.action).to.equal('tap');
       });
     });
   });

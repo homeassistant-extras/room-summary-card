@@ -5,9 +5,9 @@ import {
 } from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import {
-  getEntityIconStyles,
   getProblemEntitiesStyle,
-} from '@theme/render-styles';
+  renderEntityIconStyles,
+} from '@theme/render/icon-styles';
 import type { Config, EntityInformation } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
 import { getDevice, getEntity, getState } from '../helpers';
@@ -92,7 +92,7 @@ export const renderStateIcon = (
   const { state } = entity;
   if (!state) return nothing;
 
-  const { iconStyle } = getEntityIconStyles(hass, state);
+  const { iconStyle } = renderEntityIconStyles(hass, state);
 
   return html`<div
     class="${['icon', ...classes].join(' ')}"

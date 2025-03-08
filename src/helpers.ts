@@ -12,7 +12,6 @@ import type { AreaRegistryEntry } from '@hass/data/area_registry';
 import type { DeviceRegistryEntry } from '@hass/data/device_registry';
 import type { EntityRegistryDisplayEntry } from '@hass/data/entity_registry';
 import type { HomeAssistant } from '@hass/types';
-import { getClimateStyles } from '@theme/render-styles';
 import type {
   Config,
   EntityConfig,
@@ -130,6 +129,16 @@ export const getProblemEntities = (
   };
 };
 
+const climateIcons = {
+  auto: 'mdi:autorenew',
+  cool: 'mdi:snowflake',
+  heat: 'mdi:fire',
+  dry: 'mdi:water',
+  heat_cool: 'mdi:sun-snowflake',
+  fan_only: 'mdi:fan',
+  off: 'mdi:snowflake-off',
+} as Record<string, string>;
+
 /**
  * Gets entities to display icons for
  *
@@ -165,11 +174,10 @@ export const getIconEntities = (
       const state = getState(hass, entity.entity_id);
       if (!state) return undefined;
 
-      const useClimateColors =
+      // todo - rename
+      const useClimateIcons =
         !config.features?.includes('skip_climate_colors') &&
         state.domain === 'climate';
-
-      const { climateStyles, climateIcons } = getClimateStyles();
 
       // Create entity information with defaults and climate handling
       return {
@@ -182,8 +190,7 @@ export const getIconEntities = (
         state: {
           ...state,
           attributes: {
-            icon: useClimateColors ? climateIcons[state.state] : undefined,
-            on_color: useClimateColors ? climateStyles[state.state] : undefined,
+            icon: useClimateIcons ? climateIcons[state.state] : undefined,
             ...state.attributes,
           },
         },

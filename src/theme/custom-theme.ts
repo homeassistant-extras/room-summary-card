@@ -1,6 +1,6 @@
 import type { HomeAssistant } from '@hass/types';
 import type { EntityState } from '@type/config';
-import { homeAssistantColors, minimalistColors } from '.';
+import { homeAssistantColors, minimalistColors } from './themes';
 
 /**
  * Maps Home Assistant domains to their conventional active state colors
@@ -73,6 +73,25 @@ const activeColorFromDomain = (domain: string | undefined) => {
   }
 };
 
+/**
+ * Determines the appropriate theme color based on entity state and active status
+ * This function handles both default Home Assistant themes and Minimalist themes
+ *
+ * @param hass - The Home Assistant instance containing theme information
+ * @param state - The entity state object (optional)
+ * @param active - Boolean indicating if the entity is in an active state (optional)
+ * @returns A CSS color variable string or undefined if no appropriate color is found
+ *
+ * @example
+ * // For a light entity in active state with default theme
+ * const color = getThemeColorOverride(hass, lightState, true);
+ * // Returns something like "var(--yellow-color)" if conditions are met
+ *
+ * @example
+ * // For an inactive entity with minimalist theme
+ * const color = getThemeColorOverride(hass, entityState, false);
+ * // Returns something like "rgb(var(--color-grey))" if conditions are met
+ */
 export const getThemeColorOverride = (
   hass: HomeAssistant,
   state?: EntityState,
