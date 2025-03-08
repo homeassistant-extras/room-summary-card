@@ -34,7 +34,6 @@ export default () => {
               off_color: 'grey',
             },
             domain: 'light',
-            isActive: true,
           };
 
           const result = getThemeColorOverride(hassDefault, state, true);
@@ -50,7 +49,6 @@ export default () => {
               off_color: 'grey',
             },
             domain: 'light',
-            isActive: false,
           };
 
           const result = getThemeColorOverride(hassDefault, state, false);
@@ -66,7 +64,6 @@ export default () => {
               off_color: 'grey',
             },
             domain: 'light',
-            isActive: true,
           };
 
           const result = getThemeColorOverride(hassDefault, state, true);
@@ -81,7 +78,6 @@ export default () => {
             state: 'on',
             attributes: {},
             domain: 'light',
-            isActive: true,
           };
 
           const result = getThemeColorOverride(hassMinimalist, state, true);
@@ -97,7 +93,6 @@ export default () => {
               off_color: 'grey',
             },
             domain: 'light',
-            isActive: true,
           };
 
           const result = getThemeColorOverride(hassMinimalist, state, true);
@@ -113,7 +108,6 @@ export default () => {
               off_color: 'grey',
             },
             domain: 'light',
-            isActive: false,
           };
 
           const result = getThemeColorOverride(hassMinimalist, state, false);
@@ -128,7 +122,6 @@ export default () => {
               on_color: 'cyan', // not in minimalistColors
             },
             domain: 'light',
-            isActive: true,
           };
 
           const result = getThemeColorOverride(hassMinimalist, state, true);
@@ -143,7 +136,6 @@ export default () => {
             state: 'on',
             attributes: {},
             domain: 'light',
-            isActive: true,
           };
 
           const result = getThemeColorOverride(hassMinimalist, state, true);
@@ -156,7 +148,6 @@ export default () => {
             state: 'on',
             attributes: {},
             domain: 'switch',
-            isActive: true,
           };
 
           const result = getThemeColorOverride(hassMinimalist, state, true);
@@ -169,7 +160,6 @@ export default () => {
             state: 'heat',
             attributes: {},
             domain: 'climate',
-            isActive: true,
           };
 
           // teal isn't in minimalistColors, so we expect undefined
@@ -183,7 +173,6 @@ export default () => {
             state: 'active',
             attributes: {},
             domain: 'unknown',
-            isActive: true,
           };
 
           const result = getThemeColorOverride(hassMinimalist, state, true);

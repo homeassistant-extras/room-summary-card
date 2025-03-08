@@ -87,7 +87,4 @@ export interface EntityState {
 
   /** Returns the domain portion of the entity_id */
   domain: string;
-
-  /** Returns if it's active or not */
-  isActive: boolean;
 }

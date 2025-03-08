@@ -17,6 +17,9 @@ export default () => {
         devices: {},
         areas: {},
         states: {},
+        themes: {
+          theme: 'minimalist-foo',
+        },
       } as any as HomeAssistant;
     });
 
@@ -44,7 +47,6 @@ export default () => {
             icon: 'mdi:light',
           },
           domain: 'light',
-          isActive: true,
         };
 
         // Mock entity information
@@ -83,8 +85,11 @@ export default () => {
         const el = await fixture(result as TemplateResult);
 
         expect((el as any).style.getPropertyValue('--icon-color')).to.equal(
-          'rgba(var(--rgb-amber), 1)',
+          'var(--state-color-theme-override, var(--state-light-on-color, var(--state-light-active-color, var(--state-active-color))))',
         );
+        expect(
+          (el as any).style.getPropertyValue('--state-color-theme-override'),
+        ).to.equal('rgb(var(--color-yellow))');
       });
 
       it('should render ha-state-icon with correct properties', async () => {
@@ -170,9 +175,12 @@ export default () => {
         const el = await fixture(result as TemplateResult);
 
         expect(el).to.exist;
-        expect((el as any).style.backgroundColor).to.equal(
-          'rgba(var(--rgb-green), 0.6)',
-        );
+        expect(
+          (el as any).style.getPropertyValue('--background-color-icon'),
+        ).to.equal('var(--success-color)');
+        expect(
+          (el as any).style.getPropertyValue('--background-opacity-icon'),
+        ).to.equal('0.6');
       });
 
       it('should use red background when problemExists is true', async () => {
@@ -180,9 +188,12 @@ export default () => {
         const el = await fixture(result as TemplateResult);
 
         expect(el).to.exist;
-        expect((el as any).style.backgroundColor).to.equal(
-          'rgba(var(--rgb-red), 0.8)',
-        );
+        expect(
+          (el as any).style.getPropertyValue('--background-color-icon'),
+        ).to.equal('var(--error-color)');
+        expect(
+          (el as any).style.getPropertyValue('--background-opacity-icon'),
+        ).to.equal('0.8');
       });
 
       // Edge cases

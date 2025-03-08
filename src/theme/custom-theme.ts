@@ -101,6 +101,8 @@ export const getThemeColorOverride = (
   const onColor = state.attributes.on_color;
   const offColor = state?.attributes?.off_color;
 
+  console.log(onColor, offColor, hass.themes.theme);
+
   if (hass.themes.theme === 'default') {
     // only overwrite default theme if explicitly set
     if (active && onColor && homeAssistantColors.includes(onColor)) {

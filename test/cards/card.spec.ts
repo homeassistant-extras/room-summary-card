@@ -67,6 +67,10 @@ describe('card.ts', () => {
           icon: '',
         },
       },
+      themes: {
+        darkMode: true,
+        theme: 'default',
+      },
     } as any as HomeAssistant;
     card.setConfig({ area: 'living_room' });
     card.hass = mockHass as HomeAssistant;

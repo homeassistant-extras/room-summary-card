@@ -19,8 +19,6 @@ export const createState = (
     entity_id: `${domain}.${name}`,
     state: state,
     attributes: attributes,
-    //domain,
-    //isActive: state === 'on',
   };
 };
 
@@ -43,6 +41,5 @@ export const createStateEntity = (
     state: state,
     attributes: attributes,
     domain,
-    isActive: state === 'on',
   };
 };

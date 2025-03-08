@@ -7,91 +7,11 @@
  */
 
 import { hasFeature } from '@/config/feature';
-import { computeDomain } from '@hass/common/entity/compute_domain';
-import type { AreaRegistryEntry } from '@hass/data/area_registry';
-import type { DeviceRegistryEntry } from '@hass/data/device_registry';
-import type { EntityRegistryDisplayEntry } from '@hass/data/entity_registry';
+import { getArea } from '@delegates/retrievers/area';
+import { getState } from '@delegates/retrievers/state';
+import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
-import type {
-  Config,
-  EntityConfig,
-  EntityInformation,
-  EntityState,
-} from '@type/config';
-
-/**
- * Retrieves the state of an entity
- *
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {string} [entityId] - The ID of the entity
- * @param {boolean} [fakeState=false] - Whether to create a fake state if none exists
- * @returns {State | undefined} The entity's state or undefined
- */
-export const getState = (
-  hass: HomeAssistant,
-  entityId?: string,
-  fakeState: boolean = false,
-): EntityState | undefined => {
-  if (!entityId) return undefined;
-
-  const state =
-    (hass.states as { [key: string]: any })[entityId] ||
-    (fakeState
-      ? { entity_id: entityId, state: 'off', attributes: {} }
-      : undefined);
-
-  if (!state) return undefined;
-
-  const domain = computeDomain(state.entity_id);
-  return {
-    state: state.state,
-    attributes: state.attributes,
-    entity_id: state.entity_id,
-    domain,
-    isActive:
-      domain === 'climate' ||
-      ['on', 'true'].includes(state.state?.toLowerCase()) ||
-      Number(state.state) > 0,
-  };
-};
-
-/**
- * Retrieves entity information
- *
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {string} entityId - The ID of the entity
- * @returns {Entity} The entity information
- */
-export const getEntity = (
-  hass: HomeAssistant,
-  entityId: string,
-): EntityRegistryDisplayEntry =>
-  (hass.entities as { [key: string]: any })[entityId];
-
-/**
- * Retrieves device information
- *
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {string} deviceId - The ID of the device
- * @returns {Device} The device information
- */
-export const getDevice = (
-  hass: HomeAssistant,
-  deviceId: string,
-): DeviceRegistryEntry => (hass.devices as { [key: string]: any })[deviceId];
-
-/**
- * Retrieves area information
- *
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {string} deviceId - The ID of the device
- * @returns {Area | undefined} The area information
- */
-export const getArea = (
-  hass: HomeAssistant,
-  deviceId: string,
-): AreaRegistryEntry | undefined =>
-  (hass.areas as { [key: string]: any })[deviceId];
+import type { Config, EntityConfig, EntityInformation } from '@type/config';
 
 /**
  * Gets entities with problems in a specific area
@@ -120,7 +40,8 @@ export const getProblemEntities = (
   const problemExists = problemEntities.some((entityId) => {
     const entityState = getState(hass, entityId);
     if (!entityState) return false;
-    return entityState.isActive;
+    const active = stateActive(entityState);
+    return active;
   });
 
   return {

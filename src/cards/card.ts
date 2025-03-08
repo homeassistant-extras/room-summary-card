@@ -16,6 +16,7 @@ import {
   handleClickAction,
 } from '@/delegates/action-handler-delegate';
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
+import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
@@ -26,8 +27,7 @@ import {
   getIconEntities,
   getProblemEntities,
   getRoomEntity,
-  getState,
-} from '../helpers';
+} from '../delegates/utils/card-entities';
 import { renderAreaStatistics, renderLabel } from '../html/text';
 const equal = require('fast-deep-equal');
 
