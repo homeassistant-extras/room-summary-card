@@ -1,4 +1,4 @@
-import { RoomSummaryCard } from '@/card';
+import { RoomSummaryCard } from '@/cards/card';
 import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
@@ -6,8 +6,8 @@ import { styles } from '@theme/styles';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { version } from '../package.json';
-import { createState as s } from './test-helpers';
+import { version } from '../../package.json';
+import { createState as s } from '../test-helpers';
 
 describe('card.ts', () => {
   let card: RoomSummaryCard;

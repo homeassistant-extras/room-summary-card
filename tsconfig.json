@@ -19,11 +19,12 @@
     /* Paths */
     "baseUrl": ".",
     "paths": {
+      "@cards/*": ["./src/cards/*"],
       "@type/*": ["./src/types/*"],
       "@config/*": ["./src/config/*"],
       "@delegates/*": ["./src/delegates/*"],
       "@hass/*": ["./src/hass/*"],
-      "@util/*": ["./src/util/*"],
+      "@html/*": ["./src/html/*"],
       "@theme/*": ["./src/theme/*"],
       "@test/*": ["./test/*"],
       "@/*": ["./src/*"]

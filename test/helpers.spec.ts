@@ -169,7 +169,7 @@ describe('helpers.ts', () => {
       expect(entities).to.have.lengthOf(0);
     });
 
-    it('should handle climate entities and skip_climate_colors', () => {
+    it('should handle climate entities and skip_climate_styles', () => {
       mockHass.states!['climate.test'] = e('climate', 'test', 'heat');
       mockHass.entities!['climate.test'] = {
         device_id: 'device_1',
@@ -191,7 +191,7 @@ describe('helpers.ts', () => {
       const configWithoutColors = {
         area: 'test_room',
         entities: ['climate.test'],
-        features: ['skip_climate_colors'],
+        features: ['skip_climate_styles'],
       };
 
       const entitiesWithoutColors = getIconEntities(

@@ -151,7 +151,7 @@ Most of these are optional if you setup the entities a certain way using labels 
 | hide_climate_label       | flag | Show the climate label or not          |
 | hide_area_stats          | flag | Show the area statistics label or not  |
 | exclude_default_entities | flag | Exclude the default light/fan entities |
-| skip_climate_colors      | flag | Disable climate-based color coding     |
+| skip_climate_styles      | flag | Disable climate-based color coding     |
 
 ### Default Entities
 
@@ -298,7 +298,7 @@ entities:
   - switch.living_room_fan
 temperature_sensor: sensor.living_room_temperature
 humidity_sensor: sensor.living_room_humidity
-skip_climate_colors: false
+skip_climate_styles: false
 navigate: /lovelace/living-room
 features:
   - hide_climate_label

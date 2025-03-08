@@ -55,7 +55,7 @@ const SCHEMA: HaFormSchema[] = [
             label: 'Exclude Default Entities',
             value: 'exclude_default_entities',
           },
-          { label: 'Skip Climate Colors', value: 'skip_climate_colors' },
+          { label: 'Skip Climate Styles', value: 'skip_climate_styles' },
         ],
       },
     },

@@ -174,9 +174,8 @@ export const getIconEntities = (
       const state = getState(hass, entity.entity_id);
       if (!state) return undefined;
 
-      // todo - rename
       const useClimateIcons =
-        !config.features?.includes('skip_climate_colors') &&
+        !config.features?.includes('skip_climate_styles') &&
         state.domain === 'climate';
 
       // Create entity information with defaults and climate handling

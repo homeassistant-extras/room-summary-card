@@ -39,7 +39,7 @@ export type Features =
   | 'hide_climate_label'
   | 'hide_area_stats'
   | 'exclude_default_entities'
-  | 'skip_climate_colors';
+  | 'skip_climate_styles';
 
 /**
  * Configuration for an individual entity including display and interaction options.

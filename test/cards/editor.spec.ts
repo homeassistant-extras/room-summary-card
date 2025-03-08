@@ -1,4 +1,4 @@
-import { RoomSummaryCardEditor } from '@/editor';
+import { RoomSummaryCardEditor } from '@/cards/editor';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Config } from '@type/config';
@@ -138,7 +138,7 @@ describe('editor.ts', () => {
                   label: 'Exclude Default Entities',
                   value: 'exclude_default_entities',
                 },
-                { label: 'Skip Climate Colors', value: 'skip_climate_colors' },
+                { label: 'Skip Climate Styles', value: 'skip_climate_styles' },
               ],
             },
           },

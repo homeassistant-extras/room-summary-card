@@ -6,8 +6,8 @@
  * component available for use in Home Assistant dashboards.
  */
 
-import { RoomSummaryCard } from '@/card';
-import { RoomSummaryCardEditor } from '@/editor';
+import { RoomSummaryCard } from '@/cards/card';
+import { RoomSummaryCardEditor } from '@/cards/editor';
 
 // Register the custom element with the browser
 customElements.define('room-summary-card', RoomSummaryCard);

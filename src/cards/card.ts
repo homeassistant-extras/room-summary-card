@@ -15,24 +15,20 @@ import {
   actionHandler,
   handleClickAction,
 } from '@/delegates/action-handler-delegate';
+import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
 import type { HomeAssistant } from '@hass/types';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { styles } from '@theme/styles';
 import type { Config, EntityInformation, EntityState } from '@type/config';
-import {
-  renderAreaStatistics,
-  renderLabel,
-  renderProblemIndicator,
-  renderStateIcon,
-} from '@util/render';
-import { version } from '../package.json';
+import { version } from '../../package.json';
 import {
   getIconEntities,
   getProblemEntities,
   getRoomEntity,
   getState,
-} from './helpers';
+} from '../helpers';
+import { renderAreaStatistics, renderLabel } from '../html/text';
 const equal = require('fast-deep-equal');
 
 export class RoomSummaryCard extends LitElement {
