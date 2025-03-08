@@ -1,4 +1,4 @@
-import { hasFeature } from '@common/feature';
+import { hasFeature } from '@/config/feature';
 import type { Config, Features } from '@type/config';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';

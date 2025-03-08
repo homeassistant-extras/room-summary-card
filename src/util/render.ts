@@ -1,5 +1,8 @@
-import { actionHandler, handleClickAction } from '@common/action-handler';
-import { hasFeature } from '@common/feature';
+import { hasFeature } from '@/config/feature';
+import {
+  actionHandler,
+  handleClickAction,
+} from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import {
   getEntityIconStyles,

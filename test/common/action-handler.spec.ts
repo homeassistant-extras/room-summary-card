@@ -1,4 +1,4 @@
-import { handleClickAction } from '@common/action-handler';
+import { handleClickAction } from '@/delegates/action-handler-delegate';
 import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
 
 import type { EntityInformation } from '@type/config';
@@ -16,7 +16,7 @@ const directiveStub = stub().returns(mockDirectiveFunction); // Now returns a fu
 const noChangeStub = Symbol('noChange');
 
 // Use proxyquire to replace both the lit and lit/directive modules
-const { actionHandler } = proxyquire('@common/action-handler', {
+const { actionHandler } = proxyquire('@delegates/action-handler-delegate.ts', {
   lit: {
     noChange: noChangeStub,
   },

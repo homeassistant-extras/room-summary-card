@@ -1,10 +1,10 @@
+import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import {
   renderAreaStatistics,
   renderLabel,
   renderProblemIndicator,
   renderStateIcon,
 } from '@/util/render';
-import * as actionHandlerModule from '@common/action-handler';
 import type { HomeAssistant } from '@hass/types';
 import { elementUpdated, fixture } from '@open-wc/testing-helpers';
 import { createState as s } from '@test/test-helpers';

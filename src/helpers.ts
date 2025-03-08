@@ -6,7 +6,7 @@
  * state retrieval, and UI element creation.
  */
 
-import { hasFeature } from '@common/feature';
+import { hasFeature } from '@/config/feature';
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { AreaRegistryEntry } from '@hass/data/area_registry';
 import type { DeviceRegistryEntry } from '@hass/data/device_registry';

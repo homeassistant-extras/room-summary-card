@@ -20,7 +20,8 @@
     "baseUrl": ".",
     "paths": {
       "@type/*": ["./src/types/*"],
-      "@common/*": ["./src/common/*"],
+      "@config/*": ["./src/config/*"],
+      "@delegates/*": ["./src/delegates/*"],
       "@hass/*": ["./src/hass/*"],
       "@util/*": ["./src/util/*"],
       "@theme/*": ["./src/theme/*"],

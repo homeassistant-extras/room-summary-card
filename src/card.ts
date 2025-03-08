@@ -11,7 +11,10 @@
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
-import { actionHandler, handleClickAction } from '@common/action-handler';
+import {
+  actionHandler,
+  handleClickAction,
+} from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import { getCardStyles, getEntityIconStyles } from '@theme/render-styles';
 import { styles } from '@theme/styles';

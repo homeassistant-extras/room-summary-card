@@ -1,5 +1,5 @@
 import { RoomSummaryCard } from '@/card';
-import * as actionHandlerModule from '@common/action-handler';
+import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { styles } from '@theme/styles';
