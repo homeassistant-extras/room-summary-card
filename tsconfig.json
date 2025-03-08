@@ -19,9 +19,13 @@
     /* Paths */
     "baseUrl": ".",
     "paths": {
+      "@cards/*": ["./src/cards/*"],
       "@type/*": ["./src/types/*"],
-      "@common/*": ["./src/common/*"],
-      "@util/*": ["./src/util/*"],
+      "@config/*": ["./src/config/*"],
+      "@delegates/*": ["./src/delegates/*"],
+      "@hass/*": ["./src/hass/*"],
+      "@html/*": ["./src/html/*"],
+      "@theme/*": ["./src/theme/*"],
       "@test/*": ["./test/*"],
       "@/*": ["./src/*"]
     }

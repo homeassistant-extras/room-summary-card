@@ -61,6 +61,10 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 
 ![icons](assets/icons.png)
 
+Entity Off Color attribute. Shows lightly in a different color than the default.
+
+![icons](assets/off-color.png)
+
 ### Problem Detection
 
 - Automatically detects entities labeled as "problem" in the area based on area and labels
@@ -151,7 +155,7 @@ Most of these are optional if you setup the entities a certain way using labels 
 | hide_climate_label       | flag | Show the climate label or not          |
 | hide_area_stats          | flag | Show the area statistics label or not  |
 | exclude_default_entities | flag | Exclude the default light/fan entities |
-| skip_climate_colors      | flag | Disable climate-based color coding     |
+| skip_climate_styles      | flag | Disable climate-based color coding     |
 
 ### Default Entities
 
@@ -220,13 +224,13 @@ tap_action:
 
 You can add attributes to entities to customize the functionality further.
 
-| Name                  | Type   | Default         | Description                             |
-| --------------------- | ------ | --------------- | --------------------------------------- |
-| on_color              | string | yellow          | Color when the entity is on or positive |
-| off_color             | string | theme off color | Color when the entity is off or 0       |
-| temperature_threshold | number | 80              | Threshold to show red border.           |
-| humidity_threshold    | number | 60              | Threshold to show blue border.          |
-| icon                  | string | entity default  | Custom MDI icon                         |
+| Name                  | Type   | Default         | Description                         |
+| --------------------- | ------ | --------------- | ----------------------------------- |
+| on_color              | string | yellow          | Color when the entity is active     |
+| off_color             | string | theme off color | Color when the entity is not active |
+| temperature_threshold | number | 80              | Threshold to show red border.       |
+| humidity_threshold    | number | 60              | Threshold to show blue border.      |
+| icon                  | string | entity default  | Custom MDI icon                     |
 
 You can customize entity attributes several ways.
 
@@ -298,7 +302,7 @@ entities:
   - switch.living_room_fan
 temperature_sensor: sensor.living_room_temperature
 humidity_sensor: sensor.living_room_humidity
-skip_climate_colors: false
+skip_climate_styles: false
 navigate: /lovelace/living-room
 features:
   - hide_climate_label
@@ -330,11 +334,13 @@ The card will match the following themes
 
 Default HA Example
 
-![ha-theme](assets/ha-theme.png)
+![ha-dark](assets/default-dark.png)
+![ha-light](assets/default-light.png)
 
 UI Minimalist Example
 
-![minimalist-theme](assets/minimalist-theme.png)
+![minimalist-dark](assets/minimalist-dark.png)
+![minimalist-light](assets/minimalist-light.png)
 
 ### Active Colors by Domain
 
@@ -342,7 +348,7 @@ Active entities will be colored based on their domain unless overriden.
 
 | Domain Category              | Domains                                           | Active Color |
 | ---------------------------- | ------------------------------------------------- | ------------ |
-| **Lighting**                 | `light`, `switch_as_x`                            | Amber        |
+| **Lighting**                 | `light`, `switch_as_x`                            | Yellow       |
 | **Switches & Electric**      | `switch`, `input_boolean`, `automation`, `script` | Blue         |
 | **Climate & Environment**    | `climate`, `fan`                                  | Teal         |
 | **Security & Safety**        | `alarm_control_panel`, `lock`                     | Red          |
@@ -353,7 +359,7 @@ Active entities will be colored based on their domain unless overriden.
 | **Weather**                  | `weather`                                         | Orange       |
 | **Vacuum**                   | `vacuum`                                          | Deep Purple  |
 | **Timer & Schedule**         | `timer`, `schedule`                               | Pink         |
-| **Unknown Domains**          | Any other domain                                  | Amber        |
+| **Unknown Domains**          | Any other domain                                  | Yellow       |
 
 Each domain has a predefined color to indicate its active status.
 
@@ -393,8 +399,9 @@ The `on_color` and `off_color` attributes support these color stylings from the 
 - [x] **`Initial design`**: <strike>create initial room card based on button-card template in UI minimialist theme.</strike>
 - [x] **`Temperature`**: <strike>use uom from the device.</strike>
 - [x] **`Card Editor`**: <strike>ability to use the HA card editor.</strike>
-- [ ] **`Test on other themes`**: make sure it works elsewhere.
-- [ ] **`Flags`**: ability to disable features.
+- [x] **`Test on other themes`**: <strike>make sure it works elsewhere.</strike>
+- [x] **`Flags`**: <strike>ability to disable features.</strike>
+- [ ] **`Test on iOS theme`**: another theme to consider
 - [ ] **`Sizing`**: ability to fit different size squares.
 
 ## Contributing

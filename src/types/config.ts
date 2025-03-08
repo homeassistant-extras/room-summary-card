@@ -3,7 +3,7 @@
  * @description Core type definitions for card configuration.
  */
 
-import type { ActionConfig } from './action';
+import type { ActionConfig } from '../hass/data/lovelace/config/action';
 
 /**
  * Configuration settings for entity display and behavior within Home Assistant.
@@ -39,7 +39,7 @@ export type Features =
   | 'hide_climate_label'
   | 'hide_area_stats'
   | 'exclude_default_entities'
-  | 'skip_climate_colors';
+  | 'skip_climate_styles';
 
 /**
  * Configuration for an individual entity including display and interaction options.
@@ -87,7 +87,4 @@ export interface EntityState {
 
   /** Returns the domain portion of the entity_id */
   domain: string;
-
-  /** Returns if it's active or not */
-  isActive: boolean;
 }
