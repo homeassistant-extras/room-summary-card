@@ -3,7 +3,7 @@
  */
 
 import { isUnavailableState, OFF, UNAVAILABLE } from '@hass/data/entity';
-import type { HassEntity } from '@hass/types';
+import type { HassEntity } from '@hass/ws/types';
 import { computeDomain } from './compute_domain';
 
 export function stateActive(stateObj: HassEntity, state?: string): boolean {

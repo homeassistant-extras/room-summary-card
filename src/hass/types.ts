@@ -1,34 +1,17 @@
 /**
- * https://github.com/home-assistant/home-assistant-js-websocket/blob/master/lib/types.ts
+ * https://github.com/home-assistant/frontend/blob/dev/src/types.ts
  */
-export type Context = {
-  id: string;
-  user_id: string | null;
-  parent_id: string | null;
-};
 
-export type HassEntity = HassEntityBase & {
-  attributes: { [key: string]: any };
-};
+import type { AreaRegistryEntry } from './data/area_registry';
+import type { DeviceRegistryEntry } from './data/device_registry';
+import type { EntityRegistryDisplayEntry } from './data/entity_registry';
+import type { Themes } from './data/ws-themes';
+import type { HassEntities } from './ws/types';
 
-export type HassEntityBase = {
-  entity_id: string;
-  state: string;
-  last_changed: string;
-  last_updated: string;
-  attributes: HassEntityAttributeBase;
-  context: Context;
-};
-
-export type HassEntityAttributeBase = {
-  friendly_name?: string;
-  unit_of_measurement?: string;
-  icon?: string;
-  entity_picture?: string;
-  supported_features?: number;
-  hidden?: boolean;
-  assumed_state?: boolean;
-  device_class?: string;
-  state_class?: string;
-  restored?: boolean;
-};
+export interface HomeAssistant {
+  states: HassEntities;
+  entities: Record<string, EntityRegistryDisplayEntry>;
+  devices: Record<string, DeviceRegistryEntry>;
+  areas: Record<string, AreaRegistryEntry>;
+  themes: Themes;
+}

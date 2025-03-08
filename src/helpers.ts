@@ -6,8 +6,12 @@
  * state retrieval, and UI element creation.
  */
 
-import { feature } from '@common/feature';
+import { hasFeature } from '@common/feature';
 import { computeDomain } from '@hass/common/entity/compute_domain';
+import type { AreaRegistryEntry } from '@hass/data/area_registry';
+import type { DeviceRegistryEntry } from '@hass/data/device_registry';
+import type { EntityRegistryDisplayEntry } from '@hass/data/entity_registry';
+import type { HomeAssistant } from '@hass/types';
 import { getClimateStyles } from '@theme/render-styles';
 import type {
   Config,
@@ -15,7 +19,6 @@ import type {
   EntityInformation,
   EntityState,
 } from '@type/config';
-import type { Area, Device, Entity, HomeAssistant } from '@type/homeassistant';
 
 /**
  * Retrieves the state of an entity
@@ -60,7 +63,10 @@ export const getState = (
  * @param {string} entityId - The ID of the entity
  * @returns {Entity} The entity information
  */
-export const getEntity = (hass: HomeAssistant, entityId: string): Entity =>
+export const getEntity = (
+  hass: HomeAssistant,
+  entityId: string,
+): EntityRegistryDisplayEntry =>
   (hass.entities as { [key: string]: any })[entityId];
 
 /**
@@ -70,8 +76,10 @@ export const getEntity = (hass: HomeAssistant, entityId: string): Entity =>
  * @param {string} deviceId - The ID of the device
  * @returns {Device} The device information
  */
-export const getDevice = (hass: HomeAssistant, deviceId: string): Device =>
-  (hass.devices as { [key: string]: any })[deviceId];
+export const getDevice = (
+  hass: HomeAssistant,
+  deviceId: string,
+): DeviceRegistryEntry => (hass.devices as { [key: string]: any })[deviceId];
 
 /**
  * Retrieves area information
@@ -83,7 +91,8 @@ export const getDevice = (hass: HomeAssistant, deviceId: string): Device =>
 export const getArea = (
   hass: HomeAssistant,
   deviceId: string,
-): Area | undefined => (hass.areas as { [key: string]: any })[deviceId];
+): AreaRegistryEntry | undefined =>
+  (hass.areas as { [key: string]: any })[deviceId];
 
 /**
  * Gets entities with problems in a specific area
@@ -141,7 +150,7 @@ export const getIconEntities = (
   const configEntities = config.entities || [];
 
   // Combine base and config entities unless fan is removed
-  const entities = feature(config, 'exclude_default_entities')
+  const entities = hasFeature(config, 'exclude_default_entities')
     ? configEntities
     : baseEntities.concat(configEntities);
 

@@ -12,10 +12,10 @@ import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 import { actionHandler, handleClickAction } from '@common/action-handler';
+import type { HomeAssistant } from '@hass/types';
 import { getCardStyles, getEntityIconStyles } from '@theme/render-styles';
 import { styles } from '@theme/styles';
 import type { Config, EntityInformation, EntityState } from '@type/config';
-import type { HomeAssistant } from '@type/homeassistant';
 import {
   renderAreaStatistics,
   renderLabel,

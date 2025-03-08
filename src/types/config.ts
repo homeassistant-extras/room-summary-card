@@ -3,7 +3,7 @@
  * @description Core type definitions for card configuration.
  */
 
-import type { ActionConfig } from './action';
+import type { ActionConfig } from '../hass/data/lovelace/config/action';
 
 /**
  * Configuration settings for entity display and behavior within Home Assistant.

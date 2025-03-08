@@ -1,5 +1,5 @@
+import type { HassEntity } from '@hass/ws/types';
 import type { EntityState } from '@type/config';
-import type { State } from '@type/homeassistant';
 
 /**
  * Creats a fake entity
@@ -14,7 +14,7 @@ export const createState = (
   name: string,
   state: string = 'on',
   attributes = {},
-): State => {
+): HassEntity => {
   return {
     entity_id: `${domain}.${name}`,
     state: state,

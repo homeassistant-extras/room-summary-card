@@ -9,7 +9,7 @@ import { slugify } from '@hass/common/string/slugify';
 import { UNAVAILABLE } from '@hass/data/entity';
 import { computeGroupDomain, type GroupEntity } from '@hass/data/group';
 import { computeCssVariable } from '@hass/resources/css-variables';
-import type { HassEntity } from '@hass/types';
+import type { HassEntity } from '@hass/ws/types';
 
 const STATE_COLORED_DOMAIN = new Set([
   'alarm_control_panel',

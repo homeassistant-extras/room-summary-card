@@ -5,8 +5,8 @@ import {
   getState,
 } from '@/helpers';
 import type { Config } from '@/types/config';
+import type { HomeAssistant } from '@hass/types';
 import { createStateEntity as e } from '@test/test-helpers';
-import type { HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
 
 describe('helpers.ts', () => {
@@ -57,7 +57,7 @@ describe('helpers.ts', () => {
           icon: 'mdi:room',
         },
       },
-    };
+    } as any as HomeAssistant;
   });
 
   describe('getState', () => {
@@ -296,7 +296,7 @@ describe('helpers.ts', () => {
             icon: 'mdi:custom',
           },
         },
-      };
+      } as any as HomeAssistant;
     });
 
     it('should return default room entity when no custom entity specified', () => {

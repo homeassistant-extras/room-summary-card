@@ -7,9 +7,9 @@ import {
 
 import { stateActive } from '@hass/common/entity/state_active';
 import { stateColorCss } from '@hass/common/entity/state_color';
-import type { HassEntity } from '@hass/types';
+import type { HomeAssistant } from '@hass/types';
+import type { HassEntity } from '@hass/ws/types';
 import type { Config, EntityState } from '@type/config';
-import type { HomeAssistant } from '@type/homeassistant';
 import { getThemeColorOverride as getColorOverride } from './custom-theme';
 
 const getTemperatureBorders = (

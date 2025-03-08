@@ -1,97 +1,8 @@
-/**
- * Action Handler Directive Module
- *
- * This module implements a custom directive for handling actions in web components
- * using the Lit library. It manages action handlers for elements, supporting
- * features like double-click and hold actions.
- *
- * Implements custom click action handling for Home Assistant entities.
- * This module creates a handler that processes click events and dispatches
- * them as Home Assistant actions with the appropriate configuration.
- */
-
-import { noChange } from 'lit';
-import {
-  type AttributePart,
-  Directive,
-  type DirectiveParameters,
-  directive,
-} from 'lit/directive.js';
-
-import { fireEvent } from '@common/fire-event';
-import type {
-  ActionConfigParams,
-  ActionHandlerElement,
-  ActionHandlerEvent,
-  ActionHandlerOptions,
-  ActionHandlerType,
-} from '@type/action';
+import { fireEvent } from '@hass/common/dom/fire_event';
+import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
+import { actionHandler as hassActionHandler } from '@hass/panels/lovelace/common/directives/action-handler-directive';
+import type { ActionConfigParams } from '@hass/panels/lovelace/common/handle-action';
 import type { EntityInformation } from '@type/config';
-
-/**
- * Retrieves or creates the global action handler element.
- * The action handler is singleton element attached to the document body.
- *
- * @returns {ActionHandlerType} The action handler element
- */
-const getActionHandler = (): ActionHandlerType => {
-  const body = document.body;
-  const existingHandler = body.querySelector('action-handler');
-
-  if (existingHandler) {
-    return existingHandler as ActionHandlerType;
-  }
-
-  const actionHandler = document.createElement('action-handler');
-  body.appendChild(actionHandler);
-
-  return actionHandler as ActionHandlerType;
-};
-
-/**
- * Binds an element to the action handler with specified options.
- *
- * @param {ActionHandlerElement} element - The element to bind actions to
- * @param {ActionHandlerOptions} [options] - Configuration options for the action handler
- */
-const actionHandlerBind = (
-  element: ActionHandlerElement,
-  options?: ActionHandlerOptions,
-): void => {
-  const actionHandler: ActionHandlerType = getActionHandler();
-  if (!actionHandler) {
-    return;
-  }
-  actionHandler.bind(element, options);
-};
-
-/**
- * Creates a custom directive for handling actions.
- * This directive manages the lifecycle of action handling for elements.
- */
-const _actionHandler = directive(
-  class extends Directive {
-    /**
-     * Updates the directive when properties change.
-     *
-     * @param {AttributePart} part - The attribute part being updated
-     * @param {DirectiveParameters<this>} [options] - The options for the action handler
-     * @returns {Symbol} A symbol indicating no change is needed in the rendering
-     */
-    override update(part: AttributePart, [options]: DirectiveParameters<this>) {
-      actionHandlerBind(part.element as ActionHandlerElement, options);
-      return noChange;
-    }
-
-    /**
-     * Renders the directive.
-     * This is intentionally empty as the directive only handles actions.
-     *
-     * @param {ActionHandlerOptions} [_options] - Options for the action handler
-     */
-    render(_options?: ActionHandlerOptions) {}
-  },
-);
 
 /**
  * Creates an action handler for an entity with specified configuration.
@@ -101,7 +12,7 @@ const _actionHandler = directive(
  * @returns {Directive} A directive configured with the entity's action options
  */
 export const actionHandler = (entity: EntityInformation) => {
-  return _actionHandler({
+  return hassActionHandler({
     hasDoubleClick: entity.config?.double_tap_action?.action !== 'none',
     hasHold: entity.config?.hold_action?.action !== 'none',
   });
@@ -144,6 +55,7 @@ export const handleClickAction = (
         ...entity.config,
       };
 
+      // @ts-ignore
       fireEvent(element, 'hass-action', {
         config,
         action,

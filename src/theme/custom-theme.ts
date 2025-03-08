@@ -1,5 +1,5 @@
+import type { HomeAssistant } from '@hass/types';
 import type { EntityState } from '@type/config';
-import type { HomeAssistant } from '@type/homeassistant';
 import { homeAssistantColors, minimalistColors } from '.';
 
 /**

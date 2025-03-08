@@ -1,5 +1,5 @@
 import { computeDomain } from '@hass/common/entity/compute_domain';
-import type { HassEntityAttributeBase, HassEntityBase } from '@hass/types';
+import type { HassEntityAttributeBase, HassEntityBase } from '@hass/ws/types';
 
 interface GroupEntityAttributes extends HassEntityAttributeBase {
   entity_id: string[];

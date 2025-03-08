@@ -5,10 +5,10 @@ import {
   renderStateIcon,
 } from '@/util/render';
 import * as actionHandlerModule from '@common/action-handler';
+import type { HomeAssistant } from '@hass/types';
 import { elementUpdated, fixture } from '@open-wc/testing-helpers';
 import { createState as s } from '@test/test-helpers';
 import type { Config, EntityInformation, EntityState } from '@type/config';
-import type { HomeAssistant } from '@type/homeassistant';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -58,7 +58,7 @@ describe('render.ts', () => {
           unit_of_measurement: '%',
         }),
       },
-    } as HomeAssistant;
+    } as any as HomeAssistant;
 
     mockConfig = {
       area: 'living_room',

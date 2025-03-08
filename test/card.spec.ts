@@ -1,8 +1,8 @@
 import { RoomSummaryCard } from '@/card';
-import { styles } from '@/styles';
 import * as actionHandlerModule from '@common/action-handler';
+import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
-import { type HomeAssistant } from '@type/homeassistant';
+import { styles } from '@theme/styles';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -67,7 +67,7 @@ describe('card.ts', () => {
           icon: '',
         },
       },
-    };
+    } as any as HomeAssistant;
     card.setConfig({ area: 'living_room' });
     card.hass = mockHass as HomeAssistant;
   });
