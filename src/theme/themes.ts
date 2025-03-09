@@ -46,14 +46,13 @@ export const minimalistColors = [
 ];
 
 export const minimalistThemeColors = css`
-  --card-background-color-minimalist: var(--card-background-color);
   --theme-color-minimalist: rgb(var(--color-theme));
 `;
 
 export const themeColors = css`
   --theme-background-color-card: var(
-    --card-background-color-minimalist,
-    var(--ha-card-background, white)
+    --ha-card-background,
+    var(--card-background-color, white)
   );
   --theme-background-color-icon: var(
     --theme-color-minimalist,

@@ -84,8 +84,9 @@ export default () => {
           entities: null,
         } as unknown as HomeAssistant;
 
-        expect(() => getEntity(hassWithNullEntities, 'light.living_room')).to
-          .throw;
+        expect(() =>
+          getEntity(hassWithNullEntities, 'light.living_room'),
+        ).to.throw();
       });
     });
   });

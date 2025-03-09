@@ -1,5 +1,6 @@
 import type { HomeAssistant } from '@hass/types';
 import { getThemeColorOverride } from '@theme/custom-theme';
+import type { EntityState } from '@type/config';
 import { expect } from 'chai';
 
 export default () => {
@@ -130,50 +131,98 @@ export default () => {
       });
 
       describe('domain-based color mapping', () => {
-        it('should map light domain to yellow', () => {
+        // Mock Home Assistant instance with minimalist theme
+        const hassMinimalist = {
+          themes: {
+            theme: 'minimalist-blue',
+          },
+        } as any as HomeAssistant;
+
+        // Helper function to create a state object for a specific domain
+        const createStateForDomain = (domain: string) => ({
+          entity_id: `${domain}.test`,
+          state: 'on',
+          attributes: {},
+          domain,
+        });
+
+        // Helper function to test a domain's color mapping
+        const testDomainColor = (domain: string, expectedColor: string) => {
+          it(`should map ${domain} domain to ${expectedColor}`, () => {
+            const state = createStateForDomain(domain);
+            const result = getThemeColorOverride(hassMinimalist, state, true);
+
+            // Handle colors that aren't in minimalistColors
+            if (
+              ['teal', 'cyan', 'indigo', 'deep-purple', 'orange'].includes(
+                expectedColor,
+              )
+            ) {
+              expect(result).to.be.undefined;
+            } else {
+              expect(result).to.equal(`rgb(var(--color-${expectedColor}))`);
+            }
+          });
+        };
+
+        // Test all domain cases from the switch statement
+
+        // Lighting
+        testDomainColor('light', 'yellow');
+        testDomainColor('switch_as_x', 'yellow');
+
+        // Switches & Electric
+        testDomainColor('switch', 'blue');
+        testDomainColor('input_boolean', 'blue');
+        testDomainColor('automation', 'blue');
+        testDomainColor('script', 'blue');
+
+        // Climate & Environment
+        testDomainColor('climate', 'teal');
+        testDomainColor('fan', 'teal');
+
+        // Security & Safety
+        testDomainColor('alarm_control_panel', 'red');
+        testDomainColor('lock', 'red');
+
+        // Covers & Doors
+        testDomainColor('cover', 'green');
+        testDomainColor('garage_door', 'green');
+        testDomainColor('door', 'green');
+
+        // Media
+        testDomainColor('media_player', 'indigo');
+
+        // Sensors & Binary Sensors
+        testDomainColor('binary_sensor', 'cyan');
+        testDomainColor('sensor', 'cyan');
+
+        // Person & Presence
+        testDomainColor('person', 'purple');
+        testDomainColor('device_tracker', 'purple');
+
+        // Weather & Update
+        testDomainColor('weather', 'orange');
+        testDomainColor('update', 'orange');
+
+        // Vacuum
+        testDomainColor('vacuum', 'deep-purple');
+
+        // Timer & Schedule
+        testDomainColor('timer', 'pink');
+        testDomainColor('schedule', 'pink');
+
+        // Default case
+        testDomainColor('unknown_domain', 'yellow');
+        testDomainColor('another_unknown', 'yellow');
+
+        it('should handle undefined domain by using default color (yellow)', () => {
           const state = {
-            entity_id: 'light.living_room',
+            entity_id: 'entity.without.domain',
             state: 'on',
             attributes: {},
-            domain: 'light',
-          };
-
-          const result = getThemeColorOverride(hassMinimalist, state, true);
-          expect(result).to.equal('rgb(var(--color-yellow))');
-        });
-
-        it('should map switch domain to blue', () => {
-          const state = {
-            entity_id: 'switch.kitchen',
-            state: 'on',
-            attributes: {},
-            domain: 'switch',
-          };
-
-          const result = getThemeColorOverride(hassMinimalist, state, true);
-          expect(result).to.equal('rgb(var(--color-blue))');
-        });
-
-        it('should map climate domain to teal', () => {
-          const state = {
-            entity_id: 'climate.bedroom',
-            state: 'heat',
-            attributes: {},
-            domain: 'climate',
-          };
-
-          // teal isn't in minimalistColors, so we expect undefined
-          const result = getThemeColorOverride(hassMinimalist, state, true);
-          expect(result).to.be.undefined;
-        });
-
-        it('should use default color (yellow) for unknown domains', () => {
-          const state = {
-            entity_id: 'unknown.entity',
-            state: 'active',
-            attributes: {},
-            domain: 'unknown',
-          };
+            // domain is intentionally undefined here
+          } as any as EntityState;
 
           const result = getThemeColorOverride(hassMinimalist, state, true);
           expect(result).to.equal('rgb(var(--color-yellow))');

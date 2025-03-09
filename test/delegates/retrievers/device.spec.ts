@@ -87,7 +87,7 @@ export default () => {
           devices: null,
         } as unknown as HomeAssistant;
 
-        expect(() => getDevice(hassWithNullDevices, 'device-123')).to.throw;
+        expect(() => getDevice(hassWithNullDevices, 'device-123')).to.throw();
       });
     });
   });

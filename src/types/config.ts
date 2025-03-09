@@ -59,9 +59,6 @@ export interface EntityConfig {
 
   /** Action to perform on double tap */
   double_tap_action?: ActionConfig;
-
-  /** Custom name to display for the entity */
-  card?: Record<string, string | unknown>;
 }
 
 /**

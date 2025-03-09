@@ -72,7 +72,7 @@ export class RoomSummaryCard extends LitElement {
    * Indicates if the card is in dark mode
    */
   @property({ type: Boolean, reflect: true })
-  private isDarkMode!: Boolean;
+  private isDarkMode!: boolean;
 
   /**
    * Home Assistant instance
@@ -192,8 +192,8 @@ export class RoomSummaryCard extends LitElement {
       hass,
       this._config.area,
     );
-    const tempState = getState(hass, this._config!.temperature_sensor);
-    const humidState = getState(hass, this._config!.humidity_sensor);
+    const tempState = getState(hass, this._config.temperature_sensor);
+    const humidState = getState(hass, this._config.humidity_sensor);
 
     this._problemExists = problemExists;
 

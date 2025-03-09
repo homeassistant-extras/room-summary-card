@@ -16,14 +16,14 @@ import { html, nothing, type TemplateResult } from 'lit';
  * @param {HTMLElement} element - The parent element that will contain the icon
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {EntityInformation} entity - Information about the entity
- * @param {String[]} classes - CSS classes to apply to the icon container
+ * @param {string[]} classes - CSS classes to apply to the icon container
  * @returns {TemplateResult | typeof nothing} A Lit template containing the icon element or nothing if state doesn't exist
  */
 export const renderStateIcon = (
   element: HTMLElement,
   hass: HomeAssistant,
   entity: EntityInformation,
-  classes: String[],
+  classes: string[],
 ): TemplateResult | typeof nothing => {
   const { state } = entity;
   if (!state) return nothing;

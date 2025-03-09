@@ -72,7 +72,7 @@ export default () => {
           areas: null,
         } as unknown as HomeAssistant;
 
-        expect(() => getArea(hassWithNullAreas, 'area-123')).to.throw;
+        expect(() => getArea(hassWithNullAreas, 'area-123')).to.throw();
       });
     });
   });

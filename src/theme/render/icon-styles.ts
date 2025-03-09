@@ -10,7 +10,7 @@ import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
 import type { EntityState } from '@type/config';
-import { getThemeColorOverride as getColorOverride } from '../custom-theme';
+import { getThemeColorOverride } from '../custom-theme';
 
 /**
  * Generates styles for entity icons based on their state
@@ -31,7 +31,7 @@ export const renderEntityIconStyles = (
   const stateObj = state as any as HassEntity;
   const active = stateActive(stateObj);
   const cssColor = stateColorCss(stateObj);
-  const themeOverride = getColorOverride(hass, state, active);
+  const themeOverride = getThemeColorOverride(hass, state, active);
   const activeClass = active ? 'active' : 'inactive';
 
   return {

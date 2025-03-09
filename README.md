@@ -331,6 +331,7 @@ The card will match the following themes
 
 - [default styling of Home Assistant](https://github.com/home-assistant/frontend/blob/master/src/resources/ha-style.ts)
 - [UI Minimalist](https://ui-lovelace-minimalist.github.io/UI/)
+- [iOS Themes](https://github.com/basnijholt/lovelace-ios-themes)
 
 Default HA Example
 
@@ -341,6 +342,10 @@ UI Minimalist Example
 
 ![minimalist-dark](assets/minimalist-dark.png)
 ![minimalist-light](assets/minimalist-light.png)
+
+iOS Themes Example
+
+[See Discussion](https://github.com/homeassistant-extras/room-summary-card/issues/16)
 
 ### Active Colors by Domain
 

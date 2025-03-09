@@ -9,7 +9,7 @@ import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
 import type { EntityState } from '@type/config';
-import { getThemeColorOverride as getColorOverride } from '../custom-theme';
+import { getThemeColorOverride } from '../custom-theme';
 
 /**
  * Generates border styles based on temperature and humidity thresholds
@@ -34,19 +34,23 @@ const renderCardBorderStyles = (
   const humidity = Number(humidState.state);
 
   // Calculate border styles based on temperature and humidity
-  const border1 =
-    temp > tempThreshold
-      ? '5px solid var(--error-color)'
-      : humidity > humidThreshold
-        ? '5px solid var(--info-color)'
-        : undefined;
+  let border1;
+  if (temp > tempThreshold) {
+    border1 = '5px solid var(--error-color)';
+  } else if (humidity > humidThreshold) {
+    border1 = '5px solid var(--info-color)';
+  } else {
+    border1 = undefined;
+  }
 
-  const border2 =
-    humidity > humidThreshold
-      ? '5px solid var(--info-color)'
-      : temp > tempThreshold
-        ? '5px solid var(--error-color)'
-        : undefined;
+  let border2;
+  if (humidity > humidThreshold) {
+    border2 = '5px solid var(--info-color)';
+  } else if (temp > tempThreshold) {
+    border2 = '5px solid var(--error-color)';
+  } else {
+    border2 = undefined;
+  }
 
   return { border1, border2 };
 };
@@ -70,7 +74,7 @@ export const renderCardStyles = (
   const stateObj = state as any as HassEntity;
   const active = hass.themes.darkMode && stateActive(stateObj);
   const cssColor = hass.themes.darkMode ? stateColorCss(stateObj) : undefined;
-  const themeOverride = getColorOverride(hass, state);
+  const themeOverride = getThemeColorOverride(hass, state);
 
   const { border1, border2 } = renderCardBorderStyles(tempState, humidState);
 
