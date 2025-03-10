@@ -24,7 +24,7 @@
     "@parcel/transformer-inline-string": "^2.13.3",
     "@testing-library/dom": "^10.4.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "@types/chai": "^5.0.1",
+    "@types/chai": "^5.2.0",
     "@types/jsdom": "^21.1.7",
     "@types/mocha": "^10.0.10",
     "@types/sinon": "^17.0.4",
