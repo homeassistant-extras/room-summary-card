@@ -16,15 +16,16 @@
     "build": "parcel build",
     "test": "TS_NODE_PROJECT='./tsconfig.test.json' mocha",
     "test:coverage": "nyc npm run test",
-    "test:watch": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --watch"
+    "test:watch": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --watch",
+    "update": "npx npm-check-updates -u && npm i"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@open-wc/testing": "^4.0.0",
-    "@parcel/transformer-inline-string": "^2.14.2",
+    "@parcel/transformer-inline-string": "^2.14.3",
     "@testing-library/dom": "^10.4.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "@types/chai": "^5.2.0",
+    "@types/chai": "^5.2.1",
     "@types/jsdom": "^21.1.7",
     "@types/mocha": "^10.0.10",
     "@types/sinon": "^17.0.4",
@@ -32,11 +33,11 @@
     "jsdom": "^26.0.0",
     "mocha": "^11.1.0",
     "nyc": "^17.1.0",
-    "parcel": "^2.13.3",
+    "parcel": "^2.14.3",
     "prettier": "3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "proxyquire": "^2.1.3",
-    "sinon": "^19.0.2",
+    "sinon": "^20.0.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.2"

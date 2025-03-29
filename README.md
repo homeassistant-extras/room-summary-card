@@ -415,6 +415,7 @@ The `on_color` and `off_color` attributes support these color stylings from the 
 - **🐛 [Report Issues](https://github.com/homeassistant-extras/room-summary-card/issues)**: Submit bugs found or log feature requests for the `room-summary-card` project.
 - **💡 [Submit Pull Requests](https://github.com/homeassistant-extras/room-summary-card/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
 - **📣 [Check out discord](https://discord.gg/F28wupKC)**: Need further help, have ideas, want to chat?
+- **🃏 [Check out my other cards!](https://github.com/orgs/homeassistant-extras/repositories)** Maybe you have an integration that I made cards for.
 
 <details closed>
 <summary>Contributing Guidelines</summary>

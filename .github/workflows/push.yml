@@ -16,8 +16,10 @@ jobs:
       should_run: ${{ steps.check.outputs.should_run }}
     steps:
       - id: check
+        env:
+          AUTHOR_EMAIL: ${{ github.event.commits[0].author.email }}
         run: |
-          if [[ ! "${{ github.event.commits[0].author.email }}" == *"@users.noreply.github.com"* ]]; then
+          if [[ ! "$AUTHOR_EMAIL" == *"@users.noreply.github.com"* ]]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
