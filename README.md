@@ -272,7 +272,9 @@ sensor:
 > [!IMPORTANT]  
 > Using this setting requires a label.
 
-Give entities a label of "Status". These entities will be tracked and the icon will show red if any are "on" or have a positive state.
+Give entities a label of "problem". These entities will be tracked and the icon will show red if any are "on" or have a positive state. It will show green otherwise. In both cases it will show the total count of tracked problem entities.
+
+![problem-label](assets/problem-label.png)
 
 ## Example Configurations
 
