@@ -22,7 +22,7 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@open-wc/testing": "^4.0.0",
-    "@parcel/transformer-inline-string": "^2.14.3",
+    "@parcel/transformer-inline-string": "^2.14.4",
     "@testing-library/dom": "^10.4.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/chai": "^5.2.1",
