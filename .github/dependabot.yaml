@@ -8,5 +8,13 @@ updates:
     labels:
       - 'dependencies'
     commit-message:
-      prefix: 'chore: npm' # Optional: prefix for commit messages
+      prefix: 'chore: npm ' # Optional: prefix for commit messages
       include: 'scope'
+    # Add grouping configuration
+    groups:
+      all-dependencies:
+        patterns:
+          - "*" # This pattern matches all dependencies
+        update-types:
+          - "minor"
+          - "patch"
