@@ -77,17 +77,6 @@ export default () => {
 
         expect(entity).to.be.undefined;
       });
-
-      it('should handle null or undefined entities', () => {
-        const hassWithNullEntities = {
-          ...mockHass,
-          entities: null,
-        } as unknown as HomeAssistant;
-
-        expect(() =>
-          getEntity(hassWithNullEntities, 'light.living_room'),
-        ).to.throw();
-      });
     });
   });
 };

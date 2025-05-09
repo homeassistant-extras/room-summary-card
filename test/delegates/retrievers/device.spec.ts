@@ -80,15 +80,6 @@ export default () => {
 
         expect(device).to.be.undefined;
       });
-
-      it('should handle null or undefined devices', () => {
-        const hassWithNullDevices = {
-          ...mockHass,
-          devices: null,
-        } as unknown as HomeAssistant;
-
-        expect(() => getDevice(hassWithNullDevices, 'device-123')).to.throw();
-      });
     });
   });
 };

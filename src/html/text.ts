@@ -26,12 +26,12 @@ export const renderLabel = (
 
   const parts: string[] = [];
   if (temp?.state) {
-    parts.push(`${temp.state}${temp.attributes?.unit_of_measurement || ''}`);
+    parts.push(`${temp.state}${temp.attributes?.unit_of_measurement ?? ''}`);
   }
 
   if (humidity?.state) {
     parts.push(
-      `${humidity.state}${humidity.attributes?.unit_of_measurement || ''}`,
+      `${humidity.state}${humidity.attributes?.unit_of_measurement ?? ''}`,
     );
   }
 

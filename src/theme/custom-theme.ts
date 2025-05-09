@@ -112,7 +112,7 @@ export const getThemeColorOverride = (
   } else if (hass.themes.theme.startsWith('minimalist-')) {
     // for minimalist - try and match a color based on domain
     const color = active
-      ? onColor || activeColorFromDomain(state.domain)
+      ? (onColor ?? activeColorFromDomain(state.domain))
       : offColor;
     if (minimalistColors.includes(color)) {
       return `rgb(var(--color-${color}))`;

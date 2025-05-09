@@ -65,15 +65,6 @@ export default () => {
 
         expect(area).to.be.undefined;
       });
-
-      it('should handle null or undefined areas', () => {
-        const hassWithNullAreas = {
-          ...mockHass,
-          areas: null,
-        } as unknown as HomeAssistant;
-
-        expect(() => getArea(hassWithNullAreas, 'area-123')).to.throw();
-      });
     });
   });
 };

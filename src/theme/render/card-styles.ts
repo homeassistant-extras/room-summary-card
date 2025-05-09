@@ -26,8 +26,8 @@ const renderCardBorderStyles = (
     return { border1: undefined, border2: undefined };
 
   // Get thresholds with defaults
-  const tempThreshold = tempState.attributes.temperature_threshold || 80;
-  const humidThreshold = tempState.attributes.humidity_threshold || 60;
+  const tempThreshold = tempState.attributes.temperature_threshold ?? 80;
+  const humidThreshold = tempState.attributes.humidity_threshold ?? 60;
 
   // Parse current values
   const temp = Number(tempState.state);
