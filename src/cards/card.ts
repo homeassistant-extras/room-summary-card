@@ -18,6 +18,7 @@ import {
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
 import { getArea } from '@delegates/retrievers/area';
 import { getState } from '@delegates/retrievers/state';
+import { getIconEntities } from '@delegates/utils/icon-entities';
 import { getRoomEntity } from '@delegates/utils/room-entity';
 import type { HomeAssistant } from '@hass/types';
 import { renderCardStyles } from '@theme/render/card-styles';
@@ -29,10 +30,7 @@ import type {
   EntityState,
   RoomInformation,
 } from '@type/config';
-import {
-  getIconEntities,
-  getProblemEntities,
-} from '../delegates/utils/card-entities';
+import { getProblemEntities } from '../delegates/utils/card-entities';
 import { renderAreaStatistics, renderLabel } from '../html/text';
 const equal = require('fast-deep-equal');
 
@@ -209,6 +207,7 @@ export class RoomSummaryCard extends LitElement {
     );
     const cardStyle = renderCardStyles(
       this._hass,
+      this._config,
       this._temperature,
       this._humidity,
       this._roomEntity.state,

@@ -43,6 +43,7 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 - Border colors indicate climate status:
   - Red: Temperature above threshold (default: 80°F)
   - Blue: Humidity above threshold (default: 60%)
+- Can all be disabled with some flags
 
 ![climate](assets/climate.png)
 
@@ -150,12 +151,12 @@ Most of these are optional if you setup the entities a certain way using labels 
 
 ### Feature Options
 
-| Name                     | Type | Description                            |
-| ------------------------ | ---- | -------------------------------------- |
-| hide_climate_label       | flag | Show the climate label or not          |
-| hide_area_stats          | flag | Show the area statistics label or not  |
-| exclude_default_entities | flag | Exclude the default light/fan entities |
-| skip_climate_styles      | flag | Disable climate-based color coding     |
+| Name                     | Type | Description                                  |
+| ------------------------ | ---- | -------------------------------------------- |
+| hide_climate_label       | flag | Show the climate label or not                |
+| hide_area_stats          | flag | Show the area statistics label or not        |
+| exclude_default_entities | flag | Exclude the default light/fan entities       |
+| skip_climate_styles      | flag | Disable climate-based color coding & borders |
 
 ### Default Entities
 

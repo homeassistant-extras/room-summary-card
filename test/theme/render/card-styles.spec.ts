@@ -3,11 +3,12 @@ import { styleMap } from 'lit-html/directives/style-map.js';
 import * as sinon from 'sinon';
 
 // Import the modules we need to stub
+import * as featureModule from '@config/feature';
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
 import * as customThemeModule from '@theme/custom-theme';
 import { renderCardStyles } from '@theme/render/card-styles';
-import type { EntityState } from '@type/config';
+import type { Config, EntityState } from '@type/config';
 
 // Helper to create entity states for testing
 const createStateEntity = (
@@ -23,16 +24,19 @@ const createStateEntity = (
       friendly_name: entity_id.replace(/_/g, ' '),
       ...attributes,
     },
-  } as any as EntityState;
+    domain,
+  } as EntityState;
 };
 
 export default () => {
   describe('card-styles.ts', () => {
     let mockHass: any;
+    let mockConfig: Config;
     let sandbox: sinon.SinonSandbox;
     let stateActiveStub: sinon.SinonStub;
     let stateColorCssStub: sinon.SinonStub;
     let getThemeColorOverrideStub: sinon.SinonStub;
+    let hasFeatureStub: sinon.SinonStub;
 
     beforeEach(() => {
       // Create a sinon sandbox for managing stubs
@@ -45,6 +49,7 @@ export default () => {
         customThemeModule,
         'getThemeColorOverride',
       );
+      hasFeatureStub = sandbox.stub(featureModule, 'hasFeature');
 
       // Default behavior for stubs
       stateActiveStub.callsFake((stateObj: any) => {
@@ -63,6 +68,9 @@ export default () => {
 
       getThemeColorOverrideStub.returns('var(--theme-override)');
 
+      // Default to not having skip_climate_styles feature
+      hasFeatureStub.returns(false);
+
       // Set up mock Home Assistant instance
       mockHass = {
         themes: {
@@ -70,6 +78,11 @@ export default () => {
           themes: {},
         },
         selectedTheme: null,
+      };
+
+      // Set up mock config
+      mockConfig = {
+        area: 'test_area',
       };
     });
 
@@ -80,7 +93,12 @@ export default () => {
 
     describe('renderCardStyles', () => {
       it('should render basic card styles with no border when sensor states are undefined', () => {
-        const styles = renderCardStyles(mockHass, undefined, undefined);
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          undefined,
+          undefined,
+        );
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -106,7 +124,12 @@ export default () => {
           humidity_threshold: 60,
         });
 
-        const styles = renderCardStyles(mockHass, tempState, humidState);
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          tempState,
+          humidState,
+        );
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -132,7 +155,12 @@ export default () => {
           humidity_threshold: 60,
         });
 
-        const styles = renderCardStyles(mockHass, tempState, humidState);
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          tempState,
+          humidState,
+        );
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -158,7 +186,12 @@ export default () => {
           humidity_threshold: 60,
         });
 
-        const styles = renderCardStyles(mockHass, tempState, humidState);
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          tempState,
+          humidState,
+        );
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -180,7 +213,12 @@ export default () => {
         // Create humidity state with value above default threshold (60) but no threshold in attributes
         const humidState = createStateEntity('sensor', 'humidity', '65', {});
 
-        const styles = renderCardStyles(mockHass, tempState, humidState);
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          tempState,
+          humidState,
+        );
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -216,7 +254,13 @@ export default () => {
           humidity_threshold: 60,
         });
 
-        const styles = renderCardStyles(mockHass, tempState, humidState, state);
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          tempState,
+          humidState,
+          state,
+        );
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -252,7 +296,13 @@ export default () => {
           humidity_threshold: 60,
         });
 
-        const styles = renderCardStyles(mockHass, tempState, humidState, state);
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          tempState,
+          humidState,
+          state,
+        );
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -265,6 +315,46 @@ export default () => {
             borderBottom: undefined,
           }),
         );
+      });
+
+      it('should not render border styles when skip_climate_styles feature is enabled', () => {
+        // Set hasFeature to return true for skip_climate_styles
+        hasFeatureStub
+          .withArgs(mockConfig, 'skip_climate_styles')
+          .returns(true);
+
+        // Create temperature state with value above threshold
+        const tempState = createStateEntity('sensor', 'temperature', '85', {
+          temperature_threshold: 80,
+        });
+
+        // Create humidity state with value above threshold
+        const humidState = createStateEntity('sensor', 'humidity', '65', {
+          humidity_threshold: 60,
+        });
+
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          tempState,
+          humidState,
+        );
+
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+            '--state-color-theme-override': 'var(--theme-override)',
+            borderLeft: undefined,
+            borderTop: undefined,
+            borderRight: undefined,
+            borderBottom: undefined,
+          }),
+        );
+
+        // Verify hasFeature was called with the correct parameters
+        expect(hasFeatureStub.calledWith(mockConfig, 'skip_climate_styles')).to
+          .be.true;
       });
     });
   });
