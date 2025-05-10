@@ -7,7 +7,6 @@
  */
 
 import { hasFeature } from '@/config/feature';
-import { getArea } from '@delegates/retrievers/area';
 import { getState } from '@delegates/retrievers/state';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
@@ -119,58 +118,4 @@ export const getIconEntities = (
     .filter((entity): entity is EntityInformation => entity !== undefined);
 
   return states;
-};
-
-/**
- * Gets the room entity information
- *
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {Config} config - The configuration object
- * @returns {EntityInformation} The room entity information
- */
-export const getRoomEntity = (
-  hass: HomeAssistant,
-  config: Config,
-): EntityInformation => {
-  const roomEntityId = `light.${config.area}_light`;
-
-  // Handle different entity configuration formats
-  if (config.entity) {
-    if (typeof config.entity === 'string') {
-      // String format
-      return {
-        config: {
-          entity_id: config.entity,
-          hold_action: { action: 'more-info' },
-          double_tap_action: { action: 'none' },
-        },
-        state: getState(hass, config.entity),
-      };
-    } else {
-      // Object format
-      return {
-        config: {
-          hold_action: { action: 'more-info' },
-          double_tap_action: { action: 'none' },
-          ...config.entity,
-        },
-        state: getState(hass, config.entity.entity_id),
-      };
-    }
-  }
-
-  // Default room light configuration
-  return {
-    config: {
-      entity_id: roomEntityId,
-      icon: getArea(hass, config.area)?.icon,
-      tap_action: {
-        action: 'navigate',
-        navigation_path: config.navigate ?? config.area.replace('_', '-'),
-      },
-      hold_action: { action: 'more-info' },
-      double_tap_action: { action: 'none' },
-    } as EntityConfig,
-    state: getState(hass, roomEntityId, true),
-  };
 };

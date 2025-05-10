@@ -18,6 +18,7 @@ import {
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
 import { getArea } from '@delegates/retrievers/area';
 import { getState } from '@delegates/retrievers/state';
+import { getRoomEntity } from '@delegates/utils/room-entity';
 import type { HomeAssistant } from '@hass/types';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
@@ -31,7 +32,6 @@ import type {
 import {
   getIconEntities,
   getProblemEntities,
-  getRoomEntity,
 } from '../delegates/utils/card-entities';
 import { renderAreaStatistics, renderLabel } from '../html/text';
 const equal = require('fast-deep-equal');
