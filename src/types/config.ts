@@ -85,3 +85,8 @@ export interface EntityState {
   /** Returns the domain portion of the entity_id */
   domain: string;
 }
+
+export interface RoomInformation {
+  /** The area name */
+  area_name: string;
+}

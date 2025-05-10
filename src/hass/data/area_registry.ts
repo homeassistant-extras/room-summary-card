@@ -7,4 +7,5 @@ import type { RegistryEntry } from './registry';
 export interface AreaRegistryEntry extends RegistryEntry {
   area_id: string;
   icon: string | null;
+  name: string;
 }

@@ -6,17 +6,14 @@ import { styles } from '@theme/styles';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { version } from '../../package.json';
 import { createState as s } from '../test-helpers';
 
 describe('card.ts', () => {
   let card: RoomSummaryCard;
   let mockHass: HomeAssistant;
-  let consoleInfoStub: sinon.SinonStub;
   let actionHandlerStub: sinon.SinonStub;
 
   beforeEach(() => {
-    consoleInfoStub = stub(console, 'info');
     actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
       bind: () => {}, // Mock the bind method
       handleAction: () => {}, // Add any other methods that might be called
@@ -77,23 +74,7 @@ describe('card.ts', () => {
   });
 
   afterEach(() => {
-    consoleInfoStub.restore();
     actionHandlerStub.restore();
-  });
-
-  describe('constructor', () => {
-    it('should log the version with proper formatting', () => {
-      // Assert that console.info was called once
-      expect(consoleInfoStub.calledOnce).to.be.true;
-
-      // Assert that it was called with the expected arguments
-      expect(
-        consoleInfoStub.calledWithExactly(
-          `%c🐱 Poat's Tools: room-summary-card - ${version}`,
-          'color: #CFC493;',
-        ),
-      ).to.be.true;
-    });
   });
 
   describe('setConfig', () => {
@@ -168,8 +149,8 @@ describe('card.ts', () => {
       expect(label).to.exist;
     });
 
-    it('should render nothing if no state', async () => {
-      (card as any)._states = undefined;
+    it('should render nothing if no room info', async () => {
+      (card as any)._roomInformation = undefined;
       const el = card.render();
       expect(el).to.equal(nothing);
     });
@@ -207,13 +188,18 @@ describe('card.ts', () => {
       expect((problemIcon as any).icon).to.equal('mdi:numeric-2');
     });
 
-    it('should handle area names with multiple underscores', async () => {
-      card.setConfig({
-        area: 'second_floor_living_room',
-      });
+    it('should use the area name', async () => {
+      mockHass.areas.living_room!.name = 'I am a room';
+      card.hass = mockHass;
       const el = await fixture(card.render() as TemplateResult);
       const nameDiv = el.querySelector('.name');
-      expect(nameDiv!.textContent!.trim()).to.equal('Second Floor Living Room');
+      expect(nameDiv!.textContent!.trim()).to.equal('I am a room');
+    });
+
+    it('should use the config area id as fallback', async () => {
+      const el = await fixture(card.render() as TemplateResult);
+      const nameDiv = el.querySelector('.name');
+      expect(nameDiv!.textContent!.trim()).to.equal('living_room');
     });
 
     it('should handle empty device and entity lists', async () => {

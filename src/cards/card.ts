@@ -16,13 +16,18 @@ import {
   handleClickAction,
 } from '@/delegates/action-handler-delegate';
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
+import { getArea } from '@delegates/retrievers/area';
 import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { styles } from '@theme/styles';
-import type { Config, EntityInformation, EntityState } from '@type/config';
-import { version } from '../../package.json';
+import type {
+  Config,
+  EntityInformation,
+  EntityState,
+  RoomInformation,
+} from '@type/config';
 import {
   getIconEntities,
   getProblemEntities,
@@ -37,6 +42,12 @@ export class RoomSummaryCard extends LitElement {
    */
   @state()
   private _config!: Config;
+
+  /**
+   * The room state
+   */
+  @state()
+  private _roomInformation!: RoomInformation;
 
   /**
    * Array of entity states to display in the card
@@ -80,82 +91,6 @@ export class RoomSummaryCard extends LitElement {
    */
   private _hass!: HomeAssistant;
 
-  constructor() {
-    super();
-    console.info(
-      `%c🐱 Poat's Tools: room-summary-card - ${version}`,
-      'color: #CFC493;',
-    );
-  }
-
-  /**
-   * renders the lit element card
-   * @returns {TemplateResult} The rendered HTML template
-   */
-  override render(): TemplateResult | typeof nothing {
-    if (!this._states) {
-      return nothing;
-    }
-
-    const area = this._formatAreaName();
-    const handler = actionHandler(this._roomEntity);
-    const label = renderLabel(this._hass, this._config);
-    const action = handleClickAction(this, this._roomEntity);
-    const stats = renderAreaStatistics(this._hass, this._config);
-    const { textStyle } = renderEntityIconStyles(
-      this._hass,
-      this._roomEntity.state,
-    );
-    const roomEntity = renderStateIcon(this, this._hass, this._roomEntity, [
-      'room',
-    ]);
-    const stateIcons = this._states.map((s, i) =>
-      renderStateIcon(this, this._hass, s, ['entity', `entity-${i + 1}`]),
-    );
-    const cardStyle = renderCardStyles(
-      this._hass,
-      this._temperature,
-      this._humidity,
-      this._roomEntity.state,
-    );
-    const problems = renderProblemIndicator(
-      this._problemEntities,
-      this._problemExists,
-    );
-
-    return html`
-      <div class="card" style="${cardStyle}">
-        <div class="grid">
-          <!-- Room Name -->
-          <div
-            class="name text"
-            style=${textStyle}
-            @action=${action}
-            .actionHandler=${handler}
-          >
-            ${area}
-          </div>
-
-          <!-- Climate Information -->
-          <div
-            class="label text"
-            style=${textStyle}
-            @action=${action}
-            .actionHandler=${handler}
-          >
-            ${label} ${stats}
-          </div>
-
-          <!-- State Icons -->
-          ${roomEntity} ${stateIcons}
-
-          <!-- Problem Indicator -->
-          ${problems}
-        </div>
-      </div>
-    `;
-  }
-
   /**
    * Returns the component's styles
    */
@@ -186,6 +121,10 @@ export class RoomSummaryCard extends LitElement {
     this._hass = hass;
     this.isDarkMode = hass.themes.darkMode;
 
+    const roomInfo: RoomInformation = {
+      area_name:
+        getArea(this._hass, this._config.area)?.name ?? this._config.area,
+    };
     const states = getIconEntities(hass, this._config);
     const roomEntity = getRoomEntity(hass, this._config);
     const { problemEntities, problemExists } = getProblemEntities(
@@ -198,6 +137,9 @@ export class RoomSummaryCard extends LitElement {
     this._problemExists = problemExists;
 
     // Update states only if they've changed
+    if (!equal(roomInfo, this._roomInformation)) {
+      this._roomInformation = roomInfo;
+    }
     if (!equal(roomEntity, this._roomEntity)) {
       this._roomEntity = roomEntity;
     }
@@ -243,13 +185,69 @@ export class RoomSummaryCard extends LitElement {
   }
 
   /**
-   * Formats the area name with proper capitalization
-   * @returns {string} Formatted area name
+   * renders the lit element card
+   * @returns {TemplateResult} The rendered HTML template
    */
-  private _formatAreaName(): string {
-    return this._config.area
-      .split('_')
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ');
+  override render(): TemplateResult | typeof nothing {
+    if (!this._roomInformation) {
+      return nothing;
+    }
+
+    const handler = actionHandler(this._roomEntity);
+    const label = renderLabel(this._hass, this._config);
+    const action = handleClickAction(this, this._roomEntity);
+    const stats = renderAreaStatistics(this._hass, this._config);
+    const { textStyle } = renderEntityIconStyles(
+      this._hass,
+      this._roomEntity.state,
+    );
+    const roomEntity = renderStateIcon(this, this._hass, this._roomEntity, [
+      'room',
+    ]);
+    const stateIcons = this._states.map((s, i) =>
+      renderStateIcon(this, this._hass, s, ['entity', `entity-${i + 1}`]),
+    );
+    const cardStyle = renderCardStyles(
+      this._hass,
+      this._temperature,
+      this._humidity,
+      this._roomEntity.state,
+    );
+    const problems = renderProblemIndicator(
+      this._problemEntities,
+      this._problemExists,
+    );
+
+    return html`
+      <div class="card" style="${cardStyle}">
+        <div class="grid">
+          <!-- Room Name -->
+          <div
+            class="name text"
+            style=${textStyle}
+            @action=${action}
+            .actionHandler=${handler}
+          >
+            ${this._roomInformation.area_name}
+          </div>
+
+          <!-- Climate Information -->
+          <div
+            class="label text"
+            style=${textStyle}
+            @action=${action}
+            .actionHandler=${handler}
+          >
+            ${label} ${stats}
+          </div>
+
+          <!-- State Icons -->
+          ${roomEntity} ${stateIcons}
+
+          <!-- Problem Indicator -->
+          ${problems}
+        </div>
+      </div>
+    `;
   }
 }

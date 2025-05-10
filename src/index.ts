@@ -8,6 +8,7 @@
 
 import { RoomSummaryCard } from '@cards/card';
 import { RoomSummaryCardEditor } from '@cards/editor';
+import { version } from '../package.json';
 
 // Register the custom element with the browser
 customElements.define('room-summary-card', RoomSummaryCard);
@@ -34,3 +35,8 @@ window.customCards.push({
   // URL for the card's documentation
   documentationURL: 'https://github.com/homeassistant-extras/room-summary-card',
 });
+
+console.info(
+  `%c🐱 Poat's Tools: room-summary-card - ${version}`,
+  'color: #CFC493;',
+);
