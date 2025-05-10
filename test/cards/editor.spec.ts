@@ -93,64 +93,91 @@ export default () => {
             selector: { area: {} },
           },
           {
-            name: 'entity',
-            label: 'Main room entity',
-            required: false,
-            selector: { entity: { multiple: false } },
-          },
-          {
             name: 'entities',
-            label: 'Area side entities',
-            required: false,
-            selector: { entity: { multiple: true } },
-          },
-          {
-            name: 'temperature_sensor',
-            label: 'Temperature sensor',
-            required: false,
-            selector: {
-              entity: { multiple: false, filter: { domain: 'sensor' } },
-            },
-          },
-          {
-            name: 'humidity_sensor',
-            label: 'Humidity sensor',
-            required: false,
-            selector: {
-              entity: { multiple: false, filter: { domain: 'sensor' } },
-            },
-          },
-          {
-            name: 'navigate',
-            label: 'Navigate path when card tapped',
-            required: false,
-            selector: { text: { type: 'url' } },
+            label: 'Entities',
+            type: 'expandable' as const,
+            flatten: true,
+            icon: 'mdi:devices',
+            schema: [
+              {
+                name: 'entity',
+                label: 'Main room entity',
+                required: false,
+                selector: { entity: { multiple: false } },
+              },
+              {
+                name: 'entities',
+                label: 'Area side entities',
+                required: false,
+                selector: { entity: { multiple: true } },
+              },
+              {
+                name: 'temperature_sensor',
+                label: 'Temperature sensor',
+                required: false,
+                selector: {
+                  entity: { multiple: false, filter: { domain: 'sensor' } },
+                },
+              },
+              {
+                name: 'humidity_sensor',
+                label: 'Humidity sensor',
+                required: false,
+                selector: {
+                  entity: { multiple: false, filter: { domain: 'sensor' } },
+                },
+              },
+            ],
           },
           {
             name: 'features',
             label: 'Features',
-            required: false,
-            selector: {
-              select: {
-                multiple: true,
-                mode: 'list',
-                options: [
-                  {
-                    label: 'Hide Climate Label',
-                    value: 'hide_climate_label',
+            type: 'expandable' as const,
+            flatten: true,
+            icon: 'mdi:list-box',
+            schema: [
+              {
+                name: 'features',
+                label: 'Features',
+                required: false,
+                selector: {
+                  select: {
+                    multiple: true,
+                    mode: 'list' as const,
+                    options: [
+                      {
+                        label: 'Hide Climate Label',
+                        value: 'hide_climate_label',
+                      },
+                      { label: 'Hide Area Stats', value: 'hide_area_stats' },
+                      {
+                        label: 'Exclude Default Entities',
+                        value: 'exclude_default_entities',
+                      },
+                      {
+                        label: 'Skip Climate Styles',
+                        value: 'skip_climate_styles',
+                      },
+                    ],
                   },
-                  { label: 'Hide Area Stats', value: 'hide_area_stats' },
-                  {
-                    label: 'Exclude Default Entities',
-                    value: 'exclude_default_entities',
-                  },
-                  {
-                    label: 'Skip Climate Styles',
-                    value: 'skip_climate_styles',
-                  },
-                ],
+                },
               },
-            },
+            ],
+          },
+          {
+            name: 'interactions',
+            label: 'Interactions',
+            type: 'expandable' as const,
+            flatten: true,
+            icon: 'mdi:gesture-tap',
+            schema: [
+              {
+                name: 'navigate',
+                label: 'Navigate path when card tapped',
+                required: false,
+                selector: { text: { type: 'url' as const } },
+              },
+            ],
           },
         ]);
       });
