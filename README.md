@@ -411,7 +411,7 @@ The `on_color` and `off_color` attributes support these color stylings from the 
 - [x] **`Flags`**: <strike>ability to disable features.</strike>
 - [ ] **`Test on iOS theme`**: another theme to consider
 - [ ] **`Sizing`**: ability to fit different size squares.
-- [ ] **`CI/CD`**: issue with dependabot as first commit and release logic...
+- [ ] **`CI/CD`**: issue with dependabot as first commit and release logic....
 
 ## Contributing
 
