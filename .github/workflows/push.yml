@@ -16,13 +16,16 @@ jobs:
       should_run: ${{ steps.check.outputs.should_run }}
     steps:
       - id: check
-        env:
-          AUTHOR_EMAIL: ${{ github.event.commits[0].author.email }}
         run: |
-          if [[ ! "$AUTHOR_EMAIL" == *"@users.noreply.github.com"* ]]; then
+          # Allow dependabot emails specifically
+          if [[ "${{ github.event.commits[0].author.email }}" == *"dependabot[bot]@users.noreply.github.com"* ]]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
-          else
+          # Skip other noreply emails
+          elif [[ "${{ github.event.commits[0].author.email }}" == *"@users.noreply.github.com"* ]]; then
             echo "should_run=false" >> $GITHUB_OUTPUT
+          # Allow all other emails
+          else
+            echo "should_run=true" >> $GITHUB_OUTPUT
           fi
 
   bump-version:

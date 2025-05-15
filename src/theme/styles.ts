@@ -48,6 +48,7 @@ export const styles = css`
     line-height: normal;
     overflow: hidden;
     position: relative;
+    box-shadow: var(--ha-card-box-shadow, none);
     z-index: 1;
   }
 
@@ -60,6 +61,10 @@ export const styles = css`
     bottom: 0;
     background: var(--background-color-card);
     opacity: var(--background-opacity-card);
+    border-color: var(--ha-card-border-color, var(--divider-color, #e0e0e0));
+    border-width: var(--ha-card-border-width, 1px);
+    border-style: solid;
+    border-radius: 20px;
     z-index: -1;
   }
 
