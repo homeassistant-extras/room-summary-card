@@ -112,20 +112,10 @@ export default () => {
                 selector: { entity: { multiple: true } },
               },
               {
-                name: 'temperature_sensor',
-                label: 'Temperature sensor',
+                name: 'sensors',
+                label: 'Sensor states',
                 required: false,
-                selector: {
-                  entity: { multiple: false, filter: { domain: 'sensor' } },
-                },
-              },
-              {
-                name: 'humidity_sensor',
-                label: 'Humidity sensor',
-                required: false,
-                selector: {
-                  entity: { multiple: false, filter: { domain: 'sensor' } },
-                },
+                selector: { entity: { multiple: true } },
               },
             ],
           },

@@ -1,14 +1,18 @@
 import type { HomeAssistant } from '@hass/types';
+import * as stateDisplayModule from '@html/state-display';
 import { renderAreaStatistics, renderLabel } from '@html/text';
-import { createState as s } from '@test/test-helpers';
+import { fixture } from '@open-wc/testing-helpers';
+import { createStateEntity as e } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import { expect } from 'chai';
-import { html, nothing } from 'lit';
+import { html, nothing, type TemplateResult } from 'lit';
+import { stub, type SinonStub } from 'sinon';
 
 export default () => {
   describe('text.ts', () => {
     let mockHass: HomeAssistant;
     let mockConfig: Config;
+    let stateDisplayStub: SinonStub;
 
     beforeEach(() => {
       mockHass = {
@@ -45,118 +49,79 @@ export default () => {
           kitchen: { area_id: 'Kitchen', icon: '' },
           bedroom: { area_id: 'Bedroom', icon: '' },
         },
-        states: {
-          'sensor.temp': s('sensor', 'temp', '', {
-            unit_of_measurement: '°F',
-          }),
-          'sensor.humidity': s('sensor', 'humidity', '', {
-            unit_of_measurement: '%',
-          }),
-        },
+        states: {},
       } as any as HomeAssistant;
 
       mockConfig = {
         area: 'living_room',
         entities: [],
-        temperature_sensor: 'sensor.temp',
-        humidity_sensor: 'sensor.humidity',
       };
+
+      // Stub the stateDisplay function
+      stateDisplayStub = stub(stateDisplayModule, 'stateDisplay');
+    });
+
+    afterEach(() => {
+      stateDisplayStub.restore();
     });
 
     describe('renderLabel', () => {
-      describe('empty labels', () => {
-        beforeEach(() => {
-          mockConfig.features = ['hide_climate_label'];
-        });
-
-        it('should return empty template when mockhass is undefined', () => {
-          const result = renderLabel(
-            undefined as unknown as HomeAssistant,
-            mockConfig,
-          );
-          expect(result).to.equal(nothing);
-        });
-
-        it('should return empty template when config is undefined', () => {
-          const result = renderLabel(mockHass, undefined as unknown as Config);
-          expect(result).to.equal(nothing);
-        });
-
-        it('should return empty template when label option is false', () => {
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.equal(nothing);
-        });
-
-        it('should handle undefined sensors', () => {
-          mockConfig.temperature_sensor = 'sensor.nonexistent';
-          mockConfig.humidity_sensor = 'sensor.also_nonexistent';
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.equal(nothing);
-        });
-
-        it('should handle empty string states', () => {
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.equal(nothing);
-        });
-
-        it('should return nothing when hide_climate_label feature is enabled', () => {
-          mockHass.states['sensor.temp']!.state = '74.8';
-          mockHass.states['sensor.humidity']!.state = '53';
-          mockConfig.features = ['hide_climate_label'];
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.equal(nothing);
-        });
+      it('should return nothing when hass is undefined', () => {
+        const result = renderLabel(
+          undefined as unknown as HomeAssistant,
+          mockConfig,
+          [],
+        );
+        expect(result).to.equal(nothing);
       });
 
-      describe('valid labels', () => {
-        it('should render temperature only when humidity is undefined', () => {
-          mockHass.states['sensor.temp']!.state = '74.8';
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.deep.equal(html`<p>${'74.8°F'}</p>`);
-        });
+      it('should return nothing when hide_climate_label feature is enabled', () => {
+        mockConfig.features = ['hide_climate_label'];
+        const sensors = [
+          e('sensor', 'temperature', '72', { unit_of_measurement: '°F' }),
+        ];
+        const result = renderLabel(mockHass, mockConfig, sensors);
+        expect(result).to.equal(nothing);
+      });
 
-        it('should render humidity only when temperature is undefined', () => {
-          mockHass.states['sensor.humidity']!.state = '53';
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.deep.equal(html`<p>${'53%'}</p>`);
+      it('should iterate over sensors and return stateDisplay results', async () => {
+        // Create test sensors
+        const sensor1 = e('sensor', 'temperature', '72', {
+          unit_of_measurement: '°F',
         });
+        const sensor2 = e('sensor', 'humidity', '45', {
+          unit_of_measurement: '%',
+        });
+        const sensors = [sensor1, sensor2];
 
-        it('should render both values with separator when both are present', () => {
-          mockHass.states['sensor.temp']!.state = '74.8';
-          mockHass.states['sensor.humidity']!.state = '53';
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.deep.equal(html`<p>${'74.8°F - 53%'}</p>`);
-        });
+        // Configure stubs to return mock HTML templates
+        stateDisplayStub
+          .withArgs(mockHass, sensor1)
+          .returns(html`<div>72°F</div>`);
+        stateDisplayStub
+          .withArgs(mockHass, sensor2)
+          .returns(html`<div>45%</div>`);
 
-        it('should handle missing unit_of_measurement attributes', () => {
-          mockHass.states['sensor.temp'] = s('sensor', 'temp', '74.8');
-          mockHass.states['sensor.humidity'] = s('sensor', 'humidity', '53');
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.deep.equal(html`<p>${'74.8 - 53'}</p>`);
-        });
+        // Call the function
+        const result = await fixture(
+          renderLabel(mockHass, mockConfig, sensors) as TemplateResult,
+        );
 
-        it('should handle non-numeric states', () => {
-          mockHass.states['sensor.temp']!.state = 'unknown';
-          mockHass.states['sensor.humidity']!.state = 'unavailable';
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.deep.equal(
-            html`<p>${'unknown°F - unavailable%'}</p>`,
-          );
-        });
+        // Verify the result
+        expect(result.innerHTML).to.contain('<div>72°F</div>');
+        expect(result.innerHTML).to.contain('<div>45%</div>');
 
-        it('should handle one sensor being undefined and one valid', () => {
-          mockConfig.temperature_sensor = 'sensor.nonexistent';
-          mockHass.states['sensor.humidity']!.state = '53';
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.deep.equal(html`<p>${'53%'}</p>`);
-        });
+        // Verify stateDisplay was called for each sensor
+        expect(stateDisplayStub.calledTwice).to.be.true;
+        expect(stateDisplayStub.firstCall.args[1]).to.equal(sensor1);
+        expect(stateDisplayStub.secondCall.args[1]).to.equal(sensor2);
+      });
 
-        it('should handle zero values correctly', () => {
-          mockHass.states['sensor.temp']!.state = '0';
-          mockHass.states['sensor.humidity']!.state = '0';
-          const result = renderLabel(mockHass, mockConfig);
-          expect(result).to.deep.equal(html`<p>${'0°F - 0%'}</p>`);
-        });
+      it('should handle empty sensors array', () => {
+        const result = renderLabel(mockHass, mockConfig, []);
+        expect(result).to.deep.equal(
+          html`<div class="sensors-container">${[]}</div>`,
+        );
       });
     });
 

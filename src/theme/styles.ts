@@ -215,4 +215,12 @@ export const styles = css`
     opacity: var(--background-opacity-icon);
     z-index: -1;
   }
+
+  /* Sensors */
+  .sensors-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+  }
 `;

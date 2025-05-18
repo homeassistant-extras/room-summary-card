@@ -3,6 +3,7 @@ import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { styles } from '@theme/styles';
+import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -78,25 +79,12 @@ describe('card.ts', () => {
   });
 
   describe('setConfig', () => {
-    it('should set default sensors when not provided', () => {
-      expect(card['_config'].humidity_sensor).to.equal(
-        'sensor.living_room_climate_humidity',
-      );
-      expect(card['_config'].temperature_sensor).to.equal(
-        'sensor.living_room_climate_air_temperature',
-      );
-    });
-
-    it('should preserve custom sensor config', () => {
-      card.setConfig({
+    it('should set the config', () => {
+      const config = {
         area: 'living_room',
-        humidity_sensor: 'sensor.custom_humidity',
-        temperature_sensor: 'sensor.custom_temp',
-      });
-      expect(card['_config'].humidity_sensor).to.equal(
-        'sensor.custom_humidity',
-      );
-      expect(card['_config'].temperature_sensor).to.equal('sensor.custom_temp');
+      };
+      card.setConfig(config);
+      expect(card['_config']).to.deep.equal(config);
     });
   });
 
@@ -127,6 +115,118 @@ describe('card.ts', () => {
 
       expect(card['_problemEntities']).to.have.length.above(0);
     });
+
+    it('should correctly handle legacy sensors and new sensors array', async () => {
+      // Setup mock states
+      mockHass.states['sensor.living_room_climate_air_temperature'] = s(
+        'sensor',
+        'living_room_climate_air_temperature',
+        '72',
+      );
+      mockHass.states['sensor.living_room_climate_humidity'] = s(
+        'sensor',
+        'living_room_climate_humidity',
+        '50',
+      );
+      mockHass.states['sensor.custom_sensor'] = s(
+        'sensor',
+        'custom_sensor',
+        '123',
+      );
+      mockHass.states['sensor.additional_sensor'] = s(
+        'sensor',
+        'additional_sensor',
+        '456',
+      );
+
+      const card = new RoomSummaryCard();
+
+      // Test with only area (should use default sensors)
+      card.setConfig({
+        area: 'living_room',
+      });
+      card.hass = mockHass;
+
+      // Should have found both default sensors in the _sensors array
+      expect(card['_sensors']).to.exist;
+      expect(card['_sensors']).to.have.lengthOf(2);
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.living_room_climate_air_temperature',
+      );
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.living_room_climate_humidity',
+      );
+
+      // Test with legacy temperature_sensor and humidity_sensor
+      card.setConfig({
+        area: 'living_room',
+        temperature_sensor: 'sensor.custom_sensor',
+        humidity_sensor: 'sensor.additional_sensor',
+      } as any as Config);
+      card.hass = mockHass;
+
+      // Should use the specified legacy sensors instead of defaults
+      expect(card['_sensors']).to.exist;
+      expect(card['_sensors']).to.have.lengthOf(2);
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.custom_sensor',
+      );
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.additional_sensor',
+      );
+      // Should NOT include the default sensors when overridden
+      expect(card['_sensors'].map((s) => s.entity_id)).to.not.include(
+        'sensor.living_room_climate_air_temperature',
+      );
+      expect(card['_sensors'].map((s) => s.entity_id)).to.not.include(
+        'sensor.living_room_climate_humidity',
+      );
+
+      // Test with new sensors array plus legacy temperature/humidity sensor
+      card.setConfig({
+        area: 'living_room',
+        temperature_sensor: 'sensor.custom_sensor', // Legacy property
+        humidity_sensor: 'sensor.additional_sensor', // Legacy property
+        sensors: ['sensor.living_room_climate_air_temperature'], // New property
+      } as any as Config);
+      card.hass = mockHass;
+
+      // Should include both legacy sensors AND the sensors array value
+      expect(card['_sensors']).to.exist;
+      expect(card['_sensors']).to.have.lengthOf(3);
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.custom_sensor', // Legacy temperature sensor
+      );
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.additional_sensor', // Legacy humidity sensor
+      );
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.living_room_climate_air_temperature', // From sensors array
+      );
+
+      // Test with just new sensors array
+      card.setConfig({
+        area: 'living_room',
+        sensors: ['sensor.custom_sensor', 'sensor.additional_sensor'],
+      });
+      card.hass = mockHass;
+
+      // Should include default sensors (from area) AND all values in sensors array
+      expect(card['_sensors']).to.exist;
+      expect(card['_sensors']).to.have.lengthOf(4);
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.living_room_climate_air_temperature', // Default from area
+      );
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.living_room_climate_humidity', // Default from area
+      );
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.custom_sensor', // From sensors array
+      );
+      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
+        'sensor.additional_sensor', // From sensors array
+      );
+    });
   });
 
   describe('styles', () => {
@@ -141,12 +241,6 @@ describe('card.ts', () => {
       card.setConfig({
         area: 'living_room',
       });
-    });
-
-    it('should render climate label', async () => {
-      const el = await fixture(card.render() as TemplateResult);
-      const label = el.querySelector('.label p');
-      expect(label).to.exist;
     });
 
     it('should render nothing if no room info', async () => {

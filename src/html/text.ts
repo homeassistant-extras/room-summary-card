@@ -1,10 +1,10 @@
 import { hasFeature } from '@/config/feature';
 import { getDevice } from '@delegates/retrievers/device';
 import { getEntity } from '@delegates/retrievers/entity';
-import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
-import type { Config } from '@type/config';
+import type { Config, EntityState } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
+import { stateDisplay } from './state-display';
 
 /**
  * Gets the climate label combining temperature and humidity when available
@@ -16,28 +16,12 @@ import { html, nothing, type TemplateResult } from 'lit';
 export const renderLabel = (
   hass: HomeAssistant,
   config: Config,
+  sensors: EntityState[],
 ): TemplateResult | typeof nothing => {
   if (!hass || hasFeature(config, 'hide_climate_label')) return nothing;
 
-  const temp = getState(hass, config.temperature_sensor);
-  const humidity = getState(hass, config.humidity_sensor);
-
-  if (!temp && !humidity) return nothing;
-
-  const parts: string[] = [];
-  if (temp?.state) {
-    parts.push(`${temp.state}${temp.attributes?.unit_of_measurement ?? ''}`);
-  }
-
-  if (humidity?.state) {
-    parts.push(
-      `${humidity.state}${humidity.attributes?.unit_of_measurement ?? ''}`,
-    );
-  }
-
-  if (!parts.length) return nothing;
-
-  return html`<p>${parts.join(' - ')}</p>`;
+  const r = sensors.map((value) => stateDisplay(hass, value));
+  return html`<div class="sensors-container">${r}</div>`;
 };
 
 /**

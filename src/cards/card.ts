@@ -71,11 +71,11 @@ export class RoomSummaryCard extends LitElement {
   @state()
   private _problemExists: boolean = false;
 
+  /**
+   * The sensors to show state for
+   */
   @state()
-  private _temperature!: EntityState | undefined;
-
-  @state()
-  private _humidity!: EntityState | undefined;
+  private _sensors!: EntityState[];
 
   /**
    * Indicates if the card is in dark mode
@@ -101,13 +101,8 @@ export class RoomSummaryCard extends LitElement {
    * @param {Config} config - The card configuration
    */
   setConfig(config: Config) {
-    const cardConfig = {
-      humidity_sensor: `sensor.${config.area}_climate_humidity`,
-      temperature_sensor: `sensor.${config.area}_climate_air_temperature`,
-      ...config,
-    };
-    if (!equal(cardConfig, this._config)) {
-      this._config = cardConfig;
+    if (!equal(config, this._config)) {
+      this._config = config;
     }
   }
 
@@ -129,8 +124,23 @@ export class RoomSummaryCard extends LitElement {
       hass,
       this._config.area,
     );
-    const tempState = getState(hass, this._config.temperature_sensor);
-    const humidState = getState(hass, this._config.humidity_sensor);
+
+    // Get legacy temperature and humidity sensors for backward compatibility
+    // These are used if the user has not specified them in the config
+    // and are not part of the sensors array
+    // This is for backward compatibility with older configurations
+    // that used these default sensors
+    const temp =
+      (this._config as any).temperature_sensor ??
+      `sensor.${this._config.area}_climate_air_temperature`;
+    const humidity =
+      (this._config as any).humidity_sensor ??
+      `sensor.${this._config.area}_climate_humidity`;
+
+    // Get additional sensors from config
+    const sensors = [temp, humidity, ...(this._config.sensors ?? [])]
+      .map((sensorId) => getState(hass, sensorId))
+      .filter((sensor) => sensor !== undefined);
 
     this._problemExists = problemExists;
 
@@ -147,11 +157,8 @@ export class RoomSummaryCard extends LitElement {
     if (!equal(problemEntities, this._problemEntities)) {
       this._problemEntities = problemEntities;
     }
-    if (!equal(tempState, this._temperature)) {
-      this._temperature = tempState;
-    }
-    if (!equal(humidState, this._humidity)) {
-      this._humidity = humidState;
+    if (!equal(sensors, this._sensors)) {
+      this._sensors = sensors;
     }
   }
 
@@ -192,7 +199,7 @@ export class RoomSummaryCard extends LitElement {
     }
 
     const handler = actionHandler(this._roomEntity);
-    const label = renderLabel(this._hass, this._config);
+    const label = renderLabel(this._hass, this._config, this._sensors);
     const action = handleClickAction(this, this._roomEntity);
     const stats = renderAreaStatistics(this._hass, this._config);
     const { textStyle } = renderEntityIconStyles(
@@ -208,8 +215,7 @@ export class RoomSummaryCard extends LitElement {
     const cardStyle = renderCardStyles(
       this._hass,
       this._config,
-      this._temperature,
-      this._humidity,
+      this._sensors,
       this._roomEntity.state,
     );
     const problems = renderProblemIndicator(

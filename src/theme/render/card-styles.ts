@@ -16,19 +16,26 @@ import { getThemeColorOverride } from '../custom-theme';
  * Generates border styles based on temperature and humidity thresholds
  *
  * @param {Config} config - Configuration object
- * @param {EntityState | undefined} tempState - Temperature sensor state
- * @param {EntityState | undefined} humidState - Humidity sensor state
+ * @param {EntityState[]} sensors - Array of sensor states
  * @returns {Object} Border style configuration with border1 and border2 properties
  */
 const renderCardBorderStyles = (
   config: Config,
-  tempState: EntityState | undefined,
-  humidState: EntityState | undefined,
+  sensors: EntityState[],
 ): {
   border1: string | undefined;
   border2: string | undefined;
 } => {
-  if (hasFeature(config, 'skip_climate_styles') || !tempState || !humidState)
+  if (hasFeature(config, 'skip_climate_styles'))
+    return { border1: undefined, border2: undefined };
+
+  const tempState = sensors.find(
+    (sensor) => sensor.attributes.device_class === 'temperature',
+  );
+  const humidState = sensors.find(
+    (sensor) => sensor.attributes.device_class === 'humidity',
+  );
+  if (!tempState || !humidState)
     return { border1: undefined, border2: undefined };
 
   // Get thresholds with defaults
@@ -66,16 +73,14 @@ const renderCardBorderStyles = (
  *
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {Config} config - Configuration object
- * @param {EntityState | undefined} tempState - Temperature sensor state
- * @param {EntityState | undefined} humidState - Humidity sensor state
+ * @param {EntityState[]} sensors - Array of sensor states
  * @param {EntityState} [state] - Current entity state
  * @returns {DirectiveResult<typeof StyleMapDirective>} Style map for the card
  */
 export const renderCardStyles = (
   hass: HomeAssistant,
   config: Config,
-  tempState: EntityState | undefined,
-  humidState: EntityState | undefined,
+  sensors: EntityState[],
   state?: EntityState,
 ): DirectiveResult<typeof StyleMapDirective> => {
   // as of now, only dark mode handles background coloring
@@ -84,11 +89,7 @@ export const renderCardStyles = (
   const cssColor = hass.themes.darkMode ? stateColorCss(stateObj) : undefined;
   const themeOverride = getThemeColorOverride(hass, state);
 
-  const { border1, border2 } = renderCardBorderStyles(
-    config,
-    tempState,
-    humidState,
-  );
+  const { border1, border2 } = renderCardBorderStyles(config, sensors);
 
   // Return complete style map
   return styleMap({

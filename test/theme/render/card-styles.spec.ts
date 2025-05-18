@@ -92,13 +92,8 @@ export default () => {
     });
 
     describe('renderCardStyles', () => {
-      it('should render basic card styles with no border when sensor states are undefined', () => {
-        const styles = renderCardStyles(
-          mockHass,
-          mockConfig,
-          undefined,
-          undefined,
-        );
+      it('should render basic card styles with no border when sensor array is empty', () => {
+        const styles = renderCardStyles(mockHass, mockConfig, []);
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -114,22 +109,22 @@ export default () => {
       });
 
       it('should render card styles with borders when temperature exceeds threshold', () => {
-        // Create temperature state with value above threshold
-        const tempState = createStateEntity('sensor', 'temperature', '85', {
+        // Create temperature sensor with value above threshold
+        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
+          device_class: 'temperature',
           temperature_threshold: 80,
         });
 
-        // Create humidity state with value below threshold
-        const humidState = createStateEntity('sensor', 'humidity', '50', {
+        // Create humidity sensor with value below threshold
+        const humidSensor = createStateEntity('sensor', 'humidity', '50', {
+          device_class: 'humidity',
           humidity_threshold: 60,
         });
 
-        const styles = renderCardStyles(
-          mockHass,
-          mockConfig,
-          tempState,
-          humidState,
-        );
+        const styles = renderCardStyles(mockHass, mockConfig, [
+          tempSensor,
+          humidSensor,
+        ]);
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -145,22 +140,22 @@ export default () => {
       });
 
       it('should render card styles with borders when humidity exceeds threshold', () => {
-        // Create temperature state with value below threshold
-        const tempState = createStateEntity('sensor', 'temperature', '75', {
+        // Create temperature sensor with value below threshold
+        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
+          device_class: 'temperature',
           temperature_threshold: 80,
         });
 
-        // Create humidity state with value above threshold
-        const humidState = createStateEntity('sensor', 'humidity', '65', {
+        // Create humidity sensor with value above threshold
+        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
+          device_class: 'humidity',
           humidity_threshold: 60,
         });
 
-        const styles = renderCardStyles(
-          mockHass,
-          mockConfig,
-          tempState,
-          humidState,
-        );
+        const styles = renderCardStyles(mockHass, mockConfig, [
+          tempSensor,
+          humidSensor,
+        ]);
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -176,22 +171,22 @@ export default () => {
       });
 
       it('should render card styles with different borders when both sensors exceed thresholds', () => {
-        // Create temperature state with value above threshold
-        const tempState = createStateEntity('sensor', 'temperature', '85', {
+        // Create temperature sensor with value above threshold
+        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
+          device_class: 'temperature',
           temperature_threshold: 80,
         });
 
-        // Create humidity state with value above threshold
-        const humidState = createStateEntity('sensor', 'humidity', '65', {
+        // Create humidity sensor with value above threshold
+        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
+          device_class: 'humidity',
           humidity_threshold: 60,
         });
 
-        const styles = renderCardStyles(
-          mockHass,
-          mockConfig,
-          tempState,
-          humidState,
-        );
+        const styles = renderCardStyles(mockHass, mockConfig, [
+          tempSensor,
+          humidSensor,
+        ]);
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -207,18 +202,20 @@ export default () => {
       });
 
       it('should use default thresholds when not provided in attributes', () => {
-        // Create temperature state with value above default threshold (80) but no threshold in attributes
-        const tempState = createStateEntity('sensor', 'temperature', '85', {});
+        // Create temperature sensor with value above default threshold (80) but no threshold in attributes
+        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
+          device_class: 'temperature',
+        });
 
-        // Create humidity state with value above default threshold (60) but no threshold in attributes
-        const humidState = createStateEntity('sensor', 'humidity', '65', {});
+        // Create humidity sensor with value above default threshold (60) but no threshold in attributes
+        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
+          device_class: 'humidity',
+        });
 
-        const styles = renderCardStyles(
-          mockHass,
-          mockConfig,
-          tempState,
-          humidState,
-        );
+        const styles = renderCardStyles(mockHass, mockConfig, [
+          tempSensor,
+          humidSensor,
+        ]);
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -229,6 +226,34 @@ export default () => {
             borderTop: '5px solid var(--error-color)',
             borderRight: '5px solid var(--info-color)',
             borderBottom: '5px solid var(--info-color)',
+          }),
+        );
+      });
+
+      it('should handle missing device_class in sensors correctly', () => {
+        // Create sensors without device_class attributes
+        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
+          temperature_threshold: 80,
+        });
+        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
+          humidity_threshold: 60,
+        });
+
+        const styles = renderCardStyles(mockHass, mockConfig, [
+          tempSensor,
+          humidSensor,
+        ]);
+
+        // Should not apply any border styling without proper device_class
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+            '--state-color-theme-override': 'var(--theme-override)',
+            borderLeft: undefined,
+            borderTop: undefined,
+            borderRight: undefined,
+            borderBottom: undefined,
           }),
         );
       });
@@ -246,19 +271,20 @@ export default () => {
         stateActiveStub.withArgs(sinon.match.any).returns(true);
         stateColorCssStub.withArgs(sinon.match.any).returns('yellow');
 
-        // Create temperature and humidity states
-        const tempState = createStateEntity('sensor', 'temperature', '75', {
+        // Create temperature and humidity sensors
+        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
+          device_class: 'temperature',
           temperature_threshold: 80,
         });
-        const humidState = createStateEntity('sensor', 'humidity', '55', {
+        const humidSensor = createStateEntity('sensor', 'humidity', '55', {
+          device_class: 'humidity',
           humidity_threshold: 60,
         });
 
         const styles = renderCardStyles(
           mockHass,
           mockConfig,
-          tempState,
-          humidState,
+          [tempSensor, humidSensor],
           state,
         );
 
@@ -288,19 +314,20 @@ export default () => {
         stateActiveStub.withArgs(sinon.match.any).returns(true);
         stateColorCssStub.withArgs(sinon.match.any).returns('yellow');
 
-        // Create temperature and humidity states
-        const tempState = createStateEntity('sensor', 'temperature', '75', {
+        // Create temperature and humidity sensors
+        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
+          device_class: 'temperature',
           temperature_threshold: 80,
         });
-        const humidState = createStateEntity('sensor', 'humidity', '55', {
+        const humidSensor = createStateEntity('sensor', 'humidity', '55', {
+          device_class: 'humidity',
           humidity_threshold: 60,
         });
 
         const styles = renderCardStyles(
           mockHass,
           mockConfig,
-          tempState,
-          humidState,
+          [tempSensor, humidSensor],
           state,
         );
 
@@ -323,22 +350,20 @@ export default () => {
           .withArgs(mockConfig, 'skip_climate_styles')
           .returns(true);
 
-        // Create temperature state with value above threshold
-        const tempState = createStateEntity('sensor', 'temperature', '85', {
+        // Create temperature and humidity sensors
+        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
+          device_class: 'temperature',
           temperature_threshold: 80,
         });
-
-        // Create humidity state with value above threshold
-        const humidState = createStateEntity('sensor', 'humidity', '65', {
+        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
+          device_class: 'humidity',
           humidity_threshold: 60,
         });
 
-        const styles = renderCardStyles(
-          mockHass,
-          mockConfig,
-          tempState,
-          humidState,
-        );
+        const styles = renderCardStyles(mockHass, mockConfig, [
+          tempSensor,
+          humidSensor,
+        ]);
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -355,6 +380,45 @@ export default () => {
         // Verify hasFeature was called with the correct parameters
         expect(hasFeatureStub.calledWith(mockConfig, 'skip_climate_styles')).to
           .be.true;
+      });
+
+      it('should handle additional sensors in the array that are not temperature or humidity', () => {
+        // Create temperature and humidity sensors
+        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
+          device_class: 'temperature',
+          temperature_threshold: 80,
+        });
+        const humidSensor = createStateEntity('sensor', 'humidity', '55', {
+          device_class: 'humidity',
+          humidity_threshold: 60,
+        });
+        // Add some other sensor types
+        const luxSensor = createStateEntity('sensor', 'illuminance', '250', {
+          device_class: 'illuminance',
+        });
+        const battSensor = createStateEntity('sensor', 'battery', '80', {
+          device_class: 'battery',
+        });
+
+        const styles = renderCardStyles(mockHass, mockConfig, [
+          tempSensor,
+          humidSensor,
+          luxSensor,
+          battSensor,
+        ]);
+
+        // Should still work correctly with the extra sensors
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+            '--state-color-theme-override': 'var(--theme-override)',
+            borderLeft: undefined,
+            borderTop: undefined,
+            borderRight: undefined,
+            borderBottom: undefined,
+          }),
+        );
       });
     });
   });

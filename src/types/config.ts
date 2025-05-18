@@ -18,17 +18,14 @@ export interface Config {
   /** Array of entity configurations or entity IDs */
   entities?: (EntityConfig | string)[];
 
-  /** List of entity IDs that are experiencing issues */
-  problem_entities?: string[];
-
   /** Navigation path for the entity */
   navigate?: string;
 
-  /** Entity ID for humidity sensor */
-  humidity_sensor?: string;
+  /** List of entity IDs that are experiencing issues */
+  problem_entities?: string[];
 
-  /** Entity ID for temperature sensor */
-  temperature_sensor?: string;
+  /** Array of sensor entity IDs to display in the label area */
+  sensors?: string[];
 
   /** Options to enable disable features **/
   features?: Features[];
