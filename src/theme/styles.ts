@@ -48,7 +48,7 @@ export const styles = css`
   /* Card container */
   .card {
     padding: 5px;
-    border-radius: 20px;
+    border-radius: var(--ha-card-border-radius, var(--border-radius, 20px));
     line-height: normal;
     overflow: hidden;
     position: relative;
@@ -71,7 +71,6 @@ export const styles = css`
     border-color: var(--ha-card-border-color, var(--divider-color, #e0e0e0));
     border-width: var(--ha-card-border-width, 1px);
     border-style: solid;
-    border-radius: 20px;
     z-index: -1;
   }
 
