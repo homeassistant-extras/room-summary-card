@@ -82,6 +82,17 @@ Entity Off Color attribute. Shows lightly in a different color than the default.
 - Shows total number of entities in the room
 - Automatic entity discovery based on area
 
+### RGB Color Support
+
+The card now supports RGB color values directly from entities with `rgb_color` attributes. This feature works particularly well with color lights and other entities that expose RGB values.
+
+When an entity has a valid `rgb_color` attribute (an array with three values), the card will automatically use this for coloring icons and elements. This provides a more accurate representation of colored lights and other RGB-supporting entities.
+
+For example, a light with RGB values will show its actual color rather than a generic "on" color:
+
+![light](assets/light-rgb.png)
+![dark](assets/dark-rgb.png)
+
 ## Installation
 
 ### HACS (Recommended)
@@ -456,6 +467,12 @@ The `on_color` and `off_color` attributes support these color stylings from the 
 - white
 - disabled
 
+Additionally, the card now supports direct RGB colors:
+
+- For entities with `rgb_color` attributes (like color-capable lights), the actual RGB values are used for coloring
+- This provides accurate color representation without needing to manually set `on_color` values
+- The card will prioritize RGB colors over theme-based colors when both are available. `on_color` and `off_color` will take precedence over RGB values.
+
 ## Project Roadmap
 
 - [x] **`Initial design`**: create initial room card based on button-card template in UI minimialist theme.
@@ -474,6 +491,7 @@ The `on_color` and `off_color` attributes support these color stylings from the 
 - [x] **`UI Minimalist theme integration`**: add UI minimalist theme - thanks @tardis89
 - [x] **`iOS themes support`**: ios themes - thanks @avatar25pl
 - [x] **`Problem entities counter`**: add problem entities counter - thanks to multiple users
+- [x] **`Card RGB coloring`**: RGB lights color the card - thanks @ChristopherLMiller
 
 ## Contributing
 

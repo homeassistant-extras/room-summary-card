@@ -1,5 +1,6 @@
 import type { HomeAssistant } from '@hass/types';
 import type { EntityState } from '@type/config';
+import { getRgbColor } from './get-rgb';
 import { homeAssistantColors, minimalistColors } from './themes';
 
 /**
@@ -100,6 +101,11 @@ export const getThemeColorOverride = (
   if (!state) return undefined;
   const onColor = state.attributes.on_color;
   const offColor = state?.attributes?.off_color;
+  const rgbColor = getRgbColor(state, onColor, offColor, active);
+
+  if (rgbColor) {
+    return rgbColor;
+  }
 
   if (hass.themes.theme === 'default') {
     // only overwrite default theme if explicitly set

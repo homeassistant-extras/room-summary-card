@@ -1,7 +1,9 @@
 import type { HomeAssistant } from '@hass/types';
 import { getThemeColorOverride } from '@theme/custom-theme';
+import * as rgbColorModule from '@theme/get-rgb';
 import type { EntityState } from '@type/config';
 import { expect } from 'chai';
+import { stub } from 'sinon';
 
 export default () => {
   describe('custom-theme.ts', () => {
@@ -128,6 +130,40 @@ export default () => {
           const result = getThemeColorOverride(hassMinimalist, state, true);
           expect(result).to.be.undefined;
         });
+      });
+
+      it('should return rgb color when getRgbColor returns a value', () => {
+        // Create a stub for the getRgbColor function
+        const getRgbColorStub = stub(rgbColorModule, 'getRgbColor').returns(
+          'rgb(123, 45, 67)',
+        );
+
+        // Create a mock state with rgb_color
+        const state = {
+          entity_id: 'light.living_room',
+          state: 'on',
+          attributes: {
+            rgb_color: [123, 45, 67],
+            on_color: 'red',
+          },
+          domain: 'light',
+        };
+
+        // Call getThemeColorOverride with the state
+        const result = getThemeColorOverride(hassDefault, state, true);
+
+        // Verify the function returns the RGB color string
+        expect(result).to.equal('rgb(123, 45, 67)');
+
+        // Verify getRgbColor was called with the correct parameters
+        expect(getRgbColorStub.calledOnce).to.be.true;
+        expect(getRgbColorStub.firstCall.args[0]).to.equal(state);
+        expect(getRgbColorStub.firstCall.args[1]).to.equal('red');
+        expect(getRgbColorStub.firstCall.args[2]).to.equal(undefined);
+        expect(getRgbColorStub.firstCall.args[3]).to.equal(true);
+
+        // Restore the stub to avoid affecting other tests
+        getRgbColorStub.restore();
       });
 
       describe('domain-based color mapping', () => {
