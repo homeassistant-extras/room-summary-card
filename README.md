@@ -3,7 +3,7 @@
 </p>
 <p align="center"><h1 align="center">Room Summary Card</h1></p>
 <p align="center">
-	<em>Room Data at Your Fingertips</em>
+  <em>Room Data at Your Fingertips</em>
 </p>
 
 ![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white)
@@ -21,11 +21,11 @@
 
 <p align="center">Built with the tools and technologies:</p>
 <p align="center">
-	<img src="https://img.shields.io/badge/npm-CB3837.svg?style=for-the-badge&logo=npm&logoColor=white" alt="npm">
-	<img src="https://img.shields.io/badge/Prettier-F7B93E.svg?style=for-the-badge&logo=Prettier&logoColor=black" alt="Prettier">
-	<img src="https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=TypeScript&logoColor=white" alt="TypeScript">
-	<img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=for-the-badge&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions">
-	<img src="https://img.shields.io/badge/Lit-324FFF.svg?style=for-the-badge&logo=Lit&logoColor=white" alt="Lit">
+  <img src="https://img.shields.io/badge/npm-CB3837.svg?style=for-the-badge&logo=npm&logoColor=white" alt="npm">
+  <img src="https://img.shields.io/badge/Prettier-F7B93E.svg?style=for-the-badge&logo=Prettier&logoColor=black" alt="Prettier">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=TypeScript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=for-the-badge&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions">
+  <img src="https://img.shields.io/badge/Lit-324FFF.svg?style=for-the-badge&logo=Lit&logoColor=white" alt="Lit">
 </p>
 <br>
 
@@ -37,7 +37,7 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 
 ### Climate Information
 
-- Displays room temperature and humidity
+- Displays any number of sensors (temperature, humidity, or any other sensor)
   - this can be turned off with an optional flag
 - Visual indicators for temperature and humidity thresholds
 - Border colors indicate climate status:
@@ -139,15 +139,40 @@ The card will automatically:
 
 Most of these are optional if you setup the entities a certain way using labels and attributes. For example, see my HA configuration for my dashboard home page: [01-home.yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml)
 
-| Name               | Type             | Default                                 | Description                                                       |
-| ------------------ | ---------------- | --------------------------------------- | ----------------------------------------------------------------- |
-| area               | string           | **Required**                            | The area identifier for the room (e.g., 'living_room', 'kitchen') |
-| entity             | string \| object | `light.<area>_light`                    | Main entity for the room                                          |
-| entities           | array            | See below                               | Additional entities to display                                    |
-| temperature_sensor | string           | `sensor.<area>_climate_air_temperature` | Temperature sensor entity ID                                      |
-| humidity_sensor    | string           | `sensor.<area>_climate_humidity`        | Humidity sensor entity ID                                         |
-| navigate           | string           | area name (dash-separated)              | Custom navigation path when clicking the room name / icon         |
-| features           | list             | See below                               | Optional flags to toggle different features                       |
+| Name     | Type             | Default                    | Description                                                       |
+| -------- | ---------------- | -------------------------- | ----------------------------------------------------------------- |
+| area     | string           | **Required**               | The area identifier for the room (e.g., 'living_room', 'kitchen') |
+| entity   | string \| object | `light.<area>_light`       | Main entity for the room                                          |
+| entities | array            | See below                  | Additional entities to display                                    |
+| sensors  | array            | See below                  | Array of sensor entities to display in the card label area        |
+| navigate | string           | area name (dash-separated) | Custom navigation path when clicking the room name / icon         |
+| features | list             | See below                  | Optional flags to toggle different features                       |
+
+### Sensor Configuration
+
+The card now supports configuring multiple sensors via the `sensors` array:
+
+```yaml
+sensors:
+  - sensor.living_room_climate_air_temperature
+  - sensor.living_room_climate_humidity
+  - sensor.living_room_co2
+  - sensor.living_room_pressure
+```
+
+![sesnors](assets/sensors.png)
+
+All sensors provided will be displayed in the label area of the card. These default named senses will still be looked for first: `[sensor.<area>_climate_air_temperature, sensor.<area>_climate_humidity]`
+
+> [!NOTE]
+> For backward compatibility, you can still use the legacy `temperature_sensor` and `humidity_sensor` properties, but these are deprecated and will be removed in a future version. Please migrate to using the `sensors` array.
+
+For climate-based border styling:
+
+- The card will automatically detect sensors with `device_class: temperature` and `device_class: humidity` attributes
+- Temperature sensors with values above their threshold (default: 80°F) will trigger a red border
+- Humidity sensors with values above their threshold (default: 60%) will trigger a blue border
+- You can customize thresholds by adding `temperature_threshold` and `humidity_threshold` attributes to your sensors
 
 ### Feature Options
 
@@ -239,20 +264,20 @@ For entities you don't control, use [customizations](https://www.home-assistant.
 
 ```yaml
 customize:
-	switch.garage_opener_plug:
-		on_color: green
-		off_color: red
+  switch.garage_opener_plug:
+    on_color: green
+    off_color: red
 
-	switch.water_softener_plug:
-		on_color: green
-		off_color: red
+  switch.water_softener_plug:
+    on_color: green
+    off_color: red
 
-	sensor.garage_climate_air_temperature:
-		temperature_threshold: 90
+  sensor.garage_climate_air_temperature:
+    temperature_threshold: 90
 
-	sensor.shed_climate_air_temperature:
-		temperature_threshold: 90
-		humidity_threshold: 70
+  sensor.shed_climate_air_temperature:
+    temperature_threshold: 90
+    humidity_threshold: 70
 ```
 
 For entities you template, just set the attributes then.
@@ -286,7 +311,7 @@ type: custom:room-summary-card
 area: living_room
 ```
 
-### Full Configuration
+### Full Configuration with New Sensors Array
 
 ```yaml
 type: custom:room-summary-card
@@ -303,12 +328,33 @@ entities:
     icon: mdi:television
   - light.living_room_lamp
   - switch.living_room_fan
-temperature_sensor: sensor.living_room_temperature
-humidity_sensor: sensor.living_room_humidity
+sensors:
+  - sensor.living_room_temperature
+  - sensor.living_room_humidity
+  - sensor.living_room_co2
+  - sensor.living_room_light_level
 skip_climate_styles: false
 navigate: /lovelace/living-room
 features:
-  - hide_climate_label
+  - hide_area_stats
+```
+
+### Legacy Configuration (Backward Compatible)
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+entity:
+  entity_id: light.living_room_main
+  icon: mdi:ceiling-light
+entities:
+  - entity_id: switch.living_room_tv
+    icon: mdi:television
+  - light.living_room_lamp
+  - switch.living_room_fan
+temperature_sensor: sensor.living_room_temperature
+humidity_sensor: sensor.living_room_humidity
+navigate: /lovelace/living-room
 ```
 
 ### Custom Entities Only
@@ -316,7 +362,8 @@ features:
 ```yaml
 type: custom:room-summary-card
 area: office
-remove_fan: true
+features:
+  - exclude_default_entities
 entities:
   - entity_id: light.office_desk
     icon: mdi:desk-lamp
@@ -324,7 +371,14 @@ entities:
     icon: mdi:desktop-tower
   - entity_id: climate.office_ac
     icon: mdi:air-conditioner
+sensors:
+  - sensor.office_temperature
+  - sensor.office_humidity
+  - sensor.office_co2
 ```
+
+Example excluding the climate entities:
+![exclude](assets/exclude.png)
 
 For examples, see my HA configuration for my dashboard home page: [01-home.yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml)
 
@@ -404,14 +458,22 @@ The `on_color` and `off_color` attributes support these color stylings from the 
 
 ## Project Roadmap
 
-- [x] **`Initial design`**: <strike>create initial room card based on button-card template in UI minimialist theme.</strike>
-- [x] **`Temperature`**: <strike>use uom from the device.</strike>
-- [x] **`Card Editor`**: <strike>ability to use the HA card editor.</strike>
-- [x] **`Test on other themes`**: <strike>make sure it works elsewhere.</strike>
-- [x] **`Flags`**: <strike>ability to disable features.</strike>
-- [ ] **`Test on iOS theme`**: another theme to consider
-- [ ] **`Sizing`**: ability to fit different size squares.
-- [ ] **`CI/CD`**: issue with dependabot as first commit and release logic....
+- [x] **`Initial design`**: create initial room card based on button-card template in UI minimialist theme.
+- [x] **`Temperature`**: use uom from the device. - thanks @LiquidPT
+- [x] **`Card Editor`**: ability to use the HA card editor. - thanks @elsilius
+- [x] **`Test on other themes`**: make sure it works elsewhere. - thanks @tardis89, @avatar25pl
+- [x] **`Flags`**: ability to disable features.
+- [x] **`Multiple sensors`**: support for displaying multiple sensors in the label area. - thanks @fctruter
+- [x] **`Climate entity icon styling`**: climate entity will light up icon - thanks @murriano
+- [x] **`Border styling for climate thresholds`**: border respects skip_climate_styles - thanks @LE-tarantino
+- [x] **`Area name display`**: use area name instead of area ID on card - thanks @LE-tarantino
+- [x] **`Navigation with room entity`**: navigate now works with room entity set - thanks @LE-tarantino
+- [x] **`Card container sizing`**: card respects container - thanks @frdve
+- [x] **`Border styling improvements`**: border to match HA styles better - thanks @frdve
+- [x] **`Theme support for iOS theme`**: for opening issue on themes - thanks @yasalmasri
+- [x] **`UI Minimalist theme integration`**: add UI minimalist theme - thanks @tardis89
+- [x] **`iOS themes support`**: ios themes - thanks @avatar25pl
+- [x] **`Problem entities counter`**: add problem entities counter - thanks to multiple users
 
 ## Contributing
 

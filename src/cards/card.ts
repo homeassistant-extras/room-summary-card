@@ -16,6 +16,7 @@ import {
   handleClickAction,
 } from '@/delegates/action-handler-delegate';
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
+import { hasFeature } from '@config/feature';
 import { getArea } from '@delegates/retrievers/area';
 import { getState } from '@delegates/retrievers/state';
 import { getIconEntities } from '@delegates/utils/icon-entities';
@@ -131,11 +132,15 @@ export class RoomSummaryCard extends LitElement {
     // This is for backward compatibility with older configurations
     // that used these default sensors
     const temp =
-      (this._config as any).temperature_sensor ??
-      `sensor.${this._config.area}_climate_air_temperature`;
+      ((this._config as any).temperature_sensor ??
+      hasFeature(this._config, 'exclude_default_entities'))
+        ? undefined
+        : `sensor.${this._config.area}_climate_air_temperature`;
     const humidity =
-      (this._config as any).humidity_sensor ??
-      `sensor.${this._config.area}_climate_humidity`;
+      ((this._config as any).humidity_sensor ??
+      hasFeature(this._config, 'exclude_default_entities'))
+        ? undefined
+        : `sensor.${this._config.area}_climate_humidity`;
 
     // Get additional sensors from config
     const sensors = [temp, humidity, ...(this._config.sensors ?? [])]
