@@ -38,6 +38,8 @@ describe('card.ts', () => {
           'living_room_climate_air_temperature',
           '72',
         ),
+        'sensor.custom_sensor': s('sensor', 'custom_sensor', '25'),
+        'sensor.additional_sensor': s('sensor', 'additional_sensor', '60'),
       },
       devices: {
         device_1: { area_id: 'living_room' },
@@ -117,36 +119,6 @@ describe('card.ts', () => {
     });
 
     it('should correctly handle legacy sensors and new sensors array', async () => {
-      // Setup mock states
-      mockHass.states['sensor.living_room_climate_air_temperature'] = s(
-        'sensor',
-        'living_room_climate_air_temperature',
-        '72',
-      );
-      mockHass.states['sensor.living_room_climate_humidity'] = s(
-        'sensor',
-        'living_room_climate_humidity',
-        '50',
-      );
-      mockHass.states['sensor.custom_sensor'] = s(
-        'sensor',
-        'custom_sensor',
-        '123',
-      );
-      mockHass.states['sensor.additional_sensor'] = s(
-        'sensor',
-        'additional_sensor',
-        '456',
-      );
-
-      const card = new RoomSummaryCard();
-
-      // Test with only area (should use default sensors)
-      card.setConfig({
-        area: 'living_room',
-      });
-      card.hass = mockHass;
-
       // Should have found both default sensors in the _sensors array
       expect(card['_sensors']).to.exist;
       expect(card['_sensors']).to.have.lengthOf(2);
