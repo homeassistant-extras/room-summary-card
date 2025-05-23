@@ -115,6 +115,14 @@ export const styles = css`
     justify-content: center;
   }
 
+  /* Room area styling - Large square shape */
+  .room {
+    grid-area: r;
+    cursor: pointer;
+    width: 150%;
+    aspect-ratio: 1 / 1;
+  }
+
   /* Room name styling */
   .name {
     grid-area: n;
@@ -153,14 +161,6 @@ export const styles = css`
     font-weight: bold;
     margin-left: 12px;
     max-width: calc(100% - 12px);
-  }
-
-  /* Room area styling */
-  .room {
-    grid-area: r;
-    cursor: pointer;
-    height: 150%;
-    width: 150%;
   }
 
   /* Icon container styling */
