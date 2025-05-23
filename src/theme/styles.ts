@@ -78,14 +78,41 @@ export const styles = css`
   .grid {
     display: grid;
     grid-template-areas:
-      'n n n e1'
-      'l l l e2'
-      'r r . e3'
-      'r r . e4';
+      'n n n e'
+      'l l l e'
+      'r r . e'
+      'r r . e';
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr;
     justify-items: center;
     aspect-ratio: 1/1;
+    height: 100%;
+    width: 100%;
+  }
+
+  /* Entities Container - Flexbox with consistent spacing */
+  .entities-container {
+    grid-area: e;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    gap: 8px;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  /* Entity styling - responsive sizing with min/max bounds */
+  .entity {
+    /* Size based on both width AND height constraints */
+    width: clamp(30px, min(60%, 20vh), 70px);
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* Room name styling */
@@ -132,12 +159,12 @@ export const styles = css`
   .room {
     grid-area: r;
     cursor: pointer;
+    height: 150%;
+    width: 150%;
   }
 
   /* Icon container styling */
   .icon {
-    height: 150%;
-    width: 150%;
     align-self: center;
     position: relative;
     display: flex;
@@ -165,28 +192,6 @@ export const styles = css`
     color: var(--icon-color);
     opacity: var(--icon-opacity);
     --mdc-icon-size: 100%;
-  }
-
-  /* Entity styling */
-  .entity {
-    width: 80%;
-    height: 80%;
-    place-items: center;
-    cursor: pointer;
-  }
-
-  /* Entity position classes */
-  .entity-1 {
-    grid-area: e1;
-  }
-  .entity-2 {
-    grid-area: e2;
-  }
-  .entity-3 {
-    grid-area: e3;
-  }
-  .entity-4 {
-    grid-area: e4;
   }
 
   /* Status entities indicator */

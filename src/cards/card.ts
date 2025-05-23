@@ -214,8 +214,8 @@ export class RoomSummaryCard extends LitElement {
     const roomEntity = renderStateIcon(this, this._hass, this._roomEntity, [
       'room',
     ]);
-    const stateIcons = this._states.map((s, i) =>
-      renderStateIcon(this, this._hass, s, ['entity', `entity-${i + 1}`]),
+    const stateIcons = this._states.map((s) =>
+      renderStateIcon(this, this._hass, s, ['entity']),
     );
     const cardStyle = renderCardStyles(
       this._hass,
@@ -251,8 +251,11 @@ export class RoomSummaryCard extends LitElement {
             ${label} ${stats}
           </div>
 
-          <!-- State Icons -->
-          ${roomEntity} ${stateIcons}
+          <!-- Room Icon -->
+          ${roomEntity}
+
+          <!-- Entities Container (Flexbox) -->
+          <div class="entities-container">${stateIcons}</div>
 
           <!-- Problem Indicator -->
           ${problems}
