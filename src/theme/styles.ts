@@ -47,7 +47,6 @@ export const styles = css`
 
   /* Card container */
   .card {
-    padding: 5px;
     border-radius: var(--ha-card-border-radius, var(--border-radius, 20px));
     line-height: normal;
     overflow: hidden;
@@ -93,22 +92,21 @@ export const styles = css`
   /* Entities Container - Flexbox with consistent spacing */
   .entities-container {
     grid-area: e;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr;
+    justify-items: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
     gap: 8px;
-    padding: 8px;
     box-sizing: border-box;
+    aspect-ratio: 0.24 / 1;
+    padding: 5px 5px 5px 0;
   }
 
   /* Entity styling - responsive sizing with min/max bounds */
   .entity {
-    /* Size based on both width AND height constraints */
-    width: clamp(30px, min(60%, 20vh), 70px);
-    aspect-ratio: 1 / 1;
+    width: 100%;
+    height: 100%;
     cursor: pointer;
     display: flex;
     align-items: center;
