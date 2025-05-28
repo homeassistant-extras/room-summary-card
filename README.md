@@ -150,14 +150,15 @@ The card will automatically:
 
 Most of these are optional if you setup the entities a certain way using labels and attributes. For example, see my HA configuration for my dashboard home page: [01-home.yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml)
 
-| Name     | Type             | Default                    | Description                                                       |
-| -------- | ---------------- | -------------------------- | ----------------------------------------------------------------- |
-| area     | string           | **Required**               | The area identifier for the room (e.g., 'living_room', 'kitchen') |
-| entity   | string \| object | `light.<area>_light`       | Main entity for the room                                          |
-| entities | array            | See below                  | Additional entities to display                                    |
-| sensors  | array            | See below                  | Array of sensor entities to display in the card label area        |
-| navigate | string           | area name (dash-separated) | Custom navigation path when clicking the room name / icon         |
-| features | list             | See below                  | Optional flags to toggle different features                       |
+| Name      | Type             | Default                    | Description                                                       |
+| --------  | ---------------- | -------------------------- | ----------------------------------------------------------------- |
+| area      | string           | **Required**               | The area identifier for the room (e.g., 'living_room', 'kitchen') |
+| area_name | string           | area name                  | Custom area name                                                  |
+| entity    | string \| object | `light.<area>_light`       | Main entity for the room                                          |
+| entities  | array            | See below                  | Additional entities to display                                    |
+| sensors   | array            | See below                  | Array of sensor entities to display in the card label area        |
+| navigate  | string           | area name (dash-separated) | Custom navigation path when clicking the room name / icon         |
+| features  | list             | See below                  | Optional flags to toggle different features                       |
 
 ### Sensor Configuration
 
@@ -306,7 +307,7 @@ sensor:
 
 ### Problem Entities
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > Using this setting requires a label.
 
 Give entities a label of "problem". These entities will be tracked and the icon will show red if any are "on" or have a positive state. It will show green otherwise. In both cases it will show the total count of tracked problem entities.
@@ -327,6 +328,7 @@ area: living_room
 ```yaml
 type: custom:room-summary-card
 area: living_room
+area_name: Custom room
 entity:
   entity_id: light.living_room_main
   icon: mdi:ceiling-light
