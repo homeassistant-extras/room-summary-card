@@ -151,7 +151,7 @@ The card will automatically:
 Most of these are optional if you setup the entities a certain way using labels and attributes. For example, see my HA configuration for my dashboard home page: [01-home.yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml)
 
 | Name      | Type             | Default                    | Description                                                       |
-| --------  | ---------------- | -------------------------- | ----------------------------------------------------------------- |
+| --------- | ---------------- | -------------------------- | ----------------------------------------------------------------- |
 | area      | string           | **Required**               | The area identifier for the room (e.g., 'living_room', 'kitchen') |
 | area_name | string           | area name                  | Custom area name                                                  |
 | entity    | string \| object | `light.<area>_light`       | Main entity for the room                                          |
@@ -494,6 +494,7 @@ Additionally, the card now supports direct RGB colors:
 - [x] **`iOS themes support`**: ios themes - thanks @avatar25pl
 - [x] **`Problem entities counter`**: add problem entities counter - thanks to multiple users
 - [x] **`Card RGB coloring`**: RGB lights color the card - thanks @ChristopherLMiller
+- [x] **`Custom names`**: **⭐ First contributor ⭐** added `area_name` - thanks @Aulos
 
 ## Contributing
 
@@ -539,7 +540,7 @@ This project is protected under the MIT License. For more details, refer to the 
 - Button-Card was a huge inspo
 - Thanks to all contributors!
 
-[![contributors](https://contrib.rocks/image?repo=homeassistant-extras/room-summary-card)](https://github.com{/homeassistant-extras/room-summary-card/}graphs/contributors)
+[![contributors](https://contrib.rocks/image?repo=homeassistant-extras/room-summary-card)](https://github.com/homeassistant-extras/room-summary-card/graphs/contributors)
 
 [![ko-fi](https://img.shields.io/badge/buy%20me%20a%20coffee-72A5F2?style=for-the-badge&logo=kofi&logoColor=white)](https://ko-fi.com/N4N71AQZQG)
 
