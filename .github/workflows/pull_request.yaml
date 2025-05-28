@@ -44,3 +44,18 @@ jobs:
           # never post a comment.  (In all cases the information is
           # still available in the step's summary.)
           comment: 'on-error'
+
+  dependabot:
+    runs-on: ubuntu-latest
+
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Auto approve PR
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
