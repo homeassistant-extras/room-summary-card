@@ -10,6 +10,7 @@
 !*.ts
 !.prettierrc
 !.nycrc
+!.node-version
 !assets/**
 !dist/**
 !.github/**
