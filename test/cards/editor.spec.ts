@@ -93,6 +93,14 @@ export default () => {
             selector: { area: {} },
           },
           {
+            label: 'Area name',
+            name: 'area_name',
+            required: false,
+            selector: {
+              text: {},
+            },
+          },
+          {
             name: 'entities',
             label: 'Entities',
             type: 'expandable' as const,

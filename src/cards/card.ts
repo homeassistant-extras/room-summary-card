@@ -116,8 +116,7 @@ export class RoomSummaryCard extends LitElement {
     this.isDarkMode = hass.themes.darkMode;
 
     const roomInfo: RoomInformation = {
-      area_name:
-        getArea(this._hass, this._config.area)?.name ?? this._config.area,
+      area_name: this._config.area_name ?? getArea(this._hass, this._config.area)?.name ?? this._config.area,
     };
     const states = getIconEntities(hass, this._config);
     const roomEntity = getRoomEntity(hass, this._config);

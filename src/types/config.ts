@@ -12,6 +12,9 @@ export interface Config {
   /** The area identifier where the entity is located */
   area: string;
 
+  /** The custom area name */
+  area_name?: string;
+
   /** Single entity configuration or entity ID */
   entity?: EntityConfig | string;
 

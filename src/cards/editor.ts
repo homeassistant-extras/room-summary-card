@@ -8,6 +8,12 @@ import { state } from 'lit/decorators.js';
 const SCHEMA: HaFormSchema[] = [
   { name: 'area', label: 'Area', required: true, selector: { area: {} } },
   {
+    name: 'area_name',
+    label: 'Area name',
+    required: false,
+    selector: { text: {} },
+  },
+  {
     name: 'entities',
     label: 'Entities',
     type: 'expandable' as const,
