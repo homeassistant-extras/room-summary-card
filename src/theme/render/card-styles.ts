@@ -87,7 +87,7 @@ export const renderCardStyles = (
   const stateObj = state as any as HassEntity;
   const active = hass.themes.darkMode && stateActive(stateObj);
   const cssColor = hass.themes.darkMode ? stateColorCss(stateObj) : undefined;
-  const themeOverride = getThemeColorOverride(hass, state);
+  const themeOverride = getThemeColorOverride(hass, state, active);
 
   const { border1, border2 } = renderCardBorderStyles(config, sensors);
 

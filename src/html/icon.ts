@@ -28,7 +28,7 @@ export const renderStateIcon = (
   const { state } = entity;
   if (!state) return nothing;
 
-  const { iconStyle } = renderEntityIconStyles(hass, state);
+  const iconStyle = renderEntityIconStyles(hass, state);
 
   return html`<div
     class="${['icon', ...classes].join(' ')}"
