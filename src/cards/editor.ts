@@ -66,6 +66,10 @@ const SCHEMA: HaFormSchema[] = [
                 value: 'exclude_default_entities',
               },
               { label: 'Skip Climate Styles', value: 'skip_climate_styles' },
+              {
+                label: 'Skip Card Background Styles',
+                value: 'skip_entity_styles',
+              },
             ],
           },
         },

@@ -420,6 +420,56 @@ export default () => {
           }),
         );
       });
+
+      it('should disable background color when skip_entity_styles feature is enabled', () => {
+        // Enable dark mode to make the state normally affect background
+        mockHass.themes.darkMode = true;
+
+        // Set hasFeature to return true for skip_entity_styles
+        hasFeatureStub.withArgs(mockConfig, 'skip_entity_styles').returns(true);
+
+        // Create state entity
+        const state = createStateEntity('light', 'test', 'on', {
+          on_color: 'yellow',
+        });
+
+        // Configure stub behaviors for this test
+        stateActiveStub.withArgs(sinon.match.any).returns(true);
+        stateColorCssStub.withArgs(sinon.match.any).returns('yellow');
+
+        // Create temperature and humidity sensors
+        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
+          device_class: 'temperature',
+          temperature_threshold: 80,
+        });
+        const humidSensor = createStateEntity('sensor', 'humidity', '55', {
+          device_class: 'humidity',
+          humidity_threshold: 60,
+        });
+
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          [tempSensor, humidSensor],
+          state,
+        );
+
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined, // Should be undefined even though state is active
+            '--background-opacity-card': 'var(--opacity-background-inactive)', // Should be inactive due to skipStyles
+            '--state-color-theme-override': 'var(--theme-override)',
+            borderLeft: undefined,
+            borderTop: undefined,
+            borderRight: undefined,
+            borderBottom: undefined,
+          }),
+        );
+
+        // Verify hasFeature was called with the correct parameters
+        expect(hasFeatureStub.calledWith(mockConfig, 'skip_entity_styles')).to
+          .be.true;
+      });
     });
   });
 };

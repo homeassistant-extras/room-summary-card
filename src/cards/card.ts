@@ -23,7 +23,7 @@ import { getIconEntities } from '@delegates/utils/icon-entities';
 import { getRoomEntity } from '@delegates/utils/room-entity';
 import type { HomeAssistant } from '@hass/types';
 import { renderCardStyles } from '@theme/render/card-styles';
-import { renderTextStyles } from '@theme/render/icon-styles';
+import { renderTextStyles } from '@theme/render/text-styles';
 import { styles } from '@theme/styles';
 import type {
   Config,
@@ -209,7 +209,11 @@ export class RoomSummaryCard extends LitElement {
     const label = renderLabel(this._hass, this._config, this._sensors);
     const action = handleClickAction(this, this._roomEntity);
     const stats = renderAreaStatistics(this._hass, this._config);
-    const textStyle = renderTextStyles(this._hass, this._roomEntity.state);
+    const textStyle = renderTextStyles(
+      this._hass,
+      this._config,
+      this._roomEntity.state,
+    );
     const roomEntity = renderStateIcon(this, this._hass, this._roomEntity, [
       'room',
     ]);

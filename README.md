@@ -188,12 +188,15 @@ For climate-based border styling:
 
 ### Feature Options
 
+### Feature Options
+
 | Name                     | Type | Description                                  |
 | ------------------------ | ---- | -------------------------------------------- |
 | hide_climate_label       | flag | Show the climate label or not                |
 | hide_area_stats          | flag | Show the area statistics label or not        |
 | exclude_default_entities | flag | Exclude the default light/fan entities       |
 | skip_climate_styles      | flag | Disable climate-based color coding & borders |
+| skip_entity_styles       | flag | Disable card styling based on main entity    |
 
 ### Default Entities
 
@@ -259,6 +262,9 @@ tap_action:
 ```
 
 ### Entity Attributes Configuration
+
+> [!IMPORTANT]
+> These are not settings you add to the card, but instead settings you add to your entity state as attributes.
 
 You can add attributes to entities to customize the functionality further.
 
@@ -350,6 +356,7 @@ skip_climate_styles: false
 navigate: /lovelace/living-room
 features:
   - hide_area_stats
+  - skip_entity_styles
 ```
 
 ### Legacy Configuration (Backward Compatible)
@@ -495,6 +502,7 @@ Additionally, the card now supports direct RGB colors:
 - [x] **`Problem entities counter`**: add problem entities counter - thanks to multiple users
 - [x] **`Card RGB coloring`**: RGB lights color the card - thanks @ChristopherLMiller
 - [x] **`Custom names`**: **⭐ First contributor ⭐** added `area_name` - thanks @Aulos
+- [x] **`Disable card styling`**: bug fixes and new skip_entity_styles feature - thanks @benjycov
 
 ## Contributing
 

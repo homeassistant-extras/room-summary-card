@@ -88,13 +88,21 @@ export const renderCardStyles = (
   const active = hass.themes.darkMode && stateActive(stateObj);
   const cssColor = hass.themes.darkMode ? stateColorCss(stateObj) : undefined;
   const themeOverride = getThemeColorOverride(hass, state, active);
-
   const { border1, border2 } = renderCardBorderStyles(config, sensors);
+  const skipStyles = hasFeature(config, 'skip_entity_styles');
+
+  const opacity = `var(--opacity-background-${active && !skipStyles ? 'active' : 'inactive'})`;
+  let backgroundColorCard: string | undefined;
+  if (skipStyles) {
+    backgroundColorCard = undefined;
+  } else {
+    backgroundColorCard = active ? cssColor : undefined;
+  }
 
   // Return complete style map
   return styleMap({
-    '--background-color-card': active ? cssColor : undefined,
-    '--background-opacity-card': `var(--opacity-background-${active ? 'active' : 'inactive'})`,
+    '--background-color-card': backgroundColorCard,
+    '--background-opacity-card': opacity,
     '--state-color-theme-override': themeOverride,
     borderLeft: border1,
     borderTop: border1,
