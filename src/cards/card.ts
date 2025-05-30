@@ -16,11 +16,7 @@ import {
   handleClickAction,
 } from '@/delegates/action-handler-delegate';
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
-import { hasFeature } from '@config/feature';
-import { getArea } from '@delegates/retrievers/area';
-import { getState } from '@delegates/retrievers/state';
-import { getIconEntities } from '@delegates/utils/icon-entities';
-import { getRoomEntity } from '@delegates/utils/room-entity';
+import { getRoomProperties } from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { renderTextStyles } from '@theme/render/text-styles';
@@ -31,7 +27,6 @@ import type {
   EntityState,
   RoomInformation,
 } from '@type/config';
-import { getProblemEntities } from '../delegates/utils/card-entities';
 import { renderAreaStatistics, renderLabel } from '../html/text';
 const equal = require('fast-deep-equal');
 
@@ -86,8 +81,10 @@ export class RoomSummaryCard extends LitElement {
 
   /**
    * Home Assistant instance
-   * Not marked as @state as it's handled differently
+   * Marked as @state since we selectively update hass
+   * to avoid unnecessary re-renders
    */
+  @state()
   private _hass!: HomeAssistant;
 
   /**
@@ -112,60 +109,52 @@ export class RoomSummaryCard extends LitElement {
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
   set hass(hass: HomeAssistant) {
-    this._hass = hass;
-    this.isDarkMode = hass.themes.darkMode;
-
-    const roomInfo: RoomInformation = {
-      area_name:
-        this._config.area_name ??
-        getArea(this._hass, this._config.area)?.name ??
-        this._config.area,
-    };
-    const states = getIconEntities(hass, this._config);
-    const roomEntity = getRoomEntity(hass, this._config);
-    const { problemEntities, problemExists } = getProblemEntities(
-      hass,
-      this._config.area,
-    );
-
-    // Get legacy temperature and humidity sensors for backward compatibility
-    // These are used if the user has not specified them in the config
-    // and are not part of the sensors array
-    // This is for backward compatibility with older configurations
-    // that used these default sensors
-    const temp =
-      (this._config as any).temperature_sensor ??
-      (hasFeature(this._config, 'exclude_default_entities')
-        ? undefined
-        : `sensor.${this._config.area}_climate_air_temperature`);
-    const humidity =
-      (this._config as any).humidity_sensor ??
-      (hasFeature(this._config, 'exclude_default_entities')
-        ? undefined
-        : `sensor.${this._config.area}_climate_humidity`);
-
-    // Get additional sensors from config
-    const sensors = [temp, humidity, ...(this._config.sensors ?? [])]
-      .map((sensorId) => getState(hass, sensorId))
-      .filter((sensor) => sensor !== undefined);
+    const {
+      roomInfo,
+      states,
+      roomEntity,
+      problemEntities,
+      problemExists,
+      sensors,
+      isDarkMode,
+    } = getRoomProperties(hass, this._config);
 
     this._problemExists = problemExists;
+    this.isDarkMode = isDarkMode;
 
     // Update states only if they've changed
+    let shouldRender = false;
     if (!equal(roomInfo, this._roomInformation)) {
       this._roomInformation = roomInfo;
+      shouldRender = true;
     }
     if (!equal(roomEntity, this._roomEntity)) {
       this._roomEntity = roomEntity;
+      shouldRender = true;
     }
     if (!equal(states, this._states)) {
       this._states = states;
+      shouldRender = true;
     }
     if (!equal(problemEntities, this._problemEntities)) {
       this._problemEntities = problemEntities;
+      shouldRender = true;
     }
     if (!equal(sensors, this._sensors)) {
       this._sensors = sensors;
+      shouldRender = true;
+    }
+
+    if (
+      shouldRender ||
+      hass.formatEntityState !== this._hass?.formatEntityState
+    ) {
+      // normally we wouldn't need to update the hass object this way,
+      // but since state-display is using the formatEntityState function
+      // we need to ensure it is updated when the new function is available
+      // this is a workaround and prevents the need to re-render the card many times
+      // https://github.com/home-assistant/frontend/issues/25648
+      this._hass = hass;
     }
   }
 
@@ -201,7 +190,7 @@ export class RoomSummaryCard extends LitElement {
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
-    if (!this._roomInformation) {
+    if (!this._hass) {
       return nothing;
     }
 

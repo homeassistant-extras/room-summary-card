@@ -3,7 +3,6 @@ import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { styles } from '@theme/styles';
-import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -71,9 +70,10 @@ describe('card.ts', () => {
         darkMode: true,
         theme: 'default',
       },
+      formatEntityState: () => 'formatted state', // Add mock formatEntityState
     } as any as HomeAssistant;
     card.setConfig({ area: 'living_room' });
-    card.hass = mockHass as HomeAssistant;
+    card.hass = mockHass;
   });
 
   afterEach(() => {
@@ -91,113 +91,39 @@ describe('card.ts', () => {
   });
 
   describe('hass property setter', () => {
-    it('should update states when hass changes', () => {
+    it('should update internal state when hass changes', () => {
       expect(card['_states']).to.exist;
-    });
-
-    it('should update room entity when hass changes', () => {
       expect(card['_roomEntity']).to.exist;
+      expect(card['_sensors']).to.exist;
+      expect(card['_roomInformation']).to.exist;
     });
 
-    it('should handle problem entities', () => {
-      mockHass.entities = {
-        'binary_sensor.problem': {
-          labels: ['problem'],
-          area_id: 'living_room',
-          device_id: 'device_1',
+    it('should update _hass when formatEntityState changes', () => {
+      const newHass = {
+        ...mockHass,
+        formatEntityState: () => 'new formatted state',
+      } as any as HomeAssistant;
+
+      card.hass = newHass;
+      expect(card['_hass']).to.equal(newHass);
+    });
+
+    it('should not update _hass unnecessarily when only states change', () => {
+      const originalHass = card['_hass'];
+
+      // Change only states, keep formatEntityState the same
+      const updatedHass = {
+        ...mockHass,
+        states: {
+          ...mockHass.states,
+          'light.new_light': s('light', 'new_light', 'on'),
         },
-      };
-      mockHass.states!['binary_sensor.problem'] = s(
-        'binary_sensor',
-        'problem',
-        'on',
-      );
+      } as any as HomeAssistant;
 
-      card.hass = mockHass as HomeAssistant;
+      card.hass = updatedHass;
 
-      expect(card['_problemEntities']).to.have.length.above(0);
-    });
-
-    it('should correctly handle legacy sensors and new sensors array', async () => {
-      // Should have found both default sensors in the _sensors array
-      expect(card['_sensors']).to.exist;
-      expect(card['_sensors']).to.have.lengthOf(2);
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.living_room_climate_air_temperature',
-      );
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.living_room_climate_humidity',
-      );
-
-      // Test with legacy temperature_sensor and humidity_sensor
-      card.setConfig({
-        area: 'living_room',
-        temperature_sensor: 'sensor.custom_sensor',
-        humidity_sensor: 'sensor.additional_sensor',
-      } as any as Config);
-      card.hass = mockHass;
-
-      // Should use the specified legacy sensors instead of defaults
-      expect(card['_sensors']).to.exist;
-      expect(card['_sensors']).to.have.lengthOf(2);
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.custom_sensor',
-      );
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.additional_sensor',
-      );
-      // Should NOT include the default sensors when overridden
-      expect(card['_sensors'].map((s) => s.entity_id)).to.not.include(
-        'sensor.living_room_climate_air_temperature',
-      );
-      expect(card['_sensors'].map((s) => s.entity_id)).to.not.include(
-        'sensor.living_room_climate_humidity',
-      );
-
-      // Test with new sensors array plus legacy temperature/humidity sensor
-      card.setConfig({
-        area: 'living_room',
-        temperature_sensor: 'sensor.custom_sensor', // Legacy property
-        humidity_sensor: 'sensor.additional_sensor', // Legacy property
-        sensors: ['sensor.living_room_climate_air_temperature'], // New property
-      } as any as Config);
-      card.hass = mockHass;
-
-      // Should include both legacy sensors AND the sensors array value
-      expect(card['_sensors']).to.exist;
-      expect(card['_sensors']).to.have.lengthOf(3);
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.custom_sensor', // Legacy temperature sensor
-      );
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.additional_sensor', // Legacy humidity sensor
-      );
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.living_room_climate_air_temperature', // From sensors array
-      );
-
-      // Test with just new sensors array
-      card.setConfig({
-        area: 'living_room',
-        sensors: ['sensor.custom_sensor', 'sensor.additional_sensor'],
-      });
-      card.hass = mockHass;
-
-      // Should include default sensors (from area) AND all values in sensors array
-      expect(card['_sensors']).to.exist;
-      expect(card['_sensors']).to.have.lengthOf(4);
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.living_room_climate_air_temperature', // Default from area
-      );
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.living_room_climate_humidity', // Default from area
-      );
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.custom_sensor', // From sensors array
-      );
-      expect(card['_sensors'].map((s) => s.entity_id)).to.include(
-        'sensor.additional_sensor', // From sensors array
-      );
+      // _hass should still reference the original object since formatEntityState didn't change
+      expect(card['_hass']).to.equal(originalHass);
     });
   });
 
@@ -215,8 +141,8 @@ describe('card.ts', () => {
       });
     });
 
-    it('should render nothing if no room info', async () => {
-      (card as any)._roomInformation = undefined;
+    it('should render nothing if no hass', async () => {
+      (card as any)._hass = undefined;
       const el = card.render();
       expect(el).to.equal(nothing);
     });
@@ -232,8 +158,8 @@ describe('card.ts', () => {
     });
 
     it('should handle missing climate sensors gracefully', async () => {
-      delete mockHass.states!['sensor.living_room_climate_humidity'];
-      delete mockHass.states!['sensor.living_room_climate_air_temperature'];
+      delete mockHass.states['sensor.living_room_climate_humidity'];
+      delete mockHass.states['sensor.living_room_climate_air_temperature'];
 
       const el = await fixture(card.render() as TemplateResult);
       const label = el.querySelector('.label');
@@ -285,7 +211,7 @@ describe('card.ts', () => {
     });
 
     it('should handle entities with undefined states', async () => {
-      mockHass.states!['light.living_room']!.state = '';
+      mockHass.states['light.living_room']!.state = '';
       const el = await fixture(card.render() as TemplateResult);
       expect(el.parentNode).to.exist;
       expect(el.querySelector('.grid')).to.exist;
@@ -319,7 +245,7 @@ describe('card.ts', () => {
         labels: [],
       };
 
-      card.hass = mockHass as HomeAssistant;
+      card.hass = mockHass;
       const el = await fixture(card.render() as TemplateResult);
       const stats = el.querySelector('.stats');
       expect(stats!.textContent).to.include('3 devices');
@@ -332,6 +258,9 @@ describe('card.ts', () => {
         devices: {},
         entities: {},
       };
+
+      // trigger re-render w/ current logic
+      (card as any)._roomInformation = undefined;
       card.hass = emptyAreaHass as HomeAssistant;
       const el = await fixture(card.render() as TemplateResult);
       const stats = el.querySelector('.stats');

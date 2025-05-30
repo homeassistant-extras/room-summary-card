@@ -489,7 +489,7 @@ Additionally, the card now supports direct RGB colors:
 - [x] **`Card Editor`**: ability to use the HA card editor. - thanks @elsilius
 - [x] **`Test on other themes`**: make sure it works elsewhere. - thanks @tardis89, @avatar25pl
 - [x] **`Flags`**: ability to disable features.
-- [x] **`Multiple sensors`**: support for displaying multiple sensors in the label area. - thanks @fctruter
+- [x] **`Multiple sensors`**: support for displaying multiple sensors in the label area. - thanks @fctruter, @LE-tarantino
 - [x] **`Climate entity icon styling`**: climate entity will light up icon - thanks @murriano
 - [x] **`Border styling for climate thresholds`**: border respects skip_climate_styles - thanks @LE-tarantino
 - [x] **`Area name display`**: use area name instead of area ID on card - thanks @LE-tarantino
