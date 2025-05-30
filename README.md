@@ -276,7 +276,7 @@ You can add attributes to entities to customize the functionality further.
 | humidity_threshold    | number | 60              | Threshold to show blue border.      |
 | icon                  | string | entity default  | Custom MDI icon                     |
 
-You can customize entity attributes several ways.
+You can customize entity attributes several ways:
 
 For entities you don't control, use [customizations](https://www.home-assistant.io/docs/configuration/customizing-devices/).
 
