@@ -1,0 +1,60 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag name (e.g., v1.2.3)'
+        required: true
+        type: string
+      release_title:
+        description: 'Release title (optional)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  manual-release:
+    name: 'Create Manual Release'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v3'
+        with:
+          fetch-depth: 0
+
+      - name: 'Determine release type'
+        id: release-type
+        run: |
+          if [[ "${{ github.ref_name }}" == "release" ]]; then
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+            echo "release_type=Release" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+            echo "release_type=Pre-release" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build
+        uses: anna-money/github-actions-npm@master
+        with:
+          target: 'build'
+
+      - name: Generate release notes
+        id: create-release-notes
+        uses: johnyherangi/create-release-notes@main
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: 'dist/**'
+          generateReleaseNotes: true
+          tag: ${{ inputs.tag_name }}
+          name: ${{ inputs.release_title || format('{0} - {1} from {2}', inputs.tag_name, steps.release-type.outputs.release_type, github.ref_name) }}
+          body: ${{ steps.create-release-notes.outputs.release-notes }}
+          prerelease: ${{ steps.release-type.outputs.prerelease }}
+          draft: false

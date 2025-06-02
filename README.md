@@ -494,7 +494,7 @@ Additionally, the card now supports direct RGB colors:
 - [x] **`Border styling for climate thresholds`**: border respects skip_climate_styles - thanks @LE-tarantino
 - [x] **`Area name display`**: use area name instead of area ID on card - thanks @LE-tarantino
 - [x] **`Navigation with room entity`**: navigate now works with room entity set - thanks @LE-tarantino
-- [x] **`Card container sizing`**: card respects container - thanks @frdve
+- [x] **`Card container sizing`**: card respects container - thanks @frdve, @Erikkyw
 - [x] **`Border styling improvements`**: border to match HA styles better - thanks @frdve
 - [x] **`Theme support for iOS theme`**: for opening issue on themes - thanks @yasalmasri
 - [x] **`UI Minimalist theme integration`**: add UI minimalist theme - thanks @tardis89

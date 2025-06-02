@@ -93,12 +93,19 @@ export default () => {
             selector: { area: {} },
           },
           {
-            label: 'Area name',
-            name: 'area_name',
-            required: false,
-            selector: {
-              text: {},
-            },
+            name: 'content',
+            label: 'Content',
+            type: 'expandable',
+            flatten: true,
+            icon: 'mdi:text-short',
+            schema: [
+              {
+                name: 'area_name',
+                label: 'Area name',
+                required: false,
+                selector: { text: {} },
+              },
+            ],
           },
           {
             name: 'entities',

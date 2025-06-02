@@ -1,3 +1,5 @@
+// Updated src/cards/editor.ts
+
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
@@ -8,10 +10,19 @@ import { state } from 'lit/decorators.js';
 const SCHEMA: HaFormSchema[] = [
   { name: 'area', label: 'Area', required: true, selector: { area: {} } },
   {
-    name: 'area_name',
-    label: 'Area name',
-    required: false,
-    selector: { text: {} },
+    name: 'content',
+    label: 'Content',
+    type: 'expandable',
+    flatten: true,
+    icon: 'mdi:text-short',
+    schema: [
+      {
+        name: 'area_name',
+        label: 'Area name',
+        required: false,
+        selector: { text: {} },
+      },
+    ],
   },
   {
     name: 'entities',

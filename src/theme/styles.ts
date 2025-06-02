@@ -39,10 +39,6 @@ export const styles = css`
     --icon-color: var(--theme-color-icon);
     --background-color-icon: var(--theme-background-color-icon);
     --background-opacity-icon: var(--opacity-icon-fill-inactive);
-
-    display: block;
-    width: 100%;
-    height: 100%;
   }
 
   /* Card container */
