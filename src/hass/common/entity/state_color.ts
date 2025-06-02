@@ -44,8 +44,9 @@ const STATE_COLORED_DOMAIN = new Set([
   'water_heater',
 ]);
 
+// slightly modified from frontend/src/common/entity/state_color.ts
 export const stateColorCss = (stateObj: HassEntity, state?: string) => {
-  const compareState = state !== undefined ? state : stateObj?.state;
+  const compareState = state ?? stateObj?.state;
   if (compareState === UNAVAILABLE) {
     return `var(--state-unavailable-color)`;
   }
@@ -55,7 +56,8 @@ export const stateColorCss = (stateObj: HassEntity, state?: string) => {
     return computeCssVariable(properties);
   }
 
-  return undefined;
+  // allow for theme override at least
+  return `var(--state-color-theme-override)`;
 };
 
 /**
@@ -90,11 +92,12 @@ export const domainStateColorProperties = (
   return properties;
 };
 
+// slightly modified from frontend/src/common/entity/state_color.ts
 export const stateColorProperties = (
   stateObj: HassEntity,
   state?: string,
 ): string[] | undefined => {
-  const compareState = state !== undefined ? state : stateObj?.state;
+  const compareState = state ?? stateObj?.state;
   const domain = computeDomain(stateObj.entity_id);
   const dc = stateObj.attributes.device_class;
 
@@ -102,7 +105,7 @@ export const stateColorProperties = (
   if (domain === 'sensor' && dc === 'battery') {
     const property = batteryStateColorProperty(compareState);
     if (property) {
-      return [property];
+      return ['--state-color-theme-override', property];
     }
   }
 

@@ -476,11 +476,37 @@ The `on_color` and `off_color` attributes support these color stylings from the 
 - white
 - disabled
 
-Additionally, the card now supports direct RGB colors:
+### RBG Coloring for Lights
 
 - For entities with `rgb_color` attributes (like color-capable lights), the actual RGB values are used for coloring
 - This provides accurate color representation without needing to manually set `on_color` values
 - The card will prioritize RGB colors over theme-based colors when both are available. `on_color` and `off_color` will take precedence over RGB values.
+
+### Custom Icon Color Integration Support
+
+The card now supports the [custom-icon-color integration](https://github.com/Mariusthvdb/custom-icon-color) which allows you to set custom hex colors for entity icons using the `icon_color` attribute.
+
+When an entity has an `icon_color` attribute with a hex color value (starting with '#'), this color will take precedence over all other color settings including `on_color`, `off_color`, and RGB values.
+
+Example without integration:
+
+```yaml
+customize:
+  light.living_room:
+    icon_color: '#FF5733' # Custom hex color takes precedence
+    on_color: blue # This will be ignored
+```
+
+i.e for a media sensor
+
+```yaml
+navigation_path: /plex
+icon: mdi:netflix
+icon_color: '#E50914'
+```
+
+![icon-color](assets/icon-color.png)
+![icon-color](assets/icon-color-full.png)
 
 ## Project Roadmap
 
@@ -503,6 +529,7 @@ Additionally, the card now supports direct RGB colors:
 - [x] **`Card RGB coloring`**: RGB lights color the card - thanks @ChristopherLMiller
 - [x] **`Custom names`**: **⭐ First contributor ⭐** added `area_name` - thanks @Aulos
 - [x] **`Disable card styling`**: bug fixes and new skip_entity_styles feature - thanks @benjycov
+- [x] **`Custom icon color integration`**: support [custom-icon-color integration](https://github.com/Mariusthvdb/custom-icon-color) - thanks @benjycov
 
 ## Contributing
 

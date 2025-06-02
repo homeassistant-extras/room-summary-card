@@ -199,6 +199,8 @@ export const styles = css`
     place-items: center;
     color: var(--black-color);
     position: relative;
+    margin-left: 10px;
+    margin-bottom: 10px;
   }
 
   .status-entities::before {

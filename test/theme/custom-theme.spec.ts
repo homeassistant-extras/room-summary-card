@@ -22,6 +22,170 @@ export default () => {
         },
       } as any as HomeAssistant;
 
+      describe('icon_color attribute support', () => {
+        it('should return hex color when icon_color starts with #', () => {
+          const state = {
+            entity_id: 'light.living_room',
+            state: 'on',
+            attributes: {
+              icon_color: '#FF5733',
+              on_color: 'red', // This should be ignored
+              off_color: 'grey',
+            },
+            domain: 'light',
+          };
+
+          const result = getThemeColorOverride(hassDefault, state, true);
+          expect(result).to.equal('#FF5733');
+        });
+
+        it('should return hex color when icon_color starts with # for inactive state', () => {
+          const state = {
+            entity_id: 'light.living_room',
+            state: 'off',
+            attributes: {
+              icon_color: '#336699',
+              on_color: 'red',
+              off_color: 'grey', // This should be ignored
+            },
+            domain: 'light',
+          };
+
+          const result = getThemeColorOverride(hassDefault, state, false);
+          expect(result).to.equal('#336699');
+        });
+
+        it('should ignore icon_color if it does not start with #', () => {
+          const state = {
+            entity_id: 'light.living_room',
+            state: 'on',
+            attributes: {
+              icon_color: 'red', // Not a hex color, should be ignored
+              on_color: 'blue',
+              off_color: 'grey',
+            },
+            domain: 'light',
+          };
+
+          const result = getThemeColorOverride(hassDefault, state, true);
+          expect(result).to.equal('var(--blue-color)');
+        });
+
+        it('should ignore icon_color if it is empty string', () => {
+          const state = {
+            entity_id: 'light.living_room',
+            state: 'on',
+            attributes: {
+              icon_color: '',
+              on_color: 'blue',
+              off_color: 'grey',
+            },
+            domain: 'light',
+          };
+
+          const result = getThemeColorOverride(hassDefault, state, true);
+          expect(result).to.equal('var(--blue-color)');
+        });
+
+        it('should handle icon_color with minimalist theme', () => {
+          const state = {
+            entity_id: 'light.living_room',
+            state: 'on',
+            attributes: {
+              icon_color: '#AA4499',
+              on_color: 'red',
+            },
+            domain: 'light',
+          };
+
+          const result = getThemeColorOverride(hassMinimalist, state, true);
+          expect(result).to.equal('#AA4499');
+        });
+
+        it('should prioritize icon_color over rgb_color', () => {
+          // Create a stub for the getRgbColor function
+          const getRgbColorStub = stub(rgbColorModule, 'getRgbColor').returns(
+            'rgb(123, 45, 67)',
+          );
+
+          const state = {
+            entity_id: 'light.living_room',
+            state: 'on',
+            attributes: {
+              icon_color: '#ABCDEF',
+              rgb_color: [123, 45, 67],
+              on_color: 'red',
+            },
+            domain: 'light',
+          };
+
+          const result = getThemeColorOverride(hassDefault, state, true);
+
+          // Should return icon_color, not rgb color
+          expect(result).to.equal('#ABCDEF');
+
+          // getRgbColor should not have been called since icon_color takes precedence
+          expect(getRgbColorStub.called).to.be.false;
+
+          getRgbColorStub.restore();
+        });
+
+        it('should handle various hex color formats', () => {
+          const testCases = [
+            '#FF0000', // Standard 6-digit hex
+            '#F00', // This should not work with startsWith('#') but let's test if someone passes it
+            '#123ABC', // Mixed case
+            '#ffffff', // Lowercase
+            '#000000', // Black
+          ];
+
+          testCases.forEach((hexColor) => {
+            const state = {
+              entity_id: 'light.test',
+              state: 'on',
+              attributes: {
+                icon_color: hexColor,
+                on_color: 'red',
+              },
+              domain: 'light',
+            };
+
+            const result = getThemeColorOverride(hassDefault, state, true);
+            expect(result).to.equal(hexColor);
+          });
+        });
+
+        it('should handle undefined icon_color gracefully', () => {
+          const state = {
+            entity_id: 'light.living_room',
+            state: 'on',
+            attributes: {
+              icon_color: undefined,
+              on_color: 'blue',
+            },
+            domain: 'light',
+          };
+
+          const result = getThemeColorOverride(hassDefault, state, true);
+          expect(result).to.equal('var(--blue-color)');
+        });
+
+        it('should handle null icon_color gracefully', () => {
+          const state = {
+            entity_id: 'light.living_room',
+            state: 'on',
+            attributes: {
+              icon_color: null,
+              on_color: 'blue',
+            },
+            domain: 'light',
+          };
+
+          const result = getThemeColorOverride(hassDefault, state, true);
+          expect(result).to.equal('var(--blue-color)');
+        });
+      });
+
       describe('with default theme', () => {
         it('should return undefined when state is undefined', () => {
           const result = getThemeColorOverride(hassDefault, undefined, true);

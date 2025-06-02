@@ -99,6 +99,12 @@ export const getThemeColorOverride = (
   active?: boolean,
 ) => {
   if (!state) return undefined;
+
+  const iconColor = state.attributes.icon_color;
+  if (iconColor?.startsWith('#')) {
+    return iconColor;
+  }
+
   const onColor = state.attributes.on_color;
   const offColor = state?.attributes?.off_color;
   const rgbColor = getRgbColor(state, onColor, offColor, active);

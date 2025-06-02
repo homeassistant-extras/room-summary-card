@@ -89,14 +89,16 @@ export default () => {
           .be.true;
       });
 
-      it('should return undefined when there are no color properties', () => {
+      it('should return theme override when there are no color properties', () => {
         const stateObj = createStateObj('unsupported.entity', 'state');
         stateColorPropertiesStub = stub(
           stateColorModule,
           'stateColorProperties',
         ).returns(undefined);
 
-        expect(stateColorCss(stateObj)).to.be.undefined;
+        expect(stateColorCss(stateObj)).to.equal(
+          'var(--state-color-theme-override)',
+        );
       });
     });
 
@@ -161,7 +163,10 @@ export default () => {
         batteryStateColorStub.returns('--state-sensor-battery-high-color');
 
         const result = stateColorProperties(stateObj);
-        expect(result).to.deep.equal(['--state-sensor-battery-high-color']);
+        expect(result).to.deep.equal([
+          '--state-color-theme-override',
+          '--state-sensor-battery-high-color',
+        ]);
         expect(batteryStateColorStub.calledWith('75')).to.be.true;
       });
 
