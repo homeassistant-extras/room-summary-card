@@ -113,13 +113,13 @@ export default () => {
           .be.true;
       });
 
-      it('should handle undefined cssColor', () => {
+      it('should handle undefined cssColor with theme override', () => {
         const state = createStateEntity('light', 'test', 'on');
         stateColorCssStub.returns(undefined);
 
         const result = getStyleData(mockHass, state);
 
-        expect(result?.cssColor).to.be.undefined;
+        expect(result?.cssColor).to.equal('var(--state-color-theme-override)');
         expect(result?.active).to.be.true;
         expect(result?.activeClass).to.equal('active');
       });

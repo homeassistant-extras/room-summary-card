@@ -89,16 +89,14 @@ export default () => {
           .be.true;
       });
 
-      it('should return theme override when there are no color properties', () => {
+      it('should return undefined when there are no color properties', () => {
         const stateObj = createStateObj('unsupported.entity', 'state');
         stateColorPropertiesStub = stub(
           stateColorModule,
           'stateColorProperties',
         ).returns(undefined);
 
-        expect(stateColorCss(stateObj)).to.equal(
-          'var(--state-color-theme-override)',
-        );
+        expect(stateColorCss(stateObj)).to.be.undefined;
       });
     });
 

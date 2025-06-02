@@ -56,8 +56,7 @@ export const stateColorCss = (stateObj: HassEntity, state?: string) => {
     return computeCssVariable(properties);
   }
 
-  // allow for theme override at least
-  return `var(--state-color-theme-override)`;
+  return undefined;
 };
 
 /**

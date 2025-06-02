@@ -30,9 +30,11 @@ export const getStyleData = (
 
   const stateObj = state as any as HassEntity;
   const active = stateActive(stateObj);
-  const cssColor = stateColorCss(stateObj);
-  const themeOverride = getThemeColorOverride(hass, state, active);
   const activeClass = active ? 'active' : 'inactive';
+  const themeOverride = getThemeColorOverride(hass, state, active);
+  const cssColor =
+    stateColorCss(stateObj) ??
+    (themeOverride ? 'var(--state-color-theme-override)' : undefined);
 
   return {
     active,
