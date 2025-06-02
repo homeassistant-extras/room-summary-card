@@ -275,6 +275,7 @@ You can add attributes to entities to customize the functionality further.
 | temperature_threshold | number | 80              | Threshold to show red border.       |
 | humidity_threshold    | number | 60              | Threshold to show blue border.      |
 | icon                  | string | entity default  | Custom MDI icon                     |
+| icon_color            | string | _none_          | Hex icon color                      |
 
 You can customize entity attributes several ways:
 
