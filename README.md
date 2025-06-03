@@ -275,7 +275,7 @@ You can add attributes to entities to customize the functionality further.
 | temperature_threshold | number | 80              | Threshold to show red border.       |
 | humidity_threshold    | number | 60              | Threshold to show blue border.      |
 | icon                  | string | entity default  | Custom MDI icon                     |
-| icon_color            | string | _none_          | Hex icon color                      |
+| icon_color            | string | _none_          | Hex or allowed color                |
 
 You can customize entity attributes several ways:
 
@@ -448,7 +448,7 @@ Each domain has a predefined color to indicate its active status.
 
 ### Available color codes
 
-The `on_color` and `off_color` attributes support these color stylings from the theme.
+The `on_color`, `off_color` and `icon_color` attributes support these color stylings from the theme.
 
 - primary
 - accent
@@ -485,16 +485,16 @@ The `on_color` and `off_color` attributes support these color stylings from the 
 
 ### Custom Icon Color Integration Support
 
-The card now supports the [custom-icon-color integration](https://github.com/Mariusthvdb/custom-icon-color) which allows you to set custom hex colors for entity icons using the `icon_color` attribute.
+The card now supports the [custom-icon-color integration](https://github.com/Mariusthvdb/custom-icon-color) which allows you to set custom colors for entity icons using the `icon_color` attribute.
 
-When an entity has an `icon_color` attribute with a hex color value (starting with '#'), this color will take precedence over all other color settings including `on_color`, `off_color`, and RGB values.
+When an entity has an `icon_color` attribute, this color will take precedence over all other color settings including `on_color`, `off_color`, and RGB values.
 
 Example without integration:
 
 ```yaml
 customize:
   light.living_room:
-    icon_color: '#FF5733' # Custom hex color takes precedence
+    icon_color: yellow
     on_color: blue # This will be ignored
 ```
 
