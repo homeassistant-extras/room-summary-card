@@ -75,6 +75,15 @@ export class RoomSummaryCard extends LitElement {
   private isDarkMode!: boolean;
 
   /**
+   * Indicates status of temperature and humidity
+   */
+  @property({ type: Boolean, reflect: true })
+  private overTemp!: boolean;
+
+  @property({ type: Boolean, reflect: true })
+  private overHumid!: boolean;
+
+  /**
    * Home Assistant instance
    * Marked as @state since we selectively update hass
    * to avoid unnecessary re-renders
@@ -112,10 +121,14 @@ export class RoomSummaryCard extends LitElement {
       problemExists,
       sensors,
       isDarkMode,
+      overTemp,
+      overHumid,
     } = getRoomProperties(hass, this._config);
 
     this._problemExists = problemExists;
     this.isDarkMode = isDarkMode;
+    this.overTemp = overTemp;
+    this.overHumid = overHumid;
 
     // Update states only if they've changed
     let shouldRender = false;
@@ -198,7 +211,6 @@ export class RoomSummaryCard extends LitElement {
     const cardStyle = renderCardStyles(
       this._hass,
       this._config,
-      this._sensors,
       this._roomEntity.state,
     );
     const problems = renderProblemIndicator(

@@ -31,13 +31,34 @@ const baseThemeStyles = css`
 
   :host {
     --text-color: var(--primary-text-color);
-
     --background-color-card: var(--theme-background-color-card);
     --background-opacity-card: var(--opacity-background-inactive);
-
     --icon-color: var(--theme-color-icon);
     --background-color-icon: var(--theme-background-color-icon);
     --background-opacity-icon: var(--opacity-icon-fill-inactive);
+
+    background: var(--ha-card-background, var(--card-background-color, #fff));
+    border-color: var(--ha-card-border-color, var(--divider-color, #e0e0e0));
+    border-radius: var(--ha-card-border-radius, var(--border-radius, 12px));
+    border-width: var(--ha-card-border-width, 1px);
+    border-style: solid;
+    transition: all 0.3s ease-out;
+    display: block;
+    overflow: hidden;
+  }
+
+  :host([overTemp]) {
+    border-left: 5px solid var(--error-color) !important;
+    border-top: 5px solid var(--error-color) !important;
+    border-right: 5px solid var(--error-color);
+    border-bottom: 5px solid var(--error-color);
+  }
+
+  :host([overHumid]) {
+    border-left: 5px solid var(--info-color);
+    border-top: 5px solid var(--info-color);
+    border-right: 5px solid var(--info-color) !important;
+    border-bottom: 5px solid var(--info-color) !important;
   }
 `;
 
@@ -47,7 +68,6 @@ const baseThemeStyles = css`
 const cardContainerStyles = css`
   /* Card container */
   .card {
-    border-radius: var(--ha-card-border-radius, var(--border-radius, 20px));
     line-height: normal;
     overflow: hidden;
     position: relative;
@@ -55,21 +75,21 @@ const cardContainerStyles = css`
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+    background: linear-gradient(
+      0,
+      rgba(33, 33, 33, 0.9) 0%,
+      rgba(33, 33, 33, 0) 45%
+    );
     z-index: 1;
   }
 
   .card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100%;
+    height: 100%;
     background: var(--background-color-card);
     opacity: var(--background-opacity-card);
-    border-color: var(--ha-card-border-color, var(--divider-color, #e0e0e0));
-    border-width: var(--ha-card-border-width, 1px);
-    border-style: solid;
     z-index: -1;
   }
 `;

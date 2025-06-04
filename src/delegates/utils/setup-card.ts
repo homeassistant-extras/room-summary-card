@@ -11,6 +11,7 @@ import type {
 import { getProblemEntities } from './card-entities';
 import { getIconEntities } from './icon-entities';
 import { getRoomEntity } from './room-entity';
+import { hitThresholds } from './thresholds';
 
 export interface RoomProperties {
   roomInfo: RoomInformation;
@@ -20,6 +21,8 @@ export interface RoomProperties {
   problemExists: boolean;
   sensors: EntityState[];
   isDarkMode: boolean;
+  overTemp: boolean;
+  overHumid: boolean;
 }
 
 /**
@@ -76,6 +79,8 @@ export const getRoomProperties = (
     .map((sensorId) => getState(hass, sensorId))
     .filter((sensor) => sensor !== undefined);
 
+  const thresholds = hitThresholds(config, sensors);
+
   return {
     roomInfo,
     states,
@@ -84,5 +89,6 @@ export const getRoomProperties = (
     problemExists,
     sensors,
     isDarkMode: hass.themes.darkMode,
+    ...thresholds,
   };
 };
