@@ -15,10 +15,9 @@ import {
 } from './themes';
 
 /**
- * Static CSS styles for the Room Summary Card
- * Defines the grid layout and styling for all card elements
+ * Base theme and color definitions
  */
-export const styles = css`
+const baseThemeStyles = css`
   /* Card Themes and Colors */
   :host {
     ${minimalistThemeColors}
@@ -40,7 +39,12 @@ export const styles = css`
     --background-color-icon: var(--theme-background-color-icon);
     --background-opacity-icon: var(--opacity-icon-fill-inactive);
   }
+`;
 
+/**
+ * Card container and background styling
+ */
+const cardContainerStyles = css`
   /* Card container */
   .card {
     border-radius: var(--ha-card-border-radius, var(--border-radius, 20px));
@@ -68,13 +72,18 @@ export const styles = css`
     border-style: solid;
     z-index: -1;
   }
+`;
 
+/**
+ * Grid layout and positioning
+ */
+const gridLayoutStyles = css`
   /* Grid layout */
   .grid {
     display: grid;
     grid-template-areas:
-      'n n n e'
-      'l l l e'
+      'i i i e'
+      'i i i e'
       'r r . e'
       'r r . e';
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -83,6 +92,13 @@ export const styles = css`
     aspect-ratio: 1/1;
     height: 100%;
     width: 100%;
+  }
+
+  .info {
+    grid-area: i;
+    cursor: pointer;
+    width: 100%;
+    margin: 5% 0px 0px 10%;
   }
 
   /* Entities Container - Flexbox with consistent spacing */
@@ -99,16 +115,6 @@ export const styles = css`
     padding: 5px 5px 5px 0;
   }
 
-  /* Entity styling - responsive sizing with min/max bounds */
-  .entity {
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   /* Room area styling - Large square shape */
   .room {
     grid-area: r;
@@ -116,47 +122,37 @@ export const styles = css`
     width: 150%;
     aspect-ratio: 1 / 1;
   }
+`;
 
-  /* Room name styling */
-  .name {
-    grid-area: n;
-    align-self: end;
-    font-size: 18px;
-    margin-bottom: 10%;
+/**
+ * Entity and component area styles
+ */
+const entityAreaStyles = css`
+  /* Entity styling - responsive sizing with min/max bounds */
+  .entity {
+    width: 100%;
+    height: 100%;
     cursor: pointer;
-    color: var(--text-color);
-  }
-
-  /* Label styling */
-  .label {
-    grid-area: l;
-    align-self: start;
-    font-size: 14px;
-    margin-top: -10%;
-    filter: opacity(40%);
-    cursor: pointer;
-  }
-
-  .label p {
-    margin: 0;
   }
 
   /* Statistics text */
   .stats {
     font-size: 0.8em;
+    filter: opacity(40%);
   }
 
   /* Common text styles */
   .text {
     text-overflow: ellipsis;
     white-space: nowrap;
-    justify-self: start;
     overflow: hidden;
-    font-weight: bold;
-    margin-left: 12px;
-    max-width: calc(100% - 12px);
   }
+`;
 
+/**
+ * Icon and visual indicator styles
+ */
+const iconStyles = css`
   /* Icon container styling */
   .icon {
     align-self: center;
@@ -199,8 +195,8 @@ export const styles = css`
     place-items: center;
     color: var(--black-color);
     position: relative;
-    margin-left: 10px;
-    margin-bottom: 10px;
+    margin-left: 10%;
+    margin-bottom: 10%;
   }
 
   .status-entities::before {
@@ -215,12 +211,52 @@ export const styles = css`
     opacity: var(--background-opacity-icon);
     z-index: -1;
   }
+`;
+
+/**
+ * Sensor and label display styles
+ */
+const sensorLabelStyles = css`
+  /* Sensor Label area styling */
+  .info.bottom .label {
+    position: absolute;
+    bottom: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .info.stacked .sensors-container {
+    flex-direction: column;
+  }
+
+  /* Room name styling */
+  .name {
+    font-size: 18px;
+    color: var(--text-color);
+  }
 
   /* Sensors */
+  .label {
+    margin-left: -2%;
+    margin-top: 2%;
+  }
+
   .sensors-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin: 0;
+    filter: opacity(40%);
   }
+`;
+
+/**
+ * Combined styles for the Room Summary Card
+ * Exports all style categories as a single CSS template
+ */
+export const styles = css`
+  ${baseThemeStyles}
+  ${cardContainerStyles}
+  ${gridLayoutStyles}
+  ${entityAreaStyles}
+  ${iconStyles}
+  ${sensorLabelStyles}
 `;

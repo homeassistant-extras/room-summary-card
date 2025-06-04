@@ -93,6 +93,15 @@ For example, a light with RGB values will show its actual color rather than a ge
 ![light](assets/light-rgb.png)
 ![dark](assets/dark-rgb.png)
 
+### Sensor Display Options
+
+- Multiple sensor display layouts for better visual organization
+- **Default Layout**: Sensors displayed in the label area alongside room statistics
+- **Stacked Layout**: Sensors displayed vertically stacked in the label area
+- **Bottom Layout**: Sensors displayed at the bottom of the card for maximum visibility
+
+![sensors](assets/sensors-styles.png)
+
 ## Installation
 
 ### HACS (Recommended)
@@ -150,19 +159,20 @@ The card will automatically:
 
 Most of these are optional if you setup the entities a certain way using labels and attributes. For example, see my HA configuration for my dashboard home page: [01-home.yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml)
 
-| Name      | Type             | Default                    | Description                                                       |
-| --------- | ---------------- | -------------------------- | ----------------------------------------------------------------- |
-| area      | string           | **Required**               | The area identifier for the room (e.g., 'living_room', 'kitchen') |
-| area_name | string           | area name                  | Custom area name                                                  |
-| entity    | string \| object | `light.<area>_light`       | Main entity for the room                                          |
-| entities  | array            | See below                  | Additional entities to display                                    |
-| sensors   | array            | See below                  | Array of sensor entities to display in the card label area        |
-| navigate  | string           | area name (dash-separated) | Custom navigation path when clicking the room name / icon         |
-| features  | list             | See below                  | Optional flags to toggle different features                       |
+| Name          | Type             | Default                    | Description                                                       |
+| ------------- | ---------------- | -------------------------- | ----------------------------------------------------------------- |
+| area          | string           | **Required**               | The area identifier for the room (e.g., 'living_room', 'kitchen') |
+| area_name     | string           | area name                  | Custom area name                                                  |
+| entity        | string \| object | `light.<area>_light`       | Main entity for the room                                          |
+| entities      | array            | See below                  | Additional entities to display                                    |
+| sensors       | array            | See below                  | Array of sensor entities to display in the card label area        |
+| navigate      | string           | area name (dash-separated) | Custom navigation path when clicking the room name / icon         |
+| features      | list             | See below                  | Optional flags to toggle different features                       |
+| sensor_layout | string           | `default`                  | Layout for sensor display: `default`, `stacked`, or `bottom`      |
 
 ### Sensor Configuration
 
-The card now supports configuring multiple sensors via the `sensors` array:
+The card supports configuring multiple sensors via the `sensors` array with flexible display options:
 
 ```yaml
 sensors:
@@ -170,7 +180,14 @@ sensors:
   - sensor.living_room_climate_humidity
   - sensor.living_room_co2
   - sensor.living_room_pressure
+sensor_layout: bottom # Optional: default, stacked, or bottom
 ```
+
+**Sensor Layout Options:**
+
+- **`default`** (default): Displays sensors in the label area alongside room statistics
+- **`stacked`**: Displays sensors vertically stacked in the label area for better organization
+- **`bottom`**: Displays sensors at the bottom of the card for maximum visibility and readability
 
 ![sesnors](assets/sensors.png)
 
@@ -509,6 +526,46 @@ icon_color: '#E50914'
 ![icon-color](assets/icon-color.png)
 ![icon-color](assets/icon-color-full.png)
 
+### Example with Bottom Sensor Layout
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+area_name: Living Room
+entity:
+  entity_id: light.living_room_main
+  icon: mdi:ceiling-light
+entities:
+  - entity_id: switch.living_room_tv
+    icon: mdi:television
+  - light.living_room_lamp
+  - switch.living_room_fan
+sensors:
+  - sensor.living_room_temperature
+  - sensor.living_room_humidity
+  - sensor.living_room_co2
+  - sensor.living_room_light_level
+sensor_layout: bottom
+navigate: /lovelace/living-room
+features:
+  - hide_area_stats
+```
+
+### Example with Stacked Sensor Layout
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+entities:
+  - light.bedroom_light
+  - switch.bedroom_fan
+sensors:
+  - sensor.bedroom_temperature
+  - sensor.bedroom_humidity
+  - sensor.bedroom_air_quality
+sensor_layout: stacked
+```
+
 ## Project Roadmap
 
 - [x] **`Initial design`**: create initial room card based on button-card template in UI minimialist theme.
@@ -531,6 +588,7 @@ icon_color: '#E50914'
 - [x] **`Custom names`**: **⭐ First contributor ⭐** added `area_name` - thanks @Aulos
 - [x] **`Disable card styling`**: bug fixes and new skip_entity_styles feature - thanks @benjycov
 - [x] **`Custom icon color integration`**: support [custom-icon-color integration](https://github.com/Mariusthvdb/custom-icon-color) - thanks @benjycov
+- [x] **`Sensor layout options`**: flexible sensor display layouts (default, stacked, bottom) - thanks @Ltek
 
 ## Contributing
 

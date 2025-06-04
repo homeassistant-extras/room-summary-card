@@ -30,6 +30,9 @@ export interface Config {
   /** Array of sensor entity IDs to display in the label area */
   sensors?: string[];
 
+  /** Layout of the sensors */
+  sensor_layout?: 'default' | 'bottom' | 'stacked';
+
   /** Options to enable disable features **/
   features?: Features[];
 }

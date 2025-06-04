@@ -88,6 +88,30 @@ const SCHEMA: HaFormSchema[] = [
     ],
   },
   {
+    name: 'styles',
+    label: 'Styles',
+    type: 'expandable',
+    flatten: true,
+    icon: 'mdi:brush-variant',
+    schema: [
+      {
+        name: 'sensor_layout',
+        label: 'Sensor Layout',
+        required: false,
+        selector: {
+          select: {
+            mode: 'dropdown' as const,
+            options: [
+              { label: 'Default (in label area)', value: 'default' },
+              { label: 'Bottom', value: 'bottom' },
+              { label: 'Vertical Stack', value: 'stacked' },
+            ],
+          },
+        },
+      },
+    ],
+  },
+  {
     name: 'interactions',
     label: 'Interactions',
     type: 'expandable' as const,

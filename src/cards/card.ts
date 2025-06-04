@@ -11,15 +11,11 @@
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
-import {
-  actionHandler,
-  handleClickAction,
-} from '@/delegates/action-handler-delegate';
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
+import { info } from '@html/info';
 import { renderCardStyles } from '@theme/render/card-styles';
-import { renderTextStyles } from '@theme/render/text-styles';
 import { styles } from '@theme/styles';
 import type {
   Config,
@@ -27,7 +23,6 @@ import type {
   EntityState,
   RoomInformation,
 } from '@type/config';
-import { renderAreaStatistics, renderLabel } from '../html/text';
 const equal = require('fast-deep-equal');
 
 export class RoomSummaryCard extends LitElement {
@@ -194,15 +189,6 @@ export class RoomSummaryCard extends LitElement {
       return nothing;
     }
 
-    const handler = actionHandler(this._roomEntity);
-    const label = renderLabel(this._hass, this._config, this._sensors);
-    const action = handleClickAction(this, this._roomEntity);
-    const stats = renderAreaStatistics(this._hass, this._config);
-    const textStyle = renderTextStyles(
-      this._hass,
-      this._config,
-      this._roomEntity.state,
-    );
     const roomEntity = renderStateIcon(this, this._hass, this._roomEntity, [
       'room',
     ]);
@@ -223,25 +209,14 @@ export class RoomSummaryCard extends LitElement {
     return html`
       <div class="card" style="${cardStyle}">
         <div class="grid">
-          <!-- Room Name -->
-          <div
-            class="name text"
-            style=${textStyle}
-            @action=${action}
-            .actionHandler=${handler}
-          >
-            ${this._roomInformation.area_name}
-          </div>
-
-          <!-- Climate Information -->
-          <div
-            class="label text"
-            style=${textStyle}
-            @action=${action}
-            .actionHandler=${handler}
-          >
-            ${label} ${stats}
-          </div>
+          ${info(
+            this,
+            this._hass,
+            this._roomInformation,
+            this._roomEntity,
+            this._config,
+            this._sensors,
+          )}
 
           <!-- Room Icon -->
           ${roomEntity}
