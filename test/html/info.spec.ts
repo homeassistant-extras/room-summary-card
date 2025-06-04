@@ -126,7 +126,7 @@ export default () => {
         expect(nameElement!.textContent!.trim()).to.equal('Living Room');
 
         // Check label container
-        const labelElement = el.querySelector('.label.text');
+        const labelElement = el.querySelector('.sensors.text');
         expect(labelElement).to.exist;
       });
 
@@ -289,7 +289,7 @@ export default () => {
 
         // Both name and label should have the text styles applied
         const nameElement = el.querySelector('.name.text');
-        const labelElement = el.querySelector('.label.text');
+        const labelElement = el.querySelector('.sensors.text');
 
         expect(nameElement).to.exist;
         expect(labelElement).to.exist;
