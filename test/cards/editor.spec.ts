@@ -156,6 +156,10 @@ export default () => {
                       },
                       { label: 'Hide Area Stats', value: 'hide_area_stats' },
                       {
+                        label: 'Hide Sensor icons',
+                        value: 'hide_sensor_icons',
+                      },
+                      {
                         label: 'Exclude Default Entities',
                         value: 'exclude_default_entities',
                       },

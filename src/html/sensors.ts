@@ -17,11 +17,17 @@ export const renderSensors = (
   sensors: EntityState[],
 ): TemplateResult | typeof nothing => {
   if (!hass || hasFeature(config, 'hide_climate_label')) return nothing;
+  const hideIcon = hasFeature(config, 'hide_sensor_icons');
 
   const r = sensors.map(
     (value) =>
       html`<div>
-        <ha-state-icon .hass=${hass} .stateObj=${value}></ha-state-icon>
+        ${hideIcon
+          ? nothing
+          : html`<ha-state-icon
+              .hass=${hass}
+              .stateObj=${value}
+            ></ha-state-icon>`}
         ${stateDisplay(hass, value)}
       </div>`,
   );

@@ -39,10 +39,6 @@ export const info = (
   const snesorInfo = renderSensors(hass, config, sensors);
   const stats = renderAreaStatistics(hass, config);
 
-  const label = html`<div class="label text" style=${textStyle}>
-    ${snesorInfo}
-  </div>`;
-
   return html`<div class="info ${config.sensor_layout}">
     <div
       class="name text"
@@ -52,6 +48,7 @@ export const info = (
     >
       ${roomInformation.area_name}
     </div>
-    ${stats} ${label}
+    ${stats}
+    <div class="sensors text" style=${textStyle}>${snesorInfo}</div>
   </div>`;
 };

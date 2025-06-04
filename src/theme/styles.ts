@@ -218,7 +218,7 @@ const iconStyles = css`
  */
 const sensorLabelStyles = css`
   /* Sensor Label area styling */
-  .info.bottom .label {
+  .info.bottom .sensors {
     position: absolute;
     bottom: 2%;
     left: 50%;
@@ -236,15 +236,23 @@ const sensorLabelStyles = css`
   }
 
   /* Sensors */
-  .label {
+  .sensors {
     margin-left: -2%;
     margin-top: 2%;
+  }
+
+  .sensors:not(:has(ha-state-icon)) {
+    margin-left: 0px;
   }
 
   .sensors-container {
     display: flex;
     flex-wrap: wrap;
     filter: opacity(40%);
+  }
+
+  .sensors-container:not(:has(ha-state-icon)) {
+    column-gap: 8px;
   }
 `;
 

@@ -99,6 +99,7 @@ For example, a light with RGB values will show its actual color rather than a ge
 - **Default Layout**: Sensors displayed in the label area alongside room statistics
 - **Stacked Layout**: Sensors displayed vertically stacked in the label area
 - **Bottom Layout**: Sensors displayed at the bottom of the card for maximum visibility
+- Hide sensor state icons with the `hide_sensor_icons` feature flag.
 
 ![sensors](assets/sensors-styles.png)
 
@@ -193,6 +194,8 @@ sensor_layout: bottom # Optional: default, stacked, or bottom
 
 All sensors provided will be displayed in the label area of the card. These default named senses will still be looked for first: `[sensor.<area>_climate_air_temperature, sensor.<area>_climate_humidity]`
 
+You can also hide the sensor state icons with the `hide_sensor_icons` feature flag.
+
 > [!NOTE]
 > For backward compatibility, you can still use the legacy `temperature_sensor` and `humidity_sensor` properties, but these are deprecated and will be removed in a future version. Please migrate to using the `sensors` array.
 
@@ -211,6 +214,7 @@ For climate-based border styling:
 | ------------------------ | ---- | -------------------------------------------- |
 | hide_climate_label       | flag | Show the climate label or not                |
 | hide_area_stats          | flag | Show the area statistics label or not        |
+| hide_sensor_icons        | flag | Hide the sensor state icons                  |
 | exclude_default_entities | flag | Exclude the default light/fan entities       |
 | skip_climate_styles      | flag | Disable climate-based color coding & borders |
 | skip_entity_styles       | flag | Disable card styling based on main entity    |
@@ -375,6 +379,7 @@ navigate: /lovelace/living-room
 features:
   - hide_area_stats
   - skip_entity_styles
+  - hide_sensor_icons
 ```
 
 ### Legacy Configuration (Backward Compatible)

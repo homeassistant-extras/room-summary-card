@@ -41,6 +41,7 @@ export interface Config {
 export type Features =
   | 'hide_climate_label'
   | 'hide_area_stats'
+  | 'hide_sensor_icons'
   | 'exclude_default_entities'
   | 'skip_climate_styles'
   | 'skip_entity_styles';
