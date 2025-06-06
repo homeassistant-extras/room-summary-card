@@ -1,47 +1,47 @@
+import * as areaRetrieverModule from '@delegates/retrievers/area';
+import * as getSensorsModule from '@delegates/utils/hide-yo-sensors';
+import * as getIconEntitiesModule from '@delegates/utils/icon-entities';
+import * as getProblemEntitiesModule from '@delegates/utils/problem-entities';
+import * as getRoomEntityModule from '@delegates/utils/room-entity';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
 import { createState as s } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import { expect } from 'chai';
+import { stub, type SinonStub } from 'sinon';
 
 export default () => {
   describe('setup-card.ts', () => {
     let mockHass: HomeAssistant;
+    let getAreaStub: SinonStub;
+    let getSensorsStub: SinonStub;
+    let getIconEntitiesStub: SinonStub;
+    let getProblemEntitiesStub: SinonStub;
+    let getRoomEntityStub: SinonStub;
 
     beforeEach(() => {
+      // Create stubs for all the delegate functions
+      getAreaStub = stub(areaRetrieverModule, 'getArea');
+      getSensorsStub = stub(getSensorsModule, 'getSensors');
+      getIconEntitiesStub = stub(getIconEntitiesModule, 'getIconEntities');
+      getProblemEntitiesStub = stub(
+        getProblemEntitiesModule,
+        'getProblemEntities',
+      );
+      getRoomEntityStub = stub(getRoomEntityModule, 'getRoomEntity');
+
       mockHass = {
         states: {
           'light.living_room_light': s('light', 'living_room_light', 'on', {
             friendly_name: 'Living Room Light',
           }),
-          'switch.living_room_fan': s('switch', 'living_room_fan', 'off', {
-            friendly_name: 'Living Room Fan',
-          }),
-          'sensor.living_room_climate_humidity': s(
-            'sensor',
-            'living_room_climate_humidity',
-            '50',
-          ),
-          'sensor.living_room_climate_air_temperature': s(
-            'sensor',
-            'living_room_climate_air_temperature',
-            '72',
-          ),
-          'sensor.custom_sensor': s('sensor', 'custom_sensor', '25'),
-          'sensor.additional_sensor': s('sensor', 'additional_sensor', '60'),
         },
         devices: {
           device_1: { area_id: 'living_room' },
-          device_2: { area_id: 'living_room' },
         },
         entities: {
           'light.living_room_light': {
             device_id: 'device_1',
-            area_id: 'living_room',
-            labels: [],
-          },
-          'switch.living_room_fan': {
-            device_id: 'device_2',
             area_id: 'living_room',
             labels: [],
           },
@@ -52,16 +52,49 @@ export default () => {
             name: 'Living Room',
             icon: '',
           },
-          bedroom: {
-            area_id: 'bedroom',
-            icon: '',
-          },
         },
         themes: {
           darkMode: true,
           theme: 'default',
         },
       } as any as HomeAssistant;
+
+      // Set up default stub returns
+      getAreaStub.returns({
+        area_id: 'living_room',
+        name: 'Living Room',
+        icon: '',
+      });
+
+      getSensorsStub.returns([
+        s('sensor', 'temperature', '72'),
+        s('sensor', 'humidity', '50'),
+      ]);
+
+      getIconEntitiesStub.returns([
+        {
+          config: { entity_id: 'light.living_room_light' },
+          state: s('light', 'living_room_light', 'on'),
+        },
+      ]);
+
+      getProblemEntitiesStub.returns({
+        problemEntities: [],
+        problemExists: false,
+      });
+
+      getRoomEntityStub.returns({
+        config: { entity_id: 'light.living_room_light' },
+        state: s('light', 'living_room_light', 'on'),
+      });
+    });
+
+    afterEach(() => {
+      getAreaStub.restore();
+      getSensorsStub.restore();
+      getIconEntitiesStub.restore();
+      getProblemEntitiesStub.restore();
+      getRoomEntityStub.restore();
     });
 
     describe('getRoomProperties', () => {
@@ -79,133 +112,12 @@ export default () => {
           'isDarkMode',
         ]);
 
-        // Verify room info
-        expect(result.roomInfo.area_name).to.equal('Living Room');
-
-        // Verify states (should include default entities)
-        expect(result.states).to.be.an('array');
-        expect(Object.keys(result.states)).to.have.lengthOf(2);
-        expect(result.states.map((s) => s.config.entity_id)).to.include(
-          'light.living_room_light',
-        );
-        expect(result.states.map((s) => s.config.entity_id)).to.include(
-          'switch.living_room_fan',
-        );
-
-        // Verify room entity
-        expect(result.roomEntity).to.be.an('object');
-        expect(result.roomEntity.config.entity_id).to.equal(
-          'light.living_room_light',
-        );
-
-        // Verify problem entities (should be empty by default)
-        expect(result.problemEntities).to.be.an('array');
-        expect(result.problemEntities).to.have.lengthOf(0);
-        expect(result.problemExists).to.be.false;
-
-        // Verify sensors (should include default temperature and humidity sensors)
-        expect(result.sensors).to.be.an('array');
-        expect(result.sensors).to.have.lengthOf(2);
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.living_room_climate_air_temperature',
-        );
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.living_room_climate_humidity',
-        );
-
-        // Verify dark mode
-        expect(result.isDarkMode).to.be.true;
-      });
-
-      it('should handle complex sensor configurations correctly', () => {
-        // Test with legacy temperature_sensor and humidity_sensor
-        const legacyConfig: Config = {
-          area: 'living_room',
-          temperature_sensor: 'sensor.custom_sensor',
-          humidity_sensor: 'sensor.additional_sensor',
-        } as any;
-
-        let result = getRoomProperties(mockHass, legacyConfig);
-
-        // Should use the specified legacy sensors instead of defaults
-        expect(result.sensors).to.have.lengthOf(2);
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.custom_sensor',
-        );
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.additional_sensor',
-        );
-        expect(result.sensors.map((s) => s.entity_id)).to.not.include(
-          'sensor.living_room_climate_air_temperature',
-        );
-        expect(result.sensors.map((s) => s.entity_id)).to.not.include(
-          'sensor.living_room_climate_humidity',
-        );
-
-        // Test with new sensors array plus legacy temperature/humidity sensor
-        const mixedConfig: Config = {
-          area: 'living_room',
-          temperature_sensor: 'sensor.custom_sensor', // Legacy property
-          humidity_sensor: 'sensor.additional_sensor', // Legacy property
-          sensors: ['sensor.living_room_climate_air_temperature'], // New property
-        } as any;
-
-        result = getRoomProperties(mockHass, mixedConfig);
-
-        // Should include both legacy sensors AND the sensors array value
-        expect(result.sensors).to.have.lengthOf(3);
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.custom_sensor',
-        );
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.additional_sensor',
-        );
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.living_room_climate_air_temperature',
-        );
-
-        // Test with just new sensors array
-        const newConfig: Config = {
-          area: 'living_room',
-          sensors: ['sensor.custom_sensor', 'sensor.additional_sensor'],
-        };
-
-        result = getRoomProperties(mockHass, newConfig);
-
-        // Should include default sensors (from area) AND all values in sensors array
-        expect(result.sensors).to.have.lengthOf(4);
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.living_room_climate_air_temperature',
-        );
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.living_room_climate_humidity',
-        );
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.custom_sensor',
-        );
-        expect(result.sensors.map((s) => s.entity_id)).to.include(
-          'sensor.additional_sensor',
-        );
-      });
-
-      it('should handle problem entities correctly', () => {
-        // Add problem entities to mock
-        mockHass.entities['binary_sensor.problem'] = {
-          labels: ['problem'],
-          area_id: 'living_room',
-          device_id: 'device_1',
-        };
-        mockHass.states['binary_sensor.problem'] = s(
-          'binary_sensor',
-          'problem',
-          'on',
-        );
-
-        const config: Config = { area: 'living_room' };
-        const result = getRoomProperties(mockHass, config);
-
-        expect(result.problemEntities).to.have.length.above(0);
-        expect(result.problemExists).to.be.true;
+        // Verify it calls all the delegate functions
+        expect(getIconEntitiesStub.calledWith(mockHass, config)).to.be.true;
+        expect(getRoomEntityStub.calledWith(mockHass, config)).to.be.true;
+        expect(getProblemEntitiesStub.calledWith(mockHass, config.area)).to.be
+          .true;
+        expect(getSensorsStub.calledWith(mockHass, config)).to.be.true;
       });
 
       it('should use area_name from config when provided', () => {
@@ -216,12 +128,20 @@ export default () => {
         const result = getRoomProperties(mockHass, config);
 
         expect(result.roomInfo.area_name).to.equal('Custom Room Name');
+        // Should not call getArea when area_name is provided
+        expect(getAreaStub.called).to.be.false;
       });
 
-      it('should fallback to area ID when no area name available', () => {
-        // Remove area name from mock
-        // @ts-ignore
-        mockHass.areas.living_room!.name = null;
+      it('should use area name from getArea when no area_name in config', () => {
+        const config: Config = { area: 'living_room' };
+        const result = getRoomProperties(mockHass, config);
+
+        expect(result.roomInfo.area_name).to.equal('Living Room');
+        expect(getAreaStub.calledWith(mockHass, 'living_room')).to.be.true;
+      });
+
+      it('should fallback to area ID when getArea returns null', () => {
+        getAreaStub.returns(null);
 
         const config: Config = { area: 'living_room' };
         const result = getRoomProperties(mockHass, config);
@@ -229,24 +149,114 @@ export default () => {
         expect(result.roomInfo.area_name).to.equal('living_room');
       });
 
-      it('should handle exclude_default_entities feature', () => {
-        const config: Config = {
-          area: 'living_room',
-          features: ['exclude_default_entities'],
-          entities: ['light.custom_light'],
-        };
+      it('should fallback to area ID when getArea returns area without name', () => {
+        getAreaStub.returns({
+          area_id: 'living_room',
+          name: undefined,
+          icon: '',
+        });
 
+        const config: Config = { area: 'living_room' };
         const result = getRoomProperties(mockHass, config);
 
-        // Should not include default sensors when exclude_default_entities is set
-        expect(result.sensors).to.be.an('array');
-        // Only custom sensors should be included, no defaults
-        expect(result.sensors.map((s) => s.entity_id)).to.not.include(
-          'sensor.living_room_climate_air_temperature',
+        expect(result.roomInfo.area_name).to.equal('living_room');
+      });
+
+      it('should return sensors from getSensors', () => {
+        const mockSensors = [
+          s('sensor', 'custom_temp', '75'),
+          s('sensor', 'custom_humidity', '45'),
+          s('sensor', 'pressure', '1013'),
+        ];
+        getSensorsStub.returns(mockSensors);
+
+        const config: Config = { area: 'living_room' };
+        const result = getRoomProperties(mockHass, config);
+
+        expect(result.sensors).to.equal(mockSensors);
+        expect(getSensorsStub.calledWith(mockHass, config)).to.be.true;
+      });
+
+      it('should return states from getIconEntities', () => {
+        const mockStates = [
+          {
+            config: { entity_id: 'light.test' },
+            state: s('light', 'test', 'on'),
+          },
+          {
+            config: { entity_id: 'switch.test' },
+            state: s('switch', 'test', 'off'),
+          },
+        ];
+        getIconEntitiesStub.returns(mockStates);
+
+        const config: Config = { area: 'living_room' };
+        const result = getRoomProperties(mockHass, config);
+
+        expect(result.states).to.equal(mockStates);
+        expect(getIconEntitiesStub.calledWith(mockHass, config)).to.be.true;
+      });
+
+      it('should return room entity from getRoomEntity', () => {
+        const mockRoomEntity = {
+          config: { entity_id: 'light.custom_room' },
+          state: s('light', 'custom_room', 'on'),
+        };
+        getRoomEntityStub.returns(mockRoomEntity);
+
+        const config: Config = { area: 'living_room' };
+        const result = getRoomProperties(mockHass, config);
+
+        expect(result.roomEntity).to.equal(mockRoomEntity);
+        expect(getRoomEntityStub.calledWith(mockHass, config)).to.be.true;
+      });
+
+      it('should return problem entities from getProblemEntities', () => {
+        const mockProblemData = {
+          problemEntities: ['binary_sensor.smoke', 'binary_sensor.leak'],
+          problemExists: true,
+        };
+        getProblemEntitiesStub.returns(mockProblemData);
+
+        const config: Config = { area: 'living_room' };
+        const result = getRoomProperties(mockHass, config);
+
+        expect(result.problemEntities).to.equal(
+          mockProblemData.problemEntities,
         );
-        expect(result.sensors.map((s) => s.entity_id)).to.not.include(
-          'sensor.living_room_climate_humidity',
-        );
+        expect(result.problemExists).to.equal(mockProblemData.problemExists);
+        expect(getProblemEntitiesStub.calledWith(mockHass, config.area)).to.be
+          .true;
+      });
+
+      it('should return dark mode status from hass.themes', () => {
+        // Test dark mode true
+        mockHass.themes.darkMode = true;
+        let config: Config = { area: 'living_room' };
+        let result = getRoomProperties(mockHass, config);
+        expect(result.isDarkMode).to.be.true;
+
+        // Test dark mode false
+        mockHass.themes.darkMode = false;
+        result = getRoomProperties(mockHass, config);
+        expect(result.isDarkMode).to.be.false;
+      });
+
+      it('should handle all functions returning empty/default values', () => {
+        getSensorsStub.returns([]);
+        getIconEntitiesStub.returns([]);
+        getProblemEntitiesStub.returns({
+          problemEntities: [],
+          problemExists: false,
+        });
+
+        const config: Config = { area: 'living_room' };
+        const result = getRoomProperties(mockHass, config);
+
+        expect(result.sensors).to.have.length(0);
+        expect(result.states).to.have.length(0);
+        expect(result.problemEntities).to.have.length(0);
+        expect(result.problemExists).to.be.false;
       });
     });
   });

@@ -72,10 +72,10 @@ customize:
 
 ```yaml
 customize:
-  sensor.garage_climate_air_temperature:
+  sensor.garage_climate:
     temperature_threshold: 90
 
-  sensor.shed_climate_air_temperature:
+  sensor.shed_climate:
     temperature_threshold: 90
     humidity_threshold: 70
 ```

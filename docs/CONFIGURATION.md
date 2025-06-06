@@ -22,13 +22,14 @@ type: custom:room-summary-card
 area: living_room
 ```
 
-This automatically discovers and displays:
+With no additional configuration the card automatically discovers and displays:
 
-- Room light (`light.living_room_light`)
-- Room fan (`switch.living_room_fan`)
-- Default sensors (`sensor.living_room_climate_air_temperature`, `sensor.living_room_climate_humidity`)
-- Problem entities (labeled with "problem")
-- Area statistics
+- Room light - also the main entity for card coloring
+- Room fan
+- Temperature sensors
+- Humidity sensors
+
+See [default entities](#default-entities)
 
 ## Configuration Options
 
@@ -47,10 +48,11 @@ This automatically discovers and displays:
 
 By default, the card will include (if found):
 
-- Room light (`light.<area>_light`) - also the main entity for card coloring
-- Room fan (`switch.<area>_fan`)
-- Temperature sensor (`sensor.<area>_climate_air_temperature`)
-- Humidity sensor (`sensor.<area>_climate_humidity`)
+- Room light by naming convention (`light.living_room_light`)
+- Room fan by naming convention (`switch.living_room_fan`)
+- All temperature and humidity sensors by device class
+- Problem entities (labeled with "problem")
+- Area statistics
 
 ## Entity Configuration
 
@@ -94,8 +96,8 @@ The card supports configuring multiple sensors via the `sensors` array:
 
 ```yaml
 sensors:
-  - sensor.living_room_climate_air_temperature
-  - sensor.living_room_climate_humidity
+  - sensor.living_room_temperature
+  - sensor.living_room_humidity
   - sensor.living_room_co2
   - sensor.living_room_pressure
 sensor_layout: bottom # Optional: default, stacked, or bottom
@@ -193,7 +195,7 @@ customize:
     on_color: green
     off_color: red
 
-  sensor.garage_climate_air_temperature:
+  sensor.garage_climate:
     temperature_threshold: 90
     humidity_threshold: 70
 ```

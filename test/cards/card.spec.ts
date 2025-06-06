@@ -27,14 +27,14 @@ describe('card.ts', () => {
         'switch.living_room_fan': s('switch', 'living_room_fan', 'off', {
           friendly_name: 'Living Room Fan',
         }),
-        'sensor.living_room_climate_humidity': s(
+        'sensor.living_room_humidity': s(
           'sensor',
-          'living_room_climate_humidity',
+          'living_room_humidity',
           '50',
         ),
-        'sensor.living_room_climate_air_temperature': s(
+        'sensor.living_room_emperature': s(
           'sensor',
-          'living_room_climate_air_temperature',
+          'living_room_temperature',
           '72',
         ),
         'sensor.custom_sensor': s('sensor', 'custom_sensor', '25'),
@@ -156,7 +156,7 @@ describe('card.ts', () => {
     it('should render multiple problem entities correctly', async () => {
       card['_problemEntities'] = [
         'light.living_room',
-        'sensor.living_room_climate_humidity',
+        'sensor.living_room_humidity',
       ];
       card['_problemExists'] = true;
       const el = await fixture(card.render() as TemplateResult);

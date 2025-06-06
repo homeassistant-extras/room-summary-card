@@ -3,6 +3,7 @@
  */
 
 export interface EntityRegistryDisplayEntry {
+  entity_id: string;
   area_id: string;
   device_id: string;
   labels: string[];

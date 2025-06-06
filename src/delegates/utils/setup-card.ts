@@ -1,6 +1,4 @@
-import { hasFeature } from '@config/feature';
 import { getArea } from '@delegates/retrievers/area';
-import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
 import type {
   Config,
@@ -8,8 +6,9 @@ import type {
   EntityState,
   RoomInformation,
 } from '@type/config';
-import { getProblemEntities } from './card-entities';
+import { getSensors } from './hide-yo-sensors';
 import { getIconEntities } from './icon-entities';
+import { getProblemEntities } from './problem-entities';
 import { getRoomEntity } from './room-entity';
 
 export interface RoomProperties {
@@ -55,26 +54,7 @@ export const getRoomProperties = (
     config.area,
   );
 
-  // Get legacy temperature and humidity sensors for backward compatibility
-  // These are used if the user has not specified them in the config
-  // and are not part of the sensors array
-  // This is for backward compatibility with older configurations
-  // that used these default sensors
-  const temp =
-    (config as any).temperature_sensor ??
-    (hasFeature(config, 'exclude_default_entities')
-      ? undefined
-      : `sensor.${config.area}_climate_air_temperature`);
-  const humidity =
-    (config as any).humidity_sensor ??
-    (hasFeature(config, 'exclude_default_entities')
-      ? undefined
-      : `sensor.${config.area}_climate_humidity`);
-
-  // Get additional sensors from config
-  const sensors = [temp, humidity, ...(config.sensors ?? [])]
-    .map((sensorId) => getState(hass, sensorId))
-    .filter((sensor) => sensor !== undefined);
+  const sensors = getSensors(hass, config);
 
   return {
     roomInfo,

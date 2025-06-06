@@ -108,13 +108,9 @@ This guide helps you resolve common issues with the Room Summary Card.
 
 **Solutions**:
 
-1. **Check sensor names**:
+1. **Check sensor device classes**:
 
-   ```yaml
-   # Default expected sensors:
-   sensor.{area}_climate_air_temperature
-   sensor.{area}_climate_humidity
-   ```
+In dev tools they should have an attribute device_class of `humidity` or `temperature`
 
 2. **Specify custom sensors**:
 

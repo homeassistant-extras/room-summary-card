@@ -103,6 +103,7 @@ export default () => {
     it('should count entities that belong to devices in the area', () => {
       // Add an entity that belongs to a device in the living room but has no direct area_id
       mockHass.entities['sensor.living_room_device'] = {
+        entity_id: 'sensor.living_room_device',
         area_id: '',
         device_id: 'device1',
         labels: [],
@@ -115,6 +116,7 @@ export default () => {
 
     it('should handle entities with no device_id', () => {
       mockHass.entities['light.no_device'] = {
+        entity_id: 'light.no_device',
         area_id: 'living_room',
         device_id: '',
         labels: [],
