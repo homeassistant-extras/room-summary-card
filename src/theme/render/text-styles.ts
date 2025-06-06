@@ -24,14 +24,14 @@ export const renderTextStyles = (
 ): DirectiveResult<typeof StyleMapDirective> | typeof nothing => {
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   if (skipStyles) return nothing;
-  const styleData = getStyleData(hass, state);
+  const styleData = getStyleData(hass, 'text', state);
 
   if (!styleData) return nothing;
 
   return styleData.active
     ? styleMap({
         '--text-color': styleData.cssColor,
-        '--state-color-theme-override': styleData.themeOverride,
+        '--state-color-text-theme': styleData.themeOverride,
       })
     : nothing;
 };

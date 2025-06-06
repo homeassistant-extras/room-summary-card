@@ -86,7 +86,9 @@ export const renderCardStyles = (
   // as of now, only dark mode handles background coloring
   const stateObj = state as any as HassEntity;
   const active = hass.themes.darkMode && stateActive(stateObj);
-  const cssColor = hass.themes.darkMode ? stateColorCss(stateObj) : undefined;
+  const cssColor = hass.themes.darkMode
+    ? stateColorCss(stateObj, 'card')
+    : undefined;
   const themeOverride = getThemeColorOverride(hass, state, active);
   const { border1, border2 } = renderCardBorderStyles(config, sensors);
   const skipStyles = hasFeature(config, 'skip_entity_styles');
@@ -103,7 +105,7 @@ export const renderCardStyles = (
   return styleMap({
     '--background-color-card': backgroundColorCard,
     '--background-opacity-card': opacity,
-    '--state-color-theme-override': themeOverride,
+    '--state-color-card-theme': themeOverride,
     borderLeft: border1,
     borderTop: border1,
     borderRight: border2,

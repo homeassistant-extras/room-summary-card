@@ -31,10 +31,8 @@ const baseThemeStyles = css`
 
   :host {
     --text-color: var(--primary-text-color);
-
     --background-color-card: var(--theme-background-color-card);
     --background-opacity-card: var(--opacity-background-inactive);
-
     --icon-color: var(--theme-color-icon);
     --background-color-icon: var(--theme-background-color-icon);
     --background-opacity-icon: var(--opacity-icon-fill-inactive);
@@ -46,19 +44,16 @@ const baseThemeStyles = css`
  */
 const cardContainerStyles = css`
   /* Card container */
-  .card {
+  ha-card {
     border-radius: var(--ha-card-border-radius, var(--border-radius, 20px));
     line-height: normal;
     overflow: hidden;
-    position: relative;
-    box-shadow: var(--ha-card-box-shadow, none);
     height: 100%;
     width: 100%;
-    box-sizing: border-box;
     z-index: 1;
   }
 
-  .card::before {
+  ha-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -158,9 +153,7 @@ const iconStyles = css`
     align-self: center;
     position: relative;
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 1;
   }
 
   .icon::before {
@@ -173,7 +166,6 @@ const iconStyles = css`
     bottom: 0;
     background-color: var(--background-color-icon);
     opacity: var(--background-opacity-icon);
-    z-index: -1;
   }
 
   /* State icon styling */

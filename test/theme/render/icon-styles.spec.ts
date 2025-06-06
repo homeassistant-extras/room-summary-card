@@ -61,7 +61,7 @@ export default () => {
         const result = renderEntityIconStyles(mockHass, state);
 
         expect(result).to.deep.equal(styleMap({}));
-        expect(getStyleDataStub.calledWith(mockHass, state)).to.be.true;
+        expect(getStyleDataStub.calledWith(mockHass, 'icon', state)).to.be.true;
       });
 
       it('should return icon styles for active state', () => {
@@ -81,7 +81,7 @@ export default () => {
             '--icon-opacity': 'var(--opacity-icon-active)',
             '--background-color-icon': 'var(--primary-color)',
             '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-icon-theme': 'var(--theme-override)',
           }),
         );
       });
@@ -103,7 +103,7 @@ export default () => {
             '--icon-opacity': 'var(--opacity-icon-inactive)',
             '--background-color-icon': 'var(--disabled-color)',
             '--background-opacity-icon': 'var(--opacity-icon-fill-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-icon-theme': 'var(--theme-override)',
           }),
         );
       });
@@ -125,7 +125,7 @@ export default () => {
             '--icon-opacity': 'var(--opacity-icon-active)',
             '--background-color-icon': undefined,
             '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-icon-theme': 'var(--theme-override)',
           }),
         );
       });
@@ -147,7 +147,7 @@ export default () => {
             '--icon-opacity': 'var(--opacity-icon-active)',
             '--background-color-icon': 'var(--primary-color)',
             '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
-            '--state-color-theme-override': undefined,
+            '--state-color-icon-theme': undefined,
           }),
         );
       });
@@ -163,7 +163,7 @@ export default () => {
 
         renderEntityIconStyles(mockHass, state);
 
-        expect(getStyleDataStub.calledWith(mockHass, state)).to.be.true;
+        expect(getStyleDataStub.calledWith(mockHass, 'icon', state)).to.be.true;
       });
     });
 

@@ -149,7 +149,7 @@ describe('card.ts', () => {
 
     it('should render the basic card structure', async () => {
       const el = await fixture(card.render() as TemplateResult);
-      expect(el.className).to.equal('card');
+      expect(el.tagName).to.equal('HA-CARD');
       expect(el.querySelector('.grid')).to.exist;
     });
 

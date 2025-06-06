@@ -85,10 +85,10 @@ export default () => {
         const el = await fixture(result as TemplateResult);
 
         expect((el as any).style.getPropertyValue('--icon-color')).to.equal(
-          'var(--state-color-theme-override, var(--state-light-on-color, var(--state-light-active-color, var(--state-active-color))))',
+          'var(--state-color-icon-theme, var(--state-light-on-color, var(--state-light-active-color, var(--state-active-color))))',
         );
         expect(
-          (el as any).style.getPropertyValue('--state-color-theme-override'),
+          (el as any).style.getPropertyValue('--state-color-icon-theme'),
         ).to.equal('rgb(var(--color-yellow))');
       });
 

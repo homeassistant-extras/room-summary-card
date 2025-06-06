@@ -82,7 +82,7 @@ export default () => {
         const result = renderTextStyles(mockHass, mockConfig, state);
 
         expect(result).to.equal(nothing);
-        expect(getStyleDataStub.calledWith(mockHass, state)).to.be.true;
+        expect(getStyleDataStub.calledWith(mockHass, 'text', state)).to.be.true;
       });
 
       it('should return nothing when entity is inactive', () => {
@@ -113,7 +113,7 @@ export default () => {
         expect(result).to.deep.equal(
           styleMap({
             '--text-color': 'var(--primary-color)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-text-theme': 'var(--theme-override)',
           }),
         );
       });
@@ -132,7 +132,7 @@ export default () => {
         expect(result).to.deep.equal(
           styleMap({
             '--text-color': undefined,
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-text-theme': 'var(--theme-override)',
           }),
         );
       });
@@ -151,7 +151,7 @@ export default () => {
         expect(result).to.deep.equal(
           styleMap({
             '--text-color': 'var(--primary-color)',
-            '--state-color-theme-override': undefined,
+            '--state-color-text-theme': undefined,
           }),
         );
       });
@@ -167,7 +167,7 @@ export default () => {
 
         renderTextStyles(mockHass, mockConfig, state);
 
-        expect(getStyleDataStub.calledWith(mockHass, state)).to.be.true;
+        expect(getStyleDataStub.calledWith(mockHass, 'text', state)).to.be.true;
       });
     });
   });

@@ -207,7 +207,7 @@ export class RoomSummaryCard extends LitElement {
     );
 
     return html`
-      <div class="card" style="${cardStyle}">
+      <ha-card style="${cardStyle}">
         <div class="grid">
           ${info(
             this,
@@ -227,7 +227,7 @@ export class RoomSummaryCard extends LitElement {
           <!-- Problem Indicator -->
           ${problems}
         </div>
-      </div>
+      </ha-card>
     `;
   }
 }

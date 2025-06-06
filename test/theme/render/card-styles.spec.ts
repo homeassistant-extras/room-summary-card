@@ -99,7 +99,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: undefined,
             borderTop: undefined,
             borderRight: undefined,
@@ -130,7 +130,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: '5px solid var(--error-color)',
             borderTop: '5px solid var(--error-color)',
             borderRight: '5px solid var(--error-color)',
@@ -161,7 +161,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: '5px solid var(--info-color)',
             borderTop: '5px solid var(--info-color)',
             borderRight: '5px solid var(--info-color)',
@@ -192,7 +192,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: '5px solid var(--error-color)',
             borderTop: '5px solid var(--error-color)',
             borderRight: '5px solid var(--info-color)',
@@ -221,7 +221,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: '5px solid var(--error-color)',
             borderTop: '5px solid var(--error-color)',
             borderRight: '5px solid var(--info-color)',
@@ -249,7 +249,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: undefined,
             borderTop: undefined,
             borderRight: undefined,
@@ -269,7 +269,7 @@ export default () => {
 
         // Configure stub behaviors for this test
         stateActiveStub.withArgs(sinon.match.any).returns(true);
-        stateColorCssStub.withArgs(sinon.match.any).returns('yellow');
+        stateColorCssStub.withArgs(sinon.match.any, 'card').returns('yellow');
 
         // Create temperature and humidity sensors
         const tempSensor = createStateEntity('sensor', 'temperature', '75', {
@@ -292,7 +292,7 @@ export default () => {
           styleMap({
             '--background-color-card': 'yellow',
             '--background-opacity-card': 'var(--opacity-background-active)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: undefined,
             borderTop: undefined,
             borderRight: undefined,
@@ -312,7 +312,7 @@ export default () => {
 
         // Configure stub behaviors for this test
         stateActiveStub.withArgs(sinon.match.any).returns(true);
-        stateColorCssStub.withArgs(sinon.match.any).returns('yellow');
+        stateColorCssStub.withArgs(sinon.match.any, 'card').returns('yellow');
 
         // Create temperature and humidity sensors
         const tempSensor = createStateEntity('sensor', 'temperature', '75', {
@@ -335,7 +335,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: undefined,
             borderTop: undefined,
             borderRight: undefined,
@@ -369,7 +369,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: undefined,
             borderTop: undefined,
             borderRight: undefined,
@@ -412,7 +412,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: undefined,
             borderTop: undefined,
             borderRight: undefined,
@@ -435,7 +435,7 @@ export default () => {
 
         // Configure stub behaviors for this test
         stateActiveStub.withArgs(sinon.match.any).returns(true);
-        stateColorCssStub.withArgs(sinon.match.any).returns('yellow');
+        stateColorCssStub.withArgs(sinon.match.any, 'card').returns('yellow');
 
         // Create temperature and humidity sensors
         const tempSensor = createStateEntity('sensor', 'temperature', '75', {
@@ -458,7 +458,7 @@ export default () => {
           styleMap({
             '--background-color-card': undefined, // Should be undefined even though state is active
             '--background-opacity-card': 'var(--opacity-background-inactive)', // Should be inactive due to skipStyles
-            '--state-color-theme-override': 'var(--theme-override)',
+            '--state-color-card-theme': 'var(--theme-override)',
             borderLeft: undefined,
             borderTop: undefined,
             borderRight: undefined,

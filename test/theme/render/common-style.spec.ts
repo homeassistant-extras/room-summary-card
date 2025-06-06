@@ -65,7 +65,7 @@ export default () => {
 
     describe('getStyleData', () => {
       it('should return null when state is undefined', () => {
-        const result = getStyleData(mockHass);
+        const result = getStyleData(mockHass, 'test');
         expect(result).to.be.null;
       });
 
@@ -75,7 +75,7 @@ export default () => {
         stateColorCssStub.returns('var(--primary-color)');
         getThemeColorOverrideStub.returns('var(--theme-override)');
 
-        const result = getStyleData(mockHass, state);
+        const result = getStyleData(mockHass, 'test', state);
 
         expect(result).to.deep.equal({
           active: true,
@@ -91,7 +91,7 @@ export default () => {
         stateColorCssStub.returns('var(--disabled-color)');
         getThemeColorOverrideStub.returns('var(--theme-override)');
 
-        const result = getStyleData(mockHass, state);
+        const result = getStyleData(mockHass, 'test', state);
 
         expect(result).to.deep.equal({
           active: false,
@@ -104,7 +104,7 @@ export default () => {
       it('should call underlying functions with correct parameters', () => {
         const state = createStateEntity('switch', 'test', 'on');
 
-        getStyleData(mockHass, state);
+        getStyleData(mockHass, 'test', state);
 
         expect(stateActiveStub.calledOnce).to.be.true;
         expect(stateColorCssStub.calledOnce).to.be.true;
@@ -117,9 +117,9 @@ export default () => {
         const state = createStateEntity('light', 'test', 'on');
         stateColorCssStub.returns(undefined);
 
-        const result = getStyleData(mockHass, state);
+        const result = getStyleData(mockHass, 'test', state);
 
-        expect(result?.cssColor).to.equal('var(--state-color-theme-override)');
+        expect(result?.cssColor).to.equal('var(--state-color-test-theme)');
         expect(result?.active).to.be.true;
         expect(result?.activeClass).to.equal('active');
       });

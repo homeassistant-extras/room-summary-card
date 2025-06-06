@@ -45,13 +45,17 @@ const STATE_COLORED_DOMAIN = new Set([
 ]);
 
 // slightly modified from frontend/src/common/entity/state_color.ts
-export const stateColorCss = (stateObj: HassEntity, state?: string) => {
+export const stateColorCss = (
+  stateObj: HassEntity,
+  scope: string,
+  state?: string,
+) => {
   const compareState = state ?? stateObj?.state;
   if (compareState === UNAVAILABLE) {
     return `var(--state-unavailable-color)`;
   }
 
-  const properties = stateColorProperties(stateObj, state);
+  const properties = stateColorProperties(stateObj, scope, state);
   if (properties) {
     return computeCssVariable(properties);
   }
@@ -65,13 +69,14 @@ export const stateColorCss = (stateObj: HassEntity, state?: string) => {
 export const domainStateColorProperties = (
   domain: string,
   stateObj: HassEntity,
+  scope: string,
   state?: string,
 ): string[] => {
-  const compareState = state !== undefined ? state : stateObj.state;
+  const compareState = state ?? stateObj.state;
   const active = stateActive(stateObj, state);
 
   // allow for theme override
-  const properties: string[] = ['--state-color-theme-override'];
+  const properties: string[] = [`--state-color-${scope}-theme`];
 
   const stateKey = slugify(compareState, '_');
   const activeKey = active ? 'active' : 'inactive';
@@ -94,6 +99,7 @@ export const domainStateColorProperties = (
 // slightly modified from frontend/src/common/entity/state_color.ts
 export const stateColorProperties = (
   stateObj: HassEntity,
+  scope: string,
   state?: string,
 ): string[] | undefined => {
   const compareState = state ?? stateObj?.state;
@@ -104,7 +110,7 @@ export const stateColorProperties = (
   if (domain === 'sensor' && dc === 'battery') {
     const property = batteryStateColorProperty(compareState);
     if (property) {
-      return ['--state-color-theme-override', property];
+      return [`--state-color-${scope}-theme`, property];
     }
   }
 
@@ -112,12 +118,12 @@ export const stateColorProperties = (
   if (domain === 'group') {
     const groupDomain = computeGroupDomain(stateObj as GroupEntity);
     if (groupDomain && STATE_COLORED_DOMAIN.has(groupDomain)) {
-      return domainStateColorProperties(groupDomain, stateObj, state);
+      return domainStateColorProperties(groupDomain, stateObj, scope, state);
     }
   }
 
   if (STATE_COLORED_DOMAIN.has(domain)) {
-    return domainStateColorProperties(domain, stateObj, state);
+    return domainStateColorProperties(domain, stateObj, scope, state);
   }
 
   return undefined;

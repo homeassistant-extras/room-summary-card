@@ -24,6 +24,7 @@ interface StyleData {
  */
 export const getStyleData = (
   hass: HomeAssistant,
+  scope: string,
   state?: EntityState,
 ): StyleData | null => {
   if (!state) return null;
@@ -33,8 +34,8 @@ export const getStyleData = (
   const activeClass = active ? 'active' : 'inactive';
   const themeOverride = getThemeColorOverride(hass, state, active);
   const cssColor =
-    stateColorCss(stateObj) ??
-    (themeOverride ? 'var(--state-color-theme-override)' : undefined);
+    stateColorCss(stateObj, scope) ??
+    (themeOverride ? `var(--state-color-${scope}-theme)` : undefined);
 
   return {
     active,

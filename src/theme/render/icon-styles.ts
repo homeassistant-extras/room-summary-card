@@ -19,7 +19,7 @@ export const renderEntityIconStyles = (
   hass: HomeAssistant,
   state?: EntityState,
 ): DirectiveResult<typeof StyleMapDirective> => {
-  const styleData = getStyleData(hass, state);
+  const styleData = getStyleData(hass, 'icon', state);
 
   if (!styleData) return styleMap({});
 
@@ -28,7 +28,7 @@ export const renderEntityIconStyles = (
     '--icon-opacity': `var(--opacity-icon-${styleData.activeClass})`,
     '--background-color-icon': styleData.cssColor,
     '--background-opacity-icon': `var(--opacity-icon-fill-${styleData.activeClass})`,
-    '--state-color-theme-override': styleData.themeOverride,
+    '--state-color-icon-theme': styleData.themeOverride,
   });
 };
 
