@@ -1,6 +1,6 @@
 {
   "name": "room-summary-card",
-  "version": "0.20.2",
+  "version": "0.20.3",
   "author": "Patrick Masters",
   "license": "ISC",
   "description": "Custom card Home Assistant which can show a summary of room entities.",
