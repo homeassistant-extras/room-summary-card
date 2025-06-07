@@ -51,6 +51,7 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
+          makeLatest: true
           artifacts: 'dist/**'
           generateReleaseNotes: true
           tag: ${{ inputs.tag_name }}

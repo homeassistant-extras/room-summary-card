@@ -161,6 +161,7 @@ jobs:
           echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
       - uses: ncipollo/release-action@v1
         with:
+          makeLatest: true
           artifacts: 'dist/**'
           generateReleaseNotes: true
           tag: ${{ needs.bump-version.outputs.newTag }}
