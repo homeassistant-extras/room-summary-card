@@ -218,7 +218,7 @@ This project is protected under the MIT License. For more details, refer to the 
 
 - Built using [LitElement](https://lit.dev/)
 - Inspired by Home Assistant's chip design
-- Button-Card was a huge inspo
+- Button-Card and Auto-Entities were a huge inspo
 - Thanks to all contributors!
 
 [![contributors](https://contrib.rocks/image?repo=homeassistant-extras/room-summary-card)](https://github.com/homeassistant-extras/room-summary-card/graphs/contributors)
