@@ -1,3 +1,4 @@
+import sensorSpec from '@test/hass/data/sensor.spec';
 import areaStatisticsSpec from './area-statistics.spec';
 import iconSpec from './icon.spec';
 import infoSpec from './info.spec';
@@ -8,6 +9,7 @@ describe('html', () => {
   areaStatisticsSpec();
   iconSpec();
   infoSpec();
+  sensorSpec();
   stateDisplaySpec();
   textSpec();
 });

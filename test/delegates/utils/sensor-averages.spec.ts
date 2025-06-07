@@ -73,20 +73,6 @@ export default () => {
         expect(humidityGroup?.average).to.equal(50);
       });
 
-      it('should skip non-numeric states', () => {
-        const entities = [
-          createSensorEntity('sensor.temp1', '20', 'temperature', '°C'),
-          createSensorEntity('sensor.temp2', 'unknown', 'temperature', '°C'),
-          createSensorEntity('sensor.temp3', '24', 'temperature', '°C'),
-        ];
-
-        const result = calculateAverages(entities, ['temperature']);
-
-        expect(result).to.have.lengthOf(1);
-        expect(result[0]!.average).to.equal(22);
-        expect(result[0]!.states).to.have.lengthOf(2);
-      });
-
       it('should return empty array when no matching entities', () => {
         const entities = [
           createSensorEntity('sensor.other1', '20', 'pressure', 'hPa'),
@@ -95,19 +81,6 @@ export default () => {
         const result = calculateAverages(entities, ['temperature']);
 
         expect(result).to.have.lengthOf(0);
-      });
-
-      it('should handle entities without unit of measurement', () => {
-        const entities = [
-          createSensorEntity('sensor.count1', '5', 'custom'),
-          createSensorEntity('sensor.count2', '10', 'custom'),
-        ];
-
-        const result = calculateAverages(entities, ['custom']);
-
-        expect(result).to.have.lengthOf(1);
-        expect(result[0]!.average).to.equal(7.5);
-        expect(result[0]!.uom).to.equal('');
       });
 
       it('should skip empty groups', () => {

@@ -149,9 +149,21 @@ export default () => {
               },
               {
                 name: 'sensors',
-                label: 'Sensor states',
+                label: 'Individual sensor entities',
                 required: false,
                 selector: { entity: { multiple: true } },
+              },
+              {
+                name: 'sensor_classes',
+                label: 'Sensor classes',
+                selector: {
+                  select: {
+                    reorder: true,
+                    multiple: true,
+                    custom_value: true,
+                    options: ['temperature', 'humidity', 'pressure'],
+                  },
+                },
               },
             ],
           },
