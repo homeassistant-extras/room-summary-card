@@ -112,13 +112,11 @@ export default () => {
           state: sensor1,
           domain: 'sensor',
           device_class: 'temperature',
-          is_averaged: false,
         },
         {
           state: sensor2,
           domain: 'sensor',
           device_class: 'humidity',
-          is_averaged: false,
         },
       ];
 
@@ -170,7 +168,6 @@ export default () => {
           value: '22°C',
           domain: 'sensor',
           device_class: 'temperature',
-          is_averaged: true,
         },
       ];
 
@@ -222,7 +219,6 @@ export default () => {
           state: sensors.individual[0],
           domain: 'sensor',
           device_class: 'temperature',
-          is_averaged: false,
         },
       ];
 
@@ -265,13 +261,11 @@ export default () => {
           state: individualSensor,
           domain: 'sensor',
           device_class: 'pressure',
-          is_averaged: false,
         },
         {
           value: '22°C',
           domain: 'sensor',
           device_class: 'temperature',
-          is_averaged: true,
         },
       ];
 
@@ -312,7 +306,6 @@ export default () => {
           state: sensor,
           domain: 'sensor',
           device_class: 'temperature',
-          is_averaged: false,
         },
       ];
 

@@ -33,7 +33,6 @@ const averagedToDisplaySensor = (averaged: AveragedSensor): DisplaySensor => {
     value: displayState,
     device_class: averaged.device_class,
     domain: 'sensor',
-    is_averaged: true,
   };
 };
 
@@ -44,7 +43,6 @@ const entityToDisplaySensor = (entity: EntityState): DisplaySensor => {
   return {
     state: entity,
     domain: entity.domain,
-    is_averaged: false,
     device_class: entity.attributes.device_class || 'sensor',
   };
 };

@@ -145,7 +145,4 @@ export interface DisplaySensor {
 
   /** Device class (e.g., 'temperature', 'humidity') */
   device_class: string;
-
-  /** Whether this is an averaged sensor */
-  is_averaged?: boolean;
 }

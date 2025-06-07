@@ -30,9 +30,7 @@ export const renderSensors = (
             .domain=${sensor.domain}
             .deviceClass=${sensor.device_class}
           ></ha-domain-icon>`}
-      ${sensor.is_averaged
-        ? sensor.value
-        : hass.formatEntityState(sensor.state as HassEntity)}
+      ${sensor.value ?? hass.formatEntityState(sensor.state as HassEntity)}
     </div>`;
   });
 

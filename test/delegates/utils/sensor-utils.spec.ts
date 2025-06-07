@@ -26,7 +26,6 @@ export default () => {
         expect(result).to.have.lengthOf(2);
         expect(result[0]).to.deep.include({
           domain: 'sensor',
-          is_averaged: false,
           device_class: 'temperature',
         });
         expect(result[0]!.state!.entity_id).to.equal('sensor.temperature');
@@ -54,7 +53,6 @@ export default () => {
           value: '73.3°F',
           device_class: 'temperature',
           domain: 'sensor',
-          is_averaged: true,
         });
       });
 
@@ -145,9 +143,7 @@ export default () => {
         const result = sensorDataToDisplaySensors(sensorData);
 
         expect(result).to.have.lengthOf(2);
-        expect(result[0]!.is_averaged).to.be.false;
         expect(result[0]!.state!.entity_id).to.equal('sensor.living_room_temp');
-        expect(result[1]!.is_averaged).to.be.true;
         expect(result[1]!.value).to.equal('50%');
       });
 
