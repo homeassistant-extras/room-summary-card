@@ -3,13 +3,13 @@ import type { HomeAssistant } from '@hass/types';
 import type {
   Config,
   EntityInformation,
-  EntityState,
   RoomInformation,
+  SensorData,
 } from '@type/config';
+import { getIconEntities } from '../entities/icon-entities';
+import { getProblemEntities } from '../entities/problem-entities';
+import { getRoomEntity } from '../entities/room-entity';
 import { getSensors } from './hide-yo-sensors';
-import { getIconEntities } from './icon-entities';
-import { getProblemEntities } from './problem-entities';
-import { getRoomEntity } from './room-entity';
 
 export interface RoomProperties {
   roomInfo: RoomInformation;
@@ -17,7 +17,7 @@ export interface RoomProperties {
   roomEntity: EntityInformation;
   problemEntities: string[];
   problemExists: boolean;
-  sensors: EntityState[];
+  sensors: SensorData;
   isDarkMode: boolean;
 }
 
@@ -25,8 +25,7 @@ export interface RoomProperties {
  * Retrieves and assembles various properties and entities related to a room based on the provided Home Assistant instance and configuration.
  *
  * This function gathers information such as the room's name, associated entities for icons, the main room entity, problem entities (and whether any problems exist),
- * as well as temperature and humidity sensors (with backward compatibility for legacy configurations). It also collects any additional sensors specified in the config,
- * and determines if dark mode is enabled in the Home Assistant themes.
+ * as well as sensor data including both individual sensors and averaged readings by device class. It also determines if dark mode is enabled in the Home Assistant themes.
  *
  * @param hass - The Home Assistant instance containing state and configuration data.
  * @param config - The configuration object specifying area, sensors, and other options for the room.
@@ -36,7 +35,7 @@ export interface RoomProperties {
  *   - `roomEntity`: The main entity representing the room.
  *   - `problemEntities`: Entities indicating problems in the room.
  *   - `problemExists`: Boolean indicating if any problems exist.
- *   - `sensors`: Array of sensor states (temperature, humidity, and additional sensors).
+ *   - `sensorData`: Object containing individual and averaged sensor data.
  *   - `isDarkMode`: Boolean indicating if dark mode is enabled.
  */
 export const getRoomProperties = (

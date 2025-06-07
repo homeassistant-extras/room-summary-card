@@ -46,6 +46,14 @@ A custom card for Home Assistant that provides a comprehensive room overview, in
 
 ## Features
 
+### Sensor Averaging
+
+Automatically calculates and displays averaged sensor readings by device class:
+
+- **Individual sensors**: Display specific sensors in your preferred order
+- **Averaged sensors**: Show area-wide averages for device classes (temperature, humidity, etc.)
+- **Smart grouping**: Groups sensors by unit of measurement for accurate averaging
+
 ### Climate Information
 
 - Displays any number of sensors (temperature, humidity, or any other sensor)
@@ -138,7 +146,8 @@ The card automatically discovers and displays:
 
 - Room light and fan entities (based on area naming)
 - Problem entities (labeled with "problem")
-- Temperature and humidity sensors
+- Individual temperature and humidity sensors (via `sensors` config)
+- Averaged sensor readings by device class (via `sensor_classes` config)
 - Device and entity counts
 
 ## Documentation
@@ -191,6 +200,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Disable card styling`**: bug fixes and new skip_entity_styles feature - thanks @benjycov
 - [x] **`Custom icon color integration`**: support [custom-icon-color](https://github.com/Mariusthvdb/custom-icon-color) - thanks @benjycov
 - [x] **`Sensor layout options`**: flexible sensor display layouts (default, stacked, bottom) - thanks @Ltek
+- [x] **`Sensor averaging by device class`**: automatic averaging like HA area card - thanks @Ltek
 
 ## Contributing
 

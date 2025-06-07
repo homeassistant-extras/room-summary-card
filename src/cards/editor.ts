@@ -1,133 +1,11 @@
-// Updated src/cards/editor.ts
-
+import { getSchema } from '@delegates/utils/editor-schema';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
+import { Task } from '@lit/task';
 import type { Config } from '@type/config';
-import { html, LitElement, nothing, type TemplateResult } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { state } from 'lit/decorators.js';
-
-const SCHEMA: HaFormSchema[] = [
-  { name: 'area', label: 'Area', required: true, selector: { area: {} } },
-  {
-    name: 'content',
-    label: 'Content',
-    type: 'expandable',
-    flatten: true,
-    icon: 'mdi:text-short',
-    schema: [
-      {
-        name: 'area_name',
-        label: 'Area name',
-        required: false,
-        selector: { text: {} },
-      },
-    ],
-  },
-  {
-    name: 'entities',
-    label: 'Entities',
-    type: 'expandable' as const,
-    flatten: true,
-    icon: 'mdi:devices',
-    schema: [
-      {
-        name: 'entity',
-        label: 'Main room entity',
-        required: false,
-        selector: { entity: { multiple: false } },
-      },
-      {
-        name: 'entities',
-        label: 'Area side entities',
-        required: false,
-        selector: { entity: { multiple: true } },
-      },
-      {
-        name: 'sensors',
-        label: 'Sensor states',
-        required: false,
-        selector: { entity: { multiple: true } },
-      },
-    ],
-  },
-  {
-    name: 'features',
-    label: 'Features',
-    type: 'expandable' as const,
-    flatten: true,
-    icon: 'mdi:list-box',
-    schema: [
-      {
-        name: 'features',
-        label: 'Features',
-        required: false,
-        selector: {
-          select: {
-            multiple: true,
-            mode: 'list' as const,
-            options: [
-              {
-                label: 'Hide Climate Label',
-                value: 'hide_climate_label',
-              },
-              { label: 'Hide Area Stats', value: 'hide_area_stats' },
-              { label: 'Hide Sensor icons', value: 'hide_sensor_icons' },
-              {
-                label: 'Exclude Default Entities',
-                value: 'exclude_default_entities',
-              },
-              { label: 'Skip Climate Styles', value: 'skip_climate_styles' },
-              {
-                label: 'Skip Card Background Styles',
-                value: 'skip_entity_styles',
-              },
-            ],
-          },
-        },
-      },
-    ],
-  },
-  {
-    name: 'styles',
-    label: 'Styles',
-    type: 'expandable',
-    flatten: true,
-    icon: 'mdi:brush-variant',
-    schema: [
-      {
-        name: 'sensor_layout',
-        label: 'Sensor Layout',
-        required: false,
-        selector: {
-          select: {
-            mode: 'dropdown' as const,
-            options: [
-              { label: 'Default (in label area)', value: 'default' },
-              { label: 'Bottom', value: 'bottom' },
-              { label: 'Vertical Stack', value: 'stacked' },
-            ],
-          },
-        },
-      },
-    ],
-  },
-  {
-    name: 'interactions',
-    label: 'Interactions',
-    type: 'expandable' as const,
-    flatten: true,
-    icon: 'mdi:gesture-tap',
-    schema: [
-      {
-        name: 'navigate',
-        label: 'Navigate path when card tapped',
-        required: false,
-        selector: { text: { type: 'url' as const } },
-      },
-    ],
-  },
-];
 
 export class RoomSummaryCardEditor extends LitElement {
   /**
@@ -143,23 +21,37 @@ export class RoomSummaryCardEditor extends LitElement {
   public hass!: HomeAssistant;
 
   /**
-   * renders the lit element card
-   * @returns {TemplateResult} The rendered HTML template
+   * Task that fetches the entities asynchronously
+   * Uses the Home Assistant web sockets Promise
    */
-  override render(): TemplateResult | typeof nothing {
+  _getEntitiesTask = new Task(this, {
+    task: async ([area]) => await getSchema(this.hass, area),
+    args: () => [this._config?.area],
+  });
+
+  /**
+   * renders the lit element card
+   * @returns The rendered HTML template
+   */
+  override render() {
     if (!this.hass || !this._config) {
       return nothing;
     }
 
-    return html`
-      <ha-form
-        .hass=${this.hass}
-        .data=${this._config}
-        .schema=${SCHEMA}
-        .computeLabel=${(s: HaFormSchema) => s.label}
-        @value-changed=${this._valueChanged}
-      ></ha-form>
-    `;
+    return this._getEntitiesTask.render({
+      initial: () => nothing,
+      pending: () => nothing,
+      complete: (value) => html`
+        <ha-form
+          .hass=${this.hass}
+          .data=${this._config}
+          .schema=${value}
+          .computeLabel=${(s: HaFormSchema) => s.label}
+          @value-changed=${this._valueChanged}
+        ></ha-form>
+      `,
+      error: (error) => html`${error}`,
+    });
   }
 
   /**
@@ -172,8 +64,13 @@ export class RoomSummaryCardEditor extends LitElement {
 
   private _valueChanged(ev: CustomEvent) {
     const config = ev.detail.value as Config;
+
+    // Clean up empty arrays
     if (!config.features?.length) {
       delete config.features;
+    }
+    if (!config.sensor_classes?.length) {
+      delete config.sensor_classes;
     }
 
     // @ts-ignore

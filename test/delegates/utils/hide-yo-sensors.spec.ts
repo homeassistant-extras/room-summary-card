@@ -1,14 +1,19 @@
 import { getSensors } from '@delegates/utils/hide-yo-sensors';
+import * as sensorAveragesModule from '@delegates/utils/sensor-averages';
 import type { HomeAssistant } from '@hass/types';
 import { createStateEntity as e } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import { expect } from 'chai';
+import { stub, type SinonStub } from 'sinon';
 
 export default () => {
   describe('get-sensors.ts', () => {
     let mockHass: HomeAssistant;
+    let calculateAveragesStub: SinonStub;
 
     beforeEach(() => {
+      calculateAveragesStub = stub(sensorAveragesModule, 'calculateAverages');
+
       mockHass = {
         states: {
           'sensor.living_room_temperature': e(
@@ -103,62 +108,101 @@ export default () => {
           },
         },
       } as any as HomeAssistant;
+
+      // Default stub return
+      calculateAveragesStub.returns([]);
     });
 
-    it('should return temperature and humidity sensors in correct order when no config sensors', () => {
+    afterEach(() => {
+      calculateAveragesStub.restore();
+    });
+
+    it('should return SensorData with individual and averaged properties', () => {
       const config: Config = {
         area: 'living_room',
       };
 
+      const mockAveraged = [
+        e('sensor', 'averaged_temp', '72', { device_class: 'temperature' }),
+      ];
+      calculateAveragesStub.returns(mockAveraged);
+
       const result = getSensors(mockHass, config);
 
-      expect(result).to.have.lengthOf(2);
-      expect(result[0]!.entity_id).to.equal('sensor.living_room_temperature');
-      expect(result[1]!.entity_id).to.equal('sensor.living_room_humidity');
+      expect(result).to.have.keys(['individual', 'averaged']);
+      expect(result.individual).to.be.an('array');
+      expect(result.averaged).to.equal(mockAveraged);
     });
 
-    it('should order config sensors by their position in config.sensors array', () => {
+    it('should call calculateAverages with correct parameters', () => {
       const config: Config = {
         area: 'living_room',
-        sensors: [
-          'sensor.custom_sensor_2',
-          'sensor.living_room_pressure',
-          'sensor.custom_sensor_1',
-        ],
+        sensor_classes: ['temperature', 'humidity', 'pressure'],
+      };
+
+      getSensors(mockHass, config);
+
+      expect(calculateAveragesStub.calledOnce).to.be.true;
+      const [classSensors, sensorClasses] =
+        calculateAveragesStub.firstCall.args;
+
+      // Should include temp, humidity, and pressure sensors from living_room
+      expect(classSensors).to.have.lengthOf(3);
+      expect(classSensors.map((s: any) => s.entity_id)).to.include.members([
+        'sensor.living_room_temperature',
+        'sensor.living_room_humidity',
+        'sensor.living_room_pressure',
+      ]);
+      expect(sensorClasses).to.deep.equal([
+        'temperature',
+        'humidity',
+        'pressure',
+      ]);
+    });
+
+    it('should use default sensor classes when not specified', () => {
+      const config: Config = {
+        area: 'living_room',
+      };
+
+      getSensors(mockHass, config);
+
+      const [, sensorClasses] = calculateAveragesStub.firstCall.args;
+      expect(sensorClasses).to.deep.equal(['temperature', 'humidity']);
+    });
+
+    it('should return config sensors in individual array', () => {
+      const config: Config = {
+        area: 'living_room',
+        sensors: ['sensor.custom_sensor_2', 'sensor.custom_sensor_1'],
       };
 
       const result = getSensors(mockHass, config);
 
-      expect(result).to.have.lengthOf(5); // 2 default + 3 config
-      // Temperature and humidity first (not in config)
-      expect(result[0]!.entity_id).to.equal('sensor.living_room_temperature');
-      expect(result[1]!.entity_id).to.equal('sensor.living_room_humidity');
-      // Then config sensors in specified order
-      expect(result[2]!.entity_id).to.equal('sensor.custom_sensor_2');
-      expect(result[3]!.entity_id).to.equal('sensor.living_room_pressure');
-      expect(result[4]!.entity_id).to.equal('sensor.custom_sensor_1');
-    });
-
-    it('should put temperature/humidity in config order when explicitly defined', () => {
-      const config: Config = {
-        area: 'living_room',
-        sensors: [
-          'sensor.living_room_humidity', // Humidity first
-          'sensor.custom_sensor_1',
-          'sensor.living_room_temperature', // Temperature last
-        ],
-      };
-
-      const result = getSensors(mockHass, config);
-
-      expect(result).to.have.lengthOf(3);
-      // Should follow config order exactly
-      expect(result[0]!.entity_id).to.equal('sensor.living_room_humidity');
-      expect(result[1]!.entity_id).to.equal('sensor.custom_sensor_1');
-      expect(result[2]!.entity_id).to.equal('sensor.living_room_temperature');
+      expect(result.individual).to.have.lengthOf(2);
+      expect(result.individual[0]!.entity_id).to.equal(
+        'sensor.custom_sensor_2',
+      );
+      expect(result.individual[1]!.entity_id).to.equal(
+        'sensor.custom_sensor_1',
+      );
     });
 
     it('should exclude sensors from other areas', () => {
+      const config: Config = {
+        area: 'living_room',
+        sensors: [],
+      };
+
+      const result = getSensors(mockHass, config);
+
+      // Should not include the kitchen sensor
+      expect(result.individual.map((s) => s.entity_id)).to.not.include(
+        'sensor.other_area_temp', // This is in kitchen area
+      );
+    });
+
+    it('should exclude sensors from other areas unless configured', () => {
       const config: Config = {
         area: 'living_room',
         sensors: ['sensor.other_area_temp'], // This is in kitchen area
@@ -166,10 +210,36 @@ export default () => {
 
       const result = getSensors(mockHass, config);
 
-      // Should only get living room temp/humidity, not the kitchen sensor
-      expect(result).to.have.lengthOf(2);
-      expect(result.map((s) => s.entity_id)).to.not.include(
+      // Should not include the kitchen sensor
+      expect(result.individual.map((s) => s.entity_id)).to.include(
         'sensor.other_area_temp',
+      );
+    });
+
+    it('should skip default entities when exclude_default_entities is enabled', () => {
+      const config: Config = {
+        area: 'living_room',
+        features: ['exclude_default_entities'],
+      };
+
+      getSensors(mockHass, config);
+
+      const [classSensors] = calculateAveragesStub.firstCall.args;
+      expect(classSensors).to.have.lengthOf(0);
+    });
+
+    it('should still include config sensors when exclude_default_entities is enabled', () => {
+      const config: Config = {
+        area: 'living_room',
+        features: ['exclude_default_entities'],
+        sensors: ['sensor.custom_sensor_1'],
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.individual).to.have.lengthOf(1);
+      expect(result.individual[0]!.entity_id).to.equal(
+        'sensor.custom_sensor_1',
       );
     });
 
@@ -197,8 +267,7 @@ export default () => {
 
       const result = getSensors(mockHass, config);
 
-      expect(result).to.have.lengthOf(3); // temp + humidity + device sensor
-      expect(result.map((s) => s.entity_id)).to.include(
+      expect(result.individual.map((s) => s.entity_id)).to.include(
         'sensor.device_area_sensor',
       );
     });
@@ -209,101 +278,28 @@ export default () => {
         sensors: [
           'sensor.living_room_temperature',
           'sensor.nonexistent_sensor', // This doesn't exist
-          'sensor.living_room_humidity',
         ],
       };
 
       const result = getSensors(mockHass, config);
 
-      // Should include only the existing sensors
-      expect(result).to.have.lengthOf(2);
-      expect(result[0]!.entity_id).to.equal('sensor.living_room_temperature');
-      expect(result[1]!.entity_id).to.equal('sensor.living_room_humidity');
+      // Should include only the existing sensor
+      expect(result.individual).to.have.lengthOf(1);
+      expect(result.individual[0]!.entity_id).to.equal(
+        'sensor.living_room_temperature',
+      );
     });
 
-    it('should return empty array when no matching sensors found', () => {
+    it('should return empty arrays when no matching sensors found', () => {
       const config: Config = {
         area: 'empty_area',
       };
 
       const result = getSensors(mockHass, config);
 
-      expect(result).to.be.an('array');
-      expect(result).to.have.lengthOf(0);
-    });
-
-    it('should handle mixed scenario with partial config overlap', () => {
-      const config: Config = {
-        area: 'living_room',
-        sensors: [
-          'sensor.custom_sensor_1',
-          'sensor.living_room_temperature', // This is also a default temp sensor
-        ],
-      };
-
-      const result = getSensors(mockHass, config);
-
-      expect(result).to.have.lengthOf(3);
-      // Humidity first (default, not in config)
-      expect(result[0]!.entity_id).to.equal('sensor.living_room_humidity');
-      // Then config sensors in order
-      expect(result[1]!.entity_id).to.equal('sensor.custom_sensor_1');
-      expect(result[2]!.entity_id).to.equal('sensor.living_room_temperature');
-    });
-
-    it('should skip default temperature and humidity sensors when exclude_default_entities is enabled', () => {
-      const config: Config = {
-        area: 'living_room',
-        features: ['exclude_default_entities'],
-      };
-
-      const result = getSensors(mockHass, config);
-
-      expect(result).to.have.lengthOf(0);
-      expect(result.map((s) => s.entity_id)).to.not.include(
-        'sensor.living_room_temperature',
-      );
-      expect(result.map((s) => s.entity_id)).to.not.include(
-        'sensor.living_room_humidity',
-      );
-    });
-
-    it('should still include config sensors when exclude_default_entities is enabled', () => {
-      const config: Config = {
-        area: 'living_room',
-        features: ['exclude_default_entities'],
-        sensors: [
-          'sensor.custom_sensor_1',
-          'sensor.living_room_temperature', // Explicitly configured
-        ],
-      };
-
-      const result = getSensors(mockHass, config);
-
-      expect(result).to.have.lengthOf(2);
-      expect(result[0]!.entity_id).to.equal('sensor.custom_sensor_1');
-      expect(result[1]!.entity_id).to.equal('sensor.living_room_temperature');
-      // Should not include humidity since it's not in config and we're excluding defaults
-      expect(result.map((s) => s.entity_id)).to.not.include(
-        'sensor.living_room_humidity',
-      );
-    });
-
-    it('should not include pressure sensor when exclude_default_entities is enabled and not in config', () => {
-      const config: Config = {
-        area: 'living_room',
-        features: ['exclude_default_entities'],
-        sensors: ['sensor.custom_sensor_1'],
-      };
-
-      const result = getSensors(mockHass, config);
-
-      expect(result).to.have.lengthOf(1);
-      expect(result[0]!.entity_id).to.equal('sensor.custom_sensor_1');
-      // Should not include pressure sensor (device_class: pressure) since it's not temp/humidity
-      expect(result.map((s) => s.entity_id)).to.not.include(
-        'sensor.living_room_pressure',
-      );
+      expect(result.individual).to.be.an('array');
+      expect(result.individual).to.have.lengthOf(0);
+      expect(result.averaged).to.be.an('array');
     });
   });
 };

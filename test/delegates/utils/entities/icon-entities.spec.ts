@@ -1,5 +1,5 @@
 import type { Config } from '@/types/config';
-import { getIconEntities } from '@delegates/utils/icon-entities';
+import { getIconEntities } from '@delegates/entities/icon-entities';
 import type { HomeAssistant } from '@hass/types';
 import { createStateEntity as e } from '@test/test-helpers';
 import { expect } from 'chai';

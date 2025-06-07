@@ -1,4 +1,4 @@
-import { getRoomEntity } from '@delegates/utils/room-entity';
+import { getRoomEntity } from '@delegates/entities/room-entity';
 import type { NavigateActionConfig } from '@hass/data/lovelace/config/action';
 import type { HomeAssistant } from '@hass/types';
 import { createStateEntity as e } from '@test/test-helpers';

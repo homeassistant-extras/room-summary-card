@@ -6,7 +6,12 @@ import * as sensorsModule from '@html/sensors';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity as e } from '@test/test-helpers';
 import * as textStylesModule from '@theme/render/text-styles';
-import type { Config, EntityInformation, RoomInformation } from '@type/config';
+import type {
+  Config,
+  EntityInformation,
+  RoomInformation,
+  SensorData,
+} from '@type/config';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { styleMap } from 'lit-html/directives/style-map.js';
@@ -100,10 +105,13 @@ export default () => {
 
     describe('info component', () => {
       it('should render the basic info structure', async () => {
-        const sensors = [
-          e('sensor', 'temperature', '22', { device_class: 'temperature' }),
-          e('sensor', 'humidity', '45', { device_class: 'humidity' }),
-        ];
+        const sensors: SensorData = {
+          individual: [
+            e('sensor', 'temperature', '22', { device_class: 'temperature' }),
+            e('sensor', 'humidity', '45', { device_class: 'humidity' }),
+          ],
+          averaged: [],
+        };
 
         const result = info(
           mockElement,
@@ -131,7 +139,10 @@ export default () => {
       });
 
       it('should apply correct CSS classes based on sensor_layout config', async () => {
-        const sensors = [e('sensor', 'temperature', '22')];
+        const sensors: SensorData = {
+          individual: [e('sensor', 'temperature', '22')],
+          averaged: [],
+        };
 
         // Test with vertical layout
         const verticalConfig = {
@@ -169,7 +180,10 @@ export default () => {
       });
 
       it('should call actionHandler with correct parameters', () => {
-        const sensors = [e('sensor', 'temperature', '22')];
+        const sensors: SensorData = {
+          individual: [e('sensor', 'temperature', '22')],
+          averaged: [],
+        };
 
         info(
           mockElement,
@@ -185,7 +199,10 @@ export default () => {
       });
 
       it('should call handleClickAction with correct parameters', () => {
-        const sensors = [e('sensor', 'temperature', '22')];
+        const sensors: SensorData = {
+          individual: [e('sensor', 'temperature', '22')],
+          averaged: [],
+        };
 
         info(
           mockElement,
@@ -202,10 +219,13 @@ export default () => {
       });
 
       it('should call renderSensors with correct parameters', () => {
-        const sensors = [
-          e('sensor', 'temperature', '22'),
-          e('sensor', 'humidity', '45'),
-        ];
+        const sensors: SensorData = {
+          individual: [
+            e('sensor', 'temperature', '22'),
+            e('sensor', 'humidity', '45'),
+          ],
+          averaged: [],
+        };
 
         info(
           mockElement,
@@ -222,7 +242,10 @@ export default () => {
       });
 
       it('should call renderAreaStatistics with correct parameters', () => {
-        const sensors = [e('sensor', 'temperature', '22')];
+        const sensors: SensorData = {
+          individual: [e('sensor', 'temperature', '22')],
+          averaged: [],
+        };
 
         info(
           mockElement,
@@ -238,24 +261,61 @@ export default () => {
           .true;
       });
 
-      it('should handle empty sensors array', async () => {
+      it('should handle empty sensors data', async () => {
+        const sensors: SensorData = {
+          individual: [],
+          averaged: [],
+        };
+
         const result = info(
           mockElement,
           mockHass,
           mockRoomInformation,
           mockRoomEntity,
           mockConfig,
-          [],
+          sensors,
         );
 
         const el = await fixture(result as TemplateResult);
         expect(el.className).to.equal('info horizontal');
-        expect(renderSensorsStub.calledWith(mockHass, mockConfig, [])).to.be
-          .true;
+        expect(renderSensorsStub.calledWith(mockHass, mockConfig, sensors)).to
+          .be.true;
+      });
+
+      it('should handle averaged sensors', async () => {
+        const sensors: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              states: [e('sensor', 'temp1', '20'), e('sensor', 'temp2', '24')],
+              uom: '°C',
+              average: 22,
+              device_class: 'temperature',
+              domain: 'sensor',
+            },
+          ],
+        };
+
+        const result = info(
+          mockElement,
+          mockHass,
+          mockRoomInformation,
+          mockRoomEntity,
+          mockConfig,
+          sensors,
+        );
+
+        const el = await fixture(result as TemplateResult);
+        expect(el.className).to.equal('info horizontal');
+        expect(renderSensorsStub.calledWith(mockHass, mockConfig, sensors)).to
+          .be.true;
       });
 
       it('should apply action handlers to the room name element', async () => {
-        const sensors = [e('sensor', 'temperature', '22')];
+        const sensors: SensorData = {
+          individual: [e('sensor', 'temperature', '22')],
+          averaged: [],
+        };
 
         const result = info(
           mockElement,
@@ -274,7 +334,10 @@ export default () => {
       });
 
       it('should apply text styles to both name and label elements', async () => {
-        const sensors = [e('sensor', 'temperature', '22')];
+        const sensors: SensorData = {
+          individual: [e('sensor', 'temperature', '22')],
+          averaged: [],
+        };
 
         const result = info(
           mockElement,
@@ -294,7 +357,7 @@ export default () => {
         expect(nameElement).to.exist;
         expect(labelElement).to.exist;
 
-        // Check that renderTextStyles was called twice (once for each element)
+        // Check that renderTextStyles was called once
         expect(renderTextStylesStub.callCount).to.equal(1);
         expect(
           renderTextStylesStub.calledWith(
@@ -309,13 +372,18 @@ export default () => {
         const configWithoutLayout = { ...mockConfig };
         delete (configWithoutLayout as any).sensor_layout;
 
+        const sensors: SensorData = {
+          individual: [],
+          averaged: [],
+        };
+
         const result = info(
           mockElement,
           mockHass,
           mockRoomInformation,
           mockRoomEntity,
           configWithoutLayout,
-          [],
+          sensors,
         );
 
         const el = await fixture(result as TemplateResult);
@@ -327,13 +395,18 @@ export default () => {
       it('should render when renderSensors returns nothing', async () => {
         renderSensorsStub.returns(nothing);
 
+        const sensors: SensorData = {
+          individual: [],
+          averaged: [],
+        };
+
         const result = info(
           mockElement,
           mockHass,
           mockRoomInformation,
           mockRoomEntity,
           mockConfig,
-          [],
+          sensors,
         );
 
         const el = await fixture(result as TemplateResult);
@@ -344,13 +417,18 @@ export default () => {
       it('should render when renderAreaStatistics returns nothing', async () => {
         renderAreaStatisticsStub.returns(nothing);
 
+        const sensors: SensorData = {
+          individual: [],
+          averaged: [],
+        };
+
         const result = info(
           mockElement,
           mockHass,
           mockRoomInformation,
           mockRoomEntity,
           mockConfig,
-          [],
+          sensors,
         );
 
         const el = await fixture(result as TemplateResult);
@@ -363,13 +441,18 @@ export default () => {
           area_name: 'Master Bedroom & En-Suite',
         };
 
+        const sensors: SensorData = {
+          individual: [],
+          averaged: [],
+        };
+
         const result = info(
           mockElement,
           mockHass,
           complexRoomInfo,
           mockRoomEntity,
           mockConfig,
-          [],
+          sensors,
         );
 
         const el = await fixture(result as TemplateResult);
@@ -384,13 +467,18 @@ export default () => {
           area_name: 'This is a very long room name that might overflow',
         };
 
+        const sensors: SensorData = {
+          individual: [],
+          averaged: [],
+        };
+
         const result = info(
           mockElement,
           mockHass,
           longRoomInfo,
           mockRoomEntity,
           mockConfig,
-          [],
+          sensors,
         );
 
         const el = await fixture(result as TemplateResult);

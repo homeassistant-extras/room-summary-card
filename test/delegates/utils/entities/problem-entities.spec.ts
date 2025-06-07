@@ -1,4 +1,4 @@
-import { getProblemEntities } from '@delegates/utils/problem-entities';
+import { getProblemEntities } from '@delegates/entities/problem-entities';
 import type { HomeAssistant } from '@hass/types';
 import { createStateEntity as e } from '@test/test-helpers';
 import { expect } from 'chai';

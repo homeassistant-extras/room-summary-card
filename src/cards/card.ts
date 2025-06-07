@@ -20,8 +20,8 @@ import { styles } from '@theme/styles';
 import type {
   Config,
   EntityInformation,
-  EntityState,
   RoomInformation,
+  SensorData,
 } from '@type/config';
 const equal = require('fast-deep-equal');
 
@@ -66,7 +66,7 @@ export class RoomSummaryCard extends LitElement {
    * The sensors to show state for
    */
   @state()
-  private _sensors!: EntityState[];
+  private _sensors!: SensorData;
 
   /**
    * Indicates if the card is in dark mode
@@ -195,10 +195,14 @@ export class RoomSummaryCard extends LitElement {
     const stateIcons = this._states.map((s) =>
       renderStateIcon(this, this._hass, s, ['entity']),
     );
+
+    // todo: this may cause an issue - need to fix - workaround
+    const averagedSensors = this._sensors.averaged.flatMap((s) => s.states);
+
     const cardStyle = renderCardStyles(
       this._hass,
       this._config,
-      this._sensors,
+      averagedSensors,
       this._roomEntity.state,
     );
     const problems = renderProblemIndicator(

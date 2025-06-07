@@ -1,6 +1,13 @@
 /**
  * https://github.com/home-assistant/home-assistant-js-websocket/blob/master/lib/types.ts
  */
+
+export type MessageBase = {
+  id?: number;
+  type: string;
+  [key: string]: any;
+};
+
 export type HassEntityBase = {
   entity_id: string;
   state: string;

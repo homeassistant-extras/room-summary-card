@@ -1,4 +1,5 @@
 import { RoomSummaryCardEditor } from '@/cards/editor';
+import * as editorSchemaModule from '@delegates/utils/editor-schema';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Config } from '@type/config';
@@ -11,8 +12,26 @@ export default () => {
     let card: RoomSummaryCardEditor;
     let hass: HomeAssistant;
     let dispatchStub: sinon.SinonStub;
+    let getSchemaStub: sinon.SinonStub;
+    let mockSchema: any[];
 
     beforeEach(async () => {
+      // Create mock schema
+      mockSchema = [
+        {
+          name: 'area',
+          label: 'Area',
+          required: true,
+          selector: { area: {} },
+        },
+        {
+          name: 'content',
+          label: 'Content',
+          type: 'expandable',
+          schema: [],
+        },
+      ];
+
       // Create mock HomeAssistant instance
       hass = {
         states: {},
@@ -20,14 +39,25 @@ export default () => {
         entities: {},
         devices: {},
       } as HomeAssistant;
+
+      // Create component instance
       card = new RoomSummaryCardEditor();
+
+      // Stub the dispatch event method
       dispatchStub = stub(card, 'dispatchEvent');
 
+      // Stub the getSchema function
+      getSchemaStub = stub(editorSchemaModule, 'getSchema');
+      getSchemaStub.resolves(mockSchema);
+
+      // Set hass and config
       card.hass = hass;
+      card.setConfig({ area: 'living_room' });
     });
 
     afterEach(() => {
       dispatchStub.restore();
+      getSchemaStub.restore();
     });
 
     describe('initialization', () => {
@@ -37,7 +67,7 @@ export default () => {
 
       it('should have default properties', () => {
         expect(card.hass).to.exist;
-        expect(card['_config']).to.be.undefined;
+        expect(card['_config']).to.deep.equal({ area: 'living_room' });
       });
     });
 
@@ -54,205 +84,57 @@ export default () => {
     });
 
     describe('render', () => {
-      it('should return nothing when hass is not set', async () => {
+      it('should return nothing when hass is not set', () => {
         card.hass = undefined as any;
         const result = card.render();
         expect(result).to.equal(nothing);
       });
 
-      it('should return nothing when config is not set', async () => {
+      it('should return nothing when config is not set', () => {
+        card['_config'] = undefined as any;
         const result = card.render();
         expect(result).to.equal(nothing);
       });
 
-      it('should render ha-form when both hass and config are set', async () => {
-        const testConfig: Config = {
-          area: 'area_1',
-        };
-        card.setConfig(testConfig);
+      it('should render task with the correct states', async () => {
+        // Mock the task render function to test different states
+        const taskRenderStub = stub(card['_getEntitiesTask'], 'render');
 
-        const el = await fixture(card.render() as TemplateResult);
+        // Test render
+        card.render();
+
+        // Verify task.render was called with the correct handlers
+        expect(taskRenderStub.calledOnce).to.be.true;
+        const handlers = taskRenderStub.firstCall.args[0];
+
+        // Test initial state
+        // @ts-ignore
+        expect(handlers.initial()).to.equal(nothing);
+
+        // Test pending state
+        // @ts-ignore
+        expect(handlers.pending()).to.equal(nothing);
+
+        // Test error state
+        const error = new Error('Test error');
+        // @ts-ignore
+        const errorResult = handlers.error(error) as TemplateResult;
+        expect(errorResult.values).to.deep.equal([error]);
+
+        // Test complete state with schema
+        const el = await fixture(
+          // @ts-ignore
+          handlers.complete(mockSchema) as TemplateResult,
+        );
         expect(el.outerHTML).to.equal('<ha-form></ha-form>');
-      });
 
-      it('should pass correct props to ha-form', async () => {
-        const testConfig: Config = {
-          area: 'area_1',
-          features: ['hide_climate_label'],
-        };
-        card.setConfig(testConfig);
-
-        const el = await fixture(card.render() as TemplateResult);
-        expect((el as any).hass).to.deep.equal(hass);
-        expect((el as any).data).to.deep.equal(testConfig);
-        expect((el as any).schema).to.deep.equal([
-          {
-            name: 'area',
-            label: 'Area',
-            required: true,
-            selector: { area: {} },
-          },
-          {
-            name: 'content',
-            label: 'Content',
-            type: 'expandable',
-            flatten: true,
-            icon: 'mdi:text-short',
-            schema: [
-              {
-                name: 'area_name',
-                label: 'Area name',
-                required: false,
-                selector: { text: {} },
-              },
-            ],
-          },
-          {
-            name: 'entities',
-            label: 'Entities',
-            type: 'expandable' as const,
-            flatten: true,
-            icon: 'mdi:devices',
-            schema: [
-              {
-                name: 'entity',
-                label: 'Main room entity',
-                required: false,
-                selector: { entity: { multiple: false } },
-              },
-              {
-                name: 'entities',
-                label: 'Area side entities',
-                required: false,
-                selector: { entity: { multiple: true } },
-              },
-              {
-                name: 'sensors',
-                label: 'Sensor states',
-                required: false,
-                selector: { entity: { multiple: true } },
-              },
-            ],
-          },
-          {
-            name: 'features',
-            label: 'Features',
-            type: 'expandable' as const,
-            flatten: true,
-            icon: 'mdi:list-box',
-            schema: [
-              {
-                name: 'features',
-                label: 'Features',
-                required: false,
-                selector: {
-                  select: {
-                    multiple: true,
-                    mode: 'list' as const,
-                    options: [
-                      {
-                        label: 'Hide Climate Label',
-                        value: 'hide_climate_label',
-                      },
-                      { label: 'Hide Area Stats', value: 'hide_area_stats' },
-                      {
-                        label: 'Hide Sensor icons',
-                        value: 'hide_sensor_icons',
-                      },
-                      {
-                        label: 'Exclude Default Entities',
-                        value: 'exclude_default_entities',
-                      },
-                      {
-                        label: 'Skip Climate Styles',
-                        value: 'skip_climate_styles',
-                      },
-                      {
-                        label: 'Skip Card Background Styles',
-                        value: 'skip_entity_styles',
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-          {
-            name: 'styles',
-            label: 'Styles',
-            type: 'expandable',
-            flatten: true,
-            icon: 'mdi:brush-variant',
-            schema: [
-              {
-                name: 'sensor_layout',
-                label: 'Sensor Layout',
-                required: false,
-                selector: {
-                  select: {
-                    mode: 'dropdown' as const,
-                    options: [
-                      { label: 'Default (in label area)', value: 'default' },
-                      {
-                        label: 'Bottom',
-                        value: 'bottom',
-                      },
-                      {
-                        label: 'Vertical Stack',
-                        value: 'stacked',
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-          {
-            name: 'interactions',
-            label: 'Interactions',
-            type: 'expandable' as const,
-            flatten: true,
-            icon: 'mdi:gesture-tap',
-            schema: [
-              {
-                name: 'navigate',
-                label: 'Navigate path when card tapped',
-                required: false,
-                selector: { text: { type: 'url' as const } },
-              },
-            ],
-          },
-        ]);
-      });
-    });
-
-    describe('form behavior', () => {
-      it('should compute labels correctly', async () => {
-        const testConfig: Config = {
-          area: 'area_1',
-          features: [],
-        };
-        card.setConfig(testConfig);
-
-        const el = await fixture(card.render() as TemplateResult);
-        const computeLabelFn = (el as any).computeLabel;
-        expect(computeLabelFn).to.be.a('function');
-
-        // Test the compute label function
-        const testSchema = { name: 'test', label: 'Test Label' };
-        const result = computeLabelFn(testSchema);
-        expect(result).to.equal('Test Label');
+        // Restore stub
+        taskRenderStub.restore();
       });
     });
 
     describe('_valueChanged', () => {
       it('should fire config-changed event with config when features are present', () => {
-        const testConfig: Config = {
-          area: 'area_1',
-          features: ['hide_climate_label'],
-        };
-        card.setConfig(testConfig);
-
         // Simulate value-changed event
         const detail = {
           value: {
@@ -273,40 +155,27 @@ export default () => {
         });
       });
 
-      it('should remove features property when features array is empty', () => {
-        const testConfig: Config = {
-          area: 'area_1',
-          features: [],
-        };
-        card.setConfig(testConfig);
-
-        // Simulate value-changed event with empty features
+      it('should remove empty arrays from config', () => {
+        // Simulate value-changed event with empty arrays
         const detail = {
           value: {
             area: 'area_1',
             features: [],
+            sensor_classes: [],
           },
         };
 
         const event = new CustomEvent('value-changed', { detail });
         card['_valueChanged'](event);
 
-        // Verify event was dispatched with features property removed
+        // Verify event was dispatched with properties removed
         expect(dispatchStub.calledOnce).to.be.true;
-        expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
         expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
           area: 'area_1',
         });
-        expect(dispatchStub.firstCall.args[0].detail.config.features).to.be
-          .undefined;
       });
 
       it('should handle config without features property', () => {
-        const testConfig: Config = {
-          area: 'area_1',
-        };
-        card.setConfig(testConfig);
-
         // Simulate value-changed event without features
         const detail = {
           value: {

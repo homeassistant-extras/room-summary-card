@@ -29,6 +29,7 @@ export interface SelectSelector {
     custom_value?: boolean;
     mode?: 'list' | 'dropdown';
     options: string[] | SelectOption[];
+    reorder?: boolean;
   };
 }
 

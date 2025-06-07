@@ -1,8 +1,8 @@
+import * as getIconEntitiesModule from '@delegates/entities/icon-entities';
+import * as getProblemEntitiesModule from '@delegates/entities/problem-entities';
+import * as getRoomEntityModule from '@delegates/entities/room-entity';
 import * as areaRetrieverModule from '@delegates/retrievers/area';
 import * as getSensorsModule from '@delegates/utils/hide-yo-sensors';
-import * as getIconEntitiesModule from '@delegates/utils/icon-entities';
-import * as getProblemEntitiesModule from '@delegates/utils/problem-entities';
-import * as getRoomEntityModule from '@delegates/utils/room-entity';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
 import { createState as s } from '@test/test-helpers';

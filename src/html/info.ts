@@ -7,8 +7,8 @@ import { renderTextStyles } from '@theme/render/text-styles';
 import type {
   Config,
   EntityInformation,
-  EntityState,
   RoomInformation,
+  SensorData,
 } from '@type/config';
 import { html } from 'lit';
 import { renderAreaStatistics } from './area-statistics';
@@ -31,12 +31,12 @@ export const info = (
   roomInformation: RoomInformation,
   roomEntity: EntityInformation,
   config: Config,
-  sensors: EntityState[],
+  sensors: SensorData,
 ) => {
   const handler = actionHandler(roomEntity);
   const action = handleClickAction(element, roomEntity);
   const textStyle = renderTextStyles(hass, config, roomEntity.state);
-  const snesorInfo = renderSensors(hass, config, sensors);
+  const sensorInfo = renderSensors(hass, config, sensors);
   const stats = renderAreaStatistics(hass, config);
 
   return html`<div class="info ${config.sensor_layout}">
@@ -49,6 +49,6 @@ export const info = (
       ${roomInformation.area_name}
     </div>
     ${stats}
-    <div class="sensors text" style=${textStyle}>${snesorInfo}</div>
+    <div class="sensors text" style=${textStyle}>${sensorInfo}</div>
   </div>`;
 };

@@ -2,63 +2,61 @@ import { hasFeature } from '@config/feature';
 import { getDevice } from '@delegates/retrievers/device';
 import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, EntityState } from '@type/config';
+import type { Config, EntityState, SensorData } from '@type/config';
+import { calculateAverages } from './sensor-averages';
 
 /**
- * Retrieves a list of sensor entity states for a given area based on the provided configuration.
+ * Retrieves sensor data for a given area based on the provided configuration.
  *
- * This function filters Home Assistant entities to find those that are either explicitly listed
- * in the config's sensors array or have a device class of 'temperature' or 'humidity'. It ensures
- * that the entity or its associated device is not already assigned to the specified area.
+ * This function returns both individual sensors specified in config.sensors and
+ * averaged sensors based on device classes specified in config.sensor_classes.
  *
  * @param hass - The Home Assistant instance containing entities and their states.
- * @param config - The configuration object, which may specify a list of sensor entity IDs.
- * @returns An array of EntityState objects representing the matching sensors.
+ * @param config - The configuration object specifying sensor settings.
+ * @returns SensorData object containing individual and averaged sensor information.
  */
-export const getSensors = (
-  hass: HomeAssistant,
-  config: Config,
-): EntityState[] => {
-  // Check if we should skip default entities
-  const skip = hasFeature(config, 'exclude_default_entities');
+export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
+  const skipDefaultEntities = hasFeature(config, 'exclude_default_entities');
 
-  // Create arrays to hold different categories
+  // Default sensor classes if not specified
+  const sensorClasses = config.sensor_classes || ['temperature', 'humidity'];
+
+  // Arrays to hold different categories
   const configOrderedSensors: EntityState[] = [];
-  const temperatureSensors: EntityState[] = [];
-  const humiditySensors: EntityState[] = [];
+  const classSensors: EntityState[] = [];
 
-  // Process and categorize sensors in one step
+  // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
+    // Check if this sensor is explicitly configured
+    const isConfigSensor = config.sensors?.includes(entity.entity_id);
+
     const device = getDevice(hass, entity.device_id);
-    if (![entity.area_id, device?.area_id].includes(config.area)) return;
+    if (
+      !isConfigSensor &&
+      ![(entity.area_id, device?.area_id)].includes(config.area)
+    )
+      return;
 
     const state = getState(hass, entity.entity_id);
     if (!state) return;
 
-    // Check if this sensor is explicitly configured
-    const isConfigSensor = config.sensors?.includes(entity.entity_id);
-
-    // If it's a config sensor, always include it
+    // If it's a config sensor, always include it in individual sensors
     if (isConfigSensor) {
       configOrderedSensors.push(state);
       return;
     }
 
     // If we're skipping default entities, don't process further
-    if (skip) return;
+    if (skipDefaultEntities) return;
 
-    // Check if this is a default climate sensor
-    const isClimateDevice = ['temperature', 'humidity'].includes(
-      state.attributes?.device_class,
-    );
-
-    if (!isClimateDevice) return;
-
-    // Categorize the default climate sensor
-    if (state.attributes?.device_class === 'temperature') {
-      temperatureSensors.push(state);
-    } else if (state.attributes?.device_class === 'humidity') {
-      humiditySensors.push(state);
+    // Check if this is a sensor with a device class we care about
+    const deviceClass = state.attributes?.device_class;
+    if (
+      state.domain === 'sensor' &&
+      deviceClass &&
+      sensorClasses.includes(deviceClass)
+    ) {
+      classSensors.push(state);
     }
   });
 
@@ -69,8 +67,11 @@ export const getSensors = (
     return indexA - indexB;
   });
 
-  // Combine in the desired order:
-  // 1. Default temp/humidity (only if not skipping and not in config.sensors)
-  // 2. Config-ordered sensors
-  return [...temperatureSensors, ...humiditySensors, ...configOrderedSensors];
+  // Calculate averages for class-based sensors
+  const averaged = calculateAverages(classSensors, sensorClasses);
+
+  return {
+    individual: configOrderedSensors,
+    averaged,
+  };
 };
