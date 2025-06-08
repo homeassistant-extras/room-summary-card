@@ -1,4 +1,4 @@
-import { getSchema } from '@delegates/utils/editor-schema';
+import { getSchema } from '@/editor/editor-schema';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';

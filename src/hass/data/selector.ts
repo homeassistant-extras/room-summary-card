@@ -5,6 +5,7 @@
 export type Selector =
   | AreaSelector
   | EntitySelector
+  | NumberSelector
   | SelectSelector
   | StringSelector;
 
@@ -20,6 +21,17 @@ export interface EntitySelector {
   entity: {
     multiple?: boolean;
     filter?: EntitySelectorFilter | readonly EntitySelectorFilter[];
+  } | null;
+}
+
+export interface NumberSelector {
+  number: {
+    min?: number;
+    max?: number;
+    step?: number | 'any';
+    mode?: 'box' | 'slider';
+    unit_of_measurement?: string;
+    slider_ticks?: boolean;
   } | null;
 }
 

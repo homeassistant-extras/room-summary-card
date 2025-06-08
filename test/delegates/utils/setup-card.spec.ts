@@ -1,3 +1,4 @@
+import * as climateThresholdsModule from '@delegates/checks/thresholds';
 import * as getIconEntitiesModule from '@delegates/entities/icon-entities';
 import * as getProblemEntitiesModule from '@delegates/entities/problem-entities';
 import * as getRoomEntityModule from '@delegates/entities/room-entity';
@@ -18,6 +19,7 @@ export default () => {
     let getIconEntitiesStub: SinonStub;
     let getProblemEntitiesStub: SinonStub;
     let getRoomEntityStub: SinonStub;
+    let climateThresholdsStub: SinonStub;
 
     beforeEach(() => {
       // Create stubs for all the delegate functions
@@ -29,6 +31,10 @@ export default () => {
         'getProblemEntities',
       );
       getRoomEntityStub = stub(getRoomEntityModule, 'getRoomEntity');
+      climateThresholdsStub = stub(
+        climateThresholdsModule,
+        'climateThresholds',
+      );
 
       mockHass = {
         states: {
@@ -66,10 +72,10 @@ export default () => {
         icon: '',
       });
 
-      getSensorsStub.returns([
-        s('sensor', 'temperature', '72'),
-        s('sensor', 'humidity', '50'),
-      ]);
+      getSensorsStub.returns({
+        individual: [s('sensor', 'temperature', '72')],
+        averaged: [],
+      });
 
       getIconEntitiesStub.returns([
         {
@@ -87,6 +93,11 @@ export default () => {
         config: { entity_id: 'light.living_room_light' },
         state: s('light', 'living_room_light', 'on'),
       });
+
+      climateThresholdsStub.returns({
+        hot: false,
+        humid: false,
+      });
     });
 
     afterEach(() => {
@@ -95,6 +106,7 @@ export default () => {
       getIconEntitiesStub.restore();
       getProblemEntitiesStub.restore();
       getRoomEntityStub.restore();
+      climateThresholdsStub.restore();
     });
 
     describe('getRoomProperties', () => {
@@ -107,9 +119,15 @@ export default () => {
           'states',
           'roomEntity',
           'problemEntities',
-          'problemExists',
           'sensors',
-          'isDarkMode',
+          'flags',
+        ]);
+
+        expect(result.flags).to.have.all.keys([
+          'problemExists',
+          'dark',
+          'hot',
+          'humid',
         ]);
 
         // Verify it calls all the delegate functions
@@ -118,6 +136,9 @@ export default () => {
         expect(getProblemEntitiesStub.calledWith(mockHass, config.area)).to.be
           .true;
         expect(getSensorsStub.calledWith(mockHass, config)).to.be.true;
+        expect(
+          climateThresholdsStub.calledWith(config, result.sensors.averaged),
+        ).to.be.true;
       });
 
       it('should use area_name from config when provided', () => {
@@ -164,11 +185,13 @@ export default () => {
       });
 
       it('should return sensors from getSensors', () => {
-        const mockSensors = [
-          s('sensor', 'custom_temp', '75'),
-          s('sensor', 'custom_humidity', '45'),
-          s('sensor', 'pressure', '1013'),
-        ];
+        const mockSensors = {
+          individual: [
+            s('sensor', 'custom_temp', '75'),
+            s('sensor', 'custom_humidity', '45'),
+          ],
+          averaged: [],
+        };
         getSensorsStub.returns(mockSensors);
 
         const config: Config = { area: 'living_room' };
@@ -225,9 +248,25 @@ export default () => {
         expect(result.problemEntities).to.equal(
           mockProblemData.problemEntities,
         );
-        expect(result.problemExists).to.equal(mockProblemData.problemExists);
+        expect(result.flags.problemExists).to.equal(
+          mockProblemData.problemExists,
+        );
         expect(getProblemEntitiesStub.calledWith(mockHass, config.area)).to.be
           .true;
+      });
+
+      it('should return climate thresholds from climateThresholds', () => {
+        const mockThresholds = {
+          hot: true,
+          humid: false,
+        };
+        climateThresholdsStub.returns(mockThresholds);
+
+        const config: Config = { area: 'living_room' };
+        const result = getRoomProperties(mockHass, config);
+
+        expect(result.flags.hot).to.equal(mockThresholds.hot);
+        expect(result.flags.humid).to.equal(mockThresholds.humid);
       });
 
       it('should return dark mode status from hass.themes', () => {
@@ -235,16 +274,16 @@ export default () => {
         mockHass.themes.darkMode = true;
         let config: Config = { area: 'living_room' };
         let result = getRoomProperties(mockHass, config);
-        expect(result.isDarkMode).to.be.true;
+        expect(result.flags.dark).to.be.true;
 
         // Test dark mode false
         mockHass.themes.darkMode = false;
         result = getRoomProperties(mockHass, config);
-        expect(result.isDarkMode).to.be.false;
+        expect(result.flags.dark).to.be.false;
       });
 
       it('should handle all functions returning empty/default values', () => {
-        getSensorsStub.returns([]);
+        getSensorsStub.returns({ individual: [], averaged: [] });
         getIconEntitiesStub.returns([]);
         getProblemEntitiesStub.returns({
           problemEntities: [],
@@ -254,10 +293,11 @@ export default () => {
         const config: Config = { area: 'living_room' };
         const result = getRoomProperties(mockHass, config);
 
-        expect(result.sensors).to.have.length(0);
+        expect(result.sensors.individual).to.have.length(0);
+        expect(result.sensors.averaged).to.have.length(0);
         expect(result.states).to.have.length(0);
         expect(result.problemEntities).to.have.length(0);
-        expect(result.problemExists).to.be.false;
+        expect(result.flags.problemExists).to.be.false;
       });
     });
   });

@@ -236,6 +236,26 @@ In dev tools they should have an attribute device_class of `humidity` or `temper
        state: 'on'
    ```
 
+### Climate Borders Not Showing
+
+**Symptoms**: Expected temperature/humidity borders missing
+
+**Solutions**:
+
+1. **Check thresholds configuration**:
+
+   ```yaml
+   type: custom:room-summary-card
+   area: living_room
+   thresholds:
+     temperature: 75 # Must be configured
+     humidity: 55
+   ```
+
+2. **Verify sensor device classes**: Sensors must have `device_class: temperature` or `device_class: humidity`
+3. **Check threshold values**: Ensure sensor values exceed the configured thresholds
+4. **Disable skip_climate_styles**: Remove this feature if climate borders should show
+
 ## Theme Issues
 
 ### Colors Not Applying
@@ -456,7 +476,3 @@ If the card is completely broken:
 - [Configuration Guide](CONFIGURATION.md) - Complete configuration options
 - [Theming Guide](THEMING.md) - Theme support and color customization
 - [Advanced Usage](ADVANCED.md) - Explore advanced features and integrations
-
-```
-
-```

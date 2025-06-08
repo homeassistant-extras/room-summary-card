@@ -1,3 +1,4 @@
+import { climateThresholds } from '@delegates/checks/thresholds';
 import { getArea } from '@delegates/retrievers/area';
 import type { HomeAssistant } from '@hass/types';
 import type {
@@ -16,9 +17,13 @@ export interface RoomProperties {
   states: EntityInformation[];
   roomEntity: EntityInformation;
   problemEntities: string[];
-  problemExists: boolean;
   sensors: SensorData;
-  isDarkMode: boolean;
+  flags: {
+    problemExists: boolean;
+    dark: boolean;
+    hot: boolean;
+    humid: boolean;
+  };
 }
 
 /**
@@ -36,7 +41,7 @@ export interface RoomProperties {
  *   - `problemEntities`: Entities indicating problems in the room.
  *   - `problemExists`: Boolean indicating if any problems exist.
  *   - `sensorData`: Object containing individual and averaged sensor data.
- *   - `isDarkMode`: Boolean indicating if dark mode is enabled.
+ *   - `dark`: Boolean indicating if dark mode is enabled.
  */
 export const getRoomProperties = (
   hass: HomeAssistant,
@@ -54,14 +59,18 @@ export const getRoomProperties = (
   );
 
   const sensors = getSensors(hass, config);
+  const thresholds = climateThresholds(config, sensors.averaged);
 
   return {
     roomInfo,
     states,
     roomEntity,
     problemEntities,
-    problemExists,
     sensors,
-    isDarkMode: hass.themes.darkMode,
+    flags: {
+      problemExists,
+      dark: hass.themes.darkMode,
+      ...thresholds,
+    },
   };
 };

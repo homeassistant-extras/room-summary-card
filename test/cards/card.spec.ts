@@ -98,6 +98,16 @@ describe('card.ts', () => {
       expect(card['_roomInformation']).to.exist;
     });
 
+    it('should update climate and dark mode flags from getRoomProperties', () => {
+      // Test that flags are set correctly from getRoomProperties
+      expect(card['dark']).to.be.a('boolean');
+      expect(card['hot']).to.be.a('boolean');
+      expect(card['humid']).to.be.a('boolean');
+
+      // Since mockHass has darkMode: true, dark should be true
+      expect(card['dark']).to.be.true;
+    });
+
     it('should update _hass when formatEntityState changes', () => {
       const newHass = {
         ...mockHass,

@@ -69,18 +69,6 @@ customize:
     off_color: red
 ```
 
-### Climate Threshold Attributes
-
-```yaml
-customize:
-  sensor.garage_climate:
-    temperature_threshold: 90
-
-  sensor.shed_climate:
-    temperature_threshold: 90
-    humidity_threshold: 70
-```
-
 ### Icon Attributes
 
 ```yaml
@@ -92,14 +80,12 @@ customize:
 
 ### Available Attributes
 
-| Name                  | Type   | Default         | Description                         |
-| --------------------- | ------ | --------------- | ----------------------------------- |
-| on_color              | string | yellow          | Color when the entity is active     |
-| off_color             | string | theme off color | Color when the entity is not active |
-| temperature_threshold | number | 80              | Threshold to show red border        |
-| humidity_threshold    | number | 60              | Threshold to show blue border       |
-| icon                  | string | entity default  | Custom MDI icon                     |
-| icon_color            | string | none            | Hex color or theme color name       |
+| Name       | Type   | Default         | Description                         |
+| ---------- | ------ | --------------- | ----------------------------------- |
+| on_color   | string | yellow          | Color when the entity is active     |
+| off_color  | string | theme off color | Color when the entity is not active |
+| icon       | string | entity default  | Custom MDI icon                     |
+| icon_color | string | none            | Hex color or theme color name       |
 
 ## Custom Icon Color Integration
 
@@ -249,8 +235,8 @@ off: mdi:snowflake-off
 
 The card shows colored borders based on sensor thresholds:
 
-- **Red border**: Temperature above threshold (default: 80°F)
-- **Blue border**: Humidity above threshold (default: 60%)
+- **Red border**: Temperature above threshold (configurable)
+- **Blue border**: Humidity above threshold (configurable)
 
 ![Climate Borders](../assets/climate.png)
 
@@ -266,14 +252,14 @@ The card shows colored borders based on sensor thresholds:
      device_class: humidity
    ```
 
-2. **Thresholds**: Default or custom thresholds
+2. **Thresholds**: Configure in card configuration
 
    ```yaml
-   customize:
-     sensor.temperature:
-       temperature_threshold: 75 # Custom threshold
-     sensor.humidity:
-       humidity_threshold: 55 # Custom threshold
+   type: custom:room-summary-card
+   area: living_room
+   thresholds:
+     temperature: 75 # Custom temperature threshold
+     humidity: 55 # Custom humidity threshold
    ```
 
 3. **Skip feature**: Can be disabled with feature flag
@@ -307,6 +293,9 @@ sensors:
   - sensor.living_room_humidity
   - sensor.living_room_co2
 sensor_layout: bottom
+thresholds:
+  temperature: 75
+  humidity: 55
 navigate: /lovelace/living-room
 features:
   - hide_area_stats
@@ -328,11 +317,9 @@ customize:
     icon_color: '#E50914' # Netflix red
 
   sensor.living_room_temperature:
-    temperature_threshold: 75
     icon: mdi:thermometer
 
   sensor.living_room_humidity:
-    humidity_threshold: 55
     icon: mdi:water-percent
 ```
 
@@ -405,6 +392,31 @@ features:
   - hide_climate_label # No sensor display
   - hide_area_stats # No device/entity counts
   - hide_sensor_icons # No icons next to sensor values
+```
+
+### Custom Thresholds
+
+```yaml
+# High temperature threshold for garage
+type: custom:room-summary-card
+area: garage
+thresholds:
+  temperature: 90  # Red border above 90°F
+  humidity: 80     # Blue border above 80%
+
+# Low temperature threshold for wine cellar
+type: custom:room-summary-card
+area: wine_cellar
+thresholds:
+  temperature: 65  # Red border above 65°F
+  humidity: 70     # Blue border above 70%
+
+# Celsius thresholds
+type: custom:room-summary-card
+area: greenhouse
+thresholds:
+  temperature: 32  # Red border above 32°C
+  humidity: 75     # Blue border above 75%
 ```
 
 ## Legacy Configuration Support

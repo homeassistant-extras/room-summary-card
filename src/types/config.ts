@@ -36,6 +36,12 @@ export interface Config {
   /** Layout of the sensors */
   sensor_layout?: 'default' | 'bottom' | 'stacked';
 
+  /** Custom thresholds for temperature and humidity */
+  thresholds?: {
+    temperature?: number;
+    humidity?: number;
+  };
+
   /** Options to enable disable features **/
   features?: Features[];
 }

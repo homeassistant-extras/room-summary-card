@@ -8,6 +8,7 @@ This guide covers all configuration options for the Room Summary Card, from basi
 - [Configuration Options](#configuration-options)
 - [Entity Configuration](#entity-configuration)
 - [Sensor Configuration](#sensor-configuration)
+- [Threshold Configuration](#threshold-configuration)
 - [Feature Flags](#feature-flags)
 - [Action Configuration](#action-configuration)
 - [Entity Attributes](#entity-attributes)
@@ -33,17 +34,18 @@ See [default entities](#default-entities)
 
 ## Configuration Options
 
-| Name           | Type             | Default                       | Description                                                       |
-| -------------- | ---------------- | ----------------------------- | ----------------------------------------------------------------- |
-| area           | string           | **Required**                  | The area identifier for the room (e.g., 'living_room', 'kitchen') |
-| area_name      | string           | area name                     | Custom area name                                                  |
-| entity         | string \| object | `light.<area>_light`          | Main entity for the room                                          |
-| entities       | array            | See below                     | Additional entities to display                                    |
-| sensors        | array            | See below                     | Array of sensor entities to display in the card label area        |
-| navigate       | string           | area name (dash-separated)    | Custom navigation path when clicking the room name / icon         |
-| features       | list             | See below                     | Optional flags to toggle different features                       |
-| sensor_layout  | string           | `default`                     | Layout for sensor display: `default`, `stacked`, or `bottom`      |
-| sensor_classes | array            | `['temperature', 'humidity']` | Device classes to average and display sensor readings for         |
+| Name           | Type             | Default                           | Description                                                       |
+| -------------- | ---------------- | --------------------------------- | ----------------------------------------------------------------- |
+| area           | string           | **Required**                      | The area identifier for the room (e.g., 'living_room', 'kitchen') |
+| area_name      | string           | area name                         | Custom area name                                                  |
+| entity         | string \| object | `light.<area>_light`              | Main entity for the room                                          |
+| entities       | array            | See below                         | Additional entities to display                                    |
+| sensors        | array            | See below                         | Array of sensor entities to display in the card label area        |
+| navigate       | string           | area name (dash-separated)        | Custom navigation path when clicking the room name / icon         |
+| features       | list             | See below                         | Optional flags to toggle different features                       |
+| sensor_layout  | string           | `default`                         | Layout for sensor display: `default`, `stacked`, or `bottom`      |
+| sensor_classes | array            | `['temperature', 'humidity']`     | Device classes to average and display sensor readings for         |
+| thresholds     | object           | `{temperature: 80, humidity: 60}` | Temperature and humidity thresholds                               |
 
 ### Default Entities
 
@@ -193,6 +195,46 @@ humidity_sensor: sensor.living_room_humidity
 
 > **Note:** Please migrate to the `sensors` array as these legacy properties will be removed in a future version.
 
+## Threshold Configuration
+
+Configure climate-based border styling thresholds:
+
+```yaml
+thresholds:
+  temperature: 75 # Temperature threshold in current unit
+  humidity: 55 # Humidity threshold as percentage
+```
+
+**How It Works**:
+
+- Temperature sensors with values above the threshold trigger red borders
+- Humidity sensors with values above the threshold trigger blue borders
+- Thresholds respect the current unit of measurement (°F, °C, %)
+- Can be disabled with the `skip_climate_styles` feature flag
+
+**Examples**:
+
+```yaml
+# Celsius threshold
+thresholds:
+  temperature: 24  # 24°C
+
+# Fahrenheit threshold
+thresholds:
+  temperature: 75  # 75°F
+
+# Custom humidity threshold
+thresholds:
+  humidity: 50  # 50%
+
+# Both thresholds
+thresholds:
+  temperature: 78
+  humidity: 65
+```
+
+**Default values**: 80°F (26.7°C) for temperature, 60% for humidity
+
 ## Feature Flags
 
 Use feature flags to customize card behavior:
@@ -245,14 +287,12 @@ double_tap_action:
 
 These attributes can be added to your entities to customize functionality:
 
-| Name                  | Type   | Default         | Description                         |
-| --------------------- | ------ | --------------- | ----------------------------------- |
-| on_color              | string | yellow          | Color when the entity is active     |
-| off_color             | string | theme off color | Color when the entity is not active |
-| temperature_threshold | number | 80              | Threshold to show red border        |
-| humidity_threshold    | number | 60              | Threshold to show blue border       |
-| icon                  | string | entity default  | Custom MDI icon                     |
-| icon_color            | string | none            | Hex color or theme color name       |
+| Name       | Type   | Default         | Description                         |
+| ---------- | ------ | --------------- | ----------------------------------- |
+| on_color   | string | yellow          | Color when the entity is active     |
+| off_color  | string | theme off color | Color when the entity is not active |
+| icon       | string | entity default  | Custom MDI icon                     |
+| icon_color | string | none            | Hex color or theme color name       |
 
 See [Advanced Docs](ADVANCED.md) for more examples on attributes.
 
@@ -265,10 +305,6 @@ customize:
   switch.garage_opener_plug:
     on_color: green
     off_color: red
-
-  sensor.garage_climate:
-    temperature_threshold: 90
-    humidity_threshold: 70
 ```
 
 #### In Template Sensors
@@ -325,6 +361,16 @@ sensors:
 sensor_layout: bottom
 ```
 
+### With Custom Thresholds
+
+```yaml
+type: custom:room-summary-card
+area: garage
+thresholds:
+  temperature: 85 # Red border above 85°F
+  humidity: 70 # Blue border above 70%
+```
+
 ### Exclude Default Entities
 
 ```yaml
@@ -362,6 +408,9 @@ sensors:
   - sensor.living_room_humidity
   - sensor.living_room_co2
 sensor_layout: bottom
+thresholds:
+  temperature: 75
+  humidity: 55
 navigate: /lovelace/living-room
 features:
   - hide_area_stats
@@ -383,16 +432,16 @@ To use problem detection, label entities with "problem":
 
 For climate-based border styling:
 
-- Temperature sensors with `device_class: temperature` and values above threshold (default: 80°F) trigger red borders
-- Humidity sensors with `device_class: humidity` and values above threshold (default: 60%) trigger blue borders
-- Customize thresholds using entity attributes:
+- Temperature sensors with `device_class: temperature` and values above threshold trigger red borders
+- Humidity sensors with `device_class: humidity` and values above threshold trigger blue borders
+- Configure thresholds in the card configuration:
 
 ```yaml
-customize:
-  sensor.living_room_temperature:
-    temperature_threshold: 75
-  sensor.living_room_humidity:
-    humidity_threshold: 55
+type: custom:room-summary-card
+area: living_room
+thresholds:
+  temperature: 75 # Custom temperature threshold
+  humidity: 55 # Custom humidity threshold
 ```
 
 ## Next Steps

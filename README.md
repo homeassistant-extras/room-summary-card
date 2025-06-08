@@ -201,6 +201,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Custom icon color integration`**: support [custom-icon-color](https://github.com/Mariusthvdb/custom-icon-color) - thanks @benjycov
 - [x] **`Sensor layout options`**: flexible sensor display layouts (default, stacked, bottom) - thanks @Ltek
 - [x] **`Sensor averaging by device class`**: automatic averaging like HA area card - thanks @Ltek
+- [x] **`Moving away from customize.yaml`**: allowing more configuration on the card - thanks @johntdyer
 
 ## Contributing
 

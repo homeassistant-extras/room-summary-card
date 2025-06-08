@@ -25,7 +25,7 @@ const baseThemeStyles = css`
     ${colorsLight}
   }
 
-  :host([isDarkMode]) {
+  :host([dark]) {
     ${colorsDark}
   }
 
@@ -36,6 +36,20 @@ const baseThemeStyles = css`
     --icon-color: var(--theme-color-icon);
     --background-color-icon: var(--theme-background-color-icon);
     --background-opacity-icon: var(--opacity-icon-fill-inactive);
+  }
+
+  :host([hot]) ha-card {
+    border-left: 3px solid var(--error-color) !important;
+    border-top: 3px solid var(--error-color) !important;
+    border-right: 3px solid var(--error-color);
+    border-bottom: 3px solid var(--error-color);
+  }
+
+  :host([humid]) ha-card {
+    border-left: 3px solid var(--info-color);
+    border-top: 3px solid var(--info-color);
+    border-right: 3px solid var(--info-color) !important;
+    border-bottom: 3px solid var(--info-color) !important;
   }
 `;
 

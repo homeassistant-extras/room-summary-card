@@ -69,10 +69,14 @@ export class RoomSummaryCard extends LitElement {
   private _sensors!: SensorData;
 
   /**
-   * Indicates if the card is in dark mode
+   * Flags for various states
    */
   @property({ type: Boolean, reflect: true })
-  private isDarkMode!: boolean;
+  private dark!: boolean;
+  @property({ type: Boolean, reflect: true })
+  private hot!: boolean;
+  @property({ type: Boolean, reflect: true })
+  private humid!: boolean;
 
   /**
    * Home Assistant instance
@@ -109,13 +113,14 @@ export class RoomSummaryCard extends LitElement {
       states,
       roomEntity,
       problemEntities,
-      problemExists,
       sensors,
-      isDarkMode,
+      flags: { problemExists, dark, hot, humid },
     } = getRoomProperties(hass, this._config);
 
     this._problemExists = problemExists;
-    this.isDarkMode = isDarkMode;
+    this.dark = dark;
+    this.hot = hot;
+    this.humid = humid;
 
     // Update states only if they've changed
     let shouldRender = false;
@@ -192,19 +197,17 @@ export class RoomSummaryCard extends LitElement {
     const roomEntity = renderStateIcon(this, this._hass, this._roomEntity, [
       'room',
     ]);
+
     const stateIcons = this._states.map((s) =>
       renderStateIcon(this, this._hass, s, ['entity']),
     );
 
-    // todo: this may cause an issue - need to fix - workaround
-    const averagedSensors = this._sensors.averaged.flatMap((s) => s.states);
-
     const cardStyle = renderCardStyles(
       this._hass,
       this._config,
-      averagedSensors,
       this._roomEntity.state,
     );
+
     const problems = renderProblemIndicator(
       this._problemEntities,
       this._problemExists,

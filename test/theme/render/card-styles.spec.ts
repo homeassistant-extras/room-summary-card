@@ -39,10 +39,8 @@ export default () => {
     let hasFeatureStub: sinon.SinonStub;
 
     beforeEach(() => {
-      // Create a sinon sandbox for managing stubs
       sandbox = sinon.createSandbox();
 
-      // Create stubs for the imported functions
       stateActiveStub = sandbox.stub(stateActiveModule, 'stateActive');
       stateColorCssStub = sandbox.stub(stateColorModule, 'stateColorCss');
       getThemeColorOverrideStub = sandbox.stub(
@@ -51,424 +49,129 @@ export default () => {
       );
       hasFeatureStub = sandbox.stub(featureModule, 'hasFeature');
 
-      // Default behavior for stubs
-      stateActiveStub.callsFake((stateObj: any) => {
-        return (
-          ['on', 'true', 'home', 'open'].includes(stateObj.state) ||
-          Number(stateObj.state) > 0
-        );
-      });
-
-      stateColorCssStub.callsFake((stateObj: any) => {
-        if (stateActiveStub(stateObj)) {
-          return stateObj.attributes.on_color || 'var(--primary-color)';
-        }
-        return stateObj.attributes.off_color || 'var(--disabled-color)';
-      });
-
+      // Default stub behaviors
+      stateActiveStub.returns(false);
+      stateColorCssStub.returns('var(--primary-color)');
       getThemeColorOverrideStub.returns('var(--theme-override)');
-
-      // Default to not having skip_climate_styles feature
       hasFeatureStub.returns(false);
 
-      // Set up mock Home Assistant instance
       mockHass = {
         themes: {
           darkMode: false,
-          themes: {},
         },
-        selectedTheme: null,
       };
 
-      // Set up mock config
       mockConfig = {
         area: 'test_area',
       };
     });
 
     afterEach(() => {
-      // Restore the sandbox to clean up stubs
       sandbox.restore();
     });
 
     describe('renderCardStyles', () => {
-      it('should render basic card styles with no border when sensor array is empty', () => {
-        const styles = renderCardStyles(mockHass, mockConfig, []);
+      it('should render basic inactive styles in light mode', () => {
+        const styles = renderCardStyles(mockHass, mockConfig);
 
         expect(styles).to.deep.equal(
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
             '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: undefined,
-            borderTop: undefined,
-            borderRight: undefined,
-            borderBottom: undefined,
           }),
         );
       });
 
-      it('should render card styles with borders when temperature exceeds threshold', () => {
-        // Create temperature sensor with value above threshold
-        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
-          device_class: 'temperature',
-          temperature_threshold: 80,
-        });
-
-        // Create humidity sensor with value below threshold
-        const humidSensor = createStateEntity('sensor', 'humidity', '50', {
-          device_class: 'humidity',
-          humidity_threshold: 60,
-        });
-
-        const styles = renderCardStyles(mockHass, mockConfig, [
-          tempSensor,
-          humidSensor,
-        ]);
-
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: '5px solid var(--error-color)',
-            borderTop: '5px solid var(--error-color)',
-            borderRight: '5px solid var(--error-color)',
-            borderBottom: '5px solid var(--error-color)',
-          }),
-        );
-      });
-
-      it('should render card styles with borders when humidity exceeds threshold', () => {
-        // Create temperature sensor with value below threshold
-        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
-          device_class: 'temperature',
-          temperature_threshold: 80,
-        });
-
-        // Create humidity sensor with value above threshold
-        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
-          device_class: 'humidity',
-          humidity_threshold: 60,
-        });
-
-        const styles = renderCardStyles(mockHass, mockConfig, [
-          tempSensor,
-          humidSensor,
-        ]);
-
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: '5px solid var(--info-color)',
-            borderTop: '5px solid var(--info-color)',
-            borderRight: '5px solid var(--info-color)',
-            borderBottom: '5px solid var(--info-color)',
-          }),
-        );
-      });
-
-      it('should render card styles with different borders when both sensors exceed thresholds', () => {
-        // Create temperature sensor with value above threshold
-        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
-          device_class: 'temperature',
-          temperature_threshold: 80,
-        });
-
-        // Create humidity sensor with value above threshold
-        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
-          device_class: 'humidity',
-          humidity_threshold: 60,
-        });
-
-        const styles = renderCardStyles(mockHass, mockConfig, [
-          tempSensor,
-          humidSensor,
-        ]);
-
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: '5px solid var(--error-color)',
-            borderTop: '5px solid var(--error-color)',
-            borderRight: '5px solid var(--info-color)',
-            borderBottom: '5px solid var(--info-color)',
-          }),
-        );
-      });
-
-      it('should use default thresholds when not provided in attributes', () => {
-        // Create temperature sensor with value above default threshold (80) but no threshold in attributes
-        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
-          device_class: 'temperature',
-        });
-
-        // Create humidity sensor with value above default threshold (60) but no threshold in attributes
-        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
-          device_class: 'humidity',
-        });
-
-        const styles = renderCardStyles(mockHass, mockConfig, [
-          tempSensor,
-          humidSensor,
-        ]);
-
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: '5px solid var(--error-color)',
-            borderTop: '5px solid var(--error-color)',
-            borderRight: '5px solid var(--info-color)',
-            borderBottom: '5px solid var(--info-color)',
-          }),
-        );
-      });
-
-      it('should handle missing device_class in sensors correctly', () => {
-        // Create sensors without device_class attributes
-        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
-          temperature_threshold: 80,
-        });
-        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
-          humidity_threshold: 60,
-        });
-
-        const styles = renderCardStyles(mockHass, mockConfig, [
-          tempSensor,
-          humidSensor,
-        ]);
-
-        // Should not apply any border styling without proper device_class
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: undefined,
-            borderTop: undefined,
-            borderRight: undefined,
-            borderBottom: undefined,
-          }),
-        );
-      });
-
-      it('should set background color when dark mode is enabled and state is active', () => {
-        // Enable dark mode in mockHass
+      it('should render active styles in dark mode', () => {
         mockHass.themes.darkMode = true;
+        stateActiveStub.returns(true);
+        stateColorCssStub.returns('var(--active-color)');
 
-        // Create state entity
-        const state = createStateEntity('light', 'test', 'on', {
-          on_color: 'yellow',
-        });
-
-        // Configure stub behaviors for this test
-        stateActiveStub.withArgs(sinon.match.any).returns(true);
-        stateColorCssStub.withArgs(sinon.match.any, 'card').returns('yellow');
-
-        // Create temperature and humidity sensors
-        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
-          device_class: 'temperature',
-          temperature_threshold: 80,
-        });
-        const humidSensor = createStateEntity('sensor', 'humidity', '55', {
-          device_class: 'humidity',
-          humidity_threshold: 60,
-        });
-
-        const styles = renderCardStyles(
-          mockHass,
-          mockConfig,
-          [tempSensor, humidSensor],
-          state,
-        );
+        const state = createStateEntity('light', 'test', 'on');
+        const styles = renderCardStyles(mockHass, mockConfig, state);
 
         expect(styles).to.deep.equal(
           styleMap({
-            '--background-color-card': 'yellow',
+            '--background-color-card': 'var(--active-color)',
             '--background-opacity-card': 'var(--opacity-background-active)',
             '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: undefined,
-            borderTop: undefined,
-            borderRight: undefined,
-            borderBottom: undefined,
           }),
         );
       });
 
-      it('should not set background color when dark mode is disabled even if state is active', () => {
-        // Ensure dark mode is disabled
+      it('should not set background color in light mode even when active', () => {
         mockHass.themes.darkMode = false;
+        stateActiveStub.returns(true);
 
-        // Create state entity
-        const state = createStateEntity('light', 'test', 'on', {
-          on_color: 'yellow',
-        });
-
-        // Configure stub behaviors for this test
-        stateActiveStub.withArgs(sinon.match.any).returns(true);
-        stateColorCssStub.withArgs(sinon.match.any, 'card').returns('yellow');
-
-        // Create temperature and humidity sensors
-        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
-          device_class: 'temperature',
-          temperature_threshold: 80,
-        });
-        const humidSensor = createStateEntity('sensor', 'humidity', '55', {
-          device_class: 'humidity',
-          humidity_threshold: 60,
-        });
-
-        const styles = renderCardStyles(
-          mockHass,
-          mockConfig,
-          [tempSensor, humidSensor],
-          state,
-        );
+        const state = createStateEntity('light', 'test', 'on');
+        const styles = renderCardStyles(mockHass, mockConfig, state);
 
         expect(styles).to.deep.equal(
           styleMap({
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
             '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: undefined,
-            borderTop: undefined,
-            borderRight: undefined,
-            borderBottom: undefined,
           }),
         );
       });
 
-      it('should not render border styles when skip_climate_styles feature is enabled', () => {
-        // Set hasFeature to return true for skip_climate_styles
-        hasFeatureStub
-          .withArgs(mockConfig, 'skip_climate_styles')
-          .returns(true);
-
-        // Create temperature and humidity sensors
-        const tempSensor = createStateEntity('sensor', 'temperature', '85', {
-          device_class: 'temperature',
-          temperature_threshold: 80,
-        });
-        const humidSensor = createStateEntity('sensor', 'humidity', '65', {
-          device_class: 'humidity',
-          humidity_threshold: 60,
-        });
-
-        const styles = renderCardStyles(mockHass, mockConfig, [
-          tempSensor,
-          humidSensor,
-        ]);
-
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: undefined,
-            borderTop: undefined,
-            borderRight: undefined,
-            borderBottom: undefined,
-          }),
-        );
-
-        // Verify hasFeature was called with the correct parameters
-        expect(hasFeatureStub.calledWith(mockConfig, 'skip_climate_styles')).to
-          .be.true;
-      });
-
-      it('should handle additional sensors in the array that are not temperature or humidity', () => {
-        // Create temperature and humidity sensors
-        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
-          device_class: 'temperature',
-          temperature_threshold: 80,
-        });
-        const humidSensor = createStateEntity('sensor', 'humidity', '55', {
-          device_class: 'humidity',
-          humidity_threshold: 60,
-        });
-        // Add some other sensor types
-        const luxSensor = createStateEntity('sensor', 'illuminance', '250', {
-          device_class: 'illuminance',
-        });
-        const battSensor = createStateEntity('sensor', 'battery', '80', {
-          device_class: 'battery',
-        });
-
-        const styles = renderCardStyles(mockHass, mockConfig, [
-          tempSensor,
-          humidSensor,
-          luxSensor,
-          battSensor,
-        ]);
-
-        // Should still work correctly with the extra sensors
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: undefined,
-            borderTop: undefined,
-            borderRight: undefined,
-            borderBottom: undefined,
-          }),
-        );
-      });
-
-      it('should disable background color when skip_entity_styles feature is enabled', () => {
-        // Enable dark mode to make the state normally affect background
+      it('should disable styles when skip_entity_styles feature is enabled', () => {
         mockHass.themes.darkMode = true;
-
-        // Set hasFeature to return true for skip_entity_styles
+        stateActiveStub.returns(true);
+        stateColorCssStub.returns('var(--active-color)');
         hasFeatureStub.withArgs(mockConfig, 'skip_entity_styles').returns(true);
 
-        // Create state entity
-        const state = createStateEntity('light', 'test', 'on', {
-          on_color: 'yellow',
-        });
-
-        // Configure stub behaviors for this test
-        stateActiveStub.withArgs(sinon.match.any).returns(true);
-        stateColorCssStub.withArgs(sinon.match.any, 'card').returns('yellow');
-
-        // Create temperature and humidity sensors
-        const tempSensor = createStateEntity('sensor', 'temperature', '75', {
-          device_class: 'temperature',
-          temperature_threshold: 80,
-        });
-        const humidSensor = createStateEntity('sensor', 'humidity', '55', {
-          device_class: 'humidity',
-          humidity_threshold: 60,
-        });
-
-        const styles = renderCardStyles(
-          mockHass,
-          mockConfig,
-          [tempSensor, humidSensor],
-          state,
-        );
+        const state = createStateEntity('light', 'test', 'on');
+        const styles = renderCardStyles(mockHass, mockConfig, state);
 
         expect(styles).to.deep.equal(
           styleMap({
-            '--background-color-card': undefined, // Should be undefined even though state is active
+            '--background-color-card': undefined, // Should be undefined due to skipStyles
             '--background-opacity-card': 'var(--opacity-background-inactive)', // Should be inactive due to skipStyles
             '--state-color-card-theme': 'var(--theme-override)',
-            borderLeft: undefined,
-            borderTop: undefined,
-            borderRight: undefined,
-            borderBottom: undefined,
           }),
         );
 
-        // Verify hasFeature was called with the correct parameters
         expect(hasFeatureStub.calledWith(mockConfig, 'skip_entity_styles')).to
           .be.true;
+      });
+
+      it('should handle undefined state gracefully', () => {
+        const styles = renderCardStyles(mockHass, mockConfig);
+
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+            '--state-color-card-theme': 'var(--theme-override)',
+          }),
+        );
+      });
+
+      it('should call theme override with correct parameters', () => {
+        const state = createStateEntity('light', 'test', 'on');
+        renderCardStyles(mockHass, mockConfig, state);
+
+        expect(getThemeColorOverrideStub.calledWith(mockHass, state, false)).to
+          .be.true;
+      });
+
+      it('should call stateColorCss only in dark mode', () => {
+        const state = createStateEntity('light', 'test', 'on');
+
+        // Light mode - should not call stateColorCss
+        mockHass.themes.darkMode = false;
+        renderCardStyles(mockHass, mockConfig, state);
+        expect(stateColorCssStub.called).to.be.false;
+
+        // Reset stub
+        stateColorCssStub.resetHistory();
+
+        // Dark mode - should call stateColorCss
+        mockHass.themes.darkMode = true;
+        renderCardStyles(mockHass, mockConfig, state);
+        expect(stateColorCssStub.calledWith(state, 'card')).to.be.true;
       });
     });
   });
