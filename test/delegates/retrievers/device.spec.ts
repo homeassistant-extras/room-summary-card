@@ -48,7 +48,7 @@ export default () => {
 
     describe('getDevice', () => {
       it('should return device information when a valid device ID is provided', () => {
-        const device = getDevice(mockHass, 'device-123');
+        const device = getDevice(mockHass.devices, 'device-123');
 
         expect(device).to.exist;
         expect(device).to.deep.equal({
@@ -65,7 +65,7 @@ export default () => {
       });
 
       it('should return undefined when an invalid device ID is provided', () => {
-        const device = getDevice(mockHass, 'nonexistent-device');
+        const device = getDevice(mockHass.devices, 'nonexistent-device');
 
         expect(device).to.be.undefined;
       });
@@ -76,7 +76,7 @@ export default () => {
           devices: {},
         } as HomeAssistant;
 
-        const device = getDevice(hassWithNoDevices, 'device-123');
+        const device = getDevice(hassWithNoDevices.devices, 'device-123');
 
         expect(device).to.be.undefined;
       });

@@ -30,7 +30,7 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     // Check if this sensor is explicitly configured
     const isConfigSensor = config.sensors?.includes(entity.entity_id);
 
-    const device = getDevice(hass, entity.device_id);
+    const device = getDevice(hass.devices, entity.device_id);
     if (
       !isConfigSensor &&
       ![(entity.area_id, device?.area_id)].includes(config.area)
