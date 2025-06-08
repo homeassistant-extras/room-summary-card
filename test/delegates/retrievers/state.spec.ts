@@ -57,29 +57,29 @@ export default () => {
 
     describe('getState', () => {
       it('should return undefined for missing entity', () => {
-        expect(getState(mockHass, 'light.missing')).to.be.undefined;
+        expect(getState(mockHass.states, 'light.missing')).to.be.undefined;
       });
 
       it('should return state for existing entity', () => {
-        const state = getState(mockHass, 'light.test');
+        const state = getState(mockHass.states, 'light.test');
         expect(state).to.exist;
         expect(state?.state).to.equal('on');
       });
 
       it('should create fake state when requested', () => {
-        const state = getState(mockHass, 'light.fake', true);
+        const state = getState(mockHass.states, 'light.fake', true);
         expect(state).to.exist;
         expect(state?.entity_id).to.equal('light.fake');
       });
 
       it('should return state with domain functions', () => {
-        const result = getState(mockHass, 'light.test');
+        const result = getState(mockHass.states, 'light.test');
         expect(result).to.include.keys('domain');
         expect(result?.domain).to.equal('light');
       });
 
       it('should return correct domain from domain function', () => {
-        const result = getState(mockHass, 'light.test');
+        const result = getState(mockHass.states, 'light.test');
         expect(result?.domain).to.equal('light');
       });
     });

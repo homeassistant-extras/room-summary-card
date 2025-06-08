@@ -43,7 +43,7 @@ const entityToDisplaySensor = (entity: EntityState): DisplaySensor => {
   return {
     state: entity,
     domain: entity.domain,
-    device_class: entity.attributes.device_class || 'sensor',
+    device_class: entity.attributes.device_class ?? 'sensor',
   };
 };
 

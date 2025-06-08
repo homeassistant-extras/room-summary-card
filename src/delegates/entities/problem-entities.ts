@@ -28,7 +28,7 @@ export const getProblemEntities = (
 
   // Check if any problem entities are currently active
   const problemExists = problemEntities.some((entityId) => {
-    const entityState = getState(hass, entityId);
+    const entityState = getState(hass.states, entityId);
     if (!entityState) return false;
     const active = stateActive(entityState);
     return active;

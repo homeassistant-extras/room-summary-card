@@ -34,7 +34,7 @@ export const getRoomEntity = (
           entity_id: config.entity,
           ...actionConfig,
         },
-        state: getState(hass, config.entity),
+        state: getState(hass.states, config.entity),
       };
     } else {
       // Object format
@@ -43,7 +43,7 @@ export const getRoomEntity = (
           ...actionConfig,
           ...config.entity,
         },
-        state: getState(hass, config.entity.entity_id),
+        state: getState(hass.states, config.entity.entity_id),
       };
     }
   }
@@ -55,6 +55,6 @@ export const getRoomEntity = (
       icon: getArea(hass.areas, config.area)?.icon,
       ...actionConfig,
     },
-    state: getState(hass, roomEntityId, true),
+    state: getState(hass.states, roomEntityId, true),
   };
 };

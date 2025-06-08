@@ -46,7 +46,7 @@ export const getIconEntities = (
         entity = { entity_id: entity };
       }
 
-      const state = getState(hass, entity.entity_id);
+      const state = getState(hass.states, entity.entity_id);
       if (!state) return undefined;
 
       const useClimateIcons =

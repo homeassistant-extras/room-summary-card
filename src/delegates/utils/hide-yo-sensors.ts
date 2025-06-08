@@ -37,7 +37,7 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     )
       return;
 
-    const state = getState(hass, entity.entity_id);
+    const state = getState(hass.states, entity.entity_id);
     if (!state) return;
 
     // If it's a config sensor, always include it in individual sensors
