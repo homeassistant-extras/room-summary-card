@@ -122,13 +122,17 @@ export const STYLES: HaFormSchema = {
           name: 'temperature',
           label: 'Temperature threshold',
           required: false,
-          selector: { number: { mode: 'box', unit_of_measurement: '°' } },
+          selector: {
+            number: { mode: 'box' as const, unit_of_measurement: '°' },
+          },
         },
         {
           name: 'humidity',
           label: 'Humidity threshold',
           required: false,
-          selector: { number: { mode: 'box', unit_of_measurement: '%' } },
+          selector: {
+            number: { mode: 'box' as const, unit_of_measurement: '%' },
+          },
         },
       ],
     },

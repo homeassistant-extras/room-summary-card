@@ -237,6 +237,31 @@ describe('editor-schema.ts', () => {
                 },
               },
             },
+            {
+              name: 'thresholds',
+              label: 'Thresholds',
+              type: 'expandable',
+              flatten: false,
+              icon: 'mdi:thermometer-alert',
+              schema: [
+                {
+                  name: 'temperature',
+                  label: 'Temperature threshold',
+                  required: false,
+                  selector: {
+                    number: { mode: 'box' as const, unit_of_measurement: '°' },
+                  },
+                },
+                {
+                  name: 'humidity',
+                  label: 'Humidity threshold',
+                  required: false,
+                  selector: {
+                    number: { mode: 'box' as const, unit_of_measurement: '%' },
+                  },
+                },
+              ],
+            },
           ],
         },
         {
