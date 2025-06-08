@@ -1,0 +1,66 @@
+name: Main Branch CI
+
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: read
+
+jobs:
+  check-committer:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+    steps:
+      - id: check
+        env:
+          AUTHOR_EMAIL: ${{ github.event.commits[0].author.email }}
+        run: |
+          # Allow dependabot emails specifically
+          if [[ "$AUTHOR_EMAIL" == *"dependabot[bot]@users.noreply.github.com"* ]]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          # Skip other noreply emails
+          elif [[ "$AUTHOR_EMAIL" == *"@users.noreply.github.com"* ]]; then
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          # Allow all other emails
+          else
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          fi
+
+  sonarqube:
+    name: 'Sonar Qube Scan'
+    needs: check-committer
+    runs-on: ubuntu-latest
+
+    if: ${{ needs.check-committer.outputs.should_run == 'true' }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Run NPM coverage
+        uses: anna-money/github-actions-npm@master
+        with:
+          target: 'test:coverage'
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  hacs-validation:
+    name: 'HACS Validation'
+    needs: check-committer
+    runs-on: 'ubuntu-latest'
+
+    if: ${{ needs.check-committer.outputs.should_run == 'true' }}
+
+    steps:
+      - name: 'Checkout the repository'
+        uses: 'actions/checkout@v4'
+
+      - name: 'Run HACS validation'
+        uses: 'hacs/action@main'
+        with:
+          category: 'plugin'

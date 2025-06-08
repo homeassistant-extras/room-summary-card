@@ -1,45 +1,21 @@
-name: Bump & Tag
+name: Release & Deploy
 
 on:
   push:
     branches:
-      - 'main'
       - 'release'
 
 permissions:
   contents: read
 
 jobs:
-  check-committer:
-    runs-on: ubuntu-latest
-    outputs:
-      should_run: ${{ steps.check.outputs.should_run }}
-    steps:
-      - id: check
-        env:
-          AUTHOR_EMAIL: ${{ github.event.commits[0].author.email }}
-        run: |
-          # Allow dependabot emails specifically
-          if [[ "$AUTHOR_EMAIL" == *"dependabot[bot]@users.noreply.github.com"* ]]; then
-            echo "should_run=true" >> $GITHUB_OUTPUT
-          # Skip other noreply emails
-          elif [[ "$AUTHOR_EMAIL" == *"@users.noreply.github.com"* ]]; then
-            echo "should_run=false" >> $GITHUB_OUTPUT
-          # Allow all other emails
-          else
-            echo "should_run=true" >> $GITHUB_OUTPUT
-          fi
-
   bump-version:
-    name: 'Bump Version or Tag'
-    needs: check-committer
+    name: 'Bump Version and Tag'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
       newTag: ${{ steps.bump.outputs.newTag }}
-
-    if: ${{ needs.check-committer.outputs.should_run == 'true' && github.ref == 'refs/heads/release' }}
 
     steps:
       - uses: actions/create-github-app-token@v1
@@ -58,7 +34,7 @@ jobs:
         id: bump
         uses: 'phips28/gh-action-bump-version@master'
         with:
-          version-type: ${{ github.ref == 'refs/heads/release' && 'minor' || '' }}
+          version-type: 'minor'
           commit-message: 'chore: bumps version to {{version}}'
           bump-policy: 'ignore'
           skip-push: 'true'
@@ -78,50 +54,12 @@ jobs:
           git push --follow-tags
           git push --tags
 
-  sonarqube:
-    name: 'Sonar Qube Scan'
-    needs: check-committer
-    runs-on: ubuntu-latest
-
-    if: ${{ needs.check-committer.outputs.should_run == 'true' && github.ref == 'refs/heads/main' }}
-
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Run NPM coverage
-        uses: anna-money/github-actions-npm@master
-        with:
-          target: 'test:coverage'
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  hacs-validation:
-    name: 'HACS Validation'
-    needs: check-committer
-    runs-on: 'ubuntu-latest'
-
-    if: ${{ needs.check-committer.outputs.should_run == 'true' }}
-
-    steps:
-      - name: 'Checkout the repository'
-        uses: 'actions/checkout@v4'
-
-      - name: 'Run HACS validation'
-        uses: 'hacs/action@main'
-        with:
-          category: 'plugin'
-
   create-release:
     name: 'Create Release'
     needs: bump-version
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
-    if: github.ref == 'refs/heads/release'
 
     steps:
       - uses: actions/checkout@v3
@@ -174,8 +112,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
-    if: github.ref == 'refs/heads/release'
 
     steps:
       - uses: actions/create-github-app-token@v1
