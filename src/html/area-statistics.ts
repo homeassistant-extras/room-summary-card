@@ -20,11 +20,11 @@ export const renderAreaStatistics = (
   if (!hass || hasFeature(config, 'hide_area_stats')) return nothing;
 
   const devices = Object.keys(hass.devices).filter(
-    (k) => getDevice(hass.devices, k)?.area_id === config.area,
+    (k) => getDevice(hass.devices, k)!.area_id === config.area,
   );
 
   const entities = Object.keys(hass.entities).filter((k) => {
-    const entity = getEntity(hass, k);
+    const entity = getEntity(hass.entities, k)!;
     return entity.area_id === config.area || devices.includes(entity.device_id);
   });
 

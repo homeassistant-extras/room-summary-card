@@ -46,7 +46,7 @@ export default () => {
 
     describe('getEntity', () => {
       it('should return entity information when a valid entity ID is provided', () => {
-        const entity = getEntity(mockHass, 'light.living_room');
+        const entity = getEntity(mockHass.entities, 'light.living_room');
 
         expect(entity).to.exist;
         expect(entity).to.deep.equal({
@@ -62,7 +62,7 @@ export default () => {
       });
 
       it('should return undefined when an invalid entity ID is provided', () => {
-        const entity = getEntity(mockHass, 'nonexistent.entity');
+        const entity = getEntity(mockHass.entities, 'nonexistent.entity');
 
         expect(entity).to.be.undefined;
       });
@@ -73,7 +73,10 @@ export default () => {
           entities: {},
         } as HomeAssistant;
 
-        const entity = getEntity(hassWithNoEntities, 'light.living_room');
+        const entity = getEntity(
+          hassWithNoEntities.entities,
+          'light.living_room',
+        );
 
         expect(entity).to.be.undefined;
       });
