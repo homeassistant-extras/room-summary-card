@@ -39,7 +39,7 @@ jobs:
     outputs:
       newTag: ${{ steps.bump.outputs.newTag }}
 
-    if: ${{ needs.check-committer.outputs.should_run == 'true' }}
+    if: ${{ needs.check-committer.outputs.should_run == 'true' && github.ref == 'refs/heads/release' }}
 
     steps:
       - uses: actions/create-github-app-token@v1
