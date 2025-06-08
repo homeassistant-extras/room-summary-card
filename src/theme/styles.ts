@@ -159,6 +159,7 @@ const iconStyles = css`
     position: relative;
     display: flex;
     justify-content: center;
+    aspect-ratio: 1 / 1;
   }
 
   .icon::before {
@@ -194,6 +195,7 @@ const iconStyles = css`
     position: relative;
     margin-left: 10%;
     margin-bottom: 10%;
+    z-index: 1;
   }
 
   .status-entities::before {
