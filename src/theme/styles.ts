@@ -59,27 +59,17 @@ const baseThemeStyles = css`
 const cardContainerStyles = css`
   /* Card container */
   ha-card {
-    border-radius: var(--ha-card-border-radius, var(--border-radius, 20px));
     line-height: normal;
     overflow: hidden;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
   }
 
   ha-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100%;
+    height: 100%;
     background: var(--background-color-card);
     opacity: var(--background-opacity-card);
-    border-color: var(--ha-card-border-color, var(--divider-color, #e0e0e0));
-    border-width: var(--ha-card-border-width, 1px);
-    border-style: solid;
-    z-index: -1;
   }
 `;
 
@@ -108,6 +98,7 @@ const gridLayoutStyles = css`
     cursor: pointer;
     width: 100%;
     margin: 5% 0px 0px 10%;
+    z-index: 1;
   }
 
   /* Entities Container - Flexbox with consistent spacing */
@@ -237,7 +228,7 @@ const sensorLabelStyles = css`
 
   /* Room name styling */
   .name {
-    font-size: 18px;
+    font-size: 3.5vh;
     color: var(--text-color);
   }
 
