@@ -137,7 +137,8 @@ export default () => {
         const result = getRoomProperties(mockHass, config);
 
         expect(result.roomInfo.area_name).to.equal('Living Room');
-        expect(getAreaStub.calledWith(mockHass, 'living_room')).to.be.true;
+        expect(getAreaStub.calledWith(mockHass.areas, 'living_room')).to.be
+          .true;
       });
 
       it('should fallback to area ID when getArea returns null', () => {

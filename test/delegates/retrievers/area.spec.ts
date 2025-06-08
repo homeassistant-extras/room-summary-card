@@ -40,7 +40,7 @@ export default () => {
 
     describe('getArea', () => {
       it('should return area information when a valid area ID is provided', () => {
-        const area = getArea(mockHass, 'area-123');
+        const area = getArea(mockHass.areas, 'area-123');
 
         expect(area).to.exist;
         expect(area).to.deep.equal({
@@ -53,7 +53,7 @@ export default () => {
       });
 
       it('should return undefined when an invalid area ID is provided', () => {
-        const area = getArea(mockHass, 'nonexistent-area');
+        const area = getArea(mockHass.areas, 'nonexistent-area');
 
         expect(area).to.be.undefined;
       });
@@ -61,7 +61,7 @@ export default () => {
       it('should handle empty areas object', () => {
         const hassWithNoAreas = { ...mockHass, areas: {} } as HomeAssistant;
 
-        const area = getArea(hassWithNoAreas, 'area-123');
+        const area = getArea(hassWithNoAreas.areas, 'area-123');
 
         expect(area).to.be.undefined;
       });

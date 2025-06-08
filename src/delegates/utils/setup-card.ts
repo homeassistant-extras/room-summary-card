@@ -44,7 +44,7 @@ export const getRoomProperties = (
 ): RoomProperties => {
   const roomInfo: RoomInformation = {
     area_name:
-      config.area_name ?? getArea(hass, config.area)?.name ?? config.area,
+      config.area_name ?? getArea(hass.areas, config.area)?.name ?? config.area,
   };
   const states = getIconEntities(hass, config);
   const roomEntity = getRoomEntity(hass, config);

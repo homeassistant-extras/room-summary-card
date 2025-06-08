@@ -52,7 +52,7 @@ export const getRoomEntity = (
   return {
     config: {
       entity_id: roomEntityId,
-      icon: getArea(hass, config.area)?.icon,
+      icon: getArea(hass.areas, config.area)?.icon,
       ...actionConfig,
     },
     state: getState(hass, roomEntityId, true),
