@@ -35,7 +35,7 @@ export const getThemeColorOverride = (
   }
 
   // Try minimalist colors first if minimalist theme
-  if (hass.themes.theme.startsWith('minimalist-')) {
+  if (hass.themes.theme?.startsWith('minimalist-')) {
     const minimalistResult = processMinimalistColors(
       iconColor,
       onColor,

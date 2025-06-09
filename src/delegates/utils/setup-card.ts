@@ -1,6 +1,7 @@
 import { climateThresholds } from '@delegates/checks/thresholds';
 import { getArea } from '@delegates/retrievers/area';
 import type { HomeAssistant } from '@hass/types';
+import { getBackgroundImageUrl } from '@theme/image/get-pic';
 import type {
   Config,
   EntityInformation,
@@ -18,6 +19,7 @@ export interface RoomProperties {
   roomEntity: EntityInformation;
   problemEntities: string[];
   sensors: SensorData;
+  image?: string | null;
   flags: {
     problemExists: boolean;
     dark: boolean;
@@ -34,14 +36,7 @@ export interface RoomProperties {
  *
  * @param hass - The Home Assistant instance containing state and configuration data.
  * @param config - The configuration object specifying area, sensors, and other options for the room.
- * @returns An object containing:
- *   - `roomInfo`: Basic information about the room (e.g., area name).
- *   - `states`: Entities used for displaying icons.
- *   - `roomEntity`: The main entity representing the room.
- *   - `problemEntities`: Entities indicating problems in the room.
- *   - `problemExists`: Boolean indicating if any problems exist.
- *   - `sensorData`: Object containing individual and averaged sensor data.
- *   - `dark`: Boolean indicating if dark mode is enabled.
+ * @returns {RoomProperties} An object containing assembled room properties and related entities.
  */
 export const getRoomProperties = (
   hass: HomeAssistant,
@@ -60,6 +55,7 @@ export const getRoomProperties = (
 
   const sensors = getSensors(hass, config);
   const thresholds = climateThresholds(config, sensors.averaged);
+  const image = getBackgroundImageUrl(hass, config);
 
   return {
     roomInfo,
@@ -67,6 +63,7 @@ export const getRoomProperties = (
     roomEntity,
     problemEntities,
     sensors,
+    image,
     flags: {
       problemExists,
       dark: hass.themes.darkMode,

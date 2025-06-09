@@ -78,6 +78,9 @@ export class RoomSummaryCard extends LitElement {
   private hot!: boolean;
   @property({ type: Boolean, reflect: true })
   private humid!: boolean;
+  @property({ type: Boolean, reflect: true })
+  private image!: boolean;
+  private _image?: string | null;
 
   /**
    * Home Assistant instance
@@ -115,6 +118,7 @@ export class RoomSummaryCard extends LitElement {
       roomEntity,
       problemEntities,
       sensors,
+      image,
       flags: { problemExists, dark, hot, humid },
     } = getRoomProperties(hass, this._config);
 
@@ -122,6 +126,8 @@ export class RoomSummaryCard extends LitElement {
     this.dark = dark;
     this.hot = hot;
     this.humid = humid;
+    this.image = !!image;
+    this._image = image;
 
     // Update states only if they've changed
     let shouldRender = false;
@@ -207,6 +213,7 @@ export class RoomSummaryCard extends LitElement {
     const cardStyle = renderCardStyles(
       this._hass,
       this._config,
+      this._image,
       this._roomEntity.state,
     );
 

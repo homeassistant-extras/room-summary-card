@@ -17,7 +17,7 @@ import {
 /**
  * Base theme and color definitions
  */
-const baseThemeStyles = css`
+const hostThemeStyles = css`
   /* Card Themes and Colors */
   :host {
     ${minimalistThemeColors}
@@ -38,7 +38,12 @@ const baseThemeStyles = css`
     --background-opacity-icon: var(--opacity-icon-fill-inactive);
     --background-image: none;
   }
+`;
 
+/**
+ * Base theme and color definitions
+ */
+const haCardThemeStyles = css`
   :host([hot]) ha-card {
     border-left: 3px solid var(--error-color) !important;
     border-top: 3px solid var(--error-color) !important;
@@ -52,16 +57,23 @@ const baseThemeStyles = css`
     border-right: 3px solid var(--info-color) !important;
     border-bottom: 3px solid var(--info-color) !important;
   }
+
+  :host([image]) ha-card {
+    --opacity-theme: 0.3;
+    --text-opacity-theme: 0.8;
+    --opacity-icon-fill-inactive: 0.2;
+  }
 `;
 
 /**
  * Card container and background styling
  */
 const cardContainerStyles = css`
-  /* Card container */
   ha-card {
     line-height: normal;
     overflow: hidden;
+    height: 100%;
+    width: 100%;
   }
 
   ha-card::before {
@@ -72,7 +84,7 @@ const cardContainerStyles = css`
     background: var(--background-color-card);
     background-image: var(--background-image);
     background-size: cover;
-    opacity: var(--background-opacity-card);
+    opacity: var(--opacity-theme, var(--background-opacity-card));
   }
 `;
 
@@ -80,7 +92,6 @@ const cardContainerStyles = css`
  * Grid layout and positioning
  */
 const gridLayoutStyles = css`
-  /* Grid layout */
   .grid {
     display: grid;
     grid-template-areas:
@@ -141,7 +152,7 @@ const entityAreaStyles = css`
   /* Statistics text */
   .stats {
     font-size: 0.8em;
-    filter: opacity(40%);
+    opacity: var(--text-opacity-theme, 0.4);
   }
 
   /* Common text styles */
@@ -250,7 +261,7 @@ const sensorLabelStyles = css`
   .sensors-container {
     display: flex;
     flex-wrap: wrap;
-    filter: opacity(40%);
+    opacity: var(--text-opacity-theme, 0.4);
   }
 
   .sensors-container:not(:has(ha-state-icon)) {
@@ -263,7 +274,8 @@ const sensorLabelStyles = css`
  * Exports all style categories as a single CSS template
  */
 export const styles = css`
-  ${baseThemeStyles}
+  ${hostThemeStyles}
+  ${haCardThemeStyles}
   ${cardContainerStyles}
   ${gridLayoutStyles}
   ${entityAreaStyles}

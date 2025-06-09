@@ -6,28 +6,10 @@ import * as sinon from 'sinon';
 import * as featureModule from '@config/feature';
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
+import * as backgroundBitsModule from '@theme/background/background-bits';
 import * as customThemeModule from '@theme/custom-theme';
-import * as backgroundBitsModule from '@theme/render/background-bits';
 import { renderCardStyles } from '@theme/render/card-styles';
 import type { Config, EntityState } from '@type/config';
-
-// Helper to create entity states for testing
-const createStateEntity = (
-  domain: string,
-  entity_id: string,
-  state = 'off',
-  attributes = {},
-) => {
-  return {
-    entity_id: `${domain}.${entity_id}`,
-    state,
-    attributes: {
-      friendly_name: entity_id.replace(/_/g, ' '),
-      ...attributes,
-    },
-    domain,
-  } as EntityState;
-};
 
 export default () => {
   describe('card-styles.ts', () => {
@@ -38,7 +20,7 @@ export default () => {
     let stateColorCssStub: sinon.SinonStub;
     let getThemeColorOverrideStub: sinon.SinonStub;
     let hasFeatureStub: sinon.SinonStub;
-    let backgroundImageStub: sinon.SinonStub;
+    let getBackgroundOpacityStub: sinon.SinonStub;
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
@@ -50,9 +32,9 @@ export default () => {
         'getThemeColorOverride',
       );
       hasFeatureStub = sandbox.stub(featureModule, 'hasFeature');
-      backgroundImageStub = sandbox.stub(
+      getBackgroundOpacityStub = sandbox.stub(
         backgroundBitsModule,
-        'backgroundImage',
+        'getBackgroundOpacity',
       );
 
       // Default stub behaviors
@@ -60,23 +42,10 @@ export default () => {
       stateColorCssStub.returns('var(--primary-color)');
       getThemeColorOverrideStub.returns('var(--theme-override)');
       hasFeatureStub.returns(false);
-      backgroundImageStub.returns({
-        image: undefined,
-        opacity: 'var(--opacity-background-inactive)',
-      });
+      getBackgroundOpacityStub.returns('var(--opacity-background-inactive)');
 
-      mockHass = {
-        themes: {
-          darkMode: false,
-        },
-        areas: {
-          test_area: {},
-        },
-      };
-
-      mockConfig = {
-        area: 'test_area',
-      };
+      mockHass = { themes: { darkMode: false } };
+      mockConfig = { area: 'test_area' };
     });
 
     afterEach(() => {
@@ -84,83 +53,104 @@ export default () => {
     });
 
     describe('renderCardStyles', () => {
-      it('should render basic inactive styles in light mode', () => {
-        const styles = renderCardStyles(mockHass, mockConfig);
-
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
-            '--background-image': undefined,
-          }),
-        );
-      });
-
-      it('should include background image from backgroundImage function', () => {
-        backgroundImageStub.returns({
-          image: 'url(/local/bedroom.jpg)',
-          opacity: '0.5',
+      it('should render basic styles and call getBackgroundOpacity', () => {
+        getBackgroundOpacityStub.returns({
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
         });
 
-        const state = createStateEntity('light', 'test', 'on');
-        const styles = renderCardStyles(mockHass, mockConfig, state);
+        const styles = renderCardStyles(mockHass, mockConfig);
 
+        expect(
+          getBackgroundOpacityStub.calledWith(mockHass, mockConfig, undefined),
+        ).to.be.true;
         expect(styles).to.deep.equal(
           styleMap({
             '--background-color-card': undefined,
-            '--background-opacity-card': '0.5',
             '--state-color-card-theme': 'var(--theme-override)',
-            '--background-image': 'url(/local/bedroom.jpg)',
+            '--background-image': undefined,
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
         );
-
-        expect(backgroundImageStub.calledWith(mockHass, mockConfig, state)).to
-          .be.true;
       });
 
-      it('should render active styles in dark mode', () => {
+      it('should include background image when provided', () => {
+        const image = '/local/bedroom.jpg';
+        const mockState = {
+          entity_id: 'light.test',
+          state: 'on',
+          domain: 'light',
+        } as EntityState;
+
+        getBackgroundOpacityStub.returns({
+          '--background-opacity-card': '0.5',
+        });
+
+        const styles = renderCardStyles(mockHass, mockConfig, image, mockState);
+
+        expect(
+          getBackgroundOpacityStub.calledWith(mockHass, mockConfig, mockState),
+        ).to.be.true;
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--state-color-card-theme': 'var(--theme-override)',
+            '--background-image': 'url(/local/bedroom.jpg)',
+            '--background-opacity-card': '0.5',
+          }),
+        );
+      });
+
+      it('should render active styles in dark mode when not skipping styles', () => {
         mockHass.themes.darkMode = true;
         stateActiveStub.returns(true);
         stateColorCssStub.returns('var(--active-color)');
-        backgroundImageStub.returns({
-          image: undefined,
-          opacity: 'var(--opacity-background-active)',
+        getBackgroundOpacityStub.returns({
+          '--background-opacity-card': 'var(--opacity-background-active)',
         });
 
-        const state = createStateEntity('light', 'test', 'on');
-        const styles = renderCardStyles(mockHass, mockConfig, state);
+        const mockState = {
+          entity_id: 'light.test',
+          state: 'on',
+          domain: 'light',
+        } as EntityState;
+        const styles = renderCardStyles(mockHass, mockConfig, null, mockState);
 
         expect(styles).to.deep.equal(
           styleMap({
             '--background-color-card': 'var(--active-color)',
-            '--background-opacity-card': 'var(--opacity-background-active)',
             '--state-color-card-theme': 'var(--theme-override)',
             '--background-image': undefined,
+            '--background-opacity-card': 'var(--opacity-background-active)',
           }),
         );
       });
 
-      it('should disable styles when skip_entity_styles feature is enabled', () => {
+      it('should disable background color when skip_entity_styles is enabled', () => {
         mockHass.themes.darkMode = true;
         stateActiveStub.returns(true);
         stateColorCssStub.returns('var(--active-color)');
         hasFeatureStub.withArgs(mockConfig, 'skip_entity_styles').returns(true);
+        getBackgroundOpacityStub.returns({
+          '--background-opacity-card': 'var(--opacity-background-active)',
+          '--opacity-theme': undefined,
+        });
 
-        const state = createStateEntity('light', 'test', 'on');
-        const styles = renderCardStyles(mockHass, mockConfig, state);
+        const mockState = {
+          entity_id: 'light.test',
+          state: 'on',
+          domain: 'light',
+        } as EntityState;
+        const styles = renderCardStyles(mockHass, mockConfig, null, mockState);
 
         expect(styles).to.deep.equal(
           styleMap({
             '--background-color-card': undefined, // Should be undefined due to skipStyles
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
             '--state-color-card-theme': 'var(--theme-override)',
             '--background-image': undefined,
+            '--background-opacity-card': 'var(--opacity-background-active)',
+            '--opacity-theme': undefined,
           }),
         );
-
-        expect(hasFeatureStub.calledWith(mockConfig, 'skip_entity_styles')).to
-          .be.true;
       });
     });
   });

@@ -202,7 +202,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Sensor layout options`**: flexible sensor display layouts (default, stacked, bottom) - thanks @Ltek
 - [x] **`Sensor averaging by device class`**: automatic averaging like HA area card - thanks @Ltek
 - [x] **`Moving away from customize.yaml`**: allowing more configuration on the card - thanks @johntdyer
-- [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo
+- [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo, @X1pheR
 
 ## Contributing
 
