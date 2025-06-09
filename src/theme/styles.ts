@@ -126,14 +126,13 @@ const gridLayoutStyles = css`
     align-items: center;
     gap: 8px;
     box-sizing: border-box;
-    aspect-ratio: 0.24 / 1;
+    aspect-ratio: 0.23 / 1;
     padding: 5px 5px 5px 0;
   }
 
   /* Room area styling - Large square shape */
   .room {
     grid-area: r;
-    cursor: pointer;
     width: 150%;
     aspect-ratio: 1 / 1;
   }
@@ -143,13 +142,6 @@ const gridLayoutStyles = css`
  * Entity and component area styles
  */
 const entityAreaStyles = css`
-  /* Entity styling - responsive sizing with min/max bounds */
-  .entity {
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-  }
-
   /* Statistics text */
   .stats {
     font-size: 0.8em;
@@ -170,6 +162,7 @@ const entityAreaStyles = css`
 const iconStyles = css`
   /* Icon container styling */
   .icon {
+    cursor: pointer;
     align-self: center;
     position: relative;
     display: flex;
