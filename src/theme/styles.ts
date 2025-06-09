@@ -112,6 +112,7 @@ const gridLayoutStyles = css`
     cursor: pointer;
     width: 100%;
     margin: 5% 0px 0px 10%;
+    container-type: inline-size;
     z-index: 1;
   }
 
@@ -244,7 +245,7 @@ const sensorLabelStyles = css`
 
   /* Room name styling */
   .name {
-    font-size: 2.5vh;
+    font-size: clamp(1rem, 6cqw, 2rem);
     color: var(--text-color);
   }
 
