@@ -61,7 +61,7 @@ Automatically calculates and displays averaged sensor readings by device class:
 - Border colors indicate climate status (red for temperature, blue for humidity)
 - Configurable thresholds and can be disabled
 
-![climate](assets/climate.png)
+![Climate Borders](assets/climate.png)
 
 ### Entity Status
 
@@ -70,7 +70,7 @@ Automatically calculates and displays averaged sensor readings by device class:
 - Climate entity colors with automatic state detection
 - RGB color support for accurate light representation
 
-![icons](assets/icons.png)
+![Entity Icons](assets/icons.png)
 
 ### Problem Detection
 
@@ -78,7 +78,7 @@ Automatically calculates and displays averaged sensor readings by device class:
 - Shows count of problem entities with color-coded indicators
 - Red for active problems, green for no active problems
 
-![problems](assets/problems.png)
+![Problem Detection](assets/problems.png)
 
 ### Room Statistics
 
@@ -94,13 +94,67 @@ Choose from different sensor display options:
 - **Stacked**: Vertically stacked in the label area
 - **Bottom**: At the bottom of the card for maximum visibility
 
-![sensors](assets/sensors-styles.png)
+![Sensor Layouts](assets/sensors-styles.png)
+
+### Background Images
+
+Multiple background image sources with automatic fallbacks:
+
+- **Area Pictures**: Automatically uses area pictures from Home Assistant
+- **Custom Images**: Static image files from local storage or URLs
+- **Dynamic Entities**: Live images from camera, person, or image entities
+- **Opacity Control**: Customizable transparency levels
+- **Disable Option**: Complete background image control
+
+| area picture                     | entity picture                       | background picture                         |
+| -------------------------------- | ------------------------------------ | ------------------------------------------ |
+| ![area](assets/area-picture.png) | ![entity](assets/entity-picture.png) | ![background](assets/background-image.png) |
 
 ### RGB Color Support
 
 Direct RGB color values from entities with `rgb_color` attributes for accurate color representation.
 
-![light](assets/light-rgb.png)
+![RGB Light Colors](assets/light-rgb.png)
+
+### Custom Icon Color Integration
+
+Support for the [custom-icon-color integration](https://github.com/Mariusthvdb/custom-icon-color):
+
+- **Hex Colors**: Direct hex color specification (`#FF5733`)
+- **Theme Colors**: Use theme color names (`red`, `blue`, `yellow`)
+- **Color Priority**: Intelligent color precedence system
+- **Cross-Theme Support**: Works with multiple theme systems
+
+![Custom Icon Colors](assets/icon-color.png)
+
+### Climate Entity Styling
+
+Special styling for climate entities with automatic state detection:
+
+- **State-Based Icons**: Automatic icons based on climate state (heat, cool, auto, etc.)
+- **Color Coding**: Dynamic colors based on current operation mode
+- **Border Indicators**: Visual climate threshold warnings
+- **Skip Option**: Can be disabled for custom styling
+
+### Advanced Feature Flags
+
+Extensive customization options:
+
+- **Hide Components**: Area stats, climate labels, room icons, sensor icons
+- **Exclude Defaults**: Skip default entity discovery
+- **Style Control**: Disable climate styling, entity styling
+- **Layout Options**: Multiple sensor display layouts
+
+### Card Editor
+
+Visual configuration interface:
+
+- **Drag & Drop**: Easy entity management
+- **Live Preview**: Real-time configuration preview
+- **Schema Validation**: Built-in configuration validation
+- **Auto-Discovery**: Automatic sensor and entity detection
+
+![Card Editor](assets/editor.png)
 
 ## Installation
 
@@ -140,7 +194,7 @@ area: living_room
 
 Use the visual editor for easy configuration:
 
-![editor](assets/editor.png)
+![Card Editor Interface](assets/editor.png)
 
 The card automatically discovers and displays:
 
@@ -172,8 +226,8 @@ The card supports multiple themes out of the box:
 
 | Default HA                            | UI Minimalist                                    |
 | ------------------------------------- | ------------------------------------------------ |
-| ![ha-dark](assets/default-dark.png)   | ![minimalist-dark](assets/minimalist-dark.png)   |
-| ![ha-light](assets/default-light.png) | ![minimalist-light](assets/minimalist-light.png) |
+| ![HA Dark](assets/default-dark.png)   | ![Minimalist Dark](assets/minimalist-dark.png)   |
+| ![HA Light](assets/default-light.png) | ![Minimalist Light](assets/minimalist-light.png) |
 
 See the [Theming Guide](docs/THEMING.md) for detailed color configuration and custom theme support.
 
