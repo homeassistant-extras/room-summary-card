@@ -22,7 +22,7 @@ jobs:
           if [[ "$AUTHOR_EMAIL" == *"dependabot[bot]@users.noreply.github.com"* ]]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
           # Skip other noreply emails
-          if [[ "$AUTHOR_EMAIL" == "gh-action-bump-version@users.noreply.github.com" ]]; then
+          elif [[ "$AUTHOR_EMAIL" == *"@users.noreply.github.com"* ]]; then
             echo "should_run=false" >> $GITHUB_OUTPUT
           # Allow all other emails
           else
