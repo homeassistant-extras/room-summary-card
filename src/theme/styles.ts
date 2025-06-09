@@ -244,7 +244,7 @@ const sensorLabelStyles = css`
 
   /* Room name styling */
   .name {
-    font-size: 3.5vh;
+    font-size: 2.5vh;
     color: var(--text-color);
   }
 
