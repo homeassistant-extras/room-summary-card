@@ -35,7 +35,7 @@ export const info = (
 ) => {
   const handler = actionHandler(roomEntity);
   const action = handleClickAction(element, roomEntity);
-  const textStyle = renderTextStyles(hass, config, roomEntity.state);
+  const textStyle = renderTextStyles(hass, config, roomEntity);
   const sensorInfo = renderSensors(hass, config, sensors);
   const stats = renderAreaStatistics(hass, config);
 

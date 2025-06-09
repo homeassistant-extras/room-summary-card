@@ -71,6 +71,50 @@ entities:
     icon: mdi:shield-home
 ```
 
+### Custom Colors in Card Configuration
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+entity:
+  entity_id: light.living_room_main
+  on_color: amber
+  off_color: disabled
+entities:
+  - entity_id: switch.living_room_tv
+    icon: mdi:television
+    on_color: blue
+    off_color: grey
+  - entity_id: light.living_room_lamp
+    on_color: yellow
+    off_color: disabled
+  - entity_id: switch.living_room_fan
+    on_color: teal
+    off_color: grey
+```
+
+### Brand-Themed Entities
+
+```yaml
+entities:
+  # Netflix theme
+  - entity_id: media_player.netflix
+    icon: mdi:netflix
+    icon_color: '#E50914'
+    on_color: red
+    off_color: black
+
+  # Philips Hue theme
+  - entity_id: light.hue_bulb
+    on_color: '#FF6B35' # Philips orange
+    off_color: disabled
+
+  # TP-Link theme
+  - entity_id: switch.tp_link
+    on_color: '#1BA3E0' # TP-Link blue
+    off_color: grey
+```
+
 ### Custom Colors Example
 
 ```yaml
@@ -121,10 +165,16 @@ features:
 entities:
   - entity_id: light.office_desk
     icon: mdi:desk-lamp
+    on_color: yellow
+    off_color: disabled
   - entity_id: switch.office_computer
     icon: mdi:desktop-tower
+    on_color: blue
+    off_color: grey
   - entity_id: climate.office_ac
     icon: mdi:air-conditioner
+    on_color: teal
+    off_color: disabled
 sensors:
   - sensor.office_temperature
   - sensor.office_humidity

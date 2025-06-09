@@ -5,21 +5,21 @@ import {
 } from 'lit-html/directives/style-map.js';
 
 import type { HomeAssistant } from '@hass/types';
-import type { EntityState } from '@type/config';
+import type { EntityInformation } from '@type/config';
 import { getStyleData } from './common-style';
 
 /**
- * Generates styles for entity icons based on their state
+ * Generates a style map for an entity's icon based on its state and theme information.
  *
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {EntityState} [state] - Current entity state
- * @returns {DirectiveResult<typeof StyleMapDirective>} Style map for icon elements
+ * @param hass - The Home Assistant instance containing theme and state information.
+ * @param entity - The entity information used to determine icon styling.
+ * @returns A lit-html style map directive with CSS custom properties for icon color, opacity, and theme overrides.
  */
 export const renderEntityIconStyles = (
   hass: HomeAssistant,
-  state?: EntityState,
+  entity: EntityInformation,
 ): DirectiveResult<typeof StyleMapDirective> => {
-  const styleData = getStyleData(hass, 'icon', state);
+  const styleData = getStyleData(hass, 'icon', entity);
 
   if (!styleData) return styleMap({});
 

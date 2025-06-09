@@ -2,6 +2,9 @@
 
 This guide covers advanced features and customization options that are actually implemented in the Room Summary Card.
 
+> [!CAUTION]
+> Some advanced configuration cannot be done in the UI editor. The editor may remove some yaml.
+
 ## Table of Contents
 
 - [Background Images](advanced/BACKGROUND-IMAGES.md)

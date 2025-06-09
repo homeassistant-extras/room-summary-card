@@ -11,6 +11,7 @@ Some of these go to their own documents - so use this ToC as a guide.
 - [Feature Flags](#feature-flags)
 - [Background Configuration](configuration/BACKGROUND-CONFIGURATION.md)
 - [Entity Configuration](configuration/ENTITY-CONFIGURATION.md)
+- [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md)
 - [Sensor Configuration](configuration/SENSOR-CONFIGURATION.md)
 - [Threshold Configuration](configuration/THRESHOLD-CONFIGURATION.md)
 - [Action Configuration](configuration/ACTION-CONFIGURATION.md)
@@ -88,6 +89,23 @@ features:
 | exclude_default_entities | Don't include default light/fan entities             |
 | skip_climate_styles      | Disable climate-based color coding & borders         |
 | skip_entity_styles       | Disable card background styling based on main entity |
+
+## Color Configuration
+
+Entity colors can now be configured directly in the card:
+
+```yaml
+entities:
+  - entity_id: light.living_room
+    on_color: yellow
+    off_color: grey
+    icon_color: '#FFD700'
+  - entity_id: switch.fan
+    on_color: blue
+    off_color: disabled
+```
+
+See [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md) for complete color options.
 
 ## Next Steps
 

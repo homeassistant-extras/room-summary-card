@@ -360,11 +360,7 @@ export default () => {
         // Check that renderTextStyles was called once
         expect(renderTextStylesStub.callCount).to.equal(1);
         expect(
-          renderTextStylesStub.calledWith(
-            mockHass,
-            mockConfig,
-            mockRoomEntity.state,
-          ),
+          renderTextStylesStub.calledWith(mockHass, mockConfig, mockRoomEntity),
         ).to.be.true;
       });
 

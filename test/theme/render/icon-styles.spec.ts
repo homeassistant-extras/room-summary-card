@@ -3,28 +3,29 @@ import {
   getProblemEntitiesStyle,
   renderEntityIconStyles,
 } from '@theme/render/icon-styles';
-import type { EntityState } from '@type/config';
+import type { EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import * as sinon from 'sinon';
 
-// Helper to create entity states for testing
-const createStateEntity = (
+// Helper to create entity information for testing
+const createEntityInfo = (
   domain: string,
-  entity_id: string,
+  entityId: string,
   state = 'off',
   attributes = {},
-) => {
-  return {
-    entity_id: `${domain}.${entity_id}`,
+): EntityInformation => ({
+  config: { entity_id: `${domain}.${entityId}` },
+  state: {
+    entity_id: `${domain}.${entityId}`,
     state,
     attributes: {
-      friendly_name: entity_id.replace(/_/g, ' '),
+      friendly_name: entityId.replace(/_/g, ' '),
       ...attributes,
     },
     domain,
-  } as EntityState;
-};
+  },
+});
 
 export default () => {
   describe('icon-styles.ts', () => {
@@ -33,13 +34,9 @@ export default () => {
     let getStyleDataStub: sinon.SinonStub;
 
     beforeEach(() => {
-      // Create a sinon sandbox for managing stubs
       sandbox = sinon.createSandbox();
-
-      // Create stubs for the imported functions
       getStyleDataStub = sandbox.stub(commonStyleModule, 'getStyleData');
 
-      // Set up mock Home Assistant instance
       mockHass = {
         themes: {
           darkMode: false,
@@ -49,32 +46,33 @@ export default () => {
     });
 
     afterEach(() => {
-      // Restore the sandbox to clean up stubs
       sandbox.restore();
     });
 
     describe('renderEntityIconStyles', () => {
       it('should return empty style map when getStyleData returns null', () => {
         getStyleDataStub.returns(null);
-        const state = createStateEntity('light', 'test', 'on');
+        const entity = createEntityInfo('light', 'test', 'on');
 
-        const result = renderEntityIconStyles(mockHass, state);
+        const result = renderEntityIconStyles(mockHass, entity);
 
         expect(result).to.deep.equal(styleMap({}));
-        expect(getStyleDataStub.calledWith(mockHass, 'icon', state)).to.be.true;
+        expect(getStyleDataStub.calledWith(mockHass, 'icon', entity)).to.be
+          .true;
       });
 
-      it('should return icon styles for active state', () => {
+      it('should return correct icon styles for active and inactive states', () => {
+        const entity = createEntityInfo('light', 'test', 'on');
+
+        // Test active state
         getStyleDataStub.returns({
           active: true,
           cssColor: 'var(--primary-color)',
           themeOverride: 'var(--theme-override)',
           activeClass: 'active',
         });
-        const state = createStateEntity('light', 'test', 'on');
 
-        const result = renderEntityIconStyles(mockHass, state);
-
+        let result = renderEntityIconStyles(mockHass, entity);
         expect(result).to.deep.equal(
           styleMap({
             '--icon-color': 'var(--primary-color)',
@@ -84,19 +82,16 @@ export default () => {
             '--state-color-icon-theme': 'var(--theme-override)',
           }),
         );
-      });
 
-      it('should return icon styles for inactive state', () => {
+        // Test inactive state
         getStyleDataStub.returns({
           active: false,
           cssColor: 'var(--disabled-color)',
           themeOverride: 'var(--theme-override)',
           activeClass: 'inactive',
         });
-        const state = createStateEntity('light', 'test', 'off');
 
-        const result = renderEntityIconStyles(mockHass, state);
-
+        result = renderEntityIconStyles(mockHass, entity);
         expect(result).to.deep.equal(
           styleMap({
             '--icon-color': 'var(--disabled-color)',
@@ -108,16 +103,16 @@ export default () => {
         );
       });
 
-      it('should handle undefined cssColor', () => {
+      it('should handle undefined cssColor and themeOverride', () => {
         getStyleDataStub.returns({
           active: true,
           cssColor: undefined,
-          themeOverride: 'var(--theme-override)',
+          themeOverride: undefined,
           activeClass: 'active',
         });
-        const state = createStateEntity('light', 'test', 'on');
+        const entity = createEntityInfo('light', 'test', 'on');
 
-        const result = renderEntityIconStyles(mockHass, state);
+        const result = renderEntityIconStyles(mockHass, entity);
 
         expect(result).to.deep.equal(
           styleMap({
@@ -125,63 +120,25 @@ export default () => {
             '--icon-opacity': 'var(--opacity-icon-active)',
             '--background-color-icon': undefined,
             '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
-            '--state-color-icon-theme': 'var(--theme-override)',
-          }),
-        );
-      });
-
-      it('should handle undefined themeOverride', () => {
-        getStyleDataStub.returns({
-          active: true,
-          cssColor: 'var(--primary-color)',
-          themeOverride: undefined,
-          activeClass: 'active',
-        });
-        const state = createStateEntity('light', 'test', 'on');
-
-        const result = renderEntityIconStyles(mockHass, state);
-
-        expect(result).to.deep.equal(
-          styleMap({
-            '--icon-color': 'var(--primary-color)',
-            '--icon-opacity': 'var(--opacity-icon-active)',
-            '--background-color-icon': 'var(--primary-color)',
-            '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
             '--state-color-icon-theme': undefined,
           }),
         );
       });
-
-      it('should call getStyleData with correct parameters', () => {
-        getStyleDataStub.returns({
-          active: true,
-          cssColor: 'var(--primary-color)',
-          themeOverride: 'var(--theme-override)',
-          activeClass: 'active',
-        });
-        const state = createStateEntity('switch', 'test', 'on');
-
-        renderEntityIconStyles(mockHass, state);
-
-        expect(getStyleDataStub.calledWith(mockHass, 'icon', state)).to.be.true;
-      });
     });
 
     describe('getProblemEntitiesStyle', () => {
-      it('should return error style when problem exists', () => {
-        const result = getProblemEntitiesStyle(true);
-
+      it('should return correct styles for problem existence states', () => {
+        // Test problem exists
+        let result = getProblemEntitiesStyle(true);
         expect(result).to.deep.equal(
           styleMap({
             '--background-color-icon': 'var(--error-color)',
             '--background-opacity-icon': '0.8',
           }),
         );
-      });
 
-      it('should return success style when no problem exists', () => {
-        const result = getProblemEntitiesStyle(false);
-
+        // Test no problem exists
+        result = getProblemEntitiesStyle(false);
         expect(result).to.deep.equal(
           styleMap({
             '--background-color-icon': 'var(--success-color)',

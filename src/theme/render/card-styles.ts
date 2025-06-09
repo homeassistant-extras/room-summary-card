@@ -9,29 +9,30 @@ import { stateActive } from '@hass/common/entity/state_active';
 import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
-import type { Config, EntityState } from '@type/config';
+import type { Config, EntityInformation } from '@type/config';
 import { getBackgroundOpacity } from '../background/background-bits';
 import { getThemeColorOverride } from '../custom-theme';
 
 /**
- * Generates dynamic card styles based on state and sensor readings
+ * Generates a style map for a card component based on the current Home Assistant theme,
+ * entity state, configuration, and optional background image.
  *
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {Config} config - Configuration object
- * @param {string | null} [image] - Optional image URL
- * @param {EntityState} [state] - Current entity state
- * @returns {DirectiveResult<typeof StyleMapDirective>} Style map for the card
+ * @param hass - The Home Assistant instance containing theme and state information.
+ * @param config - The configuration object for the card.
+ * @param entity - The entity information, including its current state.
+ * @param image - (Optional) A URL or path to a background image for the card.
+ * @returns A DirectiveResult containing the computed style map for the card.
  */
 export const renderCardStyles = (
   hass: HomeAssistant,
   config: Config,
+  entity: EntityInformation,
   image?: string | null,
-  state?: EntityState,
 ): DirectiveResult<typeof StyleMapDirective> => {
-  // as of now, only dark mode handles background coloring
+  const { state } = entity;
   const stateObj = state as any as HassEntity;
   const active = hass.themes.darkMode && stateActive(stateObj);
-  const themeOverride = getThemeColorOverride(hass, state, active);
+  const themeOverride = getThemeColorOverride(hass, entity, active);
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   const opacity = getBackgroundOpacity(hass, config, state);
   const cssColor = hass.themes.darkMode

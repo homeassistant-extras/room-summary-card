@@ -1,6 +1,6 @@
 import { hasFeature } from '@config/feature';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, EntityState } from '@type/config';
+import type { Config, EntityInformation } from '@type/config';
 import { nothing } from 'lit';
 import {
   type StyleMapDirective,
@@ -10,21 +10,24 @@ import type { DirectiveResult } from 'lit/directive';
 import { getStyleData } from './common-style';
 
 /**
- * Generates styles for text elements based on entity state
+ * Renders dynamic text styles for a component based on the current Home Assistant state,
+ * configuration, and entity information. If the 'skip_entity_styles' feature is enabled in the config,
+ * or if no style data is available, no styles are applied.
  *
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {Config} config - Configuration object
- * @param {EntityState} [state] - Current entity state
- * @returns {DirectiveResult<typeof StyleMapDirective> | typeof nothing} Style map for text elements or nothing if inactive
+ * @param hass - The Home Assistant instance providing state and theme information.
+ * @param config - The configuration object that may include feature flags and style preferences.
+ * @param entity - Information about the entity for which styles are being rendered.
+ * @returns A `DirectiveResult` containing a style map with CSS variables for text color and theme override,
+ *          or `nothing` if styles should not be applied.
  */
 export const renderTextStyles = (
   hass: HomeAssistant,
   config: Config,
-  state?: EntityState,
+  entity: EntityInformation,
 ): DirectiveResult<typeof StyleMapDirective> | typeof nothing => {
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   if (skipStyles) return nothing;
-  const styleData = getStyleData(hass, 'text', state);
+  const styleData = getStyleData(hass, 'text', entity);
 
   if (!styleData) return nothing;
 

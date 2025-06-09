@@ -213,8 +213,8 @@ export class RoomSummaryCard extends LitElement {
     const cardStyle = renderCardStyles(
       this._hass,
       this._config,
+      this._roomEntity,
       this._image,
-      this._roomEntity.state,
     );
 
     const problems = renderProblemIndicator(

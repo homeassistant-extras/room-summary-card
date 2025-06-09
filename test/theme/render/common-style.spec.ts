@@ -2,27 +2,28 @@ import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
 import * as customThemeModule from '@theme/custom-theme';
 import { getStyleData } from '@theme/render/common-style';
-import type { EntityState } from '@type/config';
+import type { EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-// Helper to create entity states for testing
-const createStateEntity = (
+// Helper to create entity information for testing
+const createEntityInfo = (
   domain: string,
-  entity_id: string,
+  entityId: string,
   state = 'off',
   attributes = {},
-) => {
-  return {
-    entity_id: `${domain}.${entity_id}`,
+): EntityInformation => ({
+  config: { entity_id: `${domain}.${entityId}` },
+  state: {
+    entity_id: `${domain}.${entityId}`,
     state,
     attributes: {
-      friendly_name: entity_id.replace(/_/g, ' '),
+      friendly_name: entityId.replace(/_/g, ' '),
       ...attributes,
     },
     domain,
-  } as EntityState;
-};
+  },
+});
 
 export default () => {
   describe('common-style.ts', () => {
@@ -33,10 +34,8 @@ export default () => {
     let getThemeColorOverrideStub: sinon.SinonStub;
 
     beforeEach(() => {
-      // Create a sinon sandbox for managing stubs
       sandbox = sinon.createSandbox();
 
-      // Create stubs for the imported functions
       stateActiveStub = sandbox.stub(stateActiveModule, 'stateActive');
       stateColorCssStub = sandbox.stub(stateColorModule, 'stateColorCss');
       getThemeColorOverrideStub = sandbox.stub(
@@ -44,12 +43,11 @@ export default () => {
         'getThemeColorOverride',
       );
 
-      // Default behavior for stubs
+      // Default stub behaviors
       stateActiveStub.returns(true);
       stateColorCssStub.returns('var(--primary-color)');
       getThemeColorOverrideStub.returns('var(--theme-override)');
 
-      // Set up mock Home Assistant instance
       mockHass = {
         themes: {
           darkMode: false,
@@ -59,40 +57,38 @@ export default () => {
     });
 
     afterEach(() => {
-      // Restore the sandbox to clean up stubs
       sandbox.restore();
     });
 
     describe('getStyleData', () => {
-      it('should return null when state is undefined', () => {
-        const result = getStyleData(mockHass, 'test');
+      it('should return null when entity has no state', () => {
+        const entity = {
+          config: { entity_id: 'light.test' },
+          state: undefined,
+        };
+        const result = getStyleData(mockHass, 'test', entity);
         expect(result).to.be.null;
       });
 
-      it('should return style data for active state', () => {
-        const state = createStateEntity('light', 'test', 'on');
+      it('should return correct style data for active and inactive states', () => {
+        // Test active state
+        const activeEntity = createEntityInfo('light', 'test', 'on');
         stateActiveStub.returns(true);
-        stateColorCssStub.returns('var(--primary-color)');
-        getThemeColorOverrideStub.returns('var(--theme-override)');
 
-        const result = getStyleData(mockHass, 'test', state);
-
+        let result = getStyleData(mockHass, 'test', activeEntity);
         expect(result).to.deep.equal({
           active: true,
           cssColor: 'var(--primary-color)',
           themeOverride: 'var(--theme-override)',
           activeClass: 'active',
         });
-      });
 
-      it('should return style data for inactive state', () => {
-        const state = createStateEntity('light', 'test', 'off');
+        // Test inactive state
+        const inactiveEntity = createEntityInfo('light', 'test', 'off');
         stateActiveStub.returns(false);
         stateColorCssStub.returns('var(--disabled-color)');
-        getThemeColorOverrideStub.returns('var(--theme-override)');
 
-        const result = getStyleData(mockHass, 'test', state);
-
+        result = getStyleData(mockHass, 'test', inactiveEntity);
         expect(result).to.deep.equal({
           active: false,
           cssColor: 'var(--disabled-color)',
@@ -101,27 +97,27 @@ export default () => {
         });
       });
 
-      it('should call underlying functions with correct parameters', () => {
-        const state = createStateEntity('switch', 'test', 'on');
-
-        getStyleData(mockHass, 'test', state);
-
-        expect(stateActiveStub.calledOnce).to.be.true;
-        expect(stateColorCssStub.calledOnce).to.be.true;
-        expect(getThemeColorOverrideStub.calledOnce).to.be.true;
-        expect(getThemeColorOverrideStub.calledWith(mockHass, state, true)).to
-          .be.true;
-      });
-
-      it('should handle undefined cssColor with theme override', () => {
-        const state = createStateEntity('light', 'test', 'on');
+      it('should use theme fallback when cssColor is undefined', () => {
+        const entity = createEntityInfo('light', 'test', 'on');
         stateColorCssStub.returns(undefined);
 
-        const result = getStyleData(mockHass, 'test', state);
+        const result = getStyleData(mockHass, 'test', entity);
 
         expect(result?.cssColor).to.equal('var(--state-color-test-theme)');
         expect(result?.active).to.be.true;
         expect(result?.activeClass).to.equal('active');
+      });
+
+      it('should call underlying functions with correct parameters', () => {
+        const entity = createEntityInfo('switch', 'test', 'on');
+
+        getStyleData(mockHass, 'test', entity);
+
+        expect(stateActiveStub.calledOnce).to.be.true;
+        expect(stateColorCssStub.calledOnce).to.be.true;
+        expect(getThemeColorOverrideStub.calledOnce).to.be.true;
+        expect(getThemeColorOverrideStub.calledWith(mockHass, entity, true)).to
+          .be.true;
       });
     });
   });

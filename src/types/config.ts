@@ -83,6 +83,12 @@ export interface EntityConfig {
   /** Custom icon to display for the entity */
   icon?: string;
 
+  /** Custom color for the on state */
+  on_color?: string;
+
+  /** Custom color for the off state */
+  off_color?: string;
+
   /** Action to perform on tap */
   tap_action?: ActionConfig;
 

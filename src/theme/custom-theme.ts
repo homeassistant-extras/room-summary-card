@@ -1,22 +1,29 @@
 import type { HomeAssistant } from '@hass/types';
-import type { EntityState } from '@type/config';
+import type { EntityInformation } from '@type/config';
 import { processHomeAssistantColors, processMinimalistColors } from './colors';
 import { getRgbColor } from './get-rgb';
 
 /**
- * Determines the appropriate theme color based on entity state and active status
- * This function handles both default Home Assistant themes and Minimalist themes
+ * Determines the appropriate theme color override for a given entity based on its state,
+ * configuration, and the current Home Assistant theme.
  *
- * @param hass - The Home Assistant instance containing theme information
- * @param state - The entity state object (optional)
- * @param active - Boolean indicating if the entity is in an active state (optional)
- * @returns A CSS color variable string or undefined if no appropriate color is found
+ * The function prioritizes the following sources for the color:
+ * 1. The `icon_color` attribute if it is a hex color.
+ * 2. The entity's `on_color` or `off_color` configuration or state attributes, processed via `getRgbColor`.
+ * 3. Minimalist theme-specific color processing if the active theme starts with "minimalist-".
+ * 4. Fallback to Home Assistant's default color processing.
+ *
+ * @param hass - The Home Assistant instance containing theme information.
+ * @param entity - The entity information, including state and configuration.
+ * @param active - Optional flag indicating if the entity is in an active state.
+ * @returns The resolved color as a string (e.g., hex or rgb), or `undefined` if no color override is determined.
  */
 export const getThemeColorOverride = (
   hass: HomeAssistant,
-  state?: EntityState,
+  entity: EntityInformation,
   active?: boolean,
 ) => {
+  const { state } = entity;
   if (!state) return undefined;
 
   // icon color is the first priority - hex colors
@@ -25,8 +32,8 @@ export const getThemeColorOverride = (
     return iconColor;
   }
 
-  const onColor = state.attributes.on_color;
-  const offColor = state?.attributes?.off_color;
+  const onColor = entity.config.on_color ?? state.attributes.on_color;
+  const offColor = entity.config.off_color ?? state?.attributes?.off_color;
   const rgbColor = getRgbColor(state, onColor, offColor, active);
 
   // If the state has a specific RGB color, return it directly
