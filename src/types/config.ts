@@ -38,8 +38,25 @@ export interface Config {
 
   /** Custom thresholds for temperature and humidity */
   thresholds?: {
+    /** Temperature threshold value */
     temperature?: number;
+
+    /** Humidity threshold value */
     humidity?: number;
+  };
+
+  background?: {
+    /** URL of the background image */
+    image?: string;
+
+    /** Entity ID for dynamic background images */
+    image_entity?: string;
+
+    /** Opacity level for the background image (0 to 1) */
+    opacity?: number;
+
+    /** Option to disable the background image */
+    options?: ['disable'];
   };
 
   /** Options to enable disable features **/
@@ -48,8 +65,9 @@ export interface Config {
 
 /** Features to enable or disable functionality */
 export type Features =
-  | 'hide_climate_label'
   | 'hide_area_stats'
+  | 'hide_climate_label'
+  | 'hide_room_icon'
   | 'hide_sensor_icons'
   | 'exclude_default_entities'
   | 'skip_climate_styles'

@@ -36,6 +36,7 @@ const baseThemeStyles = css`
     --icon-color: var(--theme-color-icon);
     --background-color-icon: var(--theme-background-color-icon);
     --background-opacity-icon: var(--opacity-icon-fill-inactive);
+    --background-image: none;
   }
 
   :host([hot]) ha-card {
@@ -69,6 +70,8 @@ const cardContainerStyles = css`
     width: 100%;
     height: 100%;
     background: var(--background-color-card);
+    background-image: var(--background-image);
+    background-size: cover;
     opacity: var(--background-opacity-card);
   }
 `;

@@ -4,6 +4,7 @@ This guide covers advanced features and customization options that are actually 
 
 ## Table of Contents
 
+- [Background Images](#background-images)
 - [Problem Entity Detection](#problem-entity-detection)
 - [Entity Attributes Configuration](#entity-attributes-configuration)
 - [Custom Icon Color Integration](#custom-icon-color-integration)
@@ -11,6 +12,130 @@ This guide covers advanced features and customization options that are actually 
 - [Sensor Averaging](#sensor-averaging)
 - [Climate Entity Styling](#climate-entity-styling)
 - [Advanced Examples](#advanced-examples)
+
+## Background Images
+
+The card supports multiple background image sources with automatic fallbacks and full customization control.
+
+### Automatic Area Pictures
+
+When areas have pictures set in Home Assistant, the card automatically uses them as backgrounds:
+
+```yaml
+# No configuration needed - automatic if area has picture
+type: custom:room-summary-card
+area: living_room
+```
+
+### Custom Background Images
+
+Override area pictures with custom images:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+background:
+  image: /local/images/living-room.jpg
+  opacity: 30 # 30% opacity
+```
+
+### Dynamic Image Entities
+
+Use image entities for dynamic backgrounds that change based on entity state:
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+background:
+  image_entity: person.john # Person's picture
+  opacity: 40
+```
+
+```yaml
+type: custom:room-summary-card
+area: security_room
+background:
+  image_entity: camera.front_door # Live camera feed
+  opacity: 25
+```
+
+### Background Priority System
+
+The card uses images in this priority order:
+
+1. **image_entity**: Dynamic image from entity's `entity_picture` attribute
+2. **image**: Custom image URL/path from configuration
+3. **area.picture**: Area's picture attribute (automatic fallback)
+
+### Background Opacity Control
+
+Control background transparency with automatic or manual opacity:
+
+```yaml
+background:
+  image: /local/images/room.jpg
+  opacity: 50 # 50% opacity (0-100 scale)
+```
+
+If no opacity is specified, the card uses theme-aware automatic opacity:
+
+- Light mode: Uses standard opacity values
+- Dark mode: Adjusts opacity based on entity state
+
+### Disabling Background Images
+
+Completely disable background images:
+
+```yaml
+background:
+  options:
+    - disable
+```
+
+Or use the feature flag:
+
+```yaml
+features:
+  - hide_room_icon # Hide room icon for cleaner look
+background:
+  options:
+    - disable
+```
+
+### Image Entity Examples
+
+#### Person Entity Background
+
+```yaml
+type: custom:room-summary-card
+area: master_bedroom
+background:
+  image_entity: person.john
+  opacity: 35
+features:
+  - hide_room_icon # Clean look with person background
+```
+
+#### Camera Feed Background
+
+```yaml
+type: custom:room-summary-card
+area: garage
+background:
+  image_entity: camera.garage_cam
+  opacity: 20
+```
+
+#### Image Entity with Fallback
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+background:
+  image_entity: image.room_photo # Primary choice
+  image: /local/images/fallback.jpg # Fallback if entity unavailable
+  opacity: 30
+```
 
 ## Problem Entity Detection
 
@@ -270,7 +395,7 @@ The card shows colored borders based on sensor thresholds:
 
 ## Advanced Examples
 
-### Complete Room Configuration
+### Complete Room with Background
 
 ```yaml
 type: custom:room-summary-card
@@ -293,12 +418,52 @@ sensors:
   - sensor.living_room_humidity
   - sensor.living_room_co2
 sensor_layout: bottom
+background:
+  image: /local/images/living-room.jpg
+  opacity: 25
 thresholds:
   temperature: 75
   humidity: 55
 navigate: /lovelace/living-room
 features:
   - hide_area_stats
+```
+
+### Person's Room with Dynamic Background
+
+```yaml
+type: custom:room-summary-card
+area: master_bedroom
+area_name: "John's Room"
+background:
+  image_entity: person.john
+  opacity: 40
+features:
+  - hide_room_icon
+entities:
+  - light.bedroom_main
+  - switch.bedroom_fan
+  - climate.bedroom_ac
+sensors:
+  - sensor.bedroom_temperature
+  - sensor.bedroom_humidity
+```
+
+### Security Room with Camera Background
+
+```yaml
+type: custom:room-summary-card
+area: security_office
+background:
+  image_entity: camera.front_door
+  opacity: 20
+entities:
+  - entity_id: binary_sensor.front_door
+    icon: mdi:door
+  - entity_id: binary_sensor.motion_detector
+    icon: mdi:motion-sensor
+  - entity_id: alarm_control_panel.house
+    icon: mdi:shield-home
 ```
 
 ### Custom Colors Example
@@ -358,6 +523,9 @@ entities:
 sensors:
   - sensor.office_temperature
   - sensor.office_humidity
+background:
+  image: /local/images/office.jpg
+  opacity: 30
 ```
 
 ### Sensor Layout Options
@@ -377,6 +545,9 @@ sensor_layout: stacked
 type: custom:room-summary-card
 area: living_room
 sensor_layout: bottom
+background:
+  image: /local/images/living-room.jpg
+  opacity: 25
 ```
 
 ![Sensor Layouts](../assets/sensors-styles.png)
@@ -392,6 +563,10 @@ features:
   - hide_climate_label # No sensor display
   - hide_area_stats # No device/entity counts
   - hide_sensor_icons # No icons next to sensor values
+  - hide_room_icon # Clean layout
+background:
+  image: /local/images/utility.jpg
+  opacity: 20
 ```
 
 ### Custom Thresholds
@@ -403,6 +578,9 @@ area: garage
 thresholds:
   temperature: 90  # Red border above 90°F
   humidity: 80     # Blue border above 80%
+background:
+  image_entity: camera.garage_cam
+  opacity: 15
 
 # Low temperature threshold for wine cellar
 type: custom:room-summary-card

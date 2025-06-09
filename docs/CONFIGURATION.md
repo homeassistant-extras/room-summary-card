@@ -6,6 +6,7 @@ This guide covers all configuration options for the Room Summary Card, from basi
 
 - [Basic Configuration](#basic-configuration)
 - [Configuration Options](#configuration-options)
+- [Background Configuration](#background-configuration)
 - [Entity Configuration](#entity-configuration)
 - [Sensor Configuration](#sensor-configuration)
 - [Threshold Configuration](#threshold-configuration)
@@ -29,6 +30,7 @@ With no additional configuration the card automatically discovers and displays:
 - Room fan
 - Temperature sensors
 - Humidity sensors
+- Area background image (if set)
 
 See [default entities](#default-entities)
 
@@ -42,6 +44,7 @@ See [default entities](#default-entities)
 | entities       | array            | See below                         | Additional entities to display                                    |
 | sensors        | array            | See below                         | Array of sensor entities to display in the card label area        |
 | navigate       | string           | area name (dash-separated)        | Custom navigation path when clicking the room name / icon         |
+| background     | object           | See below                         | Background image configuration                                    |
 | features       | list             | See below                         | Optional flags to toggle different features                       |
 | sensor_layout  | string           | `default`                         | Layout for sensor display: `default`, `stacked`, or `bottom`      |
 | sensor_classes | array            | `['temperature', 'humidity']`     | Device classes to average and display sensor readings for         |
@@ -56,6 +59,79 @@ By default, the card will include (if found):
 - All temperature and humidity sensors by device class
 - Problem entities (labeled with "problem")
 - Area statistics
+- Area background image (if picture attribute is set)
+
+## Background Configuration
+
+Customize the card's background appearance with images and effects:
+
+```yaml
+background:
+  image: /local/images/living-room.jpg # Custom image path/URL
+  image_entity: image.living_room_camera # Dynamic image from entity
+  opacity: 30 # Opacity percentage (0-100)
+  options:
+    - disable # Disable background images entirely
+```
+
+### Background Options
+
+| Name         | Type   | Default | Description                                                   |
+| ------------ | ------ | ------- | ------------------------------------------------------------- |
+| image        | string | none    | URL or path to background image                               |
+| image_entity | string | none    | Entity ID for dynamic background (image, person, camera)      |
+| opacity      | number | auto    | Background opacity percentage (0-100)                         |
+| options      | array  | none    | Array with 'disable' to turn off background images completely |
+
+### Background Priority
+
+The card uses background images in this priority order:
+
+1. **image_entity**: Dynamic image from specified entity's `entity_picture`
+2. **image**: Custom image URL or path
+3. **area picture**: Area's picture attribute (automatic fallback)
+
+### Background Examples
+
+#### Custom Background Image
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+background:
+  image: /local/images/living-room.jpg
+  opacity: 25
+```
+
+#### Dynamic Background from Person Entity
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+background:
+  image_entity: person.john
+  opacity: 40
+```
+
+#### Using Camera Feed as Background
+
+```yaml
+type: custom:room-summary-card
+area: garage
+background:
+  image_entity: camera.garage_cam
+  opacity: 20
+```
+
+#### Disable Background Images
+
+```yaml
+type: custom:room-summary-card
+area: office
+background:
+  options:
+    - disable
+```
 
 ## Entity Configuration
 
@@ -243,6 +319,7 @@ Use feature flags to customize card behavior:
 features:
   - hide_climate_label
   - hide_area_stats
+  - hide_room_icon
   - hide_sensor_icons
   - exclude_default_entities
   - skip_climate_styles
@@ -253,6 +330,7 @@ features:
 | ------------------------ | ---------------------------------------------------- |
 | hide_climate_label       | Hide the climate/sensor information                  |
 | hide_area_stats          | Hide the area statistics (device/entity counts)      |
+| hide_room_icon           | Hide the room icon (for cleaner layouts)             |
 | hide_sensor_icons        | Hide the icons next to sensor values                 |
 | exclude_default_entities | Don't include default light/fan entities             |
 | skip_climate_styles      | Disable climate-based color coding & borders         |
@@ -336,6 +414,26 @@ area: living_room
 area_name: 'Family Room'
 ```
 
+### With Background Image
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+background:
+  image: /local/images/living-room.jpg
+  opacity: 30
+```
+
+### With Dynamic Background
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+background:
+  image_entity: person.john
+  opacity: 40
+```
+
 ### With Custom Entity
 
 ```yaml
@@ -385,6 +483,18 @@ entities:
     icon: mdi:desktop-tower
 ```
 
+### Hide Room Icon
+
+```yaml
+type: custom:room-summary-card
+area: bathroom
+features:
+  - hide_room_icon
+background:
+  image: /local/images/bathroom.jpg
+  opacity: 35
+```
+
 ### Full Configuration Example
 
 ```yaml
@@ -408,6 +518,9 @@ sensors:
   - sensor.living_room_humidity
   - sensor.living_room_co2
 sensor_layout: bottom
+background:
+  image: /local/images/living-room.jpg
+  opacity: 25
 thresholds:
   temperature: 75
   humidity: 55
@@ -443,6 +556,16 @@ thresholds:
   temperature: 75 # Custom temperature threshold
   humidity: 55 # Custom humidity threshold
 ```
+
+## Setting Up Area Pictures
+
+To use automatic background images from areas:
+
+1. Go to Settings → Areas & Labels in Home Assistant
+2. Click on your area
+3. Click "Edit"
+4. Upload a picture in the "Picture" field
+5. Save - the card will automatically use this as the background
 
 ## Next Steps
 

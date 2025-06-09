@@ -182,11 +182,12 @@ describe('editor-schema.ts', () => {
                   multiple: true,
                   mode: 'list' as const,
                   options: [
+                    { label: 'Hide Area Stats', value: 'hide_area_stats' },
                     {
-                      label: 'Hide Climate Label',
+                      label: 'Hide Sensors',
                       value: 'hide_climate_label',
                     },
-                    { label: 'Hide Area Stats', value: 'hide_area_stats' },
+                    { label: 'Hide Room Icon', value: 'hide_room_icon' },
                     {
                       label: 'Hide Sensor icons',
                       value: 'hide_sensor_icons',
@@ -238,10 +239,58 @@ describe('editor-schema.ts', () => {
               },
             },
             {
+              name: 'background',
+              label: 'Background',
+              type: 'expandable',
+              icon: 'mdi:format-paint',
+              schema: [
+                {
+                  name: 'image',
+                  label: 'Background Image',
+                  selector: { image: {} },
+                },
+                {
+                  name: 'image_entity',
+                  label: 'Background Image Entity',
+                  selector: {
+                    entity: { filter: { domain: ['image', 'person'] } },
+                  },
+                },
+                {
+                  name: 'opacity',
+                  label: 'Background Opacity',
+                  required: false,
+                  selector: {
+                    number: {
+                      mode: 'slider' as const,
+                      unit_of_measurement: '%',
+                      min: 0,
+                      max: 100,
+                    },
+                  },
+                },
+                {
+                  name: 'options',
+                  label: 'Options',
+                  selector: {
+                    select: {
+                      multiple: true,
+                      mode: 'list' as const,
+                      options: [
+                        {
+                          label: 'Disable Background Image',
+                          value: 'disable',
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+            },
+            {
               name: 'thresholds',
               label: 'Thresholds',
               type: 'expandable',
-              flatten: false,
               icon: 'mdi:thermometer-alert',
               schema: [
                 {
@@ -257,7 +306,12 @@ describe('editor-schema.ts', () => {
                   label: 'Humidity threshold',
                   required: false,
                   selector: {
-                    number: { mode: 'box' as const, unit_of_measurement: '%' },
+                    number: {
+                      mode: 'slider' as const,
+                      unit_of_measurement: '%',
+                      min: 0,
+                      max: 100,
+                    },
                   },
                 },
               ],

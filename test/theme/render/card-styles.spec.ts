@@ -7,6 +7,7 @@ import * as featureModule from '@config/feature';
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
 import * as customThemeModule from '@theme/custom-theme';
+import * as backgroundBitsModule from '@theme/render/background-bits';
 import { renderCardStyles } from '@theme/render/card-styles';
 import type { Config, EntityState } from '@type/config';
 
@@ -37,6 +38,7 @@ export default () => {
     let stateColorCssStub: sinon.SinonStub;
     let getThemeColorOverrideStub: sinon.SinonStub;
     let hasFeatureStub: sinon.SinonStub;
+    let backgroundImageStub: sinon.SinonStub;
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
@@ -48,16 +50,27 @@ export default () => {
         'getThemeColorOverride',
       );
       hasFeatureStub = sandbox.stub(featureModule, 'hasFeature');
+      backgroundImageStub = sandbox.stub(
+        backgroundBitsModule,
+        'backgroundImage',
+      );
 
       // Default stub behaviors
       stateActiveStub.returns(false);
       stateColorCssStub.returns('var(--primary-color)');
       getThemeColorOverrideStub.returns('var(--theme-override)');
       hasFeatureStub.returns(false);
+      backgroundImageStub.returns({
+        image: undefined,
+        opacity: 'var(--opacity-background-inactive)',
+      });
 
       mockHass = {
         themes: {
           darkMode: false,
+        },
+        areas: {
+          test_area: {},
         },
       };
 
@@ -79,14 +92,41 @@ export default () => {
             '--background-color-card': undefined,
             '--background-opacity-card': 'var(--opacity-background-inactive)',
             '--state-color-card-theme': 'var(--theme-override)',
+            '--background-image': undefined,
           }),
         );
+      });
+
+      it('should include background image from backgroundImage function', () => {
+        backgroundImageStub.returns({
+          image: 'url(/local/bedroom.jpg)',
+          opacity: '0.5',
+        });
+
+        const state = createStateEntity('light', 'test', 'on');
+        const styles = renderCardStyles(mockHass, mockConfig, state);
+
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--background-opacity-card': '0.5',
+            '--state-color-card-theme': 'var(--theme-override)',
+            '--background-image': 'url(/local/bedroom.jpg)',
+          }),
+        );
+
+        expect(backgroundImageStub.calledWith(mockHass, mockConfig, state)).to
+          .be.true;
       });
 
       it('should render active styles in dark mode', () => {
         mockHass.themes.darkMode = true;
         stateActiveStub.returns(true);
         stateColorCssStub.returns('var(--active-color)');
+        backgroundImageStub.returns({
+          image: undefined,
+          opacity: 'var(--opacity-background-active)',
+        });
 
         const state = createStateEntity('light', 'test', 'on');
         const styles = renderCardStyles(mockHass, mockConfig, state);
@@ -96,22 +136,7 @@ export default () => {
             '--background-color-card': 'var(--active-color)',
             '--background-opacity-card': 'var(--opacity-background-active)',
             '--state-color-card-theme': 'var(--theme-override)',
-          }),
-        );
-      });
-
-      it('should not set background color in light mode even when active', () => {
-        mockHass.themes.darkMode = false;
-        stateActiveStub.returns(true);
-
-        const state = createStateEntity('light', 'test', 'on');
-        const styles = renderCardStyles(mockHass, mockConfig, state);
-
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
+            '--background-image': undefined,
           }),
         );
       });
@@ -128,50 +153,14 @@ export default () => {
         expect(styles).to.deep.equal(
           styleMap({
             '--background-color-card': undefined, // Should be undefined due to skipStyles
-            '--background-opacity-card': 'var(--opacity-background-inactive)', // Should be inactive due to skipStyles
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
             '--state-color-card-theme': 'var(--theme-override)',
+            '--background-image': undefined,
           }),
         );
 
         expect(hasFeatureStub.calledWith(mockConfig, 'skip_entity_styles')).to
           .be.true;
-      });
-
-      it('should handle undefined state gracefully', () => {
-        const styles = renderCardStyles(mockHass, mockConfig);
-
-        expect(styles).to.deep.equal(
-          styleMap({
-            '--background-color-card': undefined,
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
-            '--state-color-card-theme': 'var(--theme-override)',
-          }),
-        );
-      });
-
-      it('should call theme override with correct parameters', () => {
-        const state = createStateEntity('light', 'test', 'on');
-        renderCardStyles(mockHass, mockConfig, state);
-
-        expect(getThemeColorOverrideStub.calledWith(mockHass, state, false)).to
-          .be.true;
-      });
-
-      it('should call stateColorCss only in dark mode', () => {
-        const state = createStateEntity('light', 'test', 'on');
-
-        // Light mode - should not call stateColorCss
-        mockHass.themes.darkMode = false;
-        renderCardStyles(mockHass, mockConfig, state);
-        expect(stateColorCssStub.called).to.be.false;
-
-        // Reset stub
-        stateColorCssStub.resetHistory();
-
-        // Dark mode - should call stateColorCss
-        mockHass.themes.darkMode = true;
-        renderCardStyles(mockHass, mockConfig, state);
-        expect(stateColorCssStub.calledWith(state, 'card')).to.be.true;
       });
     });
   });

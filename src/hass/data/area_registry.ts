@@ -8,4 +8,5 @@ export interface AreaRegistryEntry extends RegistryEntry {
   area_id: string;
   icon: string | undefined;
   name: string;
+  picture: string | null;
 }

@@ -6,6 +6,7 @@ This guide helps you resolve common issues with the Room Summary Card.
 
 - [Installation Issues](#installation-issues)
 - [Configuration Issues](#configuration-issues)
+- [Background Image Issues](#background-image-issues)
 - [Sensor Averaging Issues](#sensor-averaging-issues)
 - [Display Issues](#display-issues)
 - [Theme Issues](#theme-issues)
@@ -127,6 +128,91 @@ In dev tools they should have an attribute device_class of `humidity` or `temper
      - hide_climate_label # Remove this if sensors should show
    ```
 
+## Background Image Issues
+
+### Background Images Not Showing
+
+**Symptoms**: Expected background image doesn't appear
+
+**Solutions**:
+
+1. **Check image path**: Verify image URL/path is correct
+
+   ```yaml
+   background:
+     image: /local/images/room.jpg # Must be accessible
+   ```
+
+2. **Verify area picture**: Check if area has picture set in Home Assistant
+
+   - Go to Settings → Areas & Labels
+   - Edit your area and check if picture is uploaded
+
+3. **Test image entity**: Ensure image entity has `entity_picture` attribute
+
+   ```yaml
+   # Check in Developer Tools → States
+   person.john:
+     entity_picture: /api/image/serve/123/512x512
+   ```
+
+4. **Check disable option**:
+   ```yaml
+   background:
+     options:
+       - disable # Remove this if images should show
+   ```
+
+### Background Images Too Dark/Bright
+
+**Symptoms**: Background interferes with text readability
+
+**Solutions**:
+
+1. **Adjust opacity**:
+
+   ```yaml
+   background:
+     image: /local/images/room.jpg
+     opacity: 15 # Lower for subtle background
+   ```
+
+2. **Use different image**: Choose images with better contrast
+3. **Hide room icon for cleaner look**:
+   ```yaml
+   features:
+     - hide_room_icon
+   ```
+
+### Dynamic Image Entity Not Working
+
+**Symptoms**: Image entity doesn't provide background
+
+**Solutions**:
+
+1. **Check entity picture attribute**:
+
+   ```yaml
+   # Entity must have entity_picture in attributes
+   person.john:
+     entity_picture: /path/to/image.jpg
+   ```
+
+2. **Verify entity domain**: Use supported domains (person, image, camera)
+3. **Test with static image**: Try regular image path first
+4. **Check entity availability**: Ensure entity is available and not unknown
+
+### Image Loading Errors
+
+**Symptoms**: Broken image icons or console errors
+
+**Solutions**:
+
+1. **Check file permissions**: Ensure Home Assistant can access image files
+2. **Verify file format**: Use supported formats (jpg, png, gif, webp)
+3. **Test image URL**: Open image URL directly in browser
+4. **Check network**: Ensure external images are accessible
+
 ## Sensor Averaging Issues
 
 ### Averaged Sensors Not Showing
@@ -218,6 +304,22 @@ In dev tools they should have an attribute device_class of `humidity` or `temper
 2. **Clear CSS cache**: Hard refresh browser
 3. **Check theme compatibility**: Try with default HA theme
 4. **Disable custom CSS**: Temporarily remove custom styles
+
+### Room Icon Not Showing
+
+**Symptoms**: Room icon missing from card
+
+**Solutions**:
+
+1. **Check hide_room_icon feature**:
+
+   ```yaml
+   features:
+     - hide_room_icon # Remove this if icon should show
+   ```
+
+2. **Verify area icon**: Check if area has icon set in Home Assistant
+3. **Check entity icon**: If using custom entity, verify it has an icon
 
 ### Problem Indicator Missing
 
@@ -314,7 +416,19 @@ In dev tools they should have an attribute device_class of `humidity` or `temper
 1. **Reduce entity count**: Limit number of displayed entities
 2. **Optimize sensors**: Use fewer, more efficient sensors
 3. **Check network**: Slow internet affects loading
-4. **Disable animations**: If card has custom animations
+4. **Optimize images**: Use smaller, optimized background images
+5. **Disable animations**: If card has custom animations
+
+### Background Images Causing Lag
+
+**Symptoms**: Card becomes slow when background images are enabled
+
+**Solutions**:
+
+1. **Optimize image size**: Use smaller, compressed images
+2. **Reduce opacity**: Lower opacity values use less resources
+3. **Use static images**: Avoid dynamic image entities if performance is critical
+4. **Disable backgrounds**: Use `disable` option if performance is more important
 
 ### Frequent Updates
 
@@ -416,23 +530,23 @@ When asking for help, please include:
 
 ```yaml
 # Home Assistant Version: 2024.1.0
-# Card Version: 0.19.0
+# Card Version: 0.23.0
 # Browser: Chrome 120.0
-# Issue: Card shows blank
+# Issue: Background image not showing
 
 # Configuration:
 type: custom:room-summary-card
 area: living_room
-entities:
-  - light.living_room_light
-  - switch.living_room_fan
+background:
+  image: /local/images/living-room.jpg
+  opacity: 30
 # Error from browser console:
-# TypeError: Cannot read property 'state' of undefined
+# Failed to load resource: /local/images/living-room.jpg 404 (Not Found)
 
 # Steps to reproduce:
 # 1. Add card to dashboard
-# 2. Set area to 'living_room'
-# 3. Card appears blank
+# 2. Set background image path
+# 3. Image doesn't appear, shows broken icon
 ```
 
 ### Emergency Workarounds
@@ -465,6 +579,16 @@ If the card is completely broken:
 
 - **Cause**: Entity state is missing or malformed
 - **Fix**: Check entity has valid state and attributes
+
+### "Failed to load resource: /local/images/..."
+
+- **Cause**: Background image file not found or inaccessible
+- **Fix**: Verify image path and file exists in www folder
+
+### "Cannot read property 'entity_picture' of undefined"
+
+- **Cause**: Image entity doesn't have entity_picture attribute
+- **Fix**: Check entity has valid entity_picture or use different entity
 
 ### "TypeError: Cannot read property 'includes' of undefined"
 

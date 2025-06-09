@@ -11,6 +11,7 @@ import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
 import type { Config, EntityState } from '@type/config';
 import { getThemeColorOverride } from '../custom-theme';
+import { backgroundImage } from './background-bits';
 
 /**
  * Generates dynamic card styles based on state and sensor readings
@@ -33,8 +34,8 @@ export const renderCardStyles = (
     : undefined;
   const themeOverride = getThemeColorOverride(hass, state, active);
   const skipStyles = hasFeature(config, 'skip_entity_styles');
+  const { image, opacity } = backgroundImage(hass, config, state);
 
-  const opacity = `var(--opacity-background-${active && !skipStyles ? 'active' : 'inactive'})`;
   let backgroundColorCard: string | undefined;
   if (skipStyles) {
     backgroundColorCard = undefined;
@@ -47,5 +48,6 @@ export const renderCardStyles = (
     '--background-color-card': backgroundColorCard,
     '--background-opacity-card': opacity,
     '--state-color-card-theme': themeOverride,
+    '--background-image': image,
   });
 };

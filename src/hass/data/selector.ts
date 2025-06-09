@@ -2,15 +2,22 @@
  * https://github.com/home-assistant/frontend/blob/dev/src/data/selector.ts
  */
 
+import type { CropOptions } from '@hass/dialogs/image-cropper-dialog/show-image-cropper-dialog';
+
 export type Selector =
   | AreaSelector
   | EntitySelector
+  | ImageSelector
   | NumberSelector
   | SelectSelector
   | StringSelector;
 
 export interface AreaSelector {
   area: {};
+}
+
+export interface ImageSelector {
+  image: { original?: boolean; crop?: CropOptions } | null;
 }
 
 interface EntitySelectorFilter {

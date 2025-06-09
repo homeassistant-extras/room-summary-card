@@ -12,6 +12,7 @@ import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
+import { hasFeature } from '@config/feature';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
 import { info } from '@html/info';
@@ -194,9 +195,10 @@ export class RoomSummaryCard extends LitElement {
       return nothing;
     }
 
-    const roomEntity = renderStateIcon(this, this._hass, this._roomEntity, [
-      'room',
-    ]);
+    const hide = hasFeature(this._config, 'hide_room_icon');
+    const roomEntity = hide
+      ? undefined
+      : renderStateIcon(this, this._hass, this._roomEntity, ['room']);
 
     const stateIcons = this._states.map((s) =>
       renderStateIcon(this, this._hass, s, ['entity']),
