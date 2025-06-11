@@ -32,11 +32,12 @@ describe('index.ts', () => {
 
   it('should register both room-summary-card and editor custom elements', () => {
     require('@/index.ts');
-    expect(customElementsStub.calledTwice).to.be.true;
+    expect(customElementsStub.calledThrice).to.be.true;
     expect(customElementsStub.firstCall.args[0]).to.equal('room-summary-card');
     expect(customElementsStub.secondCall.args[0]).to.equal(
       'room-summary-card-editor',
     );
+    expect(customElementsStub.thirdCall.args[0]).to.equal('sensor-collection');
   });
 
   it('should initialize window.customCards if undefined', () => {
@@ -84,7 +85,7 @@ describe('index.ts', () => {
     require('@/index.ts');
 
     expect(window.customCards).to.have.lengthOf(1);
-    expect(customElementsStub.callCount).to.equal(2); // Called twice for initial registration only
+    expect(customElementsStub.callCount).to.equal(3);
   });
 
   it('should log the version with proper formatting', () => {

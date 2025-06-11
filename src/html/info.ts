@@ -12,7 +12,6 @@ import type {
 } from '@type/config';
 import { html } from 'lit';
 import { renderAreaStatistics } from './area-statistics';
-import { renderSensors } from './sensors';
 
 /**
  * Renders the information section for a room summary card.
@@ -36,10 +35,9 @@ export const info = (
   const handler = actionHandler(roomEntity);
   const action = handleClickAction(element, roomEntity);
   const textStyle = renderTextStyles(hass, config, roomEntity);
-  const sensorInfo = renderSensors(hass, config, sensors);
   const stats = renderAreaStatistics(hass, config);
 
-  return html`<div class="info ${config.sensor_layout}">
+  return html`<div class="info">
     <div
       class="name text"
       style=${textStyle}
@@ -49,6 +47,10 @@ export const info = (
       ${roomInformation.area_name}
     </div>
     ${stats}
-    <div class="sensors text" style=${textStyle}>${sensorInfo}</div>
+    <sensor-collection
+      .config=${config}
+      .sensors=${sensors}
+      .hass=${hass}
+    ></sensor-collection>
   </div>`;
 };

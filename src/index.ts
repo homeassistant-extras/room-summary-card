@@ -7,12 +7,14 @@
  */
 
 import { RoomSummaryCard } from '@cards/card';
+import { SensorCollection } from '@cards/components/sensor-collection';
 import { RoomSummaryCardEditor } from '@cards/editor';
 import { version } from '../package.json';
 
 // Register the custom element with the browser
 customElements.define('room-summary-card', RoomSummaryCard);
 customElements.define('room-summary-card-editor', RoomSummaryCardEditor);
+customElements.define('sensor-collection', SensorCollection);
 
 // Ensure the customCards array exists on the window object
 window.customCards = window.customCards || [];

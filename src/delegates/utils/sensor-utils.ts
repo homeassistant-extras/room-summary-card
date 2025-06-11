@@ -1,9 +1,4 @@
-import type {
-  AveragedSensor,
-  DisplaySensor,
-  EntityState,
-  SensorData,
-} from '@type/config';
+import type { AveragedSensor } from '@type/config';
 
 /**
  * Formats a number with appropriate decimal places
@@ -22,49 +17,13 @@ const blankBeforeUnit = (unit: string): string => {
 };
 
 /**
- * Converts an averaged sensor to a display sensor
+ * Converts an `AveragedSensor` object into a formatted string suitable for display.
+ *
+ * The output string consists of the formatted average value, an optional space (if required)
+ * before the unit of measurement, and the unit itself.
+ *
+ * @param averagedSensor - The sensor data object containing the average value and unit of measurement.
+ * @returns A string representing the sensor's average value and unit, formatted for display.
  */
-const averagedToDisplaySensor = (averaged: AveragedSensor): DisplaySensor => {
-  const formattedValue = formatNumber(averaged.average);
-  const spacing = blankBeforeUnit(averaged.uom);
-  const displayState = `${formattedValue}${spacing}${averaged.uom}`;
-
-  return {
-    value: displayState,
-    device_class: averaged.device_class,
-    domain: 'sensor',
-  };
-};
-
-/**
- * Converts an individual entity state to a display sensor
- */
-const entityToDisplaySensor = (entity: EntityState): DisplaySensor => {
-  return {
-    state: entity,
-    domain: entity.domain,
-    device_class: entity.attributes.device_class ?? 'sensor',
-  };
-};
-
-/**
- * Converts sensor data to an array of display sensors
- * Individual sensors come first, followed by averaged sensors
- */
-export const sensorDataToDisplaySensors = (
-  sensorData: SensorData,
-): DisplaySensor[] => {
-  const displaySensors: DisplaySensor[] = [];
-
-  // Add individual sensors first
-  sensorData.individual.forEach((entity) => {
-    displaySensors.push(entityToDisplaySensor(entity));
-  });
-
-  // Add averaged sensors
-  sensorData.averaged.forEach((averaged) => {
-    displaySensors.push(averagedToDisplaySensor(averaged));
-  });
-
-  return displaySensors;
-};
+export const sensorDataToDisplaySensors = (averagedSensor: AveragedSensor) =>
+  `${formatNumber(averagedSensor.average)}${blankBeforeUnit(averagedSensor.uom)}${averagedSensor.uom}`;

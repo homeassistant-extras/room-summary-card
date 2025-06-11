@@ -224,42 +224,10 @@ const iconStyles = css`
  * Sensor and label display styles
  */
 const sensorLabelStyles = css`
-  /* Sensor Label area styling */
-  .info.bottom .sensors {
-    position: absolute;
-    bottom: 2%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .info.stacked .sensors-container {
-    flex-direction: column;
-  }
-
   /* Room name styling */
   .name {
     font-size: clamp(1rem, 6cqw, 2rem);
     color: var(--text-color);
-  }
-
-  /* Sensors */
-  .sensors {
-    margin-left: -2%;
-    margin-top: 2%;
-  }
-
-  .sensors:not(:has(ha-state-icon)) {
-    margin-left: 0px;
-  }
-
-  .sensors-container {
-    display: flex;
-    flex-wrap: wrap;
-    opacity: var(--text-opacity-theme, 0.4);
-  }
-
-  .sensors-container:not(:has(ha-state-icon)) {
-    column-gap: 8px;
   }
 `;
 
@@ -275,4 +243,47 @@ export const styles = css`
   ${entityAreaStyles}
   ${iconStyles}
   ${sensorLabelStyles}
+`;
+
+/**
+ * Sensor styles for individual sensor display
+ * Includes layout, icon visibility, and sensor-specific styles
+ */
+export const sensorStyles = css`
+  :host {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    opacity: var(--text-opacity-theme, 0.4);
+    margin-left: -2%;
+    margin-top: 1%;
+  }
+
+  :host([hide-icons]) {
+    column-gap: 8px;
+    margin-left: 0px;
+  }
+
+  :host([layout='stacked']) {
+    flex-direction: column;
+  }
+
+  :host([layout='bottom']) {
+    position: absolute;
+    bottom: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .sensor {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    --mdc-icon-size: 20px;
+  }
+
+  .sensor ha-state-icon,
+  .sensor ha-icon {
+    flex-shrink: 0;
+  }
 `;
