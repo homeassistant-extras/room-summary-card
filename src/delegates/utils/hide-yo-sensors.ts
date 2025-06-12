@@ -2,7 +2,9 @@ import { hasFeature } from '@config/feature';
 import { getDevice } from '@delegates/retrievers/device';
 import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, EntityState, SensorData } from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityState } from '@type/room';
+import type { SensorData } from '@type/sensor';
 import { calculateAverages } from './sensor-averages';
 
 /**

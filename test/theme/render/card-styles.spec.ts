@@ -9,7 +9,8 @@ import * as stateColorModule from '@hass/common/entity/state_color';
 import * as backgroundBitsModule from '@theme/background/background-bits';
 import * as customThemeModule from '@theme/custom-theme';
 import { renderCardStyles } from '@theme/render/card-styles';
-import type { Config, EntityInformation } from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityInformation } from '@type/room';
 
 // Helper to create entity information for testing
 const createEntityInfo = (

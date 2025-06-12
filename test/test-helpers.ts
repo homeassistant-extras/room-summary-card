@@ -1,5 +1,5 @@
 import type { HassEntity } from '@hass/ws/types';
-import type { EntityState } from '@type/config';
+import type { EntityState } from '@type/room';
 
 /**
  * Creats a fake entity

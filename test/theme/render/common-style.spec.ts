@@ -2,7 +2,7 @@ import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
 import * as customThemeModule from '@theme/custom-theme';
 import { getStyleData } from '@theme/render/common-style';
-import type { EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 

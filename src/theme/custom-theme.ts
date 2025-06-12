@@ -1,5 +1,5 @@
 import type { HomeAssistant } from '@hass/types';
-import type { EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import { processHomeAssistantColors, processMinimalistColors } from './colors';
 import { getRgbColor } from './get-rgb';
 

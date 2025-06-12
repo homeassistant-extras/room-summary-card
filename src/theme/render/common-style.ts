@@ -3,7 +3,7 @@ import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
 import { getThemeColorOverride } from '@theme/custom-theme';
-import type { EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/room';
 
 /**
  * Interface for common style data used by both icon and text styling functions

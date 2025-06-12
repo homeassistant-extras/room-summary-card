@@ -1,4 +1,4 @@
-import type { EntityState } from '@type/config';
+import type { EntityState } from '@type/room';
 
 /**
  * Generates an RGB color string based on the state of an entity and its attributes.

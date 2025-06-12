@@ -22,12 +22,9 @@ import type { HomeAssistant } from '@hass/types';
 import { info } from '@html/info';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { styles } from '@theme/styles';
-import type {
-  Config,
-  EntityInformation,
-  RoomInformation,
-  SensorData,
-} from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityInformation, RoomInformation } from '@type/room';
+import type { SensorData } from '@type/sensor';
 const equal = require('fast-deep-equal');
 
 export class RoomSummaryCard extends LitElement {

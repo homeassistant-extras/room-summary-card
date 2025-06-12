@@ -1,5 +1,5 @@
 import { getRgbColor } from '@theme/get-rgb';
-import type { EntityState } from '@type/config';
+import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 
 export default () => {

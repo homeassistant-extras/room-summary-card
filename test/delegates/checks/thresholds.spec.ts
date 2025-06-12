@@ -1,6 +1,7 @@
 import * as featureModule from '@config/feature';
 import { climateThresholds } from '@delegates/checks/thresholds';
-import type { Config, SensorData } from '@type/config';
+import type { Config } from '@type/config';
+import type { SensorData } from '@type/sensor';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { stub, type SinonStub } from 'sinon';

@@ -1,5 +1,5 @@
 import type { HomeAssistant } from '@hass/types';
-import type { EntityState } from '@type/config';
+import type { EntityState } from '@type/room';
 import { html, type TemplateResult } from 'lit';
 
 /**

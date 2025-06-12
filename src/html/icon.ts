@@ -7,7 +7,7 @@ import {
   getProblemEntitiesStyle,
   renderEntityIconStyles,
 } from '@theme/render/icon-styles';
-import type { EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import { html, nothing, type TemplateResult } from 'lit';
 
 /**

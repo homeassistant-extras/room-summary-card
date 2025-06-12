@@ -1,7 +1,7 @@
 import type { HomeAssistant } from '@hass/types';
 import { stateDisplay } from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
-import type { EntityState } from '@type/config';
+import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 import { type TemplateResult } from 'lit';
 

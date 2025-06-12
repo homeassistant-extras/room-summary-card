@@ -2,7 +2,8 @@ import { hasFeature } from '@config/feature';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
-import type { Config, EntityState } from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityState } from '@type/room';
 
 /**
  * Calculates the opacity value for the background

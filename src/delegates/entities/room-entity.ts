@@ -2,7 +2,8 @@ import { getArea } from '@delegates/retrievers/area';
 import { getState } from '@delegates/retrievers/state';
 import type { ActionConfig } from '@hass/data/lovelace/config/action';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, EntityInformation } from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityInformation } from '@type/room';
 
 /**
  * Gets the room entity information

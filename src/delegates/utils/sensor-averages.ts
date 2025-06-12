@@ -1,5 +1,6 @@
 import { isNumericState } from '@hass/common/number/format_number';
-import type { AveragedSensor, EntityState } from '@type/config';
+import type { EntityState } from '@type/room';
+import type { AveragedSensor } from '@type/sensor';
 
 /**
  * Filters entities by device class and ensures they are numeric

@@ -5,7 +5,7 @@ import {
 } from 'lit-html/directives/style-map.js';
 
 import type { HomeAssistant } from '@hass/types';
-import type { EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import { getStyleData } from './common-style';
 
 /**

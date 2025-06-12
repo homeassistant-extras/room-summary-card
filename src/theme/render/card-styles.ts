@@ -9,7 +9,8 @@ import { stateActive } from '@hass/common/entity/state_active';
 import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
-import type { Config, EntityInformation } from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import { getBackgroundOpacity } from '../background/background-bits';
 import { getThemeColorOverride } from '../custom-theme';
 

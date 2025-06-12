@@ -2,12 +2,9 @@ import { climateThresholds } from '@delegates/checks/thresholds';
 import { getArea } from '@delegates/retrievers/area';
 import type { HomeAssistant } from '@hass/types';
 import { getBackgroundImageUrl } from '@theme/image/get-pic';
-import type {
-  Config,
-  EntityInformation,
-  RoomInformation,
-  SensorData,
-} from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityInformation, RoomInformation } from '@type/room';
+import type { SensorData } from '@type/sensor';
 import { getIconEntities } from '../entities/icon-entities';
 import { getProblemEntities } from '../entities/problem-entities';
 import { getRoomEntity } from '../entities/room-entity';

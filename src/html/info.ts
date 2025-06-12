@@ -1,11 +1,8 @@
 import type { HomeAssistant } from '@hass/types';
 import { renderTextStyles } from '@theme/render/text-styles';
-import type {
-  Config,
-  EntityInformation,
-  RoomInformation,
-  SensorData,
-} from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityInformation, RoomInformation } from '@type/room';
+import type { SensorData } from '@type/sensor';
 import { html } from 'lit';
 import { renderAreaStatistics } from './area-statistics';
 

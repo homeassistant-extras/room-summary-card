@@ -1,5 +1,5 @@
 import { sensorDataToDisplaySensors } from '@delegates/utils/sensor-utils';
-import type { AveragedSensor } from '@type/config';
+import type { AveragedSensor } from '@type/sensor';
 import { expect } from 'chai';
 
 export default () => {

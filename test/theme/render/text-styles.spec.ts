@@ -1,7 +1,8 @@
 import * as featureModule from '@config/feature';
 import * as commonStyleModule from '@theme/render/common-style';
 import { renderTextStyles } from '@theme/render/text-styles';
-import type { Config, EntityInformation } from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
 import { nothing } from 'lit';
 import { styleMap } from 'lit-html/directives/style-map.js';

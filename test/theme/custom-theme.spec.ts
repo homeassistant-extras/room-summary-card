@@ -2,7 +2,7 @@ import type { HomeAssistant } from '@hass/types';
 import * as colorsModule from '@theme/colors';
 import { getThemeColorOverride } from '@theme/custom-theme';
 import * as rgbColorModule from '@theme/get-rgb';
-import type { EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 

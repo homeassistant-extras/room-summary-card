@@ -1,5 +1,6 @@
 import { hasFeature } from '@config/feature';
-import type { AveragedSensor, Config } from '@type/config';
+import type { Config } from '@type/config';
+import type { AveragedSensor } from '@type/sensor';
 import memoizeOne from 'memoize-one';
 
 /**

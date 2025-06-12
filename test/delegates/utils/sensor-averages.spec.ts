@@ -1,5 +1,5 @@
 import { calculateAverages } from '@delegates/utils/sensor-averages';
-import type { EntityState } from '@type/config';
+import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 
 // Helper to create entity states for testing

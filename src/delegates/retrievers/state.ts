@@ -1,5 +1,5 @@
 import { computeDomain } from '@hass/common/entity/compute_domain';
-import type { EntityState } from '@type/config';
+import type { EntityState } from '@type/room';
 import memoizeOne from 'memoize-one';
 
 /**

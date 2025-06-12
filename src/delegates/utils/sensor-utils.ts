@@ -1,4 +1,4 @@
-import type { AveragedSensor } from '@type/config';
+import type { AveragedSensor } from '@type/sensor';
 
 /**
  * Formats a number with appropriate decimal places

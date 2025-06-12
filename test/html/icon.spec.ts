@@ -2,7 +2,7 @@ import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import { renderProblemIndicator, renderStateIcon } from '@html/icon';
 import { elementUpdated, fixture } from '@open-wc/testing-helpers';
-import type { EntityInformation, EntityState } from '@type/config';
+import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';

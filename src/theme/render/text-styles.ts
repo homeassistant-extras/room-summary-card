@@ -1,6 +1,7 @@
 import { hasFeature } from '@config/feature';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, EntityInformation } from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import { nothing } from 'lit';
 import {
   type StyleMapDirective,

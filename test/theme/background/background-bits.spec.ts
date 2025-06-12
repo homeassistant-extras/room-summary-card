@@ -1,7 +1,8 @@
 import * as featureModule from '@config/feature';
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import { getBackgroundOpacity } from '@theme/background/background-bits';
-import type { Config, EntityState } from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 import { stub, type SinonStub } from 'sinon';
 

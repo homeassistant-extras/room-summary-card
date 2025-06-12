@@ -3,7 +3,7 @@ import {
   getProblemEntitiesStyle,
   renderEntityIconStyles,
 } from '@theme/render/icon-styles';
-import type { EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import * as sinon from 'sinon';

@@ -4,12 +4,9 @@ import { info } from '@html/info';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity as e } from '@test/test-helpers';
 import * as textStylesModule from '@theme/render/text-styles';
-import type {
-  Config,
-  EntityInformation,
-  RoomInformation,
-  SensorData,
-} from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityInformation, RoomInformation } from '@type/room';
+import type { SensorData } from '@type/sensor';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { styleMap } from 'lit-html/directives/style-map.js';
