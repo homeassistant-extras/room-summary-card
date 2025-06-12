@@ -13,6 +13,10 @@ import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
 import { hasFeature } from '@config/feature';
+import {
+  actionHandler,
+  handleClickAction,
+} from '@delegates/action-handler-delegate';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
 import { info } from '@html/info';
@@ -222,9 +226,12 @@ export class RoomSummaryCard extends LitElement {
       this._problemExists,
     );
 
+    const handler = actionHandler(this._roomEntity);
+    const action = handleClickAction(this, this._roomEntity);
     return html`
       <ha-card style="${cardStyle}">
         <div class="grid">
+          <div class="hitbox" @action=${action} .actionHandler=${handler}></div>
           ${info(
             this,
             this._hass,

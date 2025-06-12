@@ -109,6 +109,26 @@ describe('card.ts', () => {
       expect(problemIcon).to.exist;
       expect((problemIcon as any).icon).to.equal('mdi:numeric-2');
     });
+
+    it('should call actionHandler and handleClickAction for hitbox', async () => {
+      const handleClickActionStub = stub(
+        actionHandlerModule,
+        'handleClickAction',
+      ).returns({
+        handleEvent: () => {},
+      });
+
+      const el = await fixture(card.render() as TemplateResult);
+      const hitbox = el.querySelector('.hitbox');
+
+      expect(hitbox).to.exist;
+      expect((hitbox as any).actionHandler).to.exist;
+      expect(actionHandlerStub.calledWith(card['_roomEntity'])).to.be.true;
+      expect(handleClickActionStub.calledWith(card, card['_roomEntity'])).to.be
+        .true;
+
+      handleClickActionStub.restore();
+    });
   });
 
   describe('getStubConfig()', () => {

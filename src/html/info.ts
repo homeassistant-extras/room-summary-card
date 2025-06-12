@@ -1,7 +1,3 @@
-import {
-  actionHandler,
-  handleClickAction,
-} from '@delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import { renderTextStyles } from '@theme/render/text-styles';
 import type {
@@ -32,12 +28,10 @@ export const info = (
   config: Config,
   sensors: SensorData,
 ) => {
-  const handler = actionHandler(roomEntity);
-  const action = handleClickAction(element, roomEntity);
   const textStyle = renderTextStyles(hass, config, roomEntity);
   const stats = renderAreaStatistics(hass, config);
 
-  return html`<div class="info" @action=${action} .actionHandler=${handler}>
+  return html`<div class="info">
     <div class="name text" style=${textStyle}>${roomInformation.area_name}</div>
     ${stats}
     <sensor-collection

@@ -1,4 +1,3 @@
-import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
 import * as areaStatsModule from '@html/area-statistics';
 import { info } from '@html/info';
@@ -23,8 +22,6 @@ export default () => {
     let mockRoomInformation: RoomInformation;
     let mockRoomEntity: EntityInformation;
     let mockElement: HTMLElement;
-    let actionHandlerStub: SinonStub;
-    let handleClickActionStub: SinonStub;
     let renderTextStylesStub: SinonStub;
     let renderAreaStatisticsStub: SinonStub;
 
@@ -60,18 +57,6 @@ export default () => {
         state: e('light', 'living_room', 'on'),
       };
 
-      actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
-        bind: () => {},
-        handleAction: () => {},
-      });
-
-      handleClickActionStub = stub(
-        actionHandlerModule,
-        'handleClickAction',
-      ).returns({
-        handleEvent: () => {},
-      });
-
       renderTextStylesStub = stub(textStylesModule, 'renderTextStyles').returns(
         styleMap({ '--text-color': 'var(--primary-color)' }),
       );
@@ -83,8 +68,6 @@ export default () => {
     });
 
     afterEach(() => {
-      actionHandlerStub.restore();
-      handleClickActionStub.restore();
       renderTextStylesStub.restore();
       renderAreaStatisticsStub.restore();
     });
@@ -139,27 +122,6 @@ export default () => {
         expect((sensorCollection as any).config).to.equal(mockConfig);
         expect((sensorCollection as any).sensors).to.equal(sensors);
         expect((sensorCollection as any).hass).to.equal(mockHass);
-      });
-
-      it('should call actionHandler and handleClickAction', async () => {
-        const sensors: SensorData = { individual: [], averaged: [] };
-
-        const result = info(
-          mockElement,
-          mockHass,
-          mockRoomInformation,
-          mockRoomEntity,
-          mockConfig,
-          sensors,
-        );
-        const el = await fixture(result as TemplateResult);
-
-        expect((el as any).actionHandler).to.exist;
-        expect(actionHandlerStub.calledOnce).to.be.true;
-        expect(actionHandlerStub.calledWith(mockRoomEntity)).to.be.true;
-        expect(handleClickActionStub.calledOnce).to.be.true;
-        expect(handleClickActionStub.calledWith(mockElement, mockRoomEntity)).to
-          .be.true;
       });
 
       it('should call renderAreaStatistics', () => {

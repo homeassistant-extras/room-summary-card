@@ -105,15 +105,25 @@ const gridLayoutStyles = css`
     aspect-ratio: 1/1;
     height: 100%;
     width: 100%;
+    position: relative; /* For absolute positioning of clickable area */
+  }
+
+  /* clickable overlay */
+  .hitbox {
+    grid-column: 1 / 4; /* Spans columns 1-3 */
+    grid-row: 1 / 6; /* Spans all rows */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2; /* High enough to be clickable */
   }
 
   .info {
     grid-area: i;
-    cursor: pointer;
     width: 100%;
     margin: 5% 0px 0px 10%;
     container-type: inline-size;
-    z-index: 1;
   }
 
   /* Entities Container - Flexbox with consistent spacing */
