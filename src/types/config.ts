@@ -59,6 +59,21 @@ export interface Config {
     options?: ['disable'];
   };
 
+  /** Custom styling configuration */
+  styles?: {
+    /** CSS properties for the card container */
+    card?: Record<string, string>;
+
+    /** Sensor CSS properties as an object */
+    sensors?: Record<string, string>;
+
+    /** CSS properties for the stats area */
+    stats?: Record<string, string>;
+
+    /** Title CSS properties as an object */
+    title?: Record<string, string>;
+  };
+
   /** Options to enable disable features **/
   features?: Features[];
 }

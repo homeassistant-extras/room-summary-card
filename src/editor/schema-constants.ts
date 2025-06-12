@@ -184,5 +184,37 @@ export const STYLES: HaFormSchema = {
         },
       ],
     },
+    {
+      name: 'styles',
+      label: 'Your CSS Styles',
+      type: 'expandable',
+      icon: 'mdi:spray',
+      schema: [
+        {
+          name: 'card',
+          label: 'Card Styles',
+          required: false,
+          selector: { object: {} },
+        },
+        {
+          name: 'sensors',
+          label: 'Sensor Styles',
+          required: false,
+          selector: { object: {} },
+        },
+        {
+          name: 'stats',
+          label: 'Stats Styles',
+          required: false,
+          selector: { object: {} },
+        },
+        {
+          name: 'title',
+          label: 'Title Styles',
+          required: false,
+          selector: { object: {} },
+        },
+      ],
+    },
   ],
 };

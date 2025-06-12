@@ -5,6 +5,7 @@ import * as sensorUtilsModule from '@delegates/utils/sensor-utils';
 import type { HomeAssistant } from '@hass/types';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
+import * as styleConverterModule from '@theme/util/style-converter';
 import type { Config, EntityState, SensorData } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
@@ -132,6 +133,29 @@ describe('sensor-collection.ts', () => {
 
       expect(el.classList.contains('configured')).to.be.true;
       expect(stateDisplayStub.called).to.be.true;
+    });
+
+    it('should call stylesToHostCss with config styles', async () => {
+      const stylesToHostCssStub = stub(
+        styleConverterModule,
+        'stylesToHostCss',
+      ).returns(
+        html`<style>
+          :host {
+            color: red;
+          }
+        </style>`,
+      );
+      element.config = {
+        styles: { sensors: { 'font-size': '14px' } },
+      } as any as Config;
+      element.hass = mockHass;
+
+      await fixture(element.render() as TemplateResult);
+
+      // Verify stylesToHostCss is called with config.styles.sensors
+      expect(stylesToHostCssStub.calledWith({ 'font-size': '14px' })).to.be
+        .true;
     });
   });
 

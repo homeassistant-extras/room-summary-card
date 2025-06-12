@@ -278,15 +278,82 @@ The card automatically adapts to dark mode with:
 2. **Verify theme variables**: Check if theme defines required color variables
 3. **Try hex colors**: Use hex colors as fallback
 
-## Advanced Customization
+## Custom Styles Override
 
-### Custom CSS Variables
+The new custom styles feature provides the ultimate flexibility for card appearance. Custom styles take precedence over theme defaults:
 
-You can override theme variables in your theme:
+### Style Hierarchy
+
+1. **Custom styles** (highest priority)
+2. Theme variables
+3. Card defaults (lowest priority)
+
+### Using Custom Styles with Themes
 
 ```yaml
-# In your theme
-my-custom-theme:
-  # Override card variables
-  --theme-color-minimalist: "rgb(255, 120,
+type: custom:room-summary-card
+area: living_room
+styles:
+  # Override theme colors
+  title:
+    color: var(--primary-color) # Use theme variable
+  card:
+    background: '#custom-color' # Override with custom color
+  sensors:
+    color: var(--text-primary-color)
+    '--user-icon-size': 28px # Custom CSS variable
 ```
+
+### Theme-Aware Custom Styles
+
+Create styles that adapt to light/dark themes:
+
+```yaml
+styles:
+  title:
+    color: var(--primary-text-color)
+  card:
+    border: '1px solid var(--divider-color)'
+    background: 'rgba(var(--rgb-primary-color), 0.1)'
+```
+
+### Advanced CSS Variables
+
+Custom styles support CSS variables for dynamic theming:
+
+```yaml
+styles:
+  sensors:
+    '--user-icon-size': 24px
+    color: var(--accent-color)
+  card:
+    '--card-background-color': 'rgba(0,0,0,0.1)'
+```
+
+## Custom Styles Troubleshooting
+
+### Styles Not Applying
+
+1. **Check YAML syntax**: Ensure proper indentation and quotes
+2. **Verify style area names**: Must be `card`, `title`, `stats`, or `sensors`
+3. **Clear browser cache**: Force refresh to see changes
+4. **Check for typos**: CSS property names are case-sensitive
+
+### Theme Conflicts
+
+1. **Use `!important`**: Force style precedence
+
+   ```yaml
+   styles:
+     title:
+       color: 'red !important'
+   ```
+
+2. **Check theme CSS**: Some themes have very specific selectors
+3. **Use browser dev tools**: Inspect elements to see which styles are applied
+
+### Performance with Custom Styles
+
+- Custom styles are applied dynamically and don't impact card performance
+- CSS variables are efficiently handled by the browser
+- Complex gradients and effects are hardware accelerated

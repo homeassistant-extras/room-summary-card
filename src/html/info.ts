@@ -37,15 +37,8 @@ export const info = (
   const textStyle = renderTextStyles(hass, config, roomEntity);
   const stats = renderAreaStatistics(hass, config);
 
-  return html`<div class="info">
-    <div
-      class="name text"
-      style=${textStyle}
-      @action=${action}
-      .actionHandler=${handler}
-    >
-      ${roomInformation.area_name}
-    </div>
+  return html`<div class="info" @action=${action} .actionHandler=${handler}>
+    <div class="name text" style=${textStyle}>${roomInformation.area_name}</div>
     ${stats}
     <sensor-collection
       .config=${config}

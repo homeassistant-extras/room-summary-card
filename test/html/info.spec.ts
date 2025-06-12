@@ -141,10 +141,10 @@ export default () => {
         expect((sensorCollection as any).hass).to.equal(mockHass);
       });
 
-      it('should call actionHandler and handleClickAction', () => {
+      it('should call actionHandler and handleClickAction', async () => {
         const sensors: SensorData = { individual: [], averaged: [] };
 
-        info(
+        const result = info(
           mockElement,
           mockHass,
           mockRoomInformation,
@@ -152,7 +152,9 @@ export default () => {
           mockConfig,
           sensors,
         );
+        const el = await fixture(result as TemplateResult);
 
+        expect((el as any).actionHandler).to.exist;
         expect(actionHandlerStub.calledOnce).to.be.true;
         expect(actionHandlerStub.calledWith(mockRoomEntity)).to.be.true;
         expect(handleClickActionStub.calledOnce).to.be.true;
@@ -177,7 +179,7 @@ export default () => {
           .true;
       });
 
-      it('should apply text styles and action handlers to name element', async () => {
+      it('should apply text styles to name element', async () => {
         const sensors: SensorData = { individual: [], averaged: [] };
 
         const result = info(
@@ -193,7 +195,6 @@ export default () => {
         const nameElement = el.querySelector('.name.text');
 
         expect(nameElement).to.exist;
-        expect((nameElement as any).actionHandler).to.exist;
         expect(renderTextStylesStub.calledOnce).to.be.true;
         expect(
           renderTextStylesStub.calledWith(mockHass, mockConfig, mockRoomEntity),

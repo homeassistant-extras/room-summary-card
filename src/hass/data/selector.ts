@@ -9,6 +9,7 @@ export type Selector =
   | EntitySelector
   | ImageSelector
   | NumberSelector
+  | ObjectSelector
   | SelectSelector
   | StringSelector;
 
@@ -40,6 +41,10 @@ export interface NumberSelector {
     unit_of_measurement?: string;
     slider_ticks?: boolean;
   } | null;
+}
+
+export interface ObjectSelector {
+  object: {} | null;
 }
 
 export interface SelectSelector {

@@ -18,6 +18,7 @@ Some of these go to their own documents - so use this ToC as a guide.
 - [Entity Attributes](configuration/ENTITY-ATTRIBUTES.md)
 - [Setting Up Area Pictures](configuration/AREA-PICTURES.md)
 - [Examples](configuration/EXAMPLES.md)
+- [Custom Styles Configuration](configuration/CUSTOM-STYLES.md)
 
 ## Basic Configuration
 
@@ -40,19 +41,20 @@ See [default entities](#default-entities)
 
 ## Configuration Options
 
-| Name           | Type             | Default                           | Description                                                       |
-| -------------- | ---------------- | --------------------------------- | ----------------------------------------------------------------- |
-| area           | string           | **Required**                      | The area identifier for the room (e.g., 'living_room', 'kitchen') |
-| area_name      | string           | area name                         | Custom area name                                                  |
-| entity         | string \| object | `light.<area>_light`              | Main entity for the room                                          |
-| entities       | array            | See below                         | Additional entities to display                                    |
-| sensors        | array            | See below                         | Array of sensor entities to display in the card label area        |
-| navigate       | string           | area name (dash-separated)        | Custom navigation path when clicking the room name / icon         |
-| background     | object           | See below                         | Background image configuration                                    |
-| features       | list             | See below                         | Optional flags to toggle different features                       |
-| sensor_layout  | string           | `default`                         | Layout for sensor display: `default`, `stacked`, or `bottom`      |
-| sensor_classes | array            | `['temperature', 'humidity']`     | Device classes to average and display sensor readings for         |
-| thresholds     | object           | `{temperature: 80, humidity: 60}` | Temperature and humidity thresholds                               |
+| Name           | Type             | Default                           | Description                                                    |
+| -------------- | ---------------- | --------------------------------- | -------------------------------------------------------------- |
+| area           | string           | **Required**                      | The area identifier for the room (e.g., 'shed', 'kitchen')     |
+| area_name      | string           | area name                         | Custom area name                                               |
+| entity         | string \| object | `light.<area>_light`              | Main entity for the room                                       |
+| entities       | array            | See below                         | Additional entities to display                                 |
+| sensors        | array            | See below                         | Array of sensor entities to display in the card label area     |
+| navigate       | string           | area name (dash-separated)        | Custom navigation path when clicking the room name / icon      |
+| background     | object           | See below                         | Background image configuration                                 |
+| features       | list             | See below                         | Optional flags to toggle different features                    |
+| sensor_layout  | string           | `default`                         | Layout for sensor display: `default`, `stacked`, or `bottom`   |
+| sensor_classes | array            | `['temperature', 'humidity']`     | Device classes to average and display sensor readings for      |
+| thresholds     | object           | `{temperature: 80, humidity: 60}` | Temperature and humidity thresholds                            |
+| styles         | object           | `{}`                              | Custom CSS styles for card areas (card, title, stats, sensors) |
 
 ### Default Entities
 
@@ -105,7 +107,30 @@ entities:
     off_color: disabled
 ```
 
-See [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md) for complete color options.
+## Custom Styles
+
+Apply custom CSS styles to different areas of the card:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+styles:
+  card:
+    background: 'linear-gradient(45deg, #ff6b6b, #4ecdc4)'
+    border-radius: 15px
+  title:
+    color: white
+    font-size: 2em
+  stats:
+    color: yellow
+    opacity: 1
+  sensors:
+    color: red
+    '--user-icon-size': 24px
+```
+
+- See [Custom Styles Configuration](configuration/CUSTOM-STYLES.md) for style information.
+- See [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md) for complete color options.
 
 ## Next Steps
 

@@ -2,6 +2,7 @@ import { hasFeature } from '@config/feature';
 import { getDevice } from '@delegates/retrievers/device';
 import { getEntity } from '@delegates/retrievers/entity';
 import type { HomeAssistant } from '@hass/types';
+import { stylesToMap } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import { type TemplateResult, html, nothing } from 'lit';
 
@@ -28,7 +29,7 @@ export const renderAreaStatistics = (
     return entity.area_id === config.area || devices.includes(entity.device_id);
   });
 
-  const stats = [
+  const e = [
     [devices.length, 'devices'],
     [entities.length, 'entities'],
   ]
@@ -36,5 +37,6 @@ export const renderAreaStatistics = (
     .map(([count, type]) => `${count} ${type}`)
     .join(' ');
 
-  return html`<span class="stats text">${stats}</span>`;
+  const s = stylesToMap(config.styles?.stats);
+  return html`<span style="${s}" class="stats text">${e}</span>`;
 };

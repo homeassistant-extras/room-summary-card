@@ -99,9 +99,19 @@ export default () => {
           '--background-opacity-card': '0.5',
         });
 
+        const configWithStyles = {
+          ...mockConfig,
+          styles: { card: { 'border-radius': '8px', padding: '16px' } },
+        };
+
         const entity = createEntityInfo('light.test', 'on');
         const image = '/local/bedroom.jpg';
-        const styles = renderCardStyles(mockHass, mockConfig, entity, image);
+        const styles = renderCardStyles(
+          mockHass,
+          configWithStyles,
+          entity,
+          image,
+        );
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -109,6 +119,8 @@ export default () => {
             '--state-color-card-theme': 'var(--theme-override)',
             '--background-image': 'url(/local/bedroom.jpg)',
             '--background-opacity-card': '0.5',
+            'border-radius': '8px',
+            padding: '16px',
           }),
         );
       });

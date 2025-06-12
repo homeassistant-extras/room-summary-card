@@ -123,6 +123,31 @@ export default () => {
         expect(getStyleDataStub.calledWith(mockHass, 'text', entity)).to.be
           .true;
       });
+
+      it('should spread config.styles.title when active and present', () => {
+        const entity = createEntityInfo('light', 'test', 'on');
+        mockConfig.styles = {
+          title: { 'font-size': '18px', color: 'red' },
+        };
+
+        getStyleDataStub.returns({
+          active: true,
+          cssColor: 'var(--primary-color)',
+          themeOverride: 'var(--theme-override)',
+          activeClass: 'active',
+        });
+
+        const result = renderTextStyles(mockHass, mockConfig, entity);
+
+        expect(result).to.deep.equal(
+          styleMap({
+            '--text-color': 'var(--primary-color)',
+            '--state-color-text-theme': 'var(--theme-override)',
+            'font-size': '18px',
+            color: 'red',
+          }),
+        );
+      });
     });
   });
 };

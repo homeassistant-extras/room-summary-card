@@ -155,14 +155,24 @@ export default () => {
         });
       });
 
-      it('should remove empty arrays from config', () => {
+      it('should remove empty fields from config', () => {
         // Simulate value-changed event with empty arrays
         const detail = {
           value: {
             area: 'area_1',
             features: [],
             sensor_classes: [],
-          },
+            thresholds: {},
+            background: {
+              options: undefined,
+            },
+            styles: {
+              card: undefined,
+              sensors: undefined,
+              stats: undefined,
+              title: undefined,
+            },
+          } as Config,
         };
 
         const event = new CustomEvent('value-changed', { detail });

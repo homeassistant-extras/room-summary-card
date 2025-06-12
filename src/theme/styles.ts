@@ -279,7 +279,7 @@ export const sensorStyles = css`
     display: flex;
     align-items: center;
     gap: 4px;
-    --mdc-icon-size: 20px;
+    --mdc-icon-size: var(--user-icon-size, 20px);
   }
 
   .sensor ha-state-icon,

@@ -1,11 +1,13 @@
 import type { HomeAssistant } from '@hass/types';
 import { renderAreaStatistics } from '@html/area-statistics';
 import * as stateDisplayModule from '@html/state-display';
+import * as styleConverterModule from '@theme/util/style-converter';
+
 import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing } from 'lit';
+import { styleMap } from 'lit-html/directives/style-map.js';
 import { stub, type SinonStub } from 'sinon';
-
 export default () => {
   describe('area-statistics.ts', () => {
     let mockHass: HomeAssistant;
@@ -87,16 +89,20 @@ export default () => {
 
     it('should count devices and entities in the specified area', () => {
       const result = renderAreaStatistics(mockHass, mockConfig);
+      const s = nothing;
+      const e = '2 devices 2 entities';
       expect(result).to.deep.equal(
-        html`<span class="stats text">${'2 devices 2 entities'}</span>`,
+        html`<span style="${s}" class="stats text">${e}</span>`,
       );
     });
 
     it('should handle areas with no devices or entities', () => {
       mockConfig.area = 'empty_area';
       const result = renderAreaStatistics(mockHass, mockConfig);
+      const s = nothing;
+      const e = '0 devices 0 entities';
       expect(result).to.deep.equal(
-        html`<span class="stats text">${'0 devices 0 entities'}</span>`,
+        html`<span style="${s}" class="stats text">${e}</span>`,
       );
     });
 
@@ -109,8 +115,10 @@ export default () => {
         labels: [],
       };
       const result = renderAreaStatistics(mockHass, mockConfig);
+      const s = nothing;
+      const e = '2 devices 3 entities';
       expect(result).to.deep.equal(
-        html`<span class="stats text">${'2 devices 3 entities'}</span>`,
+        html`<span style="${s}" class="stats text">${e}</span>`,
       );
     });
 
@@ -122,9 +130,22 @@ export default () => {
         labels: [],
       };
       const result = renderAreaStatistics(mockHass, mockConfig);
+      const s = nothing;
+      const e = '2 devices 3 entities';
       expect(result).to.deep.equal(
-        html`<span class="stats text">${'2 devices 3 entities'}</span>`,
+        html`<span style="${s}" class="stats text">${e}</span>`,
       );
+    });
+
+    it('should call stylesToMap with config stats styles', () => {
+      const stylesToMapStub = stub(styleConverterModule, 'stylesToMap').returns(
+        styleMap({ color: 'blue' }),
+      );
+      mockConfig.styles = { stats: { color: 'blue' } };
+
+      renderAreaStatistics(mockHass, mockConfig);
+
+      expect(stylesToMapStub.calledWith({ color: 'blue' })).to.be.true;
     });
   });
 };

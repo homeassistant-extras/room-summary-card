@@ -157,3 +157,41 @@ thresholds:
   temperature: 75 # Custom temperature threshold
   humidity: 55 # Custom humidity threshold
 ```
+
+## Custom Styling Examples
+
+### Basic Custom Colors
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+styles:
+  title:
+    color: '#4CAF50'
+    font-weight: bold
+  stats:
+    color: '#FFC107'
+  sensors:
+    color: '#2196F3'
+```
+
+### Modern Glass Card
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+styles:
+  card:
+    background: 'rgba(255, 255, 255, 0.1)'
+    border: '1px solid rgba(255, 255, 255, 0.2)'
+    border-radius: 20px
+    backdrop-filter: 'blur(10px)'
+  title:
+    color: '#ffffff'
+    font-weight: 300
+    letter-spacing: 2px
+  stats:
+    color: 'rgba(255, 255, 255, 0.7)'
+  sensors:
+    color: 'rgba(255, 255, 255, 0.8)'
+```

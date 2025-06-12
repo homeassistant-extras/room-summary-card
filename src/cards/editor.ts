@@ -72,6 +72,38 @@ export class RoomSummaryCardEditor extends LitElement {
     if (!config.sensor_classes?.length) {
       delete config.sensor_classes;
     }
+    if (config.sensor_layout === 'default') {
+      delete config.sensor_layout;
+    }
+    if (config.background) {
+      if (!config.background.options?.length) {
+        delete config.background.options;
+      }
+
+      if (!Object.keys(config.background).length) {
+        delete config.background;
+      }
+    }
+    if (!Object.keys(config.thresholds || {}).length) {
+      delete config.thresholds;
+    }
+    if (config.styles) {
+      if (!config.styles.card) {
+        delete config.styles.card;
+      }
+      if (!config.styles.sensors) {
+        delete config.styles.sensors;
+      }
+      if (!config.styles.stats) {
+        delete config.styles.stats;
+      }
+      if (!config.styles.title) {
+        delete config.styles.title;
+      }
+      if (!Object.keys(config.styles).length) {
+        delete config.styles;
+      }
+    }
 
     // @ts-ignore
     fireEvent(this, 'config-changed', {

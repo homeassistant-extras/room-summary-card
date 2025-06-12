@@ -35,6 +35,7 @@ export const renderTextStyles = (
     ? styleMap({
         '--text-color': styleData.cssColor,
         '--state-color-text-theme': styleData.themeOverride,
+        ...config.styles?.title,
       })
-    : nothing;
+    : styleMap({ ...config.styles?.title });
 };

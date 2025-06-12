@@ -5,6 +5,7 @@ import { FALLBACK_DOMAIN_ICONS } from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
 import { stateDisplay } from '@html/state-display';
 import { sensorStyles } from '@theme/styles';
+import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config, SensorData } from '@type/config';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
@@ -73,6 +74,7 @@ export class SensorCollection extends LitElement {
     }
 
     return html`
+      ${stylesToHostCss(this.config.styles?.sensors)}
       ${this.sensors.averaged.map((sensor) => this.renderSensor(sensor, true))}
       ${this.sensors.individual.map((sensor) =>
         this.renderSensor(sensor, false),

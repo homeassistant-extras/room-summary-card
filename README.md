@@ -145,6 +145,17 @@ Extensive customization options:
 - **Style Control**: Disable climate styling, entity styling
 - **Layout Options**: Multiple sensor display layouts
 
+### Custom Styling
+
+Customize the appearance with CSS styles the way you like.
+
+- **Custom Styling**: Apply custom CSS styles to different card areas (title, stats, sensors, card container)
+- **Precise Control**: Override theme defaults with specific colors, fonts, and layout properties
+- **CSS Variables**: Support for CSS custom properties like `--user-icon-size` for advanced customization
+- **Theme Integration**: Works alongside existing themes while allowing complete visual override
+
+![styles](assets/custom-styles.png)
+
 ### Card Editor
 
 Visual configuration interface:
@@ -257,6 +268,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Sensor averaging by device class`**: automatic averaging like HA area card - thanks @Ltek
 - [x] **`Moving away from customize.yaml`**: allowing more configuration on the card - thanks @johntdyer
 - [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo, @X1pheR
+- [x] **`Custom Styles`**: ability to apply custom CSS styles - thanks @marceloroloff, @ma-gu-16
 
 ## Contributing
 

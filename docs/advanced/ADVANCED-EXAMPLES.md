@@ -251,3 +251,191 @@ thresholds:
   temperature: 32  # Red border above 32°C
   humidity: 75     # Blue border above 75%
 ```
+
+## Custom Styles with Complex Configurations
+
+### Complete Styled Gaming Room
+
+```yaml
+type: custom:room-summary-card
+area: gaming_room
+area_name: 'Gaming Den'
+entity:
+  entity_id: light.gaming_room_led_strip
+  icon: mdi:led-strip-variant
+entities:
+  - entity_id: switch.gaming_pc
+    icon: mdi:desktop-tower
+    on_color: blue
+  - entity_id: media_player.gaming_speakers
+    icon: mdi:speaker
+  - entity_id: climate.gaming_room_ac
+    icon: mdi:air-conditioner
+sensors:
+  - sensor.gaming_room_temperature
+  - sensor.gaming_room_humidity
+  - sensor.pc_cpu_temperature
+background:
+  image: /local/images/gaming-setup.jpg
+  opacity: 30
+sensor_layout: bottom
+features:
+  - hide_area_stats
+styles:
+  card:
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    border: '2px solid #00ff41'
+    border-radius: 15px
+    box-shadow: '0 0 30px rgba(0, 255, 65, 0.3)'
+  title:
+    color: '#00ff41'
+    font-size: 2.5em
+    font-weight: bold
+    text-transform: uppercase
+    text-shadow: '0 0 15px rgba(0, 255, 65, 0.8)'
+  sensors:
+    color: '#00ff41'
+    font-family: 'monospace'
+    font-weight: bold
+    '--user-icon-size': 24px
+```
+
+### Minimalist Bedroom with Custom Styling
+
+```yaml
+type: custom:room-summary-card
+area: master_bedroom
+area_name: 'Master Suite'
+entity:
+  entity_id: light.bedroom_ceiling
+  on_color: warm_white
+entities:
+  - entity_id: switch.bedroom_fan
+    icon: mdi:ceiling-fan
+  - entity_id: climate.bedroom_thermostat
+    icon: mdi:thermostat
+  - entity_id: media_player.bedroom_tv
+    icon: mdi:television
+background:
+  image_entity: person.john
+  opacity: 15
+sensor_classes:
+  - temperature
+  - humidity
+sensor_layout: stacked
+thresholds:
+  temperature: 72
+  humidity: 50
+features:
+  - hide_room_icon
+styles:
+  card:
+    background: 'rgba(255, 255, 255, 0.05)'
+    border: '1px solid rgba(255, 255, 255, 0.1)'
+    border-radius: 25px
+    backdrop-filter: 'blur(15px)'
+  title:
+    color: '#ffffff'
+    font-size: 2em
+    font-weight: 200
+    letter-spacing: 3px
+  sensors:
+    color: 'rgba(255, 255, 255, 0.9)'
+    font-size: 16px
+    '--user-icon-size': 18px
+```
+
+### Industrial Workshop Theme
+
+```yaml
+type: custom:room-summary-card
+area: workshop
+area_name: 'Workshop'
+entity:
+  entity_id: light.workshop_overhead
+  icon: mdi:ceiling-light-multiple
+entities:
+  - entity_id: switch.workshop_ventilation
+    icon: mdi:fan
+    on_color: blue
+  - entity_id: binary_sensor.workshop_door
+    icon: mdi:door
+  - entity_id: switch.workshop_compressor
+    icon: mdi:air-compressor
+    on_color: orange
+sensors:
+  - sensor.workshop_temperature
+  - sensor.workshop_humidity
+  - sensor.workshop_dust_level
+problem_entities:
+  - binary_sensor.workshop_smoke_detector
+  - binary_sensor.workshop_motion
+sensor_layout: default
+features:
+  - hide_area_stats
+styles:
+  card:
+    background: 'linear-gradient(45deg, #2c3e50, #34495e)'
+    border: '3px solid #e67e22'
+    border-radius: 8px
+    box-shadow: 'inset 0 0 20px rgba(0,0,0,0.3)'
+  title:
+    color: '#e67e22'
+    font-family: 'monospace'
+    font-size: 2.2em
+    font-weight: bold
+    text-transform: uppercase
+    text-shadow: '2px 2px 4px rgba(0,0,0,0.8)'
+  sensors:
+    color: '#ecf0f1'
+    font-family: 'monospace'
+    font-weight: bold
+    '--user-icon-size': 20px
+```
+
+### Luxury Kitchen Style
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+area_name: "Chef's Kitchen"
+entity:
+  entity_id: light.kitchen_pendants
+  icon: mdi:ceiling-light-multiple-outline
+  on_color: warm_white
+entities:
+  - entity_id: switch.kitchen_island_power
+    icon: mdi:power-socket-us
+  - entity_id: switch.kitchen_exhaust_fan
+    icon: mdi:fan
+  - entity_id: switch.coffee_maker
+    icon: mdi:coffee-maker
+    on_color: brown
+  - entity_id: switch.dishwasher
+    icon: mdi:dishwasher
+sensors:
+  - sensor.kitchen_temperature
+  - sensor.kitchen_humidity
+background:
+  image: /local/images/luxury-kitchen.jpg
+  opacity: 20
+sensor_layout: bottom
+styles:
+  card:
+    border: '2px solid #d4af37'
+    border-radius: 12px
+    box-shadow: '0 8px 32px rgba(212, 175, 55, 0.2)'
+  title:
+    color: '#d4af37'
+    font-size: 2.3em
+    font-weight: 600
+    text-shadow: '0 2px 4px rgba(0,0,0,0.3)'
+  sensors:
+    color: '#f8f9fa'
+    font-size: 18px
+    font-weight: 500
+    background: 'rgba(0,0,0,0.4)'
+    padding: '8px 12px'
+    border-radius: 8px
+    '--user-icon-size': 22px
+```

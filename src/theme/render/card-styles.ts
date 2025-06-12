@@ -52,5 +52,6 @@ export const renderCardStyles = (
     '--state-color-card-theme': themeOverride,
     '--background-image': image ? `url(${image})` : undefined,
     ...opacity,
+    ...config.styles?.card,
   });
 };
