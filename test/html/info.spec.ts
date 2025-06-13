@@ -18,13 +18,10 @@ export default () => {
     let mockConfig: Config;
     let mockRoomInformation: RoomInformation;
     let mockRoomEntity: EntityInformation;
-    let mockElement: HTMLElement;
     let renderTextStylesStub: SinonStub;
     let renderAreaStatisticsStub: SinonStub;
 
     beforeEach(() => {
-      mockElement = document.createElement('div');
-
       mockHass = {
         entities: {},
         devices: {},
@@ -77,7 +74,6 @@ export default () => {
         };
 
         const result = info(
-          mockElement,
           mockHass,
           mockRoomInformation,
           mockRoomEntity,
@@ -104,7 +100,6 @@ export default () => {
         };
 
         const result = info(
-          mockElement,
           mockHass,
           mockRoomInformation,
           mockRoomEntity,
@@ -125,7 +120,6 @@ export default () => {
         const sensors: SensorData = { individual: [], averaged: [] };
 
         info(
-          mockElement,
           mockHass,
           mockRoomInformation,
           mockRoomEntity,
@@ -142,7 +136,6 @@ export default () => {
         const sensors: SensorData = { individual: [], averaged: [] };
 
         const result = info(
-          mockElement,
           mockHass,
           mockRoomInformation,
           mockRoomEntity,
@@ -165,7 +158,6 @@ export default () => {
         const sensors: SensorData = { individual: [], averaged: [] };
 
         const result = info(
-          mockElement,
           mockHass,
           mockRoomInformation,
           mockRoomEntity,
@@ -184,7 +176,6 @@ export default () => {
         const sensors: SensorData = { individual: [], averaged: [] };
 
         const result = info(
-          mockElement,
           mockHass,
           complexRoomInfo,
           mockRoomEntity,

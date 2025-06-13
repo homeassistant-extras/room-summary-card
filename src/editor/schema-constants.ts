@@ -197,6 +197,12 @@ export const STYLES: HaFormSchema = {
           selector: { object: {} },
         },
         {
+          name: 'entities',
+          label: 'Entities Styles',
+          required: false,
+          selector: { object: {} },
+        },
+        {
           name: 'sensors',
           label: 'Sensor Styles',
           required: false,

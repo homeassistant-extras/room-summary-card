@@ -65,49 +65,38 @@ export class RoomSummaryCardEditor extends LitElement {
   private _valueChanged(ev: CustomEvent) {
     const config = ev.detail.value as Config;
 
-    // Clean up empty arrays
-    if (!config.features?.length) {
-      delete config.features;
-    }
-    if (!config.sensor_classes?.length) {
-      delete config.sensor_classes;
-    }
-    if (config.sensor_layout === 'default') {
-      delete config.sensor_layout;
-    }
-    if (config.background) {
-      if (!config.background.options?.length) {
-        delete config.background.options;
-      }
+    // Clean default values
+    if (config.sensor_layout === 'default') delete config.sensor_layout;
 
-      if (!Object.keys(config.background).length) {
-        delete config.background;
-      }
-    }
-    if (!Object.keys(config.thresholds || {}).length) {
-      delete config.thresholds;
-    }
-    if (config.styles) {
-      if (!config.styles.card) {
-        delete config.styles.card;
-      }
-      if (!config.styles.sensors) {
-        delete config.styles.sensors;
-      }
-      if (!config.styles.stats) {
-        delete config.styles.stats;
-      }
-      if (!config.styles.title) {
-        delete config.styles.title;
-      }
-      if (!Object.keys(config.styles).length) {
-        delete config.styles;
-      }
-    }
+    // Clean up empty arrays
+    this._cleanEmptyArrays(config, 'features');
+    this._cleanEmptyArrays(config, 'entities');
+    this._cleanEmptyArrays(config, 'problem_entities');
+    this._cleanEmptyArrays(config, 'sensor_classes');
+
+    // Clean nested objects
+    this._cleanEmptyProps(config, 'background');
+    this._cleanEmptyProps(config, 'thresholds');
 
     // @ts-ignore
-    fireEvent(this, 'config-changed', {
-      config,
-    });
+    fireEvent(this, 'config-changed', { config });
+  }
+
+  private _cleanEmptyArrays<T extends Record<string, any>>(
+    config: T,
+    key: keyof T,
+  ): void {
+    const arr = config[key];
+    if (Array.isArray(arr) && !arr.length) delete config[key];
+  }
+
+  private _cleanEmptyProps<T extends Record<string, any>>(
+    config: T,
+    key: keyof T,
+  ): void {
+    const obj = config[key];
+    if (!obj || typeof obj !== 'object') return;
+    Object.keys(obj).forEach((k) => !obj[k] && delete obj[k]);
+    if (!Object.keys(obj).length) delete config[key];
   }
 }

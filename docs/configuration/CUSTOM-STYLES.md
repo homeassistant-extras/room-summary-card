@@ -6,9 +6,10 @@ The Room Summary Card now supports custom CSS styles for different areas of the 
 
 ## Overview
 
-Custom styles can be applied to four main areas of the card:
+Custom styles can be applied to the main areas of the card:
 
 - **`card`** - The entire card container and background
+- **`entities`** - The entitiy container
 - **`title`** - The room name/title text
 - **`stats`** - The area statistics (device/entity counts)
 - **`sensors`** - The sensor display area and sensor styling
@@ -24,6 +25,9 @@ styles:
     font-size: 2em
   card:
     background: 'linear-gradient(45deg, #ff6b6b, #4ecdc4)'
+  entities:
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
 ```
 
 ## Style Areas
@@ -40,6 +44,20 @@ styles:
     border-radius: 15px # Rounded corners
     aspect-ratio: '16/9' # Change card proportions
     box-shadow: '0 4px 8px rgba(0,0,0,0.2)'
+```
+
+### Entity Styles
+
+Control the entity container:
+
+```yaml
+styles:
+  entities:
+    background: red # Remove default background
+    border: '2px solid #ff6b6b' # Add border
+    border-radius: 15px # Rounded corners
+    grid-template-rows: 1fr 1fr; # 2 rows
+    grid-template-columns: 1fr 1fr; # 2 columns
 ```
 
 ### Title Styles
@@ -184,6 +202,8 @@ Example:
 styles:
   sensors:
     '--user-icon-size': 30px # Large sensor icons
+  entities:
+    '--user-icon-size': 50% # half size
 ```
 
 ## Combining with Features

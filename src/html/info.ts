@@ -9,7 +9,6 @@ import { renderAreaStatistics } from './area-statistics';
 /**
  * Renders the information section for a room summary card.
  *
- * @param element - The root HTML element to attach event handlers to.
  * @param hass - The Home Assistant instance containing state and configuration.
  * @param roomInformation - Metadata about the room, such as its name.
  * @param roomEntity - The main entity representing the room.
@@ -18,7 +17,6 @@ import { renderAreaStatistics } from './area-statistics';
  * @returns A lit-html template representing the room information section.
  */
 export const info = (
-  element: HTMLElement,
   hass: HomeAssistant,
   roomInformation: RoomInformation,
   roomEntity: EntityInformation,

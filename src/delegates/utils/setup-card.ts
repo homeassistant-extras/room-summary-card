@@ -5,14 +5,12 @@ import { getBackgroundImageUrl } from '@theme/image/get-pic';
 import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
-import { getIconEntities } from '../entities/icon-entities';
 import { getProblemEntities } from '../entities/problem-entities';
 import { getRoomEntity } from '../entities/room-entity';
 import { getSensors } from './hide-yo-sensors';
 
 export interface RoomProperties {
   roomInfo: RoomInformation;
-  states: EntityInformation[];
   roomEntity: EntityInformation;
   problemEntities: string[];
   sensors: SensorData;
@@ -43,7 +41,6 @@ export const getRoomProperties = (
     area_name:
       config.area_name ?? getArea(hass.areas, config.area)?.name ?? config.area,
   };
-  const states = getIconEntities(hass, config);
   const roomEntity = getRoomEntity(hass, config);
   const { problemEntities, problemExists } = getProblemEntities(
     hass,
@@ -56,7 +53,6 @@ export const getRoomProperties = (
 
   return {
     roomInfo,
-    states,
     roomEntity,
     problemEntities,
     sensors,

@@ -64,6 +64,9 @@ export interface Config {
     /** CSS properties for the card container */
     card?: Record<string, string>;
 
+    /** CSS properties for the entities container */
+    entities?: Record<string, string>;
+
     /** Sensor CSS properties as an object */
     sensors?: Record<string, string>;
 

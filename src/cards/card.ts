@@ -41,12 +41,6 @@ export class RoomSummaryCard extends LitElement {
   private _roomInformation!: RoomInformation;
 
   /**
-   * Array of entity states to display in the card
-   */
-  @state()
-  private _states!: EntityInformation[];
-
-  /**
    * Information about the room entity
    */
   @state()
@@ -115,7 +109,6 @@ export class RoomSummaryCard extends LitElement {
   set hass(hass: HomeAssistant) {
     const {
       roomInfo,
-      states,
       roomEntity,
       problemEntities,
       sensors,
@@ -138,10 +131,6 @@ export class RoomSummaryCard extends LitElement {
     }
     if (!equal(roomEntity, this._roomEntity)) {
       this._roomEntity = roomEntity;
-      shouldRender = true;
-    }
-    if (!equal(states, this._states)) {
-      this._states = states;
       shouldRender = true;
     }
     if (!equal(problemEntities, this._problemEntities)) {
@@ -207,10 +196,6 @@ export class RoomSummaryCard extends LitElement {
       ? undefined
       : renderStateIcon(this, this._hass, this._roomEntity, ['room']);
 
-    const stateIcons = this._states.map((s) =>
-      renderStateIcon(this, this._hass, s, ['entity']),
-    );
-
     const cardStyle = renderCardStyles(
       this._hass,
       this._config,
@@ -230,7 +215,6 @@ export class RoomSummaryCard extends LitElement {
         <div class="grid">
           <div class="hitbox" @action=${action} .actionHandler=${handler}></div>
           ${info(
-            this,
             this._hass,
             this._roomInformation,
             this._roomEntity,
@@ -241,8 +225,11 @@ export class RoomSummaryCard extends LitElement {
           <!-- Room Icon -->
           ${roomEntity}
 
-          <!-- Entities Container (Flexbox) -->
-          <div class="entities-container">${stateIcons}</div>
+          <!-- Entities Container -->
+          <entity-collection
+            .config=${this._config}
+            .hass=${this._hass}
+          ></entity-collection>
 
           <!-- Problem Indicator -->
           ${problems}

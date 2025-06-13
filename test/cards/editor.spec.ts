@@ -160,6 +160,8 @@ export default () => {
         const detail = {
           value: {
             area: 'area_1',
+            entities: [],
+            problem_entities: [],
             features: [],
             sensor_classes: [],
             thresholds: {},
@@ -168,6 +170,7 @@ export default () => {
             },
             styles: {
               card: undefined,
+              entities: undefined,
               sensors: undefined,
               stats: undefined,
               title: undefined,
@@ -182,6 +185,13 @@ export default () => {
         expect(dispatchStub.calledOnce).to.be.true;
         expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
           area: 'area_1',
+          styles: {
+            card: undefined,
+            entities: undefined,
+            sensors: undefined,
+            stats: undefined,
+            title: undefined,
+          },
         });
       });
 

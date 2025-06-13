@@ -1,5 +1,4 @@
 import * as climateThresholdsModule from '@delegates/checks/thresholds';
-import * as getIconEntitiesModule from '@delegates/entities/icon-entities';
 import * as getProblemEntitiesModule from '@delegates/entities/problem-entities';
 import * as getRoomEntityModule from '@delegates/entities/room-entity';
 import * as areaRetrieverModule from '@delegates/retrievers/area';
@@ -17,7 +16,6 @@ export default () => {
     let mockHass: HomeAssistant;
     let getAreaStub: SinonStub;
     let getSensorsStub: SinonStub;
-    let getIconEntitiesStub: SinonStub;
     let getProblemEntitiesStub: SinonStub;
     let getRoomEntityStub: SinonStub;
     let climateThresholdsStub: SinonStub;
@@ -27,7 +25,6 @@ export default () => {
       // Create stubs for all the delegate functions
       getAreaStub = stub(areaRetrieverModule, 'getArea');
       getSensorsStub = stub(getSensorsModule, 'getSensors');
-      getIconEntitiesStub = stub(getIconEntitiesModule, 'getIconEntities');
       getProblemEntitiesStub = stub(
         getProblemEntitiesModule,
         'getProblemEntities',
@@ -50,7 +47,6 @@ export default () => {
       // Set up default stub returns
       getAreaStub.returns({ area_id: 'living_room', name: 'Living Room' });
       getSensorsStub.returns({ individual: [], averaged: [] });
-      getIconEntitiesStub.returns([]);
       getProblemEntitiesStub.returns({
         problemEntities: [],
         problemExists: false,
@@ -66,7 +62,6 @@ export default () => {
     afterEach(() => {
       getAreaStub.restore();
       getSensorsStub.restore();
-      getIconEntitiesStub.restore();
       getProblemEntitiesStub.restore();
       getRoomEntityStub.restore();
       climateThresholdsStub.restore();
@@ -79,7 +74,6 @@ export default () => {
         const result = getRoomProperties(mockHass, config);
 
         // Verify all functions were called with correct parameters
-        expect(getIconEntitiesStub.calledWith(mockHass, config)).to.be.true;
         expect(getRoomEntityStub.calledWith(mockHass, config)).to.be.true;
         expect(getProblemEntitiesStub.calledWith(mockHass, config.area)).to.be
           .true;
@@ -90,7 +84,6 @@ export default () => {
         // Verify result structure and values
         expect(result).to.have.all.keys([
           'roomInfo',
-          'states',
           'roomEntity',
           'problemEntities',
           'sensors',

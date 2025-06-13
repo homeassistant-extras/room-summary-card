@@ -126,18 +126,8 @@ const gridLayoutStyles = css`
     container-type: inline-size;
   }
 
-  /* Entities Container - Flexbox with consistent spacing */
-  .entities-container {
+  entity-collection {
     grid-area: e;
-    display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    align-items: center;
-    gap: 8px;
-    box-sizing: border-box;
-    aspect-ratio: 0.23 / 1;
-    padding: 5px 5px 5px 0;
   }
 
   /* Room area styling - Large square shape */
@@ -197,9 +187,14 @@ const iconStyles = css`
     width: 50%;
     color: var(--icon-color);
     opacity: var(--icon-opacity);
-    --mdc-icon-size: 100%;
+    --mdc-icon-size: var(--user-icon-size, 100%);
   }
+`;
 
+/**
+ * Status entity indicator
+ */
+const statusEntityStyles = css`
   /* Status entities indicator */
   .status-entities {
     grid-area: 4 / 1 / 4 / 1;
@@ -253,6 +248,7 @@ export const styles = css`
   ${entityAreaStyles}
   ${iconStyles}
   ${sensorLabelStyles}
+  ${statusEntityStyles}
 `;
 
 /**
@@ -296,4 +292,24 @@ export const sensorStyles = css`
   .sensor ha-icon {
     flex-shrink: 0;
   }
+`;
+
+/**
+ * Entity collection styles for entity icon display
+ * Includes grid layout, positioning, and entity-specific styles
+ */
+export const entityStyles = css`
+  :host {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    aspect-ratio: 0.23 / 1;
+    padding: 5px 5px 5px 0;
+  }
+
+  ${iconStyles}
 `;

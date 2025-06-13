@@ -7,6 +7,7 @@
  */
 
 import { RoomSummaryCard } from '@cards/card';
+import { EntityCollection } from '@cards/components/entity-collection';
 import { SensorCollection } from '@cards/components/sensor-collection';
 import { RoomSummaryCardEditor } from '@cards/editor';
 import { version } from '../package.json';
@@ -15,6 +16,7 @@ import { version } from '../package.json';
 customElements.define('room-summary-card', RoomSummaryCard);
 customElements.define('room-summary-card-editor', RoomSummaryCardEditor);
 customElements.define('sensor-collection', SensorCollection);
+customElements.define('entity-collection', EntityCollection);
 
 // Ensure the customCards array exists on the window object
 window.customCards = window.customCards || [];

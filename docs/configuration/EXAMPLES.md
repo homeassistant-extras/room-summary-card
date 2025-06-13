@@ -169,6 +169,8 @@ styles:
   title:
     color: '#4CAF50'
     font-weight: bold
+  entities:
+    background: blue
   stats:
     color: '#FFC107'
   sensors:
