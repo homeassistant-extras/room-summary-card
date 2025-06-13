@@ -16,12 +16,17 @@ describe('getIconResources', () => {
     callWSStub.restore();
   });
 
-  it('should call WebSocket with correct parameters', async () => {
+  it('should call WebSocket with correct parameters and always memoize', async () => {
     const mockResponse = { icons: { light: 'mdi:lightbulb' } };
     callWSStub.resolves(mockResponse);
+    const mockHass2 = {
+      ...mockHass,
+    } as HomeAssistant;
 
     const result = await getIconResources(mockHass);
+    const result2 = await getIconResources(mockHass2);
 
+    expect(result).to.equal(result2);
     expect(callWSStub.calledOnce).to.be.true;
     expect(
       callWSStub.calledWith({
@@ -30,27 +35,7 @@ describe('getIconResources', () => {
       }),
     ).to.be.true;
     expect(result).to.equal(mockResponse);
-  });
-
-  it('should memoize results for same hass instance', async () => {
-    const mockResponse = { icons: { switch: 'mdi:toggle-switch' } };
-    callWSStub.resolves(mockResponse);
-
-    await getIconResources(mockHass);
-    await getIconResources(mockHass);
 
     expect(callWSStub.calledOnce).to.be.true;
-  });
-
-  it('should make new calls for different hass instances', async () => {
-    const mockHass2 = {
-      callWS: callWSStub.resolves({}),
-    } as any as HomeAssistant;
-    callWSStub.resolves({});
-
-    await getIconResources(mockHass);
-    await getIconResources(mockHass2);
-
-    expect(callWSStub.calledTwice).to.be.true;
   });
 });

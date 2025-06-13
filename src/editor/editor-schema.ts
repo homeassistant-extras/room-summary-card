@@ -10,6 +10,17 @@ import {
   STYLES,
 } from './schema-constants';
 
+const areaEntities = (hass: HomeAssistant, area: string) => {
+  return Object.values(hass.entities)
+    .filter((entity) => {
+      return (
+        entity.area_id === area ||
+        (entity.device_id && hass.devices[entity.device_id]?.area_id === area)
+      );
+    })
+    .map((entity) => entity.entity_id);
+};
+
 const deviceClasses = async (
   hass: HomeAssistant,
   area: string,
@@ -41,6 +52,8 @@ export const getSchema = async (
   area: string,
 ): Promise<HaFormSchema[]> => {
   const sensorClasses = await deviceClasses(hass, area);
+  const entities = areaEntities(hass, area);
+
   return [
     MAIN,
     CONTENT,
@@ -55,13 +68,13 @@ export const getSchema = async (
           name: 'entity',
           label: 'Main room entity',
           required: false,
-          selector: { entity: { multiple: false } },
+          selector: { entity: { multiple: false, include_entities: entities } },
         },
         {
           name: 'entities',
           label: 'Area side entities',
           required: false,
-          selector: { entity: { multiple: true } },
+          selector: { entity: { multiple: true, include_entities: entities } },
         },
         {
           name: 'sensors',

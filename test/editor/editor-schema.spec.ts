@@ -104,6 +104,7 @@ describe('editor-schema.ts', () => {
   describe('getSchema', () => {
     it('should return schema with sensor classes from area', async () => {
       const schema = await getSchema(mockHass, 'living_room');
+      const entities = Object.keys(mockHass.entities);
 
       expect(schema).to.deep.equal([
         {
@@ -138,13 +139,17 @@ describe('editor-schema.ts', () => {
               name: 'entity',
               label: 'Main room entity',
               required: false,
-              selector: { entity: { multiple: false } },
+              selector: {
+                entity: { multiple: false, include_entities: entities },
+              },
             },
             {
               name: 'entities',
               label: 'Area side entities',
               required: false,
-              selector: { entity: { multiple: true } },
+              selector: {
+                entity: { multiple: true, include_entities: entities },
+              },
             },
             {
               name: 'sensors',
