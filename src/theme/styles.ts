@@ -76,14 +76,29 @@ const cardContainerStyles = css`
     width: 100%;
   }
 
+  :host([image]) ha-card::before {
+    background-image:
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.8),
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.3),
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0)
+      ),
+      var(--background-image);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+  }
+
   ha-card::before {
     content: '';
     position: absolute;
     width: 100%;
     height: 100%;
-    background: var(--background-color-card);
-    background-image: var(--background-image);
-    background-size: cover;
+    background-color: var(--background-color-card);
+
     opacity: var(--opacity-theme, var(--background-opacity-card));
   }
 `;
