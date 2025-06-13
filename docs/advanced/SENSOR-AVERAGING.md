@@ -2,6 +2,12 @@
 
 The card can automatically calculate and display averaged sensor readings by device class, using the same logic as Home Assistant's area card.
 
+By default these sensor classes will be averaged.
+
+- temperature
+- humidity'
+- illuminance
+
 ### How Averaging Works
 
 1. **Discovery**: Finds all sensors in the area with specified device classes
@@ -51,6 +57,8 @@ sensor_classes:
   - temperature # Averaged (shown after individual)
   - humidity # Averaged (shown after individual)
   - illuminance # Averaged (shown after individual)
+  - battery
+  - voltage
 sensor_layout: bottom # Display location
 ```
 

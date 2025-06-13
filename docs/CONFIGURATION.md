@@ -52,7 +52,7 @@ See [default entities](#default-entities)
 | background     | object           | See below                         | Background image configuration                               |
 | features       | list             | See below                         | Optional flags to toggle different features                  |
 | sensor_layout  | string           | `default`                         | Layout for sensor display: `default`, `stacked`, or `bottom` |
-| sensor_classes | array            | `['temperature', 'humidity']`     | Device classes to average and display sensor readings for    |
+| sensor_classes | array            | See below                         | Device classes to average and display sensor readings for    |
 | thresholds     | object           | `{temperature: 80, humidity: 60}` | Temperature and humidity thresholds                          |
 | styles         | object           | `{}`                              | Custom CSS styles for card areas                             |
 
@@ -91,6 +91,16 @@ features:
 | exclude_default_entities | Don't include default light/fan entities             |
 | skip_climate_styles      | Disable climate-based color coding & borders         |
 | skip_entity_styles       | Disable card background styling based on main entity |
+
+## Sensor Classes
+
+By default these sensor classes will be averaged.
+
+- temperature
+- humidity'
+- illuminance
+
+See [sensor configuration](configuration/SENSOR-CONFIGURATION.md) for more information.
 
 ## Color Configuration
 

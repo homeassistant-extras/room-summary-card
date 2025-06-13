@@ -21,7 +21,11 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   const skipDefaultEntities = hasFeature(config, 'exclude_default_entities');
 
   // Default sensor classes if not specified
-  const sensorClasses = config.sensor_classes || ['temperature', 'humidity'];
+  const sensorClasses = config.sensor_classes || [
+    'temperature',
+    'humidity',
+    'illuminance',
+  ];
 
   // Arrays to hold different categories
   const configOrderedSensors: EntityState[] = [];

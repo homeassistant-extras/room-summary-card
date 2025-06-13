@@ -168,7 +168,11 @@ export default () => {
       getSensors(mockHass, config);
 
       const [, sensorClasses] = calculateAveragesStub.firstCall.args;
-      expect(sensorClasses).to.deep.equal(['temperature', 'humidity']);
+      expect(sensorClasses).to.deep.equal([
+        'temperature',
+        'humidity',
+        'illuminance',
+      ]);
     });
 
     it('should return config sensors in individual array', () => {

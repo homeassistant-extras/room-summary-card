@@ -52,6 +52,7 @@ The card automatically:
 sensor_classes:
   - temperature
   - humidity
+  - illuminance
 ```
 
 ### Custom Device Classes
