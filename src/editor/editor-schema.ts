@@ -2,13 +2,7 @@ import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import { getSensorNumericDeviceClasses } from '@hass/data/sensor';
 import type { HomeAssistant } from '@hass/types';
-import {
-  CONTENT,
-  FEATURES,
-  INTERACTIONS,
-  MAIN,
-  STYLES,
-} from './schema-constants';
+import { CONTENT, FEATURES, INTERACTIONS, MAIN } from './schema-constants';
 
 const areaEntities = (hass: HomeAssistant, area: string) => {
   return Object.values(hass.entities)
@@ -45,6 +39,177 @@ const deviceClasses = async (
     );
 
   return [...new Set(classes)];
+};
+
+const schemeStyles = (entities: string[]): HaFormSchema => {
+  return {
+    name: 'styles',
+    label: 'Styles',
+    type: 'expandable',
+    flatten: true,
+    icon: 'mdi:brush-variant',
+    schema: [
+      {
+        name: 'sensor_layout',
+        label: 'Sensor Layout',
+        required: false,
+        selector: {
+          select: {
+            mode: 'dropdown' as const,
+            options: [
+              { label: 'Default (in label area)', value: 'default' },
+              {
+                label: 'Bottom',
+                value: 'bottom',
+              },
+              {
+                label: 'Vertical Stack',
+                value: 'stacked',
+              },
+            ],
+          },
+        },
+      },
+      {
+        name: 'background',
+        label: 'Background',
+        type: 'expandable',
+        icon: 'mdi:format-paint',
+        schema: [
+          { name: 'image', label: 'Background Image', selector: { image: {} } },
+          {
+            name: 'image_entity',
+            label: 'Background Image Entity',
+            selector: { entity: { filter: { domain: ['image', 'person'] } } },
+          },
+          {
+            name: 'opacity',
+            label: 'Background Opacity',
+            required: false,
+            selector: {
+              number: {
+                mode: 'slider' as const,
+                unit_of_measurement: '%',
+                min: 0,
+                max: 100,
+              },
+            },
+          },
+          {
+            name: 'options',
+            label: 'Options',
+            selector: {
+              select: {
+                multiple: true,
+                mode: 'list' as const,
+                options: [
+                  {
+                    label: 'Disable Background Image',
+                    value: 'disable',
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+      {
+        name: 'thresholds',
+        label: 'Thresholds',
+        type: 'expandable',
+        icon: 'mdi:thermometer-alert',
+        schema: [
+          {
+            name: 'temperature',
+            label: 'Temperature threshold',
+            required: false,
+            selector: {
+              number: { mode: 'box' as const, unit_of_measurement: '°' },
+            },
+          },
+          {
+            name: 'humidity',
+            label: 'Humidity threshold',
+            required: false,
+            selector: {
+              number: {
+                mode: 'slider' as const,
+                unit_of_measurement: '%',
+                min: 0,
+                max: 100,
+              },
+            },
+          },
+          {
+            name: 'temperature_entity',
+            label: 'Temperature Entity',
+            required: false,
+            selector: {
+              entity: {
+                multiple: false,
+                include_entities: entities,
+                filter: {
+                  device_class: 'temperature',
+                },
+              },
+            },
+          },
+          {
+            name: 'humidity_entity',
+            label: 'Humidity Entity',
+            required: false,
+            selector: {
+              entity: {
+                multiple: false,
+                include_entities: entities,
+                filter: {
+                  device_class: 'humidity',
+                },
+              },
+            },
+          },
+        ],
+      },
+      {
+        name: 'styles',
+        label: 'Your CSS Styles',
+        type: 'expandable',
+        icon: 'mdi:spray',
+        schema: [
+          {
+            name: 'card',
+            label: 'Card Styles',
+            required: false,
+            selector: { object: {} },
+          },
+          {
+            name: 'entities',
+            label: 'Entities Styles',
+            required: false,
+            selector: { object: {} },
+          },
+          {
+            name: 'sensors',
+            label: 'Sensor Styles',
+            required: false,
+            selector: { object: {} },
+          },
+          {
+            name: 'stats',
+            label: 'Stats Styles',
+            required: false,
+            selector: { object: {} },
+          },
+          {
+            name: 'title',
+            label: 'Title Styles',
+            required: false,
+            selector: { object: {} },
+          },
+        ],
+      },
+    ],
+  };
 };
 
 export const getSchema = async (
@@ -97,7 +262,7 @@ export const getSchema = async (
       ],
     },
     FEATURES,
-    STYLES,
+    schemeStyles(entities),
     INTERACTIONS,
   ];
 };

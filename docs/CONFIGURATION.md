@@ -41,20 +41,20 @@ See [default entities](#default-entities)
 
 ## Configuration Options
 
-| Name           | Type             | Default                           | Description                                                  |
-| -------------- | ---------------- | --------------------------------- | ------------------------------------------------------------ |
-| area           | string           | **Required**                      | The area identifier for the room (e.g., 'shed', 'kitchen')   |
-| area_name      | string           | area name                         | Custom area name                                             |
-| entity         | string \| object | `light.<area>_light`              | Main entity for the room                                     |
-| entities       | array            | See below                         | Additional entities to display                               |
-| sensors        | array            | See below                         | Array of sensor entities to display in the card label area   |
-| navigate       | string           | area name (dash-separated)        | Custom navigation path when clicking the room name / icon    |
-| background     | object           | See below                         | Background image configuration                               |
-| features       | list             | See below                         | Optional flags to toggle different features                  |
-| sensor_layout  | string           | `default`                         | Layout for sensor display: `default`, `stacked`, or `bottom` |
-| sensor_classes | array            | See below                         | Device classes to average and display sensor readings for    |
-| thresholds     | object           | `{temperature: 80, humidity: 60}` | Temperature and humidity thresholds                          |
-| styles         | object           | `{}`                              | Custom CSS styles for card areas                             |
+| Name           | Type             | Default                    | Description                                                  |
+| -------------- | ---------------- | -------------------------- | ------------------------------------------------------------ |
+| area           | string           | **Required**               | The area identifier for the room (e.g., 'shed', 'kitchen')   |
+| area_name      | string           | area name                  | Custom area name                                             |
+| entity         | string \| object | `light.<area>_light`       | Main entity for the room                                     |
+| entities       | array            | See below                  | Additional entities to display                               |
+| sensors        | array            | See below                  | Array of sensor entities to display in the card label area   |
+| navigate       | string           | area name (dash-separated) | Custom navigation path when clicking the room name / icon    |
+| background     | object           | See below                  | Background image configuration                               |
+| features       | list             | See below                  | Optional flags to toggle different features                  |
+| sensor_layout  | string           | `default`                  | Layout for sensor display: `default`, `stacked`, or `bottom` |
+| sensor_classes | array            | See below                  | Device classes to average and display sensor readings for    |
+| thresholds     | object           | `80° / 60%`                | Temperature and humidity thresholds                          |
+| styles         | object           | `{}`                       | Custom CSS styles for card areas                             |
 
 ### Default Entities
 

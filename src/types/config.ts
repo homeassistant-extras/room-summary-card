@@ -43,6 +43,12 @@ export interface Config {
 
     /** Humidity threshold value */
     humidity?: number;
+
+    /** Temperature entity ID for dynamic thresholds */
+    temperature_entity?: string;
+
+    /** Humidity entity ID for dynamic thresholds */
+    humidity_entity?: string;
   };
 
   background?: {

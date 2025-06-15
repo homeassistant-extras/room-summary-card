@@ -125,6 +125,8 @@ background:
 thresholds:
   temperature: 75
   humidity: 55
+  temperature_entity: sensor.specific_temp_sensor
+  humidity_entity: sensor.specific_humidity_sensor
 navigate: /lovelace/living-room
 features:
   - hide_area_stats

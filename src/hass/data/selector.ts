@@ -22,7 +22,10 @@ export interface ImageSelector {
 }
 
 interface EntitySelectorFilter {
+  integration?: string;
   domain?: string | readonly string[];
+  device_class?: string | readonly string[];
+  supported_features?: number | [number];
 }
 
 export interface EntitySelector {

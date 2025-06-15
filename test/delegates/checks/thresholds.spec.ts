@@ -113,6 +113,67 @@ export default () => {
 
         expect(result).to.deep.equal({ hot: true, humid: false });
       });
+
+      it('should use specific entity states when entity IDs are configured', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            humidity: 50,
+            temperature_entity: 'sensor.specific_temp',
+            humidity_entity: 'sensor.specific_humidity',
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 70, // Below threshold, but specific entity is above
+              uom: '°F',
+              states: [
+                {
+                  entity_id: 'sensor.temp1',
+                  state: '72',
+                  domain: 'sensor',
+                  attributes: {},
+                },
+                {
+                  entity_id: 'sensor.specific_temp',
+                  state: '78',
+                  domain: 'sensor',
+                  attributes: {},
+                }, // Above 75
+              ],
+              domain: 'sensor',
+            },
+            {
+              device_class: 'humidity',
+              average: 55, // Above threshold, but specific entity is below
+              uom: '%',
+              states: [
+                {
+                  entity_id: 'sensor.humidity1',
+                  state: '60',
+                  domain: 'sensor',
+                  attributes: {},
+                },
+                {
+                  entity_id: 'sensor.specific_humidity',
+                  state: '45',
+                  domain: 'sensor',
+                  attributes: {},
+                }, // Below 50
+              ],
+              domain: 'sensor',
+            },
+          ],
+        };
+
+        const result = climateThresholds(config, sensorData.averaged);
+
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
     });
   });
 };

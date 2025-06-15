@@ -251,7 +251,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Flags`**: ability to disable features.
 - [x] **`Multiple sensors`**: support for displaying multiple sensors in the label area. - thanks @fctruter, @LE-tarantino
 - [x] **`Climate entity icon styling`**: climate entity will light up icon - thanks @murriano
-- [x] **`Border styling for climate thresholds`**: border respects skip_climate_styles - thanks @LE-tarantino
+- [x] **`Border styling for climate thresholds`**: border respects skip_climate_styles - thanks @LE-tarantino, @ma-gu-16
 - [x] **`Area name display`**: use area name instead of area ID on card - thanks @LE-tarantino
 - [x] **`Navigation with room entity`**: navigate now works with room entity set - thanks @LE-tarantino
 - [x] **`Card container sizing`**: card respects container - thanks @frdve, @Erikkyw
