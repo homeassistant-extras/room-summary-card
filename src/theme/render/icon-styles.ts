@@ -6,6 +6,7 @@ import {
 
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/room';
+import { nothing } from 'lit';
 import { getStyleData } from './common-style';
 
 /**
@@ -18,10 +19,10 @@ import { getStyleData } from './common-style';
 export const renderEntityIconStyles = (
   hass: HomeAssistant,
   entity: EntityInformation,
-): DirectiveResult<typeof StyleMapDirective> => {
+): DirectiveResult<typeof StyleMapDirective> | typeof nothing => {
   const styleData = getStyleData(hass, 'icon', entity);
 
-  if (!styleData) return styleMap({});
+  if (!styleData) return nothing;
 
   return styleMap({
     '--icon-color': styleData.cssColor,

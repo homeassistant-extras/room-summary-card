@@ -319,6 +319,34 @@ describe('editor-schema.ts', () => {
                     },
                   },
                 },
+                {
+                  name: 'temperature_entity',
+                  label: 'Temperature Entity',
+                  required: false,
+                  selector: {
+                    entity: {
+                      multiple: false,
+                      include_entities: entities,
+                      filter: {
+                        device_class: 'temperature',
+                      },
+                    },
+                  },
+                },
+                {
+                  name: 'humidity_entity',
+                  label: 'Humidity Entity',
+                  required: false,
+                  selector: {
+                    entity: {
+                      multiple: false,
+                      include_entities: entities,
+                      filter: {
+                        device_class: 'humidity',
+                      },
+                    },
+                  },
+                },
               ],
             },
             {

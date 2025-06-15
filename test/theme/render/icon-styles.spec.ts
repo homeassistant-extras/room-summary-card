@@ -5,6 +5,7 @@ import {
 } from '@theme/render/icon-styles';
 import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
+import { nothing } from 'lit';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import * as sinon from 'sinon';
 
@@ -56,7 +57,7 @@ export default () => {
 
         const result = renderEntityIconStyles(mockHass, entity);
 
-        expect(result).to.deep.equal(styleMap({}));
+        expect(result).to.deep.equal(nothing);
         expect(getStyleDataStub.calledWith(mockHass, 'icon', entity)).to.be
           .true;
       });

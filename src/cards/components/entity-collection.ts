@@ -1,4 +1,5 @@
 import { renderStateIcon } from '@/html/icon';
+import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { getIconEntities } from '@delegates/entities/icon-entities';
 import type { HomeAssistant } from '@hass/types';
 import { entityStyles } from '@theme/styles';
@@ -25,11 +26,10 @@ const equal = require('fast-deep-equal');
  *
  * @version See package.json
  */
-export class EntityCollection extends LitElement {
+export class EntityCollection extends HassUpdateMixin(LitElement) {
   /**
    * Home Assistant instance
    */
-  @state()
   private _hass!: HomeAssistant;
 
   /**
@@ -54,7 +54,8 @@ export class EntityCollection extends LitElement {
    * Updates the card's state when Home Assistant state changes
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
-  set hass(hass: HomeAssistant) {
+  // @ts-ignore
+  override set hass(hass: HomeAssistant) {
     const states = getIconEntities(hass, this.config);
 
     // Update entities only if they've changed

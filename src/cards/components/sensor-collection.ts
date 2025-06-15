@@ -1,7 +1,12 @@
 import { hasFeature } from '@/config/feature';
+import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { getIconResources } from '@delegates/retrievers/icons';
 import { sensorDataToDisplaySensors } from '@delegates/utils/sensor-utils';
-import { FALLBACK_DOMAIN_ICONS } from '@hass/data/icon';
+import {
+  FALLBACK_DOMAIN_ICONS,
+  type CategoryType,
+  type IconResources,
+} from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
 import { stateDisplay } from '@html/state-display';
 import { sensorStyles } from '@theme/styles';
@@ -9,7 +14,7 @@ import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { SensorData } from '@type/sensor';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
-import { property, state } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { until } from 'lit/directives/until.js';
 
 /**
@@ -27,11 +32,10 @@ import { until } from 'lit/directives/until.js';
  *
  * @version See package.json
  */
-export class SensorCollection extends LitElement {
+export class SensorCollection extends HassUpdateMixin(LitElement) {
   /**
    * Home Assistant instance
    */
-  @state()
   private _hass!: HomeAssistant;
 
   /**
@@ -63,7 +67,8 @@ export class SensorCollection extends LitElement {
    * Updates the card's state when Home Assistant state changes
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
-  set hass(hass: HomeAssistant) {
+  // @ts-ignore
+  override set hass(hass: HomeAssistant) {
     this._hass = hass;
     this.hide = hasFeature(this.config, 'hide_sensor_icons');
     this.layout = this.config.sensor_layout ?? 'default';
@@ -112,18 +117,20 @@ export class SensorCollection extends LitElement {
   ): TemplateResult | typeof nothing {
     if (this.hide) return nothing;
 
-    const iconPromise = getIconResources(this._hass).then((icons) => {
-      const icon =
-        icons.resources?.[sensor.domain]?.[sensor.device_class]?.default;
+    const iconPromise = getIconResources(this._hass).then(
+      (icons: IconResources<CategoryType['entity_component']>) => {
+        const icon =
+          icons.resources?.[sensor.domain]?.[sensor.device_class]?.default;
 
-      if (icon) return html`<ha-icon .icon=${icon}></ha-icon>`;
+        if (icon) return html`<ha-icon .icon=${icon}></ha-icon>`;
 
-      const fallback =
-        FALLBACK_DOMAIN_ICONS[
-          sensor.domain as keyof typeof FALLBACK_DOMAIN_ICONS
-        ];
-      return fallback ? html`<ha-icon .icon=${fallback}></ha-icon>` : nothing;
-    });
+        const fallback =
+          FALLBACK_DOMAIN_ICONS[
+            sensor.domain as keyof typeof FALLBACK_DOMAIN_ICONS
+          ];
+        return fallback ? html`<ha-icon .icon=${fallback}></ha-icon>` : nothing;
+      },
+    );
 
     return html`${until(iconPromise)}`;
   }

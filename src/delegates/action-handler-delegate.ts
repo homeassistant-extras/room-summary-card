@@ -2,7 +2,19 @@ import { fireEvent } from '@hass/common/dom/fire_event';
 import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
 import { actionHandler as hassActionHandler } from '@hass/panels/lovelace/common/directives/action-handler-directive';
 import type { ActionConfigParams } from '@hass/panels/lovelace/common/handle-action';
+import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/room';
+
+export interface HassUpdateEvent {
+  hass: HomeAssistant;
+}
+
+declare global {
+  // eslint-disable-next-line
+  interface HASSDomEvents {
+    'hass-update': HassUpdateEvent;
+  }
+}
 
 /**
  * Creates an action handler for an entity with specified configuration.

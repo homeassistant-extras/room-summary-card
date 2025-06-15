@@ -18,6 +18,7 @@ import {
   handleClickAction,
 } from '@delegates/action-handler-delegate';
 import { getRoomProperties } from '@delegates/utils/setup-card';
+import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { info } from '@html/info';
 import { renderCardStyles } from '@theme/render/card-styles';
@@ -152,6 +153,11 @@ export class RoomSummaryCard extends LitElement {
       // this is a workaround and prevents the need to re-render the card many times
       // https://github.com/home-assistant/frontend/issues/25648
       this._hass = hass;
+    } else {
+      // update children who are subscribed
+      fireEvent(this, 'hass-update', {
+        hass,
+      });
     }
   }
 
