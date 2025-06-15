@@ -26,6 +26,7 @@ import { styles } from '@theme/styles';
 import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
+import { d } from '@util/debug';
 const equal = require('fast-deep-equal');
 
 export class RoomSummaryCard extends LitElement {
@@ -108,6 +109,7 @@ export class RoomSummaryCard extends LitElement {
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
   set hass(hass: HomeAssistant) {
+    d(this._config, 'room-summary-card', 'set hass');
     const {
       roomInfo,
       roomEntity,
@@ -193,6 +195,7 @@ export class RoomSummaryCard extends LitElement {
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
+    d(this._config, 'room-summary-card', 'render');
     if (!this._hass) {
       return nothing;
     }

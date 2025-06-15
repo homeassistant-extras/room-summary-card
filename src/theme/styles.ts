@@ -315,6 +315,7 @@ export const sensorStyles = css`
  */
 export const entityStyles = css`
   :host {
+    height: 100%;
     display: grid;
     grid-template-rows: 1fr 1fr 1fr 1fr;
     grid-template-columns: 1fr;

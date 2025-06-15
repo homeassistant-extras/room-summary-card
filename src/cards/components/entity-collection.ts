@@ -6,10 +6,10 @@ import { entityStyles } from '@theme/styles';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
+import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 const equal = require('fast-deep-equal');
-
 /**
  * Entity Collection Component
  *
@@ -56,6 +56,7 @@ export class EntityCollection extends HassUpdateMixin(LitElement) {
    */
   // @ts-ignore
   override set hass(hass: HomeAssistant) {
+    d(this.config, 'entity-collection', 'set hass');
     const states = getIconEntities(hass, this.config);
 
     // Update entities only if they've changed
@@ -67,6 +68,7 @@ export class EntityCollection extends HassUpdateMixin(LitElement) {
   }
 
   public override render(): TemplateResult | typeof nothing {
+    d(this.config, 'entity-collection', 'render');
     if (!this._hass || !this._entities) {
       return nothing;
     }

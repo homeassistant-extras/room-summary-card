@@ -25,6 +25,7 @@
       "@delegates/*": ["./src/delegates/*"],
       "@hass/*": ["./src/hass/*"],
       "@html/*": ["./src/html/*"],
+      "@util/*": ["./src/util/*"],
       "@theme/*": ["./src/theme/*"],
       "@test/*": ["./test/*"],
       "@/*": ["./src/*"]

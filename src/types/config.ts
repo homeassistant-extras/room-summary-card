@@ -89,6 +89,7 @@ export interface Config {
 
 /** Features to enable or disable functionality */
 export type Features =
+  | 'debug'
   | 'hide_area_stats'
   | 'hide_climate_label'
   | 'hide_room_icon'

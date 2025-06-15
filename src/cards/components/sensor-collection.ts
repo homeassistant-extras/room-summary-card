@@ -13,6 +13,7 @@ import { sensorStyles } from '@theme/styles';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { SensorData } from '@type/sensor';
+import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { until } from 'lit/directives/until.js';
@@ -69,12 +70,14 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
    */
   // @ts-ignore
   override set hass(hass: HomeAssistant) {
+    d(this.config, 'sensor-collection', 'set hass');
     this._hass = hass;
     this.hide = hasFeature(this.config, 'hide_sensor_icons');
     this.layout = this.config.sensor_layout ?? 'default';
   }
 
   public override render(): TemplateResult | typeof nothing {
+    d(this.config, 'sensor-collection', 'render');
     if (!this._hass || hasFeature(this.config, 'hide_climate_label')) {
       return nothing;
     }
