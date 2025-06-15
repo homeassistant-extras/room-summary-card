@@ -98,7 +98,7 @@ styles:
   sensors:
     color: red # Sensor text color
     font-size: 18px # Sensor text size
-    '--user-icon-size': 24px # Sensor icon size (CSS variable)
+    '--user-sensor-icon-size': 24px # Sensor icon size (CSS variable)
     font-weight: bold # Bold sensor text
     opacity: 1 # Override theme opacity
 ```
@@ -132,7 +132,7 @@ styles:
   sensors:
     color: '#00ff41'
     font-family: 'monospace'
-    '--user-icon-size': 20px
+    '--user-sensor-icon-size': 20px
 ```
 
 ### Minimalist Clean Theme
@@ -156,7 +156,7 @@ styles:
     font-size: 0.9em
   sensors:
     color: 'rgba(255, 255, 255, 0.8)'
-    '--user-icon-size': 16px
+    '--user-sensor-icon-size': 16px
 ```
 
 ### Retro Neon Theme
@@ -185,25 +185,29 @@ styles:
     color: '#ffff00'
     font-family: 'monospace'
     text-shadow: '0 0 5px #ffff00'
-    '--user-icon-size': 18px
+    '--user-sensor-icon-size': 18px
 ```
 
 ## CSS Variables
 
 Some styles use CSS variables that can be overridden:
 
-| Variable           | Area    | Description          |
-| ------------------ | ------- | -------------------- |
-| `--user-icon-size` | sensors | Size of sensor icons |
+| Variable                  | Area     | Description          |
+| ------------------------- | -------- | -------------------- |
+| `--user-entity-icon-size` | entities | Size of entity icons |
+| `--user-room-icon-size`   | card     | Size of room icon    |
+| `--user-sensor-icon-size` | sensors  | Size of sensor icons |
 
 Example:
 
 ```yaml
 styles:
+  card:
+    '--user-card-icon-size': 50% # 1/3 size
   sensors:
-    '--user-icon-size': 30px # Large sensor icons
+    '--user-sensor-icon-size': 30px # Large sensor icons
   entities:
-    '--user-icon-size': 50% # half size
+    '--user-entity-icon-size': 44px # match HA default
 ```
 
 ## Combining with Features
@@ -282,5 +286,5 @@ styles:
 
 **CSS variables not working?**
 
-- Ensure quotes around variable names: `"--user-icon-size"`
+- Ensure quotes around variable names: `"--user-sensor-icon-size"`
 - Check if the variable is supported in that area

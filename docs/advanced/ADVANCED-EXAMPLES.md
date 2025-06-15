@@ -297,7 +297,7 @@ styles:
     color: '#00ff41'
     font-family: 'monospace'
     font-weight: bold
-    '--user-icon-size': 24px
+    '--user-sensor-icon-size': 24px
 ```
 
 ### Minimalist Bedroom with Custom Styling
@@ -342,7 +342,7 @@ styles:
   sensors:
     color: 'rgba(255, 255, 255, 0.9)'
     font-size: 16px
-    '--user-icon-size': 18px
+    '--user-sensor-icon-size': 18px
 ```
 
 ### Industrial Workshop Theme
@@ -390,7 +390,7 @@ styles:
     color: '#ecf0f1'
     font-family: 'monospace'
     font-weight: bold
-    '--user-icon-size': 20px
+    '--user-sensor-icon-size': 20px
 ```
 
 ### Luxury Kitchen Style
@@ -437,5 +437,5 @@ styles:
     background: 'rgba(0,0,0,0.4)'
     padding: '8px 12px'
     border-radius: 8px
-    '--user-icon-size': 22px
+    '--user-sensor-icon-size': 22px
 ```

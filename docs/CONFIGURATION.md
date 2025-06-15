@@ -134,13 +134,13 @@ styles:
   entities:
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr 1fr;
-    '--user-icon-size': 20%;
+    '--user-entity-icon-size': 44px; # match HA default
   stats:
     color: yellow
     opacity: 1
   sensors:
     color: red
-    '--user-icon-size': 24px
+    '--user-sensor-icon-size': 24px
 ```
 
 - See [Custom Styles Configuration](configuration/CUSTOM-STYLES.md) for style information.

@@ -301,7 +301,7 @@ styles:
     background: '#custom-color' # Override with custom color
   sensors:
     color: var(--text-primary-color)
-    '--user-icon-size': 28px # Custom CSS variable
+    '--user-sensor-icon-size': 28px # Custom CSS variable
 ```
 
 ### Theme-Aware Custom Styles
@@ -324,7 +324,7 @@ Custom styles support CSS variables for dynamic theming:
 ```yaml
 styles:
   sensors:
-    '--user-icon-size': 24px
+    '--user-sensor-icon-size': 24px
     color: var(--accent-color)
   card:
     '--card-background-color': 'rgba(0,0,0,0.1)'

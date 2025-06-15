@@ -148,7 +148,7 @@ const gridLayoutStyles = css`
   /* Room area styling - Large square shape */
   .room {
     grid-area: r;
-    width: 150%;
+    width: var(--user-room-icon-size, 150%);
     aspect-ratio: 1 / 1;
   }
 `;
@@ -202,7 +202,7 @@ const iconStyles = css`
     width: 50%;
     color: var(--icon-color);
     opacity: var(--icon-opacity);
-    --mdc-icon-size: var(--user-icon-size, 100%);
+    --mdc-icon-size: 100%;
   }
 `;
 
@@ -300,7 +300,7 @@ export const sensorStyles = css`
     display: flex;
     align-items: center;
     gap: 4px;
-    --mdc-icon-size: var(--user-icon-size, 20px);
+    --mdc-icon-size: var(--user-sensor-icon-size, 20px);
   }
 
   .sensor ha-state-icon,
@@ -325,6 +325,10 @@ export const entityStyles = css`
     box-sizing: border-box;
     aspect-ratio: 0.23 / 1;
     padding: 5px 5px 5px 0;
+  }
+
+  .entity {
+    width: var(--user-entity-icon-size, inherit);
   }
 
   ${iconStyles}
