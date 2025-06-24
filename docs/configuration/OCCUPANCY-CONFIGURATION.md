@@ -2,7 +2,7 @@
 
 The Room Summary Card supports occupancy detection to provide visual feedback when rooms are occupied. This feature uses motion, occupancy, or presence sensors to dynamically change the card's appearance based on room occupancy status.
 
-![Occupancy](assets/occupancy.png)
+![Occupancy](../../assets/occupancy.png)
 
 ## Overview
 
