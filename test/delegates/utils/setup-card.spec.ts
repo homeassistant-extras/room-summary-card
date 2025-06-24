@@ -1,3 +1,4 @@
+import * as occupancyModule from '@delegates/checks/occupancy';
 import * as climateThresholdsModule from '@delegates/checks/thresholds';
 import * as getProblemEntitiesModule from '@delegates/entities/problem-entities';
 import * as getRoomEntityModule from '@delegates/entities/room-entity';
@@ -20,6 +21,7 @@ export default () => {
     let getRoomEntityStub: SinonStub;
     let climateThresholdsStub: SinonStub;
     let getBackgroundImageUrlStub: SinonStub;
+    let getOccupancyStateStub: SinonStub;
 
     beforeEach(() => {
       // Create stubs for all the delegate functions
@@ -38,6 +40,7 @@ export default () => {
         getBackgroundImageModule,
         'getBackgroundImageUrl',
       );
+      getOccupancyStateStub = stub(occupancyModule, 'getOccupancyState');
 
       mockHass = {
         areas: { living_room: { area_id: 'living_room', name: 'Living Room' } },
@@ -57,6 +60,7 @@ export default () => {
       });
       climateThresholdsStub.returns({ hot: false, humid: false });
       getBackgroundImageUrlStub.returns('/local/bg.jpg');
+      getOccupancyStateStub.returns(true);
     });
 
     afterEach(() => {
@@ -66,6 +70,7 @@ export default () => {
       getRoomEntityStub.restore();
       climateThresholdsStub.restore();
       getBackgroundImageUrlStub.restore();
+      getOccupancyStateStub.restore();
     });
 
     describe('getRoomProperties', () => {
@@ -80,6 +85,8 @@ export default () => {
         expect(getSensorsStub.calledWith(mockHass, config)).to.be.true;
         expect(getBackgroundImageUrlStub.calledWith(mockHass, config)).to.be
           .true;
+        expect(getOccupancyStateStub.calledWith(mockHass, config.occupancy)).to
+          .be.true;
 
         // Verify result structure and values
         expect(result).to.have.all.keys([
@@ -92,6 +99,7 @@ export default () => {
         ]);
         expect(result.image).to.equal('/local/bg.jpg');
         expect(result.flags.dark).to.be.true;
+        expect(result.flags.occupied).to.be.true;
       });
 
       it('should use config area_name when provided instead of calling getArea', () => {

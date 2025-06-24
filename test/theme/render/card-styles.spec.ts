@@ -4,6 +4,7 @@ import * as sinon from 'sinon';
 
 // Import the modules we need to stub
 import * as featureModule from '@config/feature';
+import * as occupancyModule from '@delegates/checks/occupancy';
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
 import * as backgroundBitsModule from '@theme/background/background-bits';
@@ -23,7 +24,7 @@ const createEntityInfo = (
     entity_id: entityId,
     state,
     attributes,
-    domain: entityId.split('.')[0],
+    domain: entityId.split('.')[0] || 'unknown',
   },
 });
 
@@ -37,6 +38,7 @@ export default () => {
     let getThemeColorOverrideStub: sinon.SinonStub;
     let hasFeatureStub: sinon.SinonStub;
     let getBackgroundOpacityStub: sinon.SinonStub;
+    let getOccupancyCssVarsStub: sinon.SinonStub;
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
@@ -52,6 +54,10 @@ export default () => {
         backgroundBitsModule,
         'getBackgroundOpacity',
       );
+      getOccupancyCssVarsStub = sandbox.stub(
+        occupancyModule,
+        'getOccupancyCssVars',
+      );
 
       // Default stub behaviors
       stateActiveStub.returns(false);
@@ -61,6 +67,7 @@ export default () => {
       getBackgroundOpacityStub.returns({
         '--background-opacity-card': 'var(--opacity-background-inactive)',
       });
+      getOccupancyCssVarsStub.returns({});
 
       mockHass = { themes: { darkMode: false } };
       mockConfig = { area: 'test_area' };
@@ -73,7 +80,7 @@ export default () => {
     describe('renderCardStyles', () => {
       it('should render basic inactive styles', () => {
         const entity = createEntityInfo('light.test');
-        const styles = renderCardStyles(mockHass, mockConfig, entity);
+        const styles = renderCardStyles(mockHass, mockConfig, entity, false);
 
         expect(
           getBackgroundOpacityStub.calledWith(
@@ -82,6 +89,8 @@ export default () => {
             entity.state,
           ),
         ).to.be.true;
+        expect(getOccupancyCssVarsStub.calledWith(false, mockConfig.occupancy))
+          .to.be.true;
         expect(styles).to.deep.equal(
           styleMap({
             '--background-color-card': undefined,
@@ -111,6 +120,7 @@ export default () => {
           mockHass,
           configWithStyles,
           entity,
+          false,
           image,
         );
 
@@ -136,7 +146,7 @@ export default () => {
         });
 
         const entity = createEntityInfo('light.test', 'on');
-        const styles = renderCardStyles(mockHass, mockConfig, entity);
+        const styles = renderCardStyles(mockHass, mockConfig, entity, false);
 
         expect(styles).to.deep.equal(
           styleMap({
@@ -144,6 +154,31 @@ export default () => {
             '--state-color-card-theme': 'var(--theme-override)',
             '--background-image': undefined,
             '--background-opacity-card': 'var(--opacity-background-active)',
+          }),
+        );
+      });
+
+      it('should include occupancy styles when occupied', () => {
+        const occupancyStyles = {
+          '--occupancy-card-border': '3px solid var(--success-color)',
+          '--occupancy-card-border-color': 'var(--success-color)',
+          '--occupancy-card-animation':
+            'occupancy-pulse 2s ease-in-out infinite alternate',
+        };
+        getOccupancyCssVarsStub.returns(occupancyStyles);
+
+        const entity = createEntityInfo('light.test');
+        const styles = renderCardStyles(mockHass, mockConfig, entity, true);
+
+        expect(getOccupancyCssVarsStub.calledWith(true, mockConfig.occupancy))
+          .to.be.true;
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--state-color-card-theme': 'var(--theme-override)',
+            '--background-image': undefined,
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+            ...occupancyStyles,
           }),
         );
       });

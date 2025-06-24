@@ -14,6 +14,7 @@ Some of these go to their own documents - so use this ToC as a guide.
 - [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md)
 - [Sensor Configuration](configuration/SENSOR-CONFIGURATION.md)
 - [Threshold Configuration](configuration/THRESHOLD-CONFIGURATION.md)
+- [Occupancy Configuration](configuration/OCCUPANCY-CONFIGURATION.md)
 - [Action Configuration](configuration/ACTION-CONFIGURATION.md)
 - [Entity Attributes](configuration/ENTITY-ATTRIBUTES.md)
 - [Setting Up Area Pictures](configuration/AREA-PICTURES.md)
@@ -50,6 +51,7 @@ See [default entities](#default-entities)
 | sensors        | array            | See below                  | Array of sensor entities to display in the card label area   |
 | navigate       | string           | area name (dash-separated) | Custom navigation path when clicking the room name / icon    |
 | background     | object           | See below                  | Background image configuration                               |
+| occupancy      | object           | See below                  | Occupancy detection configuration                            |
 | features       | list             | See below                  | Optional flags to toggle different features                  |
 | sensor_layout  | string           | `default`                  | Layout for sensor display: `default`, `stacked`, or `bottom` |
 | sensor_classes | array            | See below                  | Device classes to average and display sensor readings for    |
@@ -145,6 +147,29 @@ styles:
 
 - See [Custom Styles Configuration](configuration/CUSTOM-STYLES.md) for style information.
 - See [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md) for complete color options.
+
+## Occupancy Detection
+
+The card supports occupancy detection using motion, occupancy, or presence sensors to provide visual feedback when rooms are occupied:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+occupancy:
+  entities:
+    - binary_sensor.living_room_motion
+    - binary_sensor.living_room_occupancy
+  card_border_color: '#4CAF50' # Green border when occupied
+  icon_color: '#FF9800' # Orange icon background when occupied
+```
+
+**Features:**
+
+- Visual indicators (card borders, icon colors) when occupied
+- Support for multiple sensor types (motion, occupancy, presence)
+- Customizable styling options
+
+See [Occupancy Configuration](configuration/OCCUPANCY-CONFIGURATION.md) for complete documentation and examples.
 
 ## Next Steps
 

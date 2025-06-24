@@ -80,6 +80,16 @@ Automatically calculates and displays averaged sensor readings by device class:
 
 ![Problem Detection](assets/problems.png)
 
+### Occupancy Detection
+
+- Visual indicators when rooms are occupied using motion/occupancy sensors
+- Dynamic card borders and room icon colors based on occupancy status
+- Support for multiple sensor types (motion, occupancy, presence, device trackers)
+- Customizable colors and animation options
+- Granular control over which visual effects are applied
+
+![Occupancy](assets/occupancy.png)
+
 ### Room Statistics
 
 - Shows total number of devices and entities in the room
@@ -270,6 +280,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo, @X1pheR
 - [x] **`Custom Styles`**: ability to apply custom CSS styles - thanks @marceloroloff, @ma-gu-16, @Ltek
 - [x] **`Random bugs`**: pointing out issues to improve card - thanks @rickd1994, @avijavez10
+- [x] **`Occupancy Detection`**: visual indicators for room occupancy with motion/occupancy sensors - thanks @X1pheR
 
 ## Contributing
 

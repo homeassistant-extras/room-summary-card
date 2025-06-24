@@ -6,6 +6,7 @@ import type { CropOptions } from '@hass/dialogs/image-cropper-dialog/show-image-
 
 export type Selector =
   | AreaSelector
+  | BooleanSelector
   | EntitySelector
   | ImageSelector
   | NumberSelector
@@ -15,6 +16,10 @@ export type Selector =
 
 export interface AreaSelector {
   area: {};
+}
+
+export interface BooleanSelector {
+  boolean: {} | null;
 }
 
 export interface ImageSelector {

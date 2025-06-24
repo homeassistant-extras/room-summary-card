@@ -36,6 +36,9 @@ export interface Config {
   /** Layout of the sensors */
   sensor_layout?: 'default' | 'bottom' | 'stacked';
 
+  /** Occupancy detection configuration */
+  occupancy?: OccupancyConfig;
+
   /** Custom thresholds for temperature and humidity */
   thresholds?: {
     /** Temperature threshold value */
@@ -122,4 +125,31 @@ export interface EntityConfig {
 
   /** Action to perform on double tap */
   double_tap_action?: ActionConfig;
+}
+
+/**
+ * @file Occupancy Configuration Types
+ * @description TypeScript type definitions for occupancy detection features.
+ */
+
+/**
+ * Configuration for occupancy-based visual indicators
+ */
+export interface OccupancyConfig {
+  /** Entity IDs for motion/occupancy sensors (required) */
+  entities: string[];
+
+  /** Color for card border when occupied */
+  card_border_color?: string;
+
+  /** Color for room icon background when occupied */
+  icon_color?: string;
+
+  /** Array of features to disable */
+  options?: (
+    | 'disabled_card_styles'
+    | 'disabled_card_styles_animation'
+    | 'disable_icon_styles'
+    | 'disable_icon_animation'
+  )[];
 }

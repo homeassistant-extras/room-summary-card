@@ -96,6 +96,71 @@ background:
   opacity: 35
 ```
 
+### Occupancy Detection
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+occupancy:
+  entities:
+    - binary_sensor.living_room_motion
+    - binary_sensor.living_room_occupancy
+  card_border_color: '#4CAF50' # Green border when occupied
+  icon_color: '#FF9800' # Orange icon background when occupied
+```
+
+### Advanced Occupancy with Multiple Sensors
+
+```yaml
+type: custom:room-summary-card
+area: master_bedroom
+occupancy:
+  entities:
+    - binary_sensor.master_bedroom_motion
+    - binary_sensor.master_bedroom_presence
+    - device_tracker.phone_john
+    - device_tracker.phone_jane
+  card_border_color: '#E91E63' # Pink border
+  icon_color: '#9C27B0' # Purple icon background
+background:
+  image: /local/images/bedroom.jpg
+  opacity: 25
+```
+
+### Occupancy with Custom Styling
+
+```yaml
+type: custom:room-summary-card
+area: home_office
+occupancy:
+  entities:
+    - binary_sensor.office_motion
+    - binary_sensor.office_occupancy
+  card_border_color: '#2196F3' # Blue border
+  icon_color: '#03A9F4' # Light blue icon
+styles:
+  card:
+    border-radius: 12px
+    transition: all 0.3s ease
+  title:
+    font-weight: 600
+    color: '#1976D2'
+```
+
+### Occupancy with Minimal Effects
+
+```yaml
+type: custom:room-summary-card
+area: bathroom
+occupancy:
+  entities:
+    - binary_sensor.bathroom_motion
+  options:
+    - disabled_card_styles # Disable border changes
+    - disabled_card_styles_animation # Disable border animation
+  icon_color: '#FF5722' # Only change icon color
+```
+
 ### Full Configuration Example
 
 ```yaml
@@ -122,6 +187,12 @@ sensor_layout: bottom
 background:
   image: /local/images/living-room.jpg
   opacity: 25
+occupancy:
+  entities:
+    - binary_sensor.living_room_motion
+    - binary_sensor.living_room_occupancy
+  card_border_color: '#4CAF50'
+  icon_color: '#8BC34A'
 thresholds:
   temperature: 75
   humidity: 55

@@ -1,5 +1,6 @@
 import { RoomSummaryCard } from '@/cards/card';
 import * as actionHandlerModule from '@/delegates/action-handler-delegate';
+import * as setupCardModule from '@/delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { styles } from '@theme/styles';
@@ -13,11 +14,37 @@ export default () => {
     let card: RoomSummaryCard;
     let mockHass: HomeAssistant;
     let actionHandlerStub: sinon.SinonStub;
+    let getRoomPropertiesStub: sinon.SinonStub;
 
     beforeEach(() => {
       actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
         bind: () => {},
         handleAction: () => {},
+      });
+      getRoomPropertiesStub = stub(
+        setupCardModule,
+        'getRoomProperties',
+      ).returns({
+        roomInfo: { area_name: 'Living Room' },
+        roomEntity: {
+          config: { entity_id: 'light.test' },
+          state: {
+            entity_id: 'light.test',
+            state: 'on',
+            attributes: {},
+            domain: 'light',
+          },
+        },
+        problemEntities: [],
+        sensors: { individual: [], averaged: [] },
+        image: null,
+        flags: {
+          problemExists: false,
+          occupied: true,
+          dark: true,
+          hot: false,
+          humid: false,
+        },
       });
       card = new RoomSummaryCard();
       mockHass = {
@@ -54,6 +81,7 @@ export default () => {
 
     afterEach(() => {
       actionHandlerStub.restore();
+      getRoomPropertiesStub.restore();
     });
 
     describe('setConfig', () => {
@@ -70,6 +98,7 @@ export default () => {
         expect(card['_sensors']).to.exist;
         expect(card['_roomInformation']).to.exist;
         expect(card['dark']).to.be.true; // Since mockHass has darkMode: true
+        expect(card['occupied']).to.be.true; // Should be set based on occupancy state
       });
 
       it('should update _hass when formatEntityState changes', () => {

@@ -77,6 +77,7 @@ export class RoomSummaryCardEditor extends LitElement {
     // Clean nested objects
     this._cleanEmptyProps(config, 'background');
     this._cleanEmptyProps(config, 'thresholds');
+    this._cleanEmptyProps(config, 'occupancy');
 
     // @ts-ignore
     fireEvent(this, 'config-changed', { config });
@@ -96,7 +97,11 @@ export class RoomSummaryCardEditor extends LitElement {
   ): void {
     const obj = config[key];
     if (!obj || typeof obj !== 'object') return;
-    Object.keys(obj).forEach((k) => !obj[k] && delete obj[k]);
+
+    Object.keys(obj).forEach((k) => {
+      !obj[k] && delete obj[k];
+      this._cleanEmptyArrays(obj, k);
+    });
     if (!Object.keys(obj).length) delete config[key];
   }
 }

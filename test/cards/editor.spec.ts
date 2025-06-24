@@ -175,6 +175,10 @@ export default () => {
               stats: undefined,
               title: undefined,
             },
+            occupancy: {
+              entities: [],
+              options: [],
+            },
           } as Config,
         };
 

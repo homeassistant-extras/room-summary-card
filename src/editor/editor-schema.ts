@@ -2,7 +2,13 @@ import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import { getSensorNumericDeviceClasses } from '@hass/data/sensor';
 import type { HomeAssistant } from '@hass/types';
-import { CONTENT, FEATURES, INTERACTIONS, MAIN } from './schema-constants';
+import {
+  CONTENT,
+  FEATURES,
+  INTERACTIONS,
+  MAIN,
+  OCCUPANCY,
+} from './schema-constants';
 
 const areaEntities = (hass: HomeAssistant, area: string) => {
   return Object.values(hass.entities)
@@ -261,6 +267,7 @@ export const getSchema = async (
         },
       ],
     },
+    OCCUPANCY,
     FEATURES,
     schemeStyles(entities),
     INTERACTIONS,

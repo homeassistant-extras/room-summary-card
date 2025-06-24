@@ -77,6 +77,8 @@ export class RoomSummaryCard extends LitElement {
   private humid!: boolean;
   @property({ type: Boolean, reflect: true })
   private image!: boolean;
+  @property({ type: Boolean, reflect: true })
+  private occupied!: boolean;
   private _image?: string | null;
 
   /**
@@ -116,10 +118,11 @@ export class RoomSummaryCard extends LitElement {
       problemEntities,
       sensors,
       image,
-      flags: { problemExists, dark, hot, humid },
+      flags: { problemExists, occupied, dark, hot, humid },
     } = getRoomProperties(hass, this._config);
 
     this._problemExists = problemExists;
+    this.occupied = occupied;
     this.dark = dark;
     this.hot = hot;
     this.humid = humid;
@@ -209,6 +212,7 @@ export class RoomSummaryCard extends LitElement {
       this._hass,
       this._config,
       this._roomEntity,
+      this.occupied,
       this._image,
     );
 

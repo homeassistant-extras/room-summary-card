@@ -5,6 +5,7 @@ import {
 } from 'lit-html/directives/style-map.js';
 
 import { hasFeature } from '@config/feature';
+import { getOccupancyCssVars } from '@delegates/checks/occupancy';
 import { stateActive } from '@hass/common/entity/state_active';
 import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
@@ -16,11 +17,12 @@ import { getThemeColorOverride } from '../custom-theme';
 
 /**
  * Generates a style map for a card component based on the current Home Assistant theme,
- * entity state, configuration, and optional background image.
+ * entity state, configuration, optional background image, and occupancy state.
  *
  * @param hass - The Home Assistant instance containing theme and state information.
  * @param config - The configuration object for the card.
  * @param entity - The entity information, including its current state.
+ * @param isOccupied - Whether the room is occupied.
  * @param image - (Optional) A URL or path to a background image for the card.
  * @returns A DirectiveResult containing the computed style map for the card.
  */
@@ -28,6 +30,7 @@ export const renderCardStyles = (
   hass: HomeAssistant,
   config: Config,
   entity: EntityInformation,
+  isOccupied: boolean,
   image?: string | null,
 ): DirectiveResult<typeof StyleMapDirective> => {
   const { state } = entity;
@@ -36,6 +39,7 @@ export const renderCardStyles = (
   const themeOverride = getThemeColorOverride(hass, entity, active);
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   const opacity = getBackgroundOpacity(hass, config, state);
+  const occupancy = getOccupancyCssVars(isOccupied, config.occupancy);
   const cssColor = hass.themes.darkMode
     ? stateColorCss(stateObj, 'card')
     : undefined;
@@ -53,6 +57,7 @@ export const renderCardStyles = (
     '--state-color-card-theme': themeOverride,
     '--background-image': image ? `url(${image})` : undefined,
     ...opacity,
+    ...occupancy,
     ...config.styles?.card,
   });
 };

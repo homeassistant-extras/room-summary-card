@@ -172,6 +172,69 @@ describe('editor-schema.ts', () => {
           ],
         },
         {
+          name: 'occupancy',
+          label: 'Occupancy & Presence Detection',
+          type: 'expandable' as const,
+          icon: 'mdi:motion-sensor',
+          schema: [
+            {
+              name: 'entities',
+              label: 'Motion/Occupancy/Presence Sensors',
+              required: true,
+              selector: {
+                entity: {
+                  multiple: true,
+                  filter: {
+                    domain: ['binary_sensor'],
+                    device_class: ['motion', 'occupancy', 'presence'],
+                  },
+                },
+              },
+            },
+            {
+              name: 'card_border_color',
+              label: 'Card Border Color (Occupied)',
+              required: false,
+              selector: { text: { type: 'color' as const } },
+            },
+            {
+              name: 'icon_color',
+              label: 'Icon Background Color (Occupied)',
+              required: false,
+              selector: { text: { type: 'color' as const } },
+            },
+            {
+              name: 'options',
+              label: 'Options',
+              required: false,
+              selector: {
+                select: {
+                  multiple: true,
+                  mode: 'list' as const,
+                  options: [
+                    {
+                      label: 'Disable Card Border',
+                      value: 'disabled_card_styles',
+                    },
+                    {
+                      label: 'Disable Card Border Animations',
+                      value: 'disabled_card_styles_animation',
+                    },
+                    {
+                      label: 'Disable Icon Color',
+                      value: 'disable_icon_styles',
+                    },
+                    {
+                      label: 'Disable Icon Animations',
+                      value: 'disable_icon_animation',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        {
           name: 'features',
           label: 'Features',
           type: 'expandable' as const,

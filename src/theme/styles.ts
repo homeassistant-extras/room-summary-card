@@ -7,6 +7,7 @@
  */
 
 import { css } from 'lit';
+import { occupancyStyles } from './css/occupancy';
 import {
   colorsDark,
   colorsLight,
@@ -264,6 +265,7 @@ export const styles = css`
   ${iconStyles}
   ${sensorLabelStyles}
   ${statusEntityStyles}
+  ${occupancyStyles}
 `;
 
 /**

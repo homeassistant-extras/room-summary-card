@@ -1,3 +1,4 @@
+import { getOccupancyState } from '@delegates/checks/occupancy';
 import { climateThresholds } from '@delegates/checks/thresholds';
 import { getArea } from '@delegates/retrievers/area';
 import type { HomeAssistant } from '@hass/types';
@@ -17,6 +18,7 @@ export interface RoomProperties {
   image?: string | null;
   flags: {
     problemExists: boolean;
+    occupied: boolean;
     dark: boolean;
     hot: boolean;
     humid: boolean;
@@ -50,6 +52,7 @@ export const getRoomProperties = (
   const sensors = getSensors(hass, config);
   const thresholds = climateThresholds(config, sensors.averaged);
   const image = getBackgroundImageUrl(hass, config);
+  const occupied = getOccupancyState(hass, config.occupancy);
 
   return {
     roomInfo,
@@ -59,6 +62,7 @@ export const getRoomProperties = (
     image,
     flags: {
       problemExists,
+      occupied,
       dark: hass.themes.darkMode,
       ...thresholds,
     },
