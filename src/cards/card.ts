@@ -79,6 +79,10 @@ export class RoomSummaryCard extends LitElement {
   private image!: boolean;
   @property({ type: Boolean, reflect: true })
   private occupied!: boolean;
+  @property({ type: Boolean, reflect: true, attribute: 'icon-bg' })
+  private iconBackground!: boolean;
+  @property({ type: Boolean, reflect: true, attribute: 'background-image' })
+  private backgroundImage!: boolean;
   private _image?: string | null;
 
   /**
@@ -103,6 +107,18 @@ export class RoomSummaryCard extends LitElement {
   setConfig(config: Config) {
     if (!equal(config, this._config)) {
       this._config = config;
+
+      this.iconBackground =
+        this._config.background?.options?.includes('icon_background') ?? false;
+
+      // Check if background image is configured (either image or image_entity)
+      const hasBackgroundImage = !!(
+        this._config.background?.image || this._config.background?.image_entity
+      );
+      // Check if background is disabled
+      const isBackgroundDisabled =
+        this._config.background?.options?.includes('disable') ?? false;
+      this.backgroundImage = hasBackgroundImage && !isBackgroundDisabled;
     }
   }
 
@@ -128,7 +144,6 @@ export class RoomSummaryCard extends LitElement {
     this.humid = humid;
     this.image = !!image;
     this._image = image;
-
     // Update states only if they've changed
     let shouldRender = false;
     if (!equal(roomInfo, this._roomInformation)) {

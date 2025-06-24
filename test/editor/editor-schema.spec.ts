@@ -349,6 +349,10 @@ describe('editor-schema.ts', () => {
                           label: 'Disable Background Image',
                           value: 'disable',
                         },
+                        {
+                          label: 'Icon Background',
+                          value: 'icon_background',
+                        },
                       ],
                     },
                   },

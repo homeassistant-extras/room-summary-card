@@ -114,11 +114,14 @@ Multiple background image sources with automatic fallbacks:
 - **Custom Images**: Static image files from local storage or URLs
 - **Dynamic Entities**: Live images from camera, person, or image entities
 - **Opacity Control**: Customizable transparency levels
+- **Icon Background**: Apply background to room icon only for subtle effects
 - **Disable Option**: Complete background image control
 
 | area picture                     | entity picture                       | background picture                         |
 | -------------------------------- | ------------------------------------ | ------------------------------------------ |
 | ![area](assets/area-picture.png) | ![entity](assets/entity-picture.png) | ![background](assets/background-image.png) |
+
+📖 **See [Background Configuration](docs/configuration/BACKGROUND-CONFIGURATION.md) for detailed examples and advanced usage.**
 
 ### RGB Color Support
 
@@ -277,7 +280,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Sensor layout options`**: flexible sensor display layouts (default, stacked, bottom) - thanks @Ltek
 - [x] **`Sensor averaging by device class`**: automatic averaging like HA area card - thanks @Ltek
 - [x] **`Moving away from customize.yaml`**: allowing more configuration on the card - thanks @johntdyer
-- [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo, @X1pheR
+- [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo, @X1pheR, @Ltek
 - [x] **`Custom Styles`**: ability to apply custom CSS styles - thanks @marceloroloff, @ma-gu-16, @Ltek
 - [x] **`Random bugs`**: pointing out issues to improve card - thanks @rickd1994, @avijavez10
 - [x] **`Occupancy Detection`**: visual indicators for room occupancy with motion/occupancy sensors - thanks @X1pheR

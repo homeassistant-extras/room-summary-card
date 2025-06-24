@@ -2,6 +2,8 @@
 
 The card supports multiple background image sources with automatic fallbacks and full customization control.
 
+![Background Image](../../assets/background-image.png)
+
 ### Automatic Area Pictures
 
 When areas have pictures set in Home Assistant, the card automatically uses them as backgrounds:
@@ -82,6 +84,70 @@ Or use the feature flag:
 ```yaml
 features:
   - hide_room_icon # Hide room icon for cleaner look
+background:
+  options:
+    - disable
+```
+
+### Icon-Only Background
+
+Apply background images only to the room icon area for a more subtle effect:
+
+```yaml
+background:
+  image: /local/images/room.jpg
+  opacity: 50
+  options:
+    - icon_background
+```
+
+![Icon BG](../../assets/icon-bg.png)
+
+This creates a focused background effect where the image appears behind the room icon while keeping the rest of the card clean and readable.
+
+#### Icon Background with Dynamic Images
+
+```yaml
+background:
+  image_entity: person.family_member
+  opacity: 60
+  options:
+    - icon_background
+```
+
+#### Icon Background with Camera Feeds
+
+```yaml
+background:
+  image_entity: camera.living_room
+  opacity: 40
+  options:
+    - icon_background
+```
+
+### Background Options
+
+The card supports two background options:
+
+- **`disable`**: Completely disables background images
+- **`icon_background`**: Applies background only to the room icon area
+
+You can combine these options for different effects:
+
+```yaml
+# Full card background (default)
+background:
+  image: /local/images/room.jpg
+  opacity: 30
+
+# Icon-only background
+background:
+  image: /local/images/room.jpg
+  opacity: 50
+  options:
+    - icon_background
+
+# No background
 background:
   options:
     - disable

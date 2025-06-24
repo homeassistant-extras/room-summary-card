@@ -90,6 +90,46 @@ export default () => {
         card.setConfig(config);
         expect(card['_config']).to.deep.equal(config);
       });
+
+      it('should set backgroundImage to true when config has background image', () => {
+        const config = {
+          area: 'living_room',
+          background: {
+            image: '/local/images/living-room.jpg',
+          },
+        };
+        card.setConfig(config);
+        expect(card['backgroundImage']).to.be.true;
+      });
+
+      it('should set backgroundImage to true when config has background image_entity', () => {
+        const config = {
+          area: 'living_room',
+          background: {
+            image_entity: 'camera.living_room',
+          },
+        };
+        card.setConfig(config);
+        expect(card['backgroundImage']).to.be.true;
+      });
+
+      it('should set backgroundImage to false when config has no background image', () => {
+        const config = { area: 'living_room' };
+        card.setConfig(config);
+        expect(card['backgroundImage']).to.be.false;
+      });
+
+      it('should set backgroundImage to false when background options include disable', () => {
+        const config = {
+          area: 'living_room',
+          background: {
+            image: '/local/images/living-room.jpg',
+            options: ['disable' as const],
+          },
+        };
+        card.setConfig(config);
+        expect(card['backgroundImage']).to.be.false;
+      });
     });
 
     describe('hass property setter', () => {

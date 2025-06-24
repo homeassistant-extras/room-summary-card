@@ -113,6 +113,10 @@ const schemeStyles = (entities: string[]): HaFormSchema => {
                     label: 'Disable Background Image',
                     value: 'disable',
                   },
+                  {
+                    label: 'Icon Background',
+                    value: 'icon_background',
+                  },
                 ],
               },
             },

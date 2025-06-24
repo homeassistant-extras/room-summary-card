@@ -64,8 +64,8 @@ export interface Config {
     /** Opacity level for the background image (0 to 1) */
     opacity?: number;
 
-    /** Option to disable the background image */
-    options?: ['disable'];
+    /** Background options */
+    options?: ('disable' | 'icon_background')[];
   };
 
   /** Custom styling configuration */
