@@ -88,6 +88,14 @@ export default () => {
         expect(getOccupancyStateStub.calledWith(mockHass, config.occupancy)).to
           .be.true;
 
+        // Verify climateThresholds is called with full sensor data
+        expect(
+          climateThresholdsStub.calledWith(config, {
+            individual: [],
+            averaged: [],
+          }),
+        ).to.be.true;
+
         // Verify result structure and values
         expect(result).to.have.all.keys([
           'roomInfo',

@@ -1,38 +1,57 @@
 import { hasFeature } from '@config/feature';
 import type { Config } from '@type/config';
-import type { AveragedSensor } from '@type/sensor';
+import type { SensorData } from '@type/sensor';
 import memoizeOne from 'memoize-one';
 
 /**
- * Gets sensor value - from specific entity or averaged sensor
+ * Gets sensor value - from specific entity in individual sensors, or averaged sensor
  */
 const getSensorValue = (
-  sensors: AveragedSensor[],
+  sensorData: SensorData,
   deviceClass: string,
   entityId?: string,
 ): number | null => {
-  const sensor = sensors.find((s) => s.device_class === deviceClass);
-  if (!sensor) return null;
-
+  // If entityId is specified, look for it in individual sensors first
   if (entityId) {
-    const entity = sensor.states.find((state) => state.entity_id === entityId);
+    const individualSensor = sensorData.individual.find(
+      (s) => s.entity_id === entityId,
+    );
+    if (
+      individualSensor &&
+      individualSensor.attributes.device_class === deviceClass
+    ) {
+      return Number(individualSensor.state);
+    }
+  }
+
+  // Look in averaged sensors
+  const averagedSensor = sensorData.averaged.find(
+    (s) => s.device_class === deviceClass,
+  );
+  if (!averagedSensor) return null;
+
+  // If entityId is specified, look for it in the averaged sensor's states
+  if (entityId) {
+    const entity = averagedSensor.states.find(
+      (state) => state.entity_id === entityId,
+    );
     return entity ? Number(entity.state) : null;
   }
 
-  return sensor.average;
+  return averagedSensor.average;
 };
 
 /**
  * Generates border styles based on temperature and humidity thresholds
  *
  * @param {Config} config - Configuration object
- * @param {AveragedSensor[]} sensors - Array of sensor states
+ * @param {SensorData} sensorData - Sensor data containing individual and averaged sensors
  * @returns {Object} Border style configuration with hot and humid properties
  */
 export const climateThresholds = memoizeOne(
   (
     config: Config,
-    sensors: AveragedSensor[],
+    sensorData: SensorData,
   ): {
     hot: boolean;
     humid: boolean;
@@ -41,24 +60,22 @@ export const climateThresholds = memoizeOne(
       return { hot: false, humid: false };
 
     const temp = getSensorValue(
-      sensors,
+      sensorData,
       'temperature',
       config.thresholds?.temperature_entity,
     );
     const humidity = getSensorValue(
-      sensors,
+      sensorData,
       'humidity',
       config.thresholds?.humidity_entity,
     );
-
-    if (temp === null || humidity === null) return { hot: false, humid: false };
 
     const tempThreshold = config.thresholds?.temperature ?? 80;
     const humidThreshold = config.thresholds?.humidity ?? 60;
 
     return {
-      hot: temp > tempThreshold,
-      humid: humidity > humidThreshold,
+      hot: temp ? temp > tempThreshold : false,
+      humid: humidity ? humidity > humidThreshold : false,
     };
   },
 );

@@ -69,3 +69,39 @@ The following device classes are supported for averaging (must be numeric sensor
 - `temperature`, `humidity`, `pressure`, `illuminance`, `co2`, `pm25`, `pm10`, `aqi`, `battery`, `energy`, `power`, `voltage`, `current`, and more.
 
 **Reference**: See [Home Assistant's area card documentation](https://www.home-assistant.io/dashboards/area) for the complete list.
+
+### Climate Thresholds Integration
+
+Individual sensors can also be used for climate thresholds, even when their device class isn't included in `sensor_classes`. This is useful when you want to:
+
+1. **Use specific sensors** for climate calculations while excluding others
+2. **Configure thresholds** without including all sensors of that device class in averaging
+
+#### Example: Selective Climate Thresholds
+
+```yaml
+sensors:
+  - sensor.living_room_temp_1 # Individual temperature sensor
+  - sensor.basement_temp # Different temperature sensor
+sensor_classes:
+  - pressure # Only pressure sensors from area
+thresholds:
+  temperature: 75
+  temperature_entity: sensor.living_room_temp_1 # Uses living room temp only
+```
+
+In this configuration:
+
+- `sensor.living_room_temp_1` is used for climate thresholds (if it has `device_class: temperature`)
+- `sensor.basement_temp` is shown individually but not used for thresholds
+- No temperature averaging occurs since `temperature` isn't in `sensor_classes`
+- Pressure sensors from the area are averaged as usual
+
+#### Threshold Lookup Priority
+
+When `temperature_entity` or `humidity_entity` is specified, the system looks for the sensor in this order:
+
+1. **Individual sensors** (from `config.sensors`) - if the entity has the correct device class
+2. **Averaged sensors** (from `config.sensor_classes`) - as a fallback
+
+This ensures that configured individual sensors take priority over area-wide averages for climate calculations.

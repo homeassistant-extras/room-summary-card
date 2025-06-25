@@ -50,7 +50,7 @@ export const getRoomProperties = (
   );
 
   const sensors = getSensors(hass, config);
-  const thresholds = climateThresholds(config, sensors.averaged);
+  const thresholds = climateThresholds(config, sensors);
   const image = getBackgroundImageUrl(hass, config);
   const occupied = getOccupancyState(hass, config.occupancy);
 

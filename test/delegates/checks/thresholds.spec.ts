@@ -28,7 +28,7 @@ export default () => {
         const config: Config = { area: 'test' };
         const sensorData: SensorData = { individual: [], averaged: [] };
 
-        const result = climateThresholds(config, sensorData.averaged);
+        const result = climateThresholds(config, sensorData);
 
         expect(result).to.deep.equal({ hot: false, humid: false });
       });
@@ -38,18 +38,11 @@ export default () => {
         const sensorData: SensorData = {
           individual: [],
           averaged: [
-            {
-              device_class: 'temperature',
-              average: 85,
-              uom: '°F',
-              states: [],
-              domain: 'sensor',
-            },
-            // Missing humidity sensor
+            // Missing both temperature and humidity sensors
           ],
         };
 
-        const result = climateThresholds(config, sensorData.averaged);
+        const result = climateThresholds(config, sensorData);
 
         expect(result).to.deep.equal({ hot: false, humid: false });
       });
@@ -76,7 +69,7 @@ export default () => {
           ],
         };
 
-        const result = climateThresholds(config, sensorData.averaged);
+        const result = climateThresholds(config, sensorData);
 
         expect(result).to.deep.equal({ hot: true, humid: true });
       });
@@ -109,7 +102,7 @@ export default () => {
           ],
         };
 
-        const result = climateThresholds(config, sensorData.averaged);
+        const result = climateThresholds(config, sensorData);
 
         expect(result).to.deep.equal({ hot: true, humid: false });
       });
@@ -170,9 +163,143 @@ export default () => {
           ],
         };
 
-        const result = climateThresholds(config, sensorData.averaged);
+        const result = climateThresholds(config, sensorData);
 
         expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+
+      it('should use individual sensors when entity ID matches and device class is correct', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            humidity: 50,
+            temperature_entity: 'sensor.individual_temp',
+            humidity_entity: 'sensor.individual_humidity',
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [
+            {
+              entity_id: 'sensor.individual_temp',
+              state: '78', // Above threshold
+              domain: 'sensor',
+              attributes: {
+                device_class: 'temperature',
+                unit_of_measurement: '°F',
+              },
+            },
+            {
+              entity_id: 'sensor.individual_humidity',
+              state: '45', // Below threshold
+              domain: 'sensor',
+              attributes: {
+                device_class: 'humidity',
+                unit_of_measurement: '%',
+              },
+            },
+          ],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 70, // Below threshold, should be ignored
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+            {
+              device_class: 'humidity',
+              average: 55, // Above threshold, should be ignored
+              uom: '%',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+        };
+
+        const result = climateThresholds(config, sensorData);
+
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+
+      it('should fall back to averaged sensors when individual sensor device class does not match', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            humidity: 50,
+            temperature_entity: 'sensor.wrong_device_class',
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [
+            {
+              entity_id: 'sensor.wrong_device_class',
+              state: '78', // Above threshold but wrong device class
+              domain: 'sensor',
+              attributes: {
+                device_class: 'pressure', // Wrong device class
+                unit_of_measurement: 'hPa',
+              },
+            },
+          ],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 70, // Below threshold, should be used
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+        };
+
+        const result = climateThresholds(config, sensorData);
+
+        expect(result).to.deep.equal({ hot: false, humid: false });
+      });
+
+      it('should use averaged sensors when no specific entity is configured', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            humidity: 50,
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [
+            {
+              entity_id: 'sensor.individual_temp',
+              state: '78', // Above threshold but should be ignored
+              domain: 'sensor',
+              attributes: {
+                device_class: 'temperature',
+                unit_of_measurement: '°F',
+              },
+            },
+          ],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 70, // Below threshold, should be used
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+            {
+              device_class: 'humidity',
+              average: 45, // Below threshold
+              uom: '%',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+        };
+
+        const result = climateThresholds(config, sensorData);
+
+        expect(result).to.deep.equal({ hot: false, humid: false });
       });
     });
   });

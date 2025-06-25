@@ -56,12 +56,43 @@ Automatically calculates and displays averaged sensor readings by device class:
 
 ### Climate Information
 
-- Displays any number of sensors (temperature, humidity, or any other sensor)
-- Visual indicators for temperature and humidity thresholds
-- Border colors indicate climate status (red for temperature, blue for humidity)
-- Configurable thresholds and can be disabled
+The card can display climate-related information and apply visual styling based on temperature and humidity thresholds.
 
-![Climate Borders](assets/climate.png)
+#### Climate Thresholds
+
+You can configure temperature and humidity thresholds to trigger visual indicators:
+
+```yaml
+thresholds:
+  temperature: 80 # °F (default: 80)
+  humidity: 60 # % (default: 60)
+  temperature_entity: sensor.living_room_temp # Specific sensor (optional)
+  humidity_entity: sensor.living_room_humidity # Specific sensor (optional)
+```
+
+**Individual Sensor Support**: When you specify `temperature_entity` or `humidity_entity`, the card will look for that specific sensor in both:
+
+1. **Individual sensors** (from `config.sensors`) - if the entity has the correct device class
+2. **Averaged sensors** (from `config.sensor_classes`) - as a fallback
+
+This allows you to use configured individual sensors for climate thresholds even when their device class isn't included in `sensor_classes`.
+
+#### Example: Using Individual Sensors for Thresholds
+
+```yaml
+sensors:
+  - sensor.living_room_temp_1 # Individual temperature sensor
+  - sensor.living_room_humidity # Individual humidity sensor
+sensor_classes:
+  - pressure # Only pressure sensors from area
+thresholds:
+  temperature: 75
+  humidity: 50
+  temperature_entity: sensor.living_room_temp_1 # Uses individual sensor
+  humidity_entity: sensor.living_room_humidity # Uses individual sensor
+```
+
+In this example, the climate thresholds will use the individual temperature and humidity sensors, even though `temperature` and `humidity` aren't in `sensor_classes`.
 
 ### Entity Status
 
@@ -264,7 +295,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Flags`**: ability to disable features.
 - [x] **`Multiple sensors`**: support for displaying multiple sensors in the label area. - thanks @fctruter, @LE-tarantino
 - [x] **`Climate entity icon styling`**: climate entity will light up icon - thanks @murriano
-- [x] **`Border styling for climate thresholds`**: border respects skip_climate_styles - thanks @LE-tarantino, @ma-gu-16
+- [x] **`Border styling for climate thresholds`**: border respects skip_climate_styles - thanks @LE-tarantino, @ma-gu-16, @wmtech-1
 - [x] **`Area name display`**: use area name instead of area ID on card - thanks @LE-tarantino
 - [x] **`Navigation with room entity`**: navigate now works with room entity set - thanks @LE-tarantino
 - [x] **`Card container sizing`**: card respects container - thanks @frdve, @Erikkyw
