@@ -1,4 +1,3 @@
-import { iconStyles } from '@theme/styles';
 import { css } from 'lit';
 
 /**
@@ -18,10 +17,4 @@ export const styles = css`
     aspect-ratio: 0.23 / 1;
     padding: 5px 5px 5px 0;
   }
-
-  .entity {
-    width: var(--user-entity-icon-size, inherit);
-  }
-
-  ${iconStyles}
 `;

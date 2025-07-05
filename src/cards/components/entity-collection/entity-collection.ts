@@ -1,4 +1,4 @@
-import { renderStateIcon } from '@/html/icon';
+import { renderRoomIcon } from '@/html/icon';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { getIconEntities } from '@delegates/entities/icon-entities';
 import type { HomeAssistant } from '@hass/types';
@@ -18,7 +18,7 @@ const equal = require('fast-deep-equal');
  *
  * - Individual entity state icon rendering with proper styling
  * - Grid layout management for consistent entity positioning
- * - Integration with the renderStateIcon utility for consistent icon display
+ * - Integration with the renderRoomIcon utility for consistent icon display
  * - Feature-based configuration support through the config object
  * - Internal generation of state icons from entity information
  * - Automatic retrieval of icon entities using getIconEntities utility
@@ -74,7 +74,7 @@ export class EntityCollection extends HassUpdateMixin(LitElement) {
     }
 
     const stateIcons = this._entities.map((entity) =>
-      renderStateIcon(this, this._hass, entity, ['entity']),
+      renderRoomIcon(this._hass, entity, this.config),
     );
 
     return html`

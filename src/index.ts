@@ -9,6 +9,7 @@
 import { RoomSummaryCard } from '@cards/card';
 import { EntityCollection } from '@cards/components/entity-collection/entity-collection';
 import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
+import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
 import { RoomSummaryCardEditor } from '@cards/editor';
 import { version } from '../package.json';
 
@@ -17,6 +18,7 @@ customElements.define('room-summary-card', RoomSummaryCard);
 customElements.define('room-summary-card-editor', RoomSummaryCardEditor);
 customElements.define('sensor-collection', SensorCollection);
 customElements.define('entity-collection', EntityCollection);
+customElements.define('room-state-icon', RoomStateIcon);
 
 // Ensure the customCards array exists on the window object
 window.customCards = window.customCards || [];

@@ -179,7 +179,7 @@ const entityAreaStyles = css`
 /**
  * Icon and visual indicator styles
  */
-export const iconStyles = css`
+const iconStyles = css`
   /* Icon container styling */
   .icon {
     cursor: pointer;

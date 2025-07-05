@@ -198,7 +198,13 @@ const schemeStyles = (entities: string[]): HaFormSchema => {
           },
           {
             name: 'entities',
-            label: 'Entities Styles',
+            label: 'Entities Container Styles',
+            required: false,
+            selector: { object: {} },
+          },
+          {
+            name: 'entity_icon',
+            label: 'Entity Icon Styles',
             required: false,
             selector: { object: {} },
           },

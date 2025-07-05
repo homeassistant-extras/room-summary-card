@@ -1,8 +1,9 @@
 import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
-import { renderProblemIndicator, renderStateIcon } from '@html/icon';
+import { renderProblemIndicator, renderStateIcon, renderRoomIcon } from '@html/icon';
 import { elementUpdated, fixture } from '@open-wc/testing-helpers';
 import type { EntityInformation, EntityState } from '@type/room';
+import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -221,6 +222,55 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el.className).to.include('status-entities');
+    });
+  });
+
+  describe('renderRoomIcon', () => {
+    // Common test variables
+    let entity: EntityInformation;
+    let mockState: EntityState;
+    let config: Config;
+
+    beforeEach(() => {
+      // Mock state object
+      mockState = {
+        entity_id: 'light.living_room',
+        state: 'on',
+        attributes: {
+          icon: 'mdi:light',
+        },
+        domain: 'light',
+      };
+
+      // Mock entity information
+      entity = {
+        config: {
+          entity_id: 'light.living_room',
+          icon: 'mdi:light',
+        },
+        state: mockState,
+      };
+
+      // Mock config object
+      config = {
+        area: 'living_room',
+        area_name: 'Living Room',
+        navigate: '/lovelace/living-room',
+      };
+    });
+
+    it('should return nothing when state is not present', () => {
+      entity.state = undefined;
+      const result = renderRoomIcon(mockHass, entity, config);
+
+      expect(result).to.equal(nothing);
+    });
+
+    it('should return template with room-state-icon element', async () => {
+      const result = renderRoomIcon(mockHass, entity, config);
+      
+      expect(result).to.not.equal(nothing);
+      expect(result).to.be.instanceOf(Object);
     });
   });
 });

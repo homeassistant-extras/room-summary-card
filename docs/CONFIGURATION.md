@@ -136,7 +136,9 @@ styles:
   entities:
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr 1fr;
-    '--user-entity-icon-size': 44px; # match HA default
+  entity_icon:
+    width: 50%; # change icon size
+    background: red;
   stats:
     color: yellow
     opacity: 1

@@ -15,7 +15,7 @@ describe('entity-collection.ts', () => {
   let element: EntityCollection;
   let mockHass: HomeAssistant;
   let getIconEntitiesStub: sinon.SinonStub;
-  let renderStateIconStub: sinon.SinonStub;
+  let renderRoomIconStub: sinon.SinonStub;
   let stylesToHostCssStub: sinon.SinonStub;
 
   const mockEntityStates: EntityState[] = [
@@ -64,8 +64,8 @@ describe('entity-collection.ts', () => {
     getIconEntitiesStub = stub(iconEntitiesModule, 'getIconEntities').returns(
       mockEntities,
     );
-    renderStateIconStub = stub(iconModule, 'renderStateIcon').returns(
-      html`<ha-state-icon></ha-state-icon>`,
+    renderRoomIconStub = stub(iconModule, 'renderRoomIcon').returns(
+      html`<room-state-icon></room-state-icon>`,
     );
     stylesToHostCssStub = stub(styleConverterModule, 'stylesToHostCss').returns(
       html`<style>
@@ -93,7 +93,7 @@ describe('entity-collection.ts', () => {
 
   afterEach(() => {
     getIconEntitiesStub.restore();
-    renderStateIconStub.restore();
+    renderRoomIconStub.restore();
     stylesToHostCssStub.restore();
   });
 
@@ -171,16 +171,15 @@ describe('entity-collection.ts', () => {
       // Verify stylesToHostCss is called
       expect(stylesToHostCssStub.called).to.be.true;
 
-      // Verify renderStateIcon is called for each entity
-      expect(renderStateIconStub.callCount).to.equal(mockEntities.length);
+      // Verify renderRoomIcon is called for each entity
+      expect(renderRoomIconStub.callCount).to.equal(mockEntities.length);
 
       // Verify each entity is rendered with correct parameters
       mockEntities.forEach((entity, index) => {
-        const call = renderStateIconStub.getCall(index);
-        expect(call.args[0]).to.equal(element); // this context
-        expect(call.args[1]).to.equal(mockHass); // hass instance
-        expect(call.args[2]).to.equal(entity); // entity
-        expect(call.args[3]).to.deep.equal(['entity']); // CSS classes
+        const call = renderRoomIconStub.getCall(index);
+        expect(call.args[0]).to.equal(mockHass); // hass instance
+        expect(call.args[1]).to.equal(entity); // entity
+        expect(call.args[2]).to.equal(element.config); // config
       });
     });
 
@@ -214,8 +213,8 @@ describe('entity-collection.ts', () => {
 
       // Should still call stylesToHostCss
       expect(stylesToHostCssStub.called).to.be.true;
-      // But renderStateIcon should not be called
-      expect(renderStateIconStub.called).to.be.false;
+      // But renderRoomIcon should not be called
+      expect(renderRoomIconStub.called).to.be.false;
     });
   });
 

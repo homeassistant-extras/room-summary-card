@@ -7,6 +7,7 @@ import {
   getProblemEntitiesStyle,
   renderEntityIconStyles,
 } from '@theme/render/icon-styles';
+import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { html, nothing, type TemplateResult } from 'lit';
 
@@ -72,4 +73,27 @@ export const renderProblemIndicator = (
       style=${styles}
     />
   `;
+};
+
+/**
+ * Creates a room icon element for an entity
+ *
+ * @param {HomeAssistant} hass - The Home Assistant instance
+ * @param {EntityInformation} entity - Information about the entity
+ * @param {Config} config - The configuration object
+ * @returns {TemplateResult | typeof nothing} A Lit template containing the room icon element or nothing if state doesn't exist
+ */
+export const renderRoomIcon = (
+  hass: HomeAssistant,
+  entity: EntityInformation,
+  config: Config,
+): TemplateResult | typeof nothing => {
+  const { state } = entity;
+  if (!state) return nothing;
+
+  return html`<room-state-icon
+    .entity=${entity}
+    .hass=${hass}
+    .config=${config}
+  ></room-state-icon>`;
 };

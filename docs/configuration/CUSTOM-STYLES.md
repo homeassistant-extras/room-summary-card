@@ -9,7 +9,8 @@ The Room Summary Card now supports custom CSS styles for different areas of the 
 Custom styles can be applied to the main areas of the card:
 
 - **`card`** - The entire card container and background
-- **`entities`** - The entitiy container
+- **`entities`** - The entity container
+- **`entity_icon`** - Individual entity icons
 - **`title`** - The room name/title text
 - **`stats`** - The area statistics (device/entity counts)
 - **`sensors`** - The sensor display area and sensor styling
@@ -26,8 +27,8 @@ styles:
   card:
     background: 'linear-gradient(45deg, #ff6b6b, #4ecdc4)'
   entities:
-    grid-template-rows: 1fr 1fr;
-    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr !important;
+    grid-template-columns: 1fr 1fr !important;
 ```
 
 ## Style Areas
@@ -56,8 +57,21 @@ styles:
     background: red # Remove default background
     border: '2px solid #ff6b6b' # Add border
     border-radius: 15px # Rounded corners
-    grid-template-rows: 1fr 1fr; # 2 rows
-    grid-template-columns: 1fr 1fr; # 2 columns
+    grid-template-rows: 1fr 1fr !important; # 2 rows
+    grid-template-columns: 1fr 1fr !important; # 2 columns
+```
+
+### Entity Icon Styles
+
+Control individual entity icons:
+
+```yaml
+styles:
+  entity_icon:
+    width: 50% # Icon size
+    opacity: 0.8 # Icon opacity
+    filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))' # Add shadow
+    transform: 'scale(1.2)' # Make icons larger
 ```
 
 ### Title Styles
@@ -192,11 +206,10 @@ styles:
 
 Some styles use CSS variables that can be overridden:
 
-| Variable                  | Area     | Description          |
-| ------------------------- | -------- | -------------------- |
-| `--user-entity-icon-size` | entities | Size of entity icons |
-| `--user-room-icon-size`   | card     | Size of room icon    |
-| `--user-sensor-icon-size` | sensors  | Size of sensor icons |
+| Variable                  | Area         | Description          |
+| ------------------------- | ------------ | -------------------- |
+| `--user-room-icon-size`   | card         | Size of room icon    |
+| `--user-sensor-icon-size` | sensors      | Size of sensor icons |
 
 Example:
 
@@ -206,8 +219,8 @@ styles:
     '--user-card-icon-size': 50% # 1/3 size
   sensors:
     '--user-sensor-icon-size': 30px # Large sensor icons
-  entities:
-    '--user-entity-icon-size': 44px # match HA default
+  entity_icon:
+    '--mdc-icon-size': 28px # Individual icon size
 ```
 
 ## Combining with Features
