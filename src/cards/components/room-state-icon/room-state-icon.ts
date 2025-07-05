@@ -4,13 +4,11 @@ import {
 } from '@/delegates/action-handler-delegate';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import type { HomeAssistant } from '@hass/types';
-import {
-  renderEntityIconStyles,
-} from '@theme/render/icon-styles';
+import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
-import { CSSResult, LitElement, html, nothing, type TemplateResult, css } from 'lit';
+import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { styles } from './styles';
 
@@ -75,4 +73,4 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       </div>
     `;
   }
-} 
+}

@@ -12,10 +12,11 @@ import { calculateAverages } from './sensor-averages';
  *
  * This function returns both individual sensors specified in config.sensors and
  * averaged sensors based on device classes specified in config.sensor_classes.
+ * It also collects problem entities in the area.
  *
  * @param hass - The Home Assistant instance containing entities and their states.
  * @param config - The configuration object specifying sensor settings.
- * @returns SensorData object containing individual and averaged sensor information.
+ * @returns SensorData object containing individual and averaged sensor information, plus problem entities.
  */
 export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   const skipDefaultEntities = hasFeature(config, 'exclude_default_entities');
@@ -30,29 +31,37 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   // Arrays to hold different categories
   const configOrderedSensors: EntityState[] = [];
   const classSensors: EntityState[] = [];
+  const problemSensors: EntityState[] = [];
 
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
+    // Check if the entity is in the area
+    const device = getDevice(hass.devices, entity.device_id);
+    const isInArea = [entity.area_id, device?.area_id].includes(config.area);
+
+    // Check if this is a problem entity (only for entities in the area)
+    if (isInArea && entity?.labels?.includes('problem')) {
+      const state = getState(hass.states, entity.entity_id);
+      if (state) {
+        problemSensors.push(state);
+      }
+    }
+
     // Check if this sensor is explicitly configured
     const isConfigSensor = config.sensors?.includes(entity.entity_id);
-
-    const device = getDevice(hass.devices, entity.device_id);
-    if (
-      !isConfigSensor &&
-      ![(entity.area_id, device?.area_id)].includes(config.area)
-    )
-      return;
 
     const state = getState(hass.states, entity.entity_id);
     if (!state) return;
 
-    // If it's a config sensor, always include it in individual sensors
+    // If it's a config sensor, always include it in individual sensors (regardless of area)
     if (isConfigSensor) {
       configOrderedSensors.push(state);
-      return;
     }
 
-    // If we're skipping default entities, don't process further
+    // For class-based sensors, only process entities in the area
+    if (!isInArea) return;
+
+    // If we're skipping default entities, don't process further for class-based sensors
     if (skipDefaultEntities) return;
 
     // Check if this is a sensor with a device class we care about
@@ -79,5 +88,6 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   return {
     individual: configOrderedSensors,
     averaged,
+    problemSensors,
   };
 };

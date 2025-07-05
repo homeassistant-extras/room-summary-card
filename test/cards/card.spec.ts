@@ -7,7 +7,7 @@ import { styles } from '@theme/styles';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { createState as s } from '../test-helpers';
+import { createStateEntity as e, createState as s } from '../test-helpers';
 
 describe('card.ts', () => {
   let card: RoomSummaryCard;
@@ -31,8 +31,7 @@ describe('card.ts', () => {
           domain: 'light',
         },
       },
-      problemEntities: [],
-      sensors: { individual: [], averaged: [] },
+      sensors: { individual: [], averaged: [], problemSensors: [] },
       image: null,
       flags: {
         problemExists: false,
@@ -167,7 +166,14 @@ describe('card.ts', () => {
     });
 
     it('should render problem entities correctly', async () => {
-      card['_problemEntities'] = ['light.living_room', 'sensor.humidity'];
+      card['_sensors'] = {
+        individual: [],
+        averaged: [],
+        problemSensors: [
+          e('binary_sensor', 'smoke_detector', 'on'),
+          e('binary_sensor', 'water_leak', 'on'),
+        ],
+      };
       card['_problemExists'] = true;
       const el = await fixture(card.render() as TemplateResult);
       const problemIcon = el.querySelector('.status-entities')!;

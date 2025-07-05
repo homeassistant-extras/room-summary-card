@@ -206,10 +206,10 @@ styles:
 
 Some styles use CSS variables that can be overridden:
 
-| Variable                  | Area         | Description          |
-| ------------------------- | ------------ | -------------------- |
-| `--user-room-icon-size`   | card         | Size of room icon    |
-| `--user-sensor-icon-size` | sensors      | Size of sensor icons |
+| Variable                  | Area    | Description          |
+| ------------------------- | ------- | -------------------- |
+| `--user-room-icon-size`   | card    | Size of room icon    |
+| `--user-sensor-icon-size` | sensors | Size of sensor icons |
 
 Example:
 

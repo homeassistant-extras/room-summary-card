@@ -1,7 +1,7 @@
 import { hasFeature } from '@config/feature';
 import type { Config } from '@type/config';
 import type { SensorData } from '@type/sensor';
-import memoizeOne from 'memoize-one';
+const memoizeOne = require('memoize-one');
 
 /**
  * Gets sensor value - from specific entity in individual sensors, or averaged sensor

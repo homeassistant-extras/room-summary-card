@@ -9,7 +9,6 @@ import {
 } from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
 import { stateDisplay } from '@html/state-display';
-import { styles } from './styles';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { SensorData } from '@type/sensor';
@@ -17,6 +16,7 @@ import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { until } from 'lit/directives/until.js';
+import { styles } from './styles';
 
 /**
  * Sensor Collection Component

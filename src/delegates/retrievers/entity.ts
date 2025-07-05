@@ -1,5 +1,5 @@
 import type { EntityRegistryDisplayEntry } from '@hass/data/entity_registry';
-import memoizeOne from 'memoize-one';
+const memoizeOne = require('memoize-one');
 
 /**
  * Retrieves entity information

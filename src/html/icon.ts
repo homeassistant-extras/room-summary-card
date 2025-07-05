@@ -8,7 +8,7 @@ import {
   renderEntityIconStyles,
 } from '@theme/render/icon-styles';
 import type { Config } from '@type/config';
-import type { EntityInformation } from '@type/room';
+import type { EntityInformation, EntityState } from '@type/room';
 import { html, nothing, type TemplateResult } from 'lit';
 
 /**
@@ -52,12 +52,12 @@ export const renderStateIcon = (
 /**
  * Renders the problem indicator icon if problems exist
  *
- * @param {string[]} problemEntities - Array of entity IDs that have problems
+ * @param {EntityState[]} problemEntities - Array of entity IDs that have problems
  * @param {boolean} problemExists - Whether there is an active problem that needs attention
  * @returns {TemplateResult | typeof nothing} The rendered problem indicator or nothing if no problem entities exist
  */
 export const renderProblemIndicator = (
-  problemEntities: string[],
+  problemEntities: EntityState[],
   problemExists: boolean,
 ): TemplateResult | typeof nothing => {
   if (problemEntities.length === 0) {

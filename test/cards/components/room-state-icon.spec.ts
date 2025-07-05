@@ -1,16 +1,19 @@
 import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
+import { styles } from '@cards/components/room-state-icon/styles';
 import * as actionHandlerModule from '@delegates/action-handler-delegate';
+import type {
+  MoreInfoActionConfig,
+  ToggleActionConfig,
+} from '@hass/data/lovelace/config/action';
 import type { HomeAssistant } from '@hass/types';
-import type { ToggleActionConfig, MoreInfoActionConfig } from '@hass/data/lovelace/config/action';
+import { createStateEntity } from '@test/test-helpers';
 import * as iconStylesModule from '@theme/render/icon-styles';
 import * as styleConverterModule from '@theme/util/style-converter';
 import type { Config, EntityConfig } from '@type/config';
 import type { EntityInformation, EntityState } from '@type/room';
-import { createStateEntity } from '@test/test-helpers';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { styles } from '@cards/components/room-state-icon/styles';
 
 describe('room-state-icon.ts', () => {
   let element: RoomStateIcon;
@@ -20,9 +23,14 @@ describe('room-state-icon.ts', () => {
   let actionHandlerStub: sinon.SinonStub;
   let handleClickActionStub: sinon.SinonStub;
 
-  const mockEntityState: EntityState = createStateEntity('light', 'living_room', 'on', {
-    friendly_name: 'Living Room Light',
-  });
+  const mockEntityState: EntityState = createStateEntity(
+    'light',
+    'living_room',
+    'on',
+    {
+      friendly_name: 'Living Room Light',
+    },
+  );
 
   const mockEntityConfig: EntityConfig = {
     entity_id: 'light.living_room',
@@ -44,7 +52,10 @@ describe('room-state-icon.ts', () => {
   } as Config;
 
   beforeEach(() => {
-    renderEntityIconStylesStub = stub(iconStylesModule, 'renderEntityIconStyles').returns(
+    renderEntityIconStylesStub = stub(
+      iconStylesModule,
+      'renderEntityIconStyles',
+    ).returns(
       html`<style>
         --icon-color: var(--primary-color);
       </style>`,
@@ -59,7 +70,10 @@ describe('room-state-icon.ts', () => {
     actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns(
       html`<div class="action-handler"></div>`,
     );
-    handleClickActionStub = stub(actionHandlerModule, 'handleClickAction').returns({
+    handleClickActionStub = stub(
+      actionHandlerModule,
+      'handleClickAction',
+    ).returns({
       handleEvent: () => {},
     });
 
@@ -118,10 +132,12 @@ describe('room-state-icon.ts', () => {
       expect(result).to.not.equal(nothing);
 
       // Verify renderEntityIconStyles is called with correct parameters
-      expect(renderEntityIconStylesStub.calledWith(mockHass, mockEntity)).to.be.true;
+      expect(renderEntityIconStylesStub.calledWith(mockHass, mockEntity)).to.be
+        .true;
 
       // Verify stylesToHostCss is called with config styles
-      expect(stylesToHostCssStub.calledWith(mockConfig.styles?.entity_icon)).to.be.true;
+      expect(stylesToHostCssStub.calledWith(mockConfig.styles?.entity_icon)).to
+        .be.true;
 
       // Verify action handler functions are called
       expect(actionHandlerStub.calledWith(mockEntity)).to.be.true;
@@ -201,7 +217,8 @@ describe('room-state-icon.ts', () => {
       element.render();
 
       expect(actionHandlerStub.calledWith(entityWithActions)).to.be.true;
-      expect(handleClickActionStub.calledWith(element, entityWithActions)).to.be.true;
+      expect(handleClickActionStub.calledWith(element, entityWithActions)).to.be
+        .true;
     });
   });
 
@@ -215,7 +232,8 @@ describe('room-state-icon.ts', () => {
 
       element.render();
 
-      expect(renderEntityIconStylesStub.calledWith(mockHass, mockEntity)).to.be.true;
+      expect(renderEntityIconStylesStub.calledWith(mockHass, mockEntity)).to.be
+        .true;
     });
 
     it('should apply config styles via stylesToHostCss', () => {
@@ -231,7 +249,8 @@ describe('room-state-icon.ts', () => {
 
       element.render();
 
-      expect(stylesToHostCssStub.calledWith(customConfig.styles?.entity_icon)).to.be.true;
+      expect(stylesToHostCssStub.calledWith(customConfig.styles?.entity_icon))
+        .to.be.true;
     });
 
     it('should handle renderEntityIconStyles returning nothing', () => {
@@ -240,7 +259,8 @@ describe('room-state-icon.ts', () => {
       const result = element.render();
       expect(result).to.not.equal(nothing);
 
-      expect(renderEntityIconStylesStub.calledWith(mockHass, mockEntity)).to.be.true;
+      expect(renderEntityIconStylesStub.calledWith(mockHass, mockEntity)).to.be
+        .true;
     });
   });
 
@@ -276,7 +296,9 @@ describe('room-state-icon.ts', () => {
       const result = element.render();
       expect(result).to.not.equal(nothing);
 
-      expect(renderEntityIconStylesStub.calledWith(mockHass, entityWithOffState)).to.be.true;
+      expect(
+        renderEntityIconStylesStub.calledWith(mockHass, entityWithOffState),
+      ).to.be.true;
     });
   });
 
@@ -313,4 +335,4 @@ describe('room-state-icon.ts', () => {
       expect(result).to.not.equal(nothing); // Should still render, just may not work properly
     });
   });
-}); 
+});

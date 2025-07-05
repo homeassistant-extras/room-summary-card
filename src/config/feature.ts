@@ -1,5 +1,5 @@
 import type { Config, Features } from '@type/config';
-import memoizeOne from 'memoize-one';
+const memoizeOne = require('memoize-one');
 
 /**
  * Determines if a specified feature is enabled in the provided configuration

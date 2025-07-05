@@ -14,11 +14,11 @@
   "scripts": {
     "watch": "parcel watch",
     "build": "parcel build",
-    "lint": "next lint",
+    "lint": "eslint . --fix",
     "format": "prettier --write .",
-    "test": "TS_NODE_PROJECT='./tsconfig.test.json' mocha",
+    "test": "mocha",
     "test:coverage": "nyc npm run test",
-    "test:watch": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --watch",
+    "test:watch": "mocha --watch",
     "update": "npx npm-check-updates -u && npm i"
   },
   "devDependencies": {

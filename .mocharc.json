@@ -1,10 +1,11 @@
 {
   "require": [
-    "ts-node/register",
+    "ts-node/register/transpile-only",
     "tsconfig-paths/register",
     "./mocha.setup.ts"
   ],
   "extensions": ["ts"],
   "spec": ["test/**/*.spec.ts"],
-  "watch-files": ["src/**/*.ts", "test/**/*.spec.ts"]
+  "watch-files": ["src/**/*.ts", "test/**/*.spec.ts"],
+  "loader": "ts-node/esm"
 }

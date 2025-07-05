@@ -1,7 +1,7 @@
 import type { CategoryType, IconResources } from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
 // @ts-ignore
-import memoizeOne from 'async-memoize-one';
+const memoizeOne = require('async-memoize-one');
 
 /**
  * Retrieves icon resources for a specific entity component category from Home Assistant.

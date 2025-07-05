@@ -1,5 +1,5 @@
 import type { DeviceRegistryEntry } from '@hass/data/device_registry';
-import memoizeOne from 'memoize-one';
+const memoizeOne = require('memoize-one');
 
 /**
  * Retrieves device information

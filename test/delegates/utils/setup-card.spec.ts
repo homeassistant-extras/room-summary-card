@@ -1,6 +1,5 @@
 import * as occupancyModule from '@delegates/checks/occupancy';
 import * as climateThresholdsModule from '@delegates/checks/thresholds';
-import * as getProblemEntitiesModule from '@delegates/entities/problem-entities';
 import * as getRoomEntityModule from '@delegates/entities/room-entity';
 import * as areaRetrieverModule from '@delegates/retrievers/area';
 import * as getSensorsModule from '@delegates/utils/hide-yo-sensors';
@@ -16,7 +15,6 @@ describe('setup-card.ts', () => {
   let mockHass: HomeAssistant;
   let getAreaStub: SinonStub;
   let getSensorsStub: SinonStub;
-  let getProblemEntitiesStub: SinonStub;
   let getRoomEntityStub: SinonStub;
   let climateThresholdsStub: SinonStub;
   let getBackgroundImageUrlStub: SinonStub;
@@ -26,10 +24,6 @@ describe('setup-card.ts', () => {
     // Create stubs for all the delegate functions
     getAreaStub = stub(areaRetrieverModule, 'getArea');
     getSensorsStub = stub(getSensorsModule, 'getSensors');
-    getProblemEntitiesStub = stub(
-      getProblemEntitiesModule,
-      'getProblemEntities',
-    );
     getRoomEntityStub = stub(getRoomEntityModule, 'getRoomEntity');
     climateThresholdsStub = stub(climateThresholdsModule, 'climateThresholds');
     getBackgroundImageUrlStub = stub(
@@ -45,10 +39,10 @@ describe('setup-card.ts', () => {
 
     // Set up default stub returns
     getAreaStub.returns({ area_id: 'living_room', name: 'Living Room' });
-    getSensorsStub.returns({ individual: [], averaged: [] });
-    getProblemEntitiesStub.returns({
-      problemEntities: [],
-      problemExists: false,
+    getSensorsStub.returns({
+      individual: [],
+      averaged: [],
+      problemSensors: [],
     });
     getRoomEntityStub.returns({
       config: { entity_id: 'light.test' },
@@ -62,7 +56,6 @@ describe('setup-card.ts', () => {
   afterEach(() => {
     getAreaStub.restore();
     getSensorsStub.restore();
-    getProblemEntitiesStub.restore();
     getRoomEntityStub.restore();
     climateThresholdsStub.restore();
     getBackgroundImageUrlStub.restore();
@@ -76,8 +69,6 @@ describe('setup-card.ts', () => {
 
       // Verify all functions were called with correct parameters
       expect(getRoomEntityStub.calledWith(mockHass, config)).to.be.true;
-      expect(getProblemEntitiesStub.calledWith(mockHass, config.area)).to.be
-        .true;
       expect(getSensorsStub.calledWith(mockHass, config)).to.be.true;
       expect(getBackgroundImageUrlStub.calledWith(mockHass, config)).to.be.true;
       expect(getOccupancyStateStub.calledWith(mockHass, config.occupancy)).to.be
@@ -88,6 +79,7 @@ describe('setup-card.ts', () => {
         climateThresholdsStub.calledWith(config, {
           individual: [],
           averaged: [],
+          problemSensors: [],
         }),
       ).to.be.true;
 
@@ -95,7 +87,6 @@ describe('setup-card.ts', () => {
       expect(result).to.have.all.keys([
         'roomInfo',
         'roomEntity',
-        'problemEntities',
         'sensors',
         'image',
         'flags',
@@ -103,6 +94,7 @@ describe('setup-card.ts', () => {
       expect(result.image).to.equal('/local/bg.jpg');
       expect(result.flags.dark).to.be.true;
       expect(result.flags.occupied).to.be.true;
+      expect(result.flags.problemExists).to.be.false;
     });
 
     it('should use config area_name when provided instead of calling getArea', () => {
@@ -114,6 +106,57 @@ describe('setup-card.ts', () => {
 
       expect(result.roomInfo.area_name).to.equal('Custom Name');
       expect(getAreaStub.called).to.be.false;
+    });
+
+    it('should detect problem exists when problem sensors are active', () => {
+      const config: Config = { area: 'living_room' };
+
+      // Mock sensors with active problem entities
+      getSensorsStub.returns({
+        individual: [],
+        averaged: [],
+        problemSensors: [
+          s('binary_sensor', 'smoke_detector', 'on'), // Active problem
+          s('binary_sensor', 'water_leak', 'off'), // Inactive problem
+        ],
+      });
+
+      const result = getRoomProperties(mockHass, config);
+
+      expect(result.flags.problemExists).to.be.true;
+    });
+
+    it('should not detect problem exists when all problem sensors are inactive', () => {
+      const config: Config = { area: 'living_room' };
+
+      // Mock sensors with inactive problem entities
+      getSensorsStub.returns({
+        individual: [],
+        averaged: [],
+        problemSensors: [
+          s('binary_sensor', 'smoke_detector', 'off'), // Inactive problem
+          s('binary_sensor', 'water_leak', 'off'), // Inactive problem
+        ],
+      });
+
+      const result = getRoomProperties(mockHass, config);
+
+      expect(result.flags.problemExists).to.be.false;
+    });
+
+    it('should not detect problem exists when no problem sensors exist', () => {
+      const config: Config = { area: 'living_room' };
+
+      // Mock sensors with no problem entities
+      getSensorsStub.returns({
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+      });
+
+      const result = getRoomProperties(mockHass, config);
+
+      expect(result.flags.problemExists).to.be.false;
     });
   });
 });

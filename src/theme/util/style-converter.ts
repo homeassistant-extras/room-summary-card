@@ -4,7 +4,7 @@ import {
   styleMap,
   type StyleMapDirective,
 } from 'lit-html/directives/style-map.js';
-import memoizeOne from 'memoize-one';
+const memoizeOne = require('memoize-one');
 
 /**
  * Converts a styles object to a <style> tag with :host selector

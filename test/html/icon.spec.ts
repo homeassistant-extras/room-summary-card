@@ -1,9 +1,13 @@
 import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
-import { renderProblemIndicator, renderStateIcon, renderRoomIcon } from '@html/icon';
+import {
+  renderProblemIndicator,
+  renderRoomIcon,
+  renderStateIcon,
+} from '@html/icon';
 import { elementUpdated, fixture } from '@open-wc/testing-helpers';
-import type { EntityInformation, EntityState } from '@type/room';
 import type { Config } from '@type/config';
+import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -268,7 +272,7 @@ describe('icon.ts', () => {
 
     it('should return template with room-state-icon element', async () => {
       const result = renderRoomIcon(mockHass, entity, config);
-      
+
       expect(result).to.not.equal(nothing);
       expect(result).to.be.instanceOf(Object);
     });

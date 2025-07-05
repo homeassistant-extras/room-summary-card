@@ -1,5 +1,5 @@
 import type { AreaRegistryEntry } from '@hass/data/area_registry';
-import memoizeOne from 'memoize-one';
+const memoizeOne = require('memoize-one');
 
 /**
  * Retrieves area information

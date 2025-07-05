@@ -128,9 +128,10 @@ describe('get-sensors.ts', () => {
 
     const result = getSensors(mockHass, config);
 
-    expect(result).to.have.keys(['individual', 'averaged']);
+    expect(result).to.have.keys(['individual', 'averaged', 'problemSensors']);
     expect(result.individual).to.be.an('array');
     expect(result.averaged).to.equal(mockAveraged);
+    expect(result.problemSensors).to.be.an('array');
   });
 
   it('should call calculateAverages with correct parameters', () => {
@@ -296,5 +297,161 @@ describe('get-sensors.ts', () => {
     expect(result.individual).to.be.an('array');
     expect(result.individual).to.have.lengthOf(0);
     expect(result.averaged).to.be.an('array');
+    expect(result.problemSensors).to.be.an('array');
+    expect(result.problemSensors).to.have.lengthOf(0);
+  });
+
+  describe('problem sensors', () => {
+    beforeEach(() => {
+      // Add problem entities to the mock data
+      mockHass.entities['binary_sensor.smoke_detector'] = {
+        entity_id: 'binary_sensor.smoke_detector',
+        device_id: 'device_1',
+        area_id: 'living_room',
+        labels: ['problem'],
+      };
+      mockHass.states['binary_sensor.smoke_detector'] = e(
+        'binary_sensor',
+        'smoke_detector',
+        'off',
+      );
+
+      mockHass.entities['binary_sensor.water_leak'] = {
+        entity_id: 'binary_sensor.water_leak',
+        device_id: 'device_2',
+        area_id: 'living_room',
+        labels: ['problem'],
+      };
+      mockHass.states['binary_sensor.water_leak'] = e(
+        'binary_sensor',
+        'water_leak',
+        'on',
+      );
+
+      mockHass.entities['binary_sensor.other_area_problem'] = {
+        entity_id: 'binary_sensor.other_area_problem',
+        device_id: 'device_6',
+        area_id: 'kitchen', // Different area
+        labels: ['problem'],
+      };
+      mockHass.states['binary_sensor.other_area_problem'] = e(
+        'binary_sensor',
+        'other_area_problem',
+        'on',
+      );
+    });
+
+    it('should detect problem entities in the specified area', () => {
+      const config: Config = {
+        area: 'living_room',
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.problemSensors).to.have.lengthOf(2);
+      expect(result.problemSensors.map((s) => s.entity_id)).to.include.members([
+        'binary_sensor.smoke_detector',
+        'binary_sensor.water_leak',
+      ]);
+    });
+
+    it('should not include problem entities from other areas', () => {
+      const config: Config = {
+        area: 'living_room',
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.problemSensors.map((s) => s.entity_id)).to.not.include(
+        'binary_sensor.other_area_problem',
+      );
+    });
+
+    it('should handle problem entities assigned via device area', () => {
+      // Add problem entity with no direct area but device in correct area
+      mockHass.entities['binary_sensor.device_area_problem'] = {
+        entity_id: 'binary_sensor.device_area_problem',
+        device_id: 'device_1', // This device is in living_room
+        area_id: '', // No direct area
+        labels: ['problem'],
+      };
+      mockHass.states['binary_sensor.device_area_problem'] = e(
+        'binary_sensor',
+        'device_area_problem',
+        'on',
+      );
+
+      const config: Config = {
+        area: 'living_room',
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.problemSensors.map((s) => s.entity_id)).to.include(
+        'binary_sensor.device_area_problem',
+      );
+    });
+
+    it('should not include entities without problem label', () => {
+      // Add entity without problem label
+      mockHass.entities['binary_sensor.normal_sensor'] = {
+        entity_id: 'binary_sensor.normal_sensor',
+        device_id: 'device_1',
+        area_id: 'living_room',
+        labels: ['normal'], // Not a problem
+      };
+      mockHass.states['binary_sensor.normal_sensor'] = e(
+        'binary_sensor',
+        'normal_sensor',
+        'on',
+      );
+
+      const config: Config = {
+        area: 'living_room',
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.problemSensors.map((s) => s.entity_id)).to.not.include(
+        'binary_sensor.normal_sensor',
+      );
+    });
+
+    it('should handle missing entity states gracefully', () => {
+      // Add problem entity without a corresponding state
+      mockHass.entities['binary_sensor.missing_state'] = {
+        entity_id: 'binary_sensor.missing_state',
+        device_id: 'device_1',
+        area_id: 'living_room',
+        labels: ['problem'],
+      };
+      // Don't add a state for this entity
+
+      const config: Config = {
+        area: 'living_room',
+      };
+
+      const result = getSensors(mockHass, config);
+
+      // Should not include the entity with missing state
+      expect(result.problemSensors.map((s) => s.entity_id)).to.not.include(
+        'binary_sensor.missing_state',
+      );
+    });
+
+    it('should include problem entities even when exclude_default_entities is enabled', () => {
+      const config: Config = {
+        area: 'living_room',
+        features: ['exclude_default_entities'],
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.problemSensors).to.have.lengthOf(2);
+      expect(result.problemSensors.map((s) => s.entity_id)).to.include.members([
+        'binary_sensor.smoke_detector',
+        'binary_sensor.water_leak',
+      ]);
+    });
   });
 });
