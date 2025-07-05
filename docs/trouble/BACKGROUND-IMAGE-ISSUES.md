@@ -14,7 +14,6 @@
    ```
 
 2. **Verify area picture**: Check if area has picture set in Home Assistant
-
    - Go to Settings → Areas & Labels
    - Edit your area and check if picture is uploaded
 

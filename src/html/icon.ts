@@ -38,11 +38,13 @@ export const renderStateIcon = (
     @action=${handleClickAction(element, entity)}
     .actionHandler=${actionHandler(entity)}
   >
-    ${hideIconContent ? nothing : html`<ha-state-icon
-      .hass=${hass}
-      .stateObj=${state}
-      .icon=${entity.config.icon}
-    ></ha-state-icon>`}
+    ${hideIconContent
+      ? nothing
+      : html`<ha-state-icon
+          .hass=${hass}
+          .stateObj=${state}
+          .icon=${entity.config.icon}
+        ></ha-state-icon>`}
   </div>`;
 };
 

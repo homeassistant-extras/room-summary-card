@@ -14,6 +14,8 @@
   "scripts": {
     "watch": "parcel watch",
     "build": "parcel build",
+    "lint": "next lint",
+    "format": "prettier --write .",
     "test": "TS_NODE_PROJECT='./tsconfig.test.json' mocha",
     "test:coverage": "nyc npm run test",
     "test:watch": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --watch",

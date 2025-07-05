@@ -19,7 +19,6 @@
 2. **Verify file location**: Ensure file is in `www/community/room-summary-card/`
 
 3. **Clear browser cache**:
-
    - Hard refresh (Ctrl+F5 or Cmd+Shift+R)
    - Clear browser cache completely
 

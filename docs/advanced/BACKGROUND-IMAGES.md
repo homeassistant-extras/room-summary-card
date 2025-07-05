@@ -135,7 +135,7 @@ The card supports three background options:
 
 You can combine these options for different effects:
 
-```yaml
+````yaml
 # Full card background (default)
 background:
   image: /local/images/room.jpg
@@ -172,7 +172,7 @@ background:
   opacity: 35
 features:
   - hide_room_icon # Clean look with person background
-```
+````
 
 #### Camera Feed Background
 

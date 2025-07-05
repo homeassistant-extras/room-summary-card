@@ -17,11 +17,11 @@ background:
 
 ### Background Options
 
-| Name         | Type   | Default | Description                                              |
-| ------------ | ------ | ------- | -------------------------------------------------------- |
-| image        | string | none    | URL or path to background image                          |
-| image_entity | string | none    | Entity ID for dynamic background (image, person, camera) |
-| opacity      | number | auto    | Background opacity percentage (0-100)                    |
+| Name         | Type   | Default | Description                                                         |
+| ------------ | ------ | ------- | ------------------------------------------------------------------- |
+| image        | string | none    | URL or path to background image                                     |
+| image_entity | string | none    | Entity ID for dynamic background (image, person, camera)            |
+| opacity      | number | auto    | Background opacity percentage (0-100)                               |
 | options      | array  | none    | Array of options: 'disable', 'icon_background', or 'hide_icon_only' |
 
 ### Background Priority
@@ -49,6 +49,7 @@ When enabled, the background image is applied only to the room icon area instead
 When enabled, only the icon content (the `ha-state-icon` element) is hidden, while the icon container (the circular background) remains visible. This allows the background image to show through the icon area without any icon overlay, while still maintaining the visual structure and clickable area.
 
 This option is particularly useful for:
+
 - Camera feeds where you want to see the full camera view through the icon area
 - Background images that you want to display prominently in the icon location
 - Creating a cleaner look while preserving the card's layout and functionality

@@ -14,7 +14,7 @@ updates:
     groups:
       all-dependencies:
         patterns:
-          - "*" # This pattern matches all dependencies
+          - '*' # This pattern matches all dependencies
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'

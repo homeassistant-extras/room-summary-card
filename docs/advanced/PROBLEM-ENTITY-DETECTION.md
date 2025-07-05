@@ -5,7 +5,6 @@ The card can automatically detect and monitor "problem" entities in your areas u
 ### Setting Up Problem Detection
 
 1. **Label entities** with "problem" in Home Assistant:
-
    - Go to Settings → Areas & Labels
    - Create or edit labels
    - Add "problem" label to relevant entities

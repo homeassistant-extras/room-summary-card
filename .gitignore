@@ -18,6 +18,7 @@
 !*.md
 !LICENSE
 !sonar-project.properties
+!yarn.lock
 
 # Ignore folders.
 node_modules
