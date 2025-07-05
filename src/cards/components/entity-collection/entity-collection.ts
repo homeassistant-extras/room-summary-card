@@ -2,7 +2,7 @@ import { renderStateIcon } from '@/html/icon';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { getIconEntities } from '@delegates/entities/icon-entities';
 import type { HomeAssistant } from '@hass/types';
-import { entityStyles } from '@theme/styles';
+import { styles } from './styles';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
@@ -47,7 +47,7 @@ export class EntityCollection extends HassUpdateMixin(LitElement) {
    * Returns the component's styles
    */
   static override get styles(): CSSResult {
-    return entityStyles;
+    return styles;
   }
 
   /**

@@ -179,7 +179,7 @@ const entityAreaStyles = css`
 /**
  * Icon and visual indicator styles
  */
-const iconStyles = css`
+export const iconStyles = css`
   /* Icon container styling */
   .icon {
     cursor: pointer;
@@ -289,70 +289,4 @@ export const styles = css`
   ${occupancyStyles}
 `;
 
-/**
- * Sensor styles for individual sensor display
- * Includes layout, icon visibility, and sensor-specific styles
- */
-export const sensorStyles = css`
-  :host {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    opacity: var(--text-opacity-theme, 0.4);
-    margin-left: -2%;
-    margin-top: 1%;
-  }
 
-  :host([hide-icons]) {
-    column-gap: 8px;
-    margin-left: 0px;
-  }
-
-  :host([layout='stacked']) {
-    flex-direction: column;
-  }
-
-  :host([layout='bottom']) {
-    position: absolute;
-    bottom: 2%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .sensor {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    --mdc-icon-size: var(--user-sensor-icon-size, 20px);
-  }
-
-  .sensor ha-state-icon,
-  .sensor ha-icon {
-    flex-shrink: 0;
-  }
-`;
-
-/**
- * Entity collection styles for entity icon display
- * Includes grid layout, positioning, and entity-specific styles
- */
-export const entityStyles = css`
-  :host {
-    height: 100%;
-    display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    align-items: center;
-    gap: 8px;
-    box-sizing: border-box;
-    aspect-ratio: 0.23 / 1;
-    padding: 5px 5px 5px 0;
-  }
-
-  .entity {
-    width: var(--user-entity-icon-size, inherit);
-  }
-
-  ${iconStyles}
-`;

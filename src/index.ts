@@ -7,8 +7,8 @@
  */
 
 import { RoomSummaryCard } from '@cards/card';
-import { EntityCollection } from '@cards/components/entity-collection';
-import { SensorCollection } from '@cards/components/sensor-collection';
+import { EntityCollection } from '@cards/components/entity-collection/entity-collection';
+import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
 import { RoomSummaryCardEditor } from '@cards/editor';
 import { version } from '../package.json';
 

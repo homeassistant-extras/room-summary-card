@@ -9,7 +9,7 @@ import {
 } from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
 import { stateDisplay } from '@html/state-display';
-import { sensorStyles } from '@theme/styles';
+import { styles } from './styles';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { SensorData } from '@type/sensor';
@@ -61,7 +61,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
    * Returns the component's styles
    */
   static override get styles(): CSSResult {
-    return sensorStyles;
+    return styles;
   }
 
   /**

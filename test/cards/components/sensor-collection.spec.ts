@@ -1,5 +1,5 @@
 import * as featureModule from '@/config/feature';
-import { SensorCollection } from '@cards/components/sensor-collection';
+import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
 import * as iconModule from '@delegates/retrievers/icons';
 import * as sensorUtilsModule from '@delegates/utils/sensor-utils';
 import type { HomeAssistant } from '@hass/types';
