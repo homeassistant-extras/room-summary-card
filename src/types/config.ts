@@ -65,7 +65,7 @@ export interface Config {
     opacity?: number;
 
     /** Background options */
-    options?: ('disable' | 'icon_background')[];
+    options?: ('disable' | 'icon_background' | 'hide_icon_only')[];
   };
 
   /** Custom styling configuration */

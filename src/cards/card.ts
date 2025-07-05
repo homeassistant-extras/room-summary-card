@@ -218,10 +218,12 @@ export class RoomSummaryCard extends LitElement {
       return nothing;
     }
 
-    const hide = hasFeature(this._config, 'hide_room_icon');
-    const roomEntity = hide
+    const hideIcon = hasFeature(this._config, 'hide_room_icon');
+    const hideIconContent = this._config.background?.options?.includes('hide_icon_only');
+    
+    const roomEntity = hideIcon
       ? undefined
-      : renderStateIcon(this, this._hass, this._roomEntity, ['room']);
+      : renderStateIcon(this, this._hass, this._roomEntity, ['room'], hideIconContent);
 
     const cardStyle = renderCardStyles(
       this._hass,

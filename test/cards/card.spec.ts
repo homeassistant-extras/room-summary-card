@@ -198,6 +198,22 @@ export default () => {
 
         handleClickActionStub.restore();
       });
+
+      it('should hide room icon content when hide_icon_only background option is enabled', async () => {
+        const config = {
+          area: 'living_room',
+          background: {
+            image: '/local/images/living-room.jpg',
+            options: ['hide_icon_only' as const],
+          },
+        };
+        card.setConfig(config);
+        const el = await fixture(card.render() as TemplateResult);
+        const roomIconContainer = el.querySelector('.room');
+        const roomIconContent = el.querySelector('.room ha-state-icon');
+        expect(roomIconContainer).to.exist;
+        expect(roomIconContent).to.not.exist;
+      });
     });
 
     describe('getStubConfig()', () => {

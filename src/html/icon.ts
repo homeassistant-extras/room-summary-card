@@ -17,6 +17,7 @@ import { html, nothing, type TemplateResult } from 'lit';
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {EntityInformation} entity - Information about the entity
  * @param {string[]} classes - CSS classes to apply to the icon container
+ * @param {boolean} hideIconContent - Whether to hide the icon content while keeping the container
  * @returns {TemplateResult | typeof nothing} A Lit template containing the icon element or nothing if state doesn't exist
  */
 export const renderStateIcon = (
@@ -24,6 +25,7 @@ export const renderStateIcon = (
   hass: HomeAssistant,
   entity: EntityInformation,
   classes: string[],
+  hideIconContent: boolean = false,
 ): TemplateResult | typeof nothing => {
   const { state } = entity;
   if (!state) return nothing;
@@ -36,11 +38,11 @@ export const renderStateIcon = (
     @action=${handleClickAction(element, entity)}
     .actionHandler=${actionHandler(entity)}
   >
-    <ha-state-icon
+    ${hideIconContent ? nothing : html`<ha-state-icon
       .hass=${hass}
       .stateObj=${state}
       .icon=${entity.config.icon}
-    ></ha-state-icon>
+    ></ha-state-icon>`}
   </div>`;
 };
 

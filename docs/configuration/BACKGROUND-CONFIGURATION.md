@@ -10,6 +10,7 @@ background:
   options:
     - disable # Disable background images entirely
     - icon_background # Apply background to room icon only
+    - hide_icon_only # Hide the room icon to show background clearly
 ```
 
 ![Background Image](../../assets/background-image.png)
@@ -21,7 +22,7 @@ background:
 | image        | string | none    | URL or path to background image                          |
 | image_entity | string | none    | Entity ID for dynamic background (image, person, camera) |
 | opacity      | number | auto    | Background opacity percentage (0-100)                    |
-| options      | array  | none    | Array of options: 'disable' or 'icon_background'         |
+| options      | array  | none    | Array of options: 'disable', 'icon_background', or 'hide_icon_only' |
 
 ### Background Priority
 
@@ -42,6 +43,19 @@ Completely disables background images for the card, regardless of other configur
 When enabled, the background image is applied only to the room icon area instead of the entire card. This creates a more subtle effect where the background image appears behind the room icon while keeping the rest of the card clean.
 
 ![Icon BG](../../assets/icon-bg.png)
+
+#### `hide_icon_only`
+
+When enabled, only the icon content (the `ha-state-icon` element) is hidden, while the icon container (the circular background) remains visible. This allows the background image to show through the icon area without any icon overlay, while still maintaining the visual structure and clickable area.
+
+This option is particularly useful for:
+- Camera feeds where you want to see the full camera view through the icon area
+- Background images that you want to display prominently in the icon location
+- Creating a cleaner look while preserving the card's layout and functionality
+
+**Note**: This is different from the `hide_room_icon` feature which completely removes the icon container from the DOM.
+
+![No Icon](../../assets/no-icon.png)
 
 ### Background Examples
 
@@ -107,6 +121,30 @@ background:
   opacity: 30
   options:
     - icon_background
+```
+
+#### Hide Icon Only for Camera Feed
+
+```yaml
+type: custom:room-summary-card
+area: security_room
+background:
+  image_entity: camera.front_door
+  opacity: 40
+  options:
+    - hide_icon_only
+```
+
+#### Hide Icon Only with Custom Background
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+background:
+  image: /local/images/living-room.jpg
+  opacity: 50
+  options:
+    - hide_icon_only
 ```
 
 ### Advanced Background Examples

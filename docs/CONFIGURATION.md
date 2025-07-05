@@ -173,6 +173,7 @@ See [Occupancy Configuration](configuration/OCCUPANCY-CONFIGURATION.md) for comp
 
 ## Next Steps
 
+- [Background Configuration](configuration/BACKGROUND-CONFIGURATION.md) - Customize the background with images, camera feeds, etc.
 - [Theming Guide](THEMING.md) - Learn about theme support and color customization
 - [Advanced Usage](ADVANCED.md) - Explore advanced features and integrations
 - [Troubleshooting](TROUBLESHOOTING.md) - Common issues and solutions

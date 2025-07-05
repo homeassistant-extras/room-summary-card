@@ -353,6 +353,10 @@ describe('editor-schema.ts', () => {
                           label: 'Icon Background',
                           value: 'icon_background',
                         },
+                        {
+                          label: 'Hide Icon Only',
+                          value: 'hide_icon_only',
+                        },
                       ],
                     },
                   },

@@ -127,10 +127,11 @@ background:
 
 ### Background Options
 
-The card supports two background options:
+The card supports three background options:
 
 - **`disable`**: Completely disables background images
 - **`icon_background`**: Applies background only to the room icon area
+- **`hide_icon_only`**: Hides only the icon content while keeping the icon container visible
 
 You can combine these options for different effects:
 
@@ -151,7 +152,13 @@ background:
 background:
   options:
     - disable
-```
+
+# Hide icon content only for camera feed (keeps icon container)
+background:
+  image_entity: camera.living_room
+  opacity: 40
+  options:
+    - hide_icon_only
 
 ### Image Entity Examples
 
