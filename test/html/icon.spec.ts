@@ -161,13 +161,19 @@ describe('icon.ts', () => {
   });
 
   describe('renderProblemIndicator', () => {
-    it('should return nothing when problemSensors array is empty', () => {
-      const result = renderProblemIndicator({ individual: [], averaged: [], problemSensors: [] });
-      expect(result).to.equal(nothing);
+    const mockConfig: Config = { area: 'test' };
+
+    it('should return empty problems div when problemSensors array is empty', async () => {
+      const result = renderProblemIndicator(mockHass, mockConfig, { individual: [], averaged: [], problemSensors: [] });
+      const el = await fixture(result as TemplateResult);
+      
+      expect(el).to.exist;
+      expect(el.className).to.equal('problems');
+      expect(el.children.length).to.equal(0);
     });
 
     it('should render icon with correct number when one problem entity exists', async () => {
-      const result = renderProblemIndicator({ 
+      const result = renderProblemIndicator(mockHass, mockConfig, { 
         individual: [], 
         averaged: [], 
         problemSensors: [createEntityState('entity1')] 
@@ -175,12 +181,14 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      expect((el as any).icon).to.equal('mdi:numeric-1');
-      expect(el.className).to.include('status-entities');
+      const icon = el.querySelector('ha-icon');
+      expect(icon).to.exist;
+      expect((icon as any).icon).to.equal('mdi:numeric-1');
+      expect((icon as any).className).to.include('status-entities');
     });
 
     it('should render icon with correct number for multiple problem entities', async () => {
-      const result = renderProblemIndicator({
+      const result = renderProblemIndicator(mockHass, mockConfig, {
         individual: [],
         averaged: [],
         problemSensors: [
@@ -192,11 +200,13 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      expect((el as any).icon).to.equal('mdi:numeric-3');
+      const icon = el.querySelector('ha-icon');
+      expect(icon).to.exist;
+      expect((icon as any).icon).to.equal('mdi:numeric-3');
     });
 
-    it('should use green background when no problem entities are active', async () => {
-      const result = renderProblemIndicator({ 
+    it('should not have has-problems attribute when no problem entities are active', async () => {
+      const result = renderProblemIndicator(mockHass, mockConfig, { 
         individual: [], 
         averaged: [], 
         problemSensors: [createEntityState('entity1', 'off')] 
@@ -204,16 +214,13 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      expect(
-        (el as any).style.getPropertyValue('--background-color-icon'),
-      ).to.equal('var(--success-color)');
-      expect(
-        (el as any).style.getPropertyValue('--background-opacity-icon'),
-      ).to.equal('0.6');
+      const icon = el.querySelector('ha-icon');
+      expect(icon).to.exist;
+      expect((icon as any).hasAttribute('has-problems')).to.be.false;
     });
 
-    it('should use red background when problem entities are active', async () => {
-      const result = renderProblemIndicator({ 
+    it('should have has-problems attribute when problem entities are active', async () => {
+      const result = renderProblemIndicator(mockHass, mockConfig, { 
         individual: [], 
         averaged: [], 
         problemSensors: [createEntityState('entity1', 'on')] 
@@ -221,18 +228,15 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      expect(
-        (el as any).style.getPropertyValue('--background-color-icon'),
-      ).to.equal('var(--error-color)');
-      expect(
-        (el as any).style.getPropertyValue('--background-opacity-icon'),
-      ).to.equal('0.8');
+      const icon = el.querySelector('ha-icon');
+      expect(icon).to.exist;
+      expect((icon as any).hasAttribute('has-problems')).to.be.true;
     });
 
     // Edge cases
     it('should handle large numbers of entities correctly', async () => {
       const manyEntities = Array(10).fill(null).map((_, i) => createEntityState(`entity${i}`));
-      const result = renderProblemIndicator({ 
+      const result = renderProblemIndicator(mockHass, mockConfig, { 
         individual: [], 
         averaged: [], 
         problemSensors: manyEntities 
@@ -240,11 +244,13 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      expect((el as any).icon).to.equal('mdi:numeric-10');
+      const icon = el.querySelector('ha-icon');
+      expect(icon).to.exist;
+      expect((icon as any).icon).to.equal('mdi:numeric-10');
     });
 
     it('should handle entities with special characters', async () => {
-      const result = renderProblemIndicator({
+      const result = renderProblemIndicator(mockHass, mockConfig, {
         individual: [],
         averaged: [],
         problemSensors: [
@@ -255,18 +261,60 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      expect((el as any).icon).to.equal('mdi:numeric-2');
+      const icon = el.querySelector('ha-icon');
+      expect(icon).to.exist;
+      expect((icon as any).icon).to.equal('mdi:numeric-2');
     });
 
     it('should properly combine multiple CSS classes', async () => {
-      const result = renderProblemIndicator({ 
+      const result = renderProblemIndicator(mockHass, mockConfig, { 
         individual: [], 
         averaged: [], 
         problemSensors: [createEntityState('entity1')] 
       });
       const el = await fixture(result as TemplateResult);
 
-      expect(el.className).to.include('status-entities');
+      const icon = el.querySelector('ha-icon');
+      expect(icon).to.exist;
+      expect((icon as any).className).to.include('status-entities');
+    });
+
+    it('should show mold indicator when mold sensor exists and should be shown', async () => {
+      const moldSensor = createEntityState('sensor.mold', '75');
+      const configWithThreshold: Config = {
+        area: 'test',
+        thresholds: { mold: 50 },
+      };
+      const sensorData = {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+        mold: moldSensor,
+      };
+      const result = renderProblemIndicator(mockHass, configWithThreshold, sensorData);
+      const el = await fixture(result as TemplateResult);
+
+      expect(el).to.exist;
+      expect(el.querySelector('ha-state-icon')).to.exist;
+    });
+
+    it('should hide mold indicator when mold sensor should not be shown', async () => {
+      const moldSensor = createEntityState('sensor.mold', '25');
+      const configWithThreshold: Config = {
+        area: 'test',
+        thresholds: { mold: 50 },
+      };
+      const sensorData = {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+        mold: moldSensor,
+      };
+      const result = renderProblemIndicator(mockHass, configWithThreshold, sensorData);
+      const el = await fixture(result as TemplateResult);
+
+      expect(el).to.exist;
+      expect(el.querySelector('ha-state-icon')).to.not.exist;
     });
   });
 

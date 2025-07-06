@@ -47,6 +47,9 @@ export interface Config {
     /** Humidity threshold value */
     humidity?: number;
 
+    /** Mold threshold value (percentage) */
+    mold?: number;
+
     /** Temperature entity ID for dynamic thresholds */
     temperature_entity?: string;
 

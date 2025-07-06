@@ -33,6 +33,9 @@ export interface SensorData {
 
   /** Problem entities in the area */
   problemSensors: EntityState[];
+
+  /** Mold sensor in the area */
+  mold?: EntityState;
 }
 /**
  * Represents a display-ready sensor that can be either individual or averaged

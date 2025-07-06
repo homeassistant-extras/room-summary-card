@@ -1,6 +1,5 @@
 import * as commonStyleModule from '@theme/render/common-style';
 import {
-  getProblemEntitiesStyle,
   renderEntityIconStyles,
 } from '@theme/render/icon-styles';
 import type { EntityInformation } from '@type/room';
@@ -125,25 +124,5 @@ describe('icon-styles.ts', () => {
     });
   });
 
-  describe('getProblemEntitiesStyle', () => {
-    it('should return correct styles for problem existence states', () => {
-      // Test problem exists
-      let result = getProblemEntitiesStyle(true);
-      expect(result).to.deep.equal(
-        styleMap({
-          '--background-color-icon': 'var(--error-color)',
-          '--background-opacity-icon': '0.8',
-        }),
-      );
 
-      // Test no problem exists
-      result = getProblemEntitiesStyle(false);
-      expect(result).to.deep.equal(
-        styleMap({
-          '--background-color-icon': 'var(--success-color)',
-          '--background-opacity-icon': '0.6',
-        }),
-      );
-    });
-  });
 });

@@ -5,13 +5,14 @@ import {
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import {
-  getProblemEntitiesStyle,
   renderEntityIconStyles,
 } from '@theme/render/icon-styles';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { html, nothing, type TemplateResult } from 'lit';
+import { shouldShowMoldIndicator } from '@delegates/checks/moldy';
+import { stateDisplay } from './state-display';
 
 /**
  * Creates a state icon element for an entity
@@ -54,28 +55,38 @@ export const renderStateIcon = (
 /**
  * Renders the problem indicator icon if problems exist
  *
+ * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {SensorData} sensors - The sensor data
+ * @param {Config} config - The configuration object
  * @returns {TemplateResult | typeof nothing} The rendered problem indicator or nothing if no problem entities exist
  */
 export const renderProblemIndicator = (
+  hass: HomeAssistant,
+  config: Config,
   sensors: SensorData,
 ): TemplateResult | typeof nothing => {
   const { problemSensors } = sensors;
-  if (problemSensors.length === 0) {
-    return nothing;
-  }
 
   const problemExists = problemSensors.some((sensor) => stateActive(sensor));
 
-  const styles = getProblemEntitiesStyle(problemExists);
-
-  return html`
-    <ha-icon
-      .icon=${`mdi:numeric-${problemSensors.length}`}
-      class="status-entities"
-      style=${styles}
-    />
-  `;
+  return html`<div class="problems">
+    ${problemSensors.length > 0
+      ? html`<ha-icon
+          .icon=${`mdi:numeric-${problemSensors.length}`}
+          class="status-entities"
+          ?has-problems=${problemExists}
+        ></ha-icon>`
+      : nothing}
+    ${sensors.mold && shouldShowMoldIndicator(sensors.mold, config)
+      ? html`<div class="mold-indicator">
+            <ha-state-icon
+              .hass=${hass}
+              .stateObj=${sensors.mold}
+            ></ha-state-icon>
+            <span class="mold-text">${stateDisplay(hass, sensors.mold)}</span>
+          </div>`
+      : nothing}
+  </div>`;
 };
 
 /**

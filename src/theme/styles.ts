@@ -8,6 +8,7 @@
 
 import { css } from 'lit';
 import { occupancyStyles } from './css/occupancy';
+import { moldStyles } from './css/mold';
 import {
   colorsDark,
   colorsLight,
@@ -232,19 +233,26 @@ const iconStyles = css`
  * Status entity indicator
  */
 const statusEntityStyles = css`
-  /* Status entities indicator */
-  .status-entities {
+  .problems {
     grid-area: 4 / 1 / 4 / 1;
     align-self: end;
     justify-self: start;
+    margin-left: 10%;
+    margin-bottom: 10%;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    z-index: 3; // above hitbox
+  }
+
+  /* Status entities indicator */
+  .status-entities {
     width: 26px;
     height: 26px;
     display: grid;
     place-items: center;
     color: var(--black-color);
     position: relative;
-    margin-left: 10%;
-    margin-bottom: 10%;
     z-index: 1;
   }
 
@@ -256,9 +264,28 @@ const statusEntityStyles = css`
     right: 0;
     bottom: 0;
     border-radius: 50%;
-    background-color: var(--background-color-icon);
-    opacity: var(--background-opacity-icon);
+    background-color: var(--success-color);
+    opacity: 0.6;
     z-index: -1;
+  }
+
+  /* Problem state styling */
+  .status-entities[has-problems]::before {
+    background-color: var(--error-color);
+    opacity: 0.8;
+    animation: problem-pulse 2s ease-in-out infinite;
+  }
+
+  /* Problem pulse animation */
+  @keyframes problem-pulse {
+    0%, 100% {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
   }
 `;
 
@@ -287,4 +314,5 @@ export const styles = css`
   ${sensorLabelStyles}
   ${statusEntityStyles}
   ${occupancyStyles}
+  ${moldStyles}
 `;

@@ -31,6 +31,7 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   const configOrderedSensors: EntityState[] = [];
   const classSensors: EntityState[] = [];
   const problemSensors: EntityState[] = [];
+  let mold: EntityState | undefined = undefined;
 
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
@@ -45,6 +46,10 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
     if (entity?.labels?.includes('problem')) {
       problemSensors.push(state);
+    }
+
+    if (entity?.platform === 'mold_indicator') {
+      mold = state;
     }
 
     // If it's a config sensor, always include it in individual sensors
@@ -81,5 +86,6 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     individual: configOrderedSensors,
     averaged,
     problemSensors,
+    mold,
   };
 };

@@ -155,6 +155,19 @@ const schemeStyles = (entities: string[]): HaFormSchema => {
             },
           },
           {
+            name: 'mold',
+            label: 'Mold threshold',
+            required: false,
+            selector: {
+              number: {
+                mode: 'slider' as const,
+                unit_of_measurement: '%',
+                min: 0,
+                max: 100,
+              },
+            },
+          },
+          {
             name: 'temperature_entity',
             label: 'Temperature Entity',
             required: false,

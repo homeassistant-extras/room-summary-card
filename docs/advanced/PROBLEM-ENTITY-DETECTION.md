@@ -24,8 +24,21 @@ The card automatically:
 - Displays a counter with the total number of problem entities
 - Shows green indicator if no problems are active
 - Shows red indicator if any problems are active
+- **Mold Detection**: Displays an animated mold indicator when mold levels exceed configured thresholds
 
 ![Problem Indicator](../../assets/problems.png)
+
+### Mold Indicator
+
+The mold indicator appears in the bottom left area near problem entities and provides:
+
+- **Animated Warning**: Pulsing red gradient background with bouncing effects
+- **Visual Prominence**: Warning triangle (⚠) with flashing animation
+- **Threshold Control**: Only displays when mold levels exceed your configured threshold
+- **Hover Effects**: Scales up and intensifies animations on hover
+- **Dark Theme Support**: Automatically adjusts colors for dark themes
+
+![Moldy](../../assets/moldy.png)
 
 ### Example Problem Entities
 

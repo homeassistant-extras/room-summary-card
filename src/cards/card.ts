@@ -223,6 +223,8 @@ export class RoomSummaryCard extends LitElement {
     );
 
     const problems = renderProblemIndicator(
+      this._hass,
+      this._config,
       this._sensors,
     );
 

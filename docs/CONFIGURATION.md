@@ -55,7 +55,7 @@ See [default entities](#default-entities)
 | features       | list             | See below                  | Optional flags to toggle different features                  |
 | sensor_layout  | string           | `default`                  | Layout for sensor display: `default`, `stacked`, or `bottom` |
 | sensor_classes | array            | See below                  | Device classes to average and display sensor readings for    |
-| thresholds     | object           | `80° / 60%`                | Temperature and humidity thresholds                          |
+| thresholds     | object           | `80° / 60%`                | Temperature, humidity, and mold thresholds                   |
 | styles         | object           | `{}`                       | Custom CSS styles for card areas                             |
 
 ### Default Entities
@@ -66,6 +66,7 @@ By default, the card will include (if found):
 - Room fan by naming convention (`switch.living_room_fan`)
 - All temperature and humidity sensors by device class
 - Problem entities (labeled with "problem")
+- Mold sensors (with animated indicators when thresholds are exceeded)
 - Area statistics
 - Area background image (if picture attribute is set)
 

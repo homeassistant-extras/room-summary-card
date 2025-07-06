@@ -68,6 +68,18 @@ area: garage
 thresholds:
   temperature: 85 # Red border above 85°F
   humidity: 70 # Blue border above 70%
+  mold: 50 # Animated mold indicator above 50%
+```
+
+### With Mold Detection
+
+```yaml
+type: custom:room-summary-card
+area: basement
+thresholds:
+  mold: 45 # Shows animated mold warning when levels exceed 45%
+  temperature: 65 # Lower temperature threshold for basement
+  humidity: 60
 ```
 
 ### Exclude Default Entities
@@ -196,6 +208,7 @@ occupancy:
 thresholds:
   temperature: 75
   humidity: 55
+  mold: 50
   temperature_entity: sensor.specific_temp_sensor
   humidity_entity: sensor.specific_humidity_sensor
 navigate: /lovelace/living-room

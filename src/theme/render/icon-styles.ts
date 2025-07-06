@@ -32,18 +32,3 @@ export const renderEntityIconStyles = (
     '--state-color-icon-theme': styleData.themeOverride,
   });
 };
-
-/**
- * Generates styles for problem indicator based on problem existence
- *
- * @param {boolean} problemExists - Whether a problem condition exists
- * @returns {DirectiveResult<typeof StyleMapDirective>} Style map for the problem indicator
- */
-export const getProblemEntitiesStyle = (problemExists: boolean) => {
-  return styleMap({
-    '--background-color-icon': `${
-      problemExists ? 'var(--error-color)' : 'var(--success-color)'
-    }`,
-    '--background-opacity-icon': `${problemExists ? '0.8' : '0.6'}`,
-  });
-};

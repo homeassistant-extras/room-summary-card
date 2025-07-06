@@ -60,15 +60,18 @@ The card can display climate-related information and apply visual styling based 
 
 #### Climate Thresholds
 
-You can configure temperature and humidity thresholds to trigger visual indicators:
+You can configure temperature, humidity, and mold thresholds to trigger visual indicators:
 
 ```yaml
 thresholds:
   temperature: 80 # °F (default: 80)
   humidity: 60 # % (default: 60)
+  mold: 50 # % (no default - shows whenever mold sensor is present)
   temperature_entity: sensor.living_room_temp # Specific sensor (optional)
   humidity_entity: sensor.living_room_humidity # Specific sensor (optional)
 ```
+
+**Mold Indicator**: When mold levels exceed the threshold, an animated indicator appears in the bottom left area near problem entities with pulsing effects and warning symbols.
 
 **Individual Sensor Support**: When you specify `temperature_entity` or `humidity_entity`, the card will look for that specific sensor in both:
 
@@ -108,6 +111,7 @@ In this example, the climate thresholds will use the individual temperature and 
 - Automatically detects entities labeled as "problem" in the area
 - Shows count of problem entities with color-coded indicators
 - Red for active problems, green for no active problems
+- **Mold Indicator**: Animated warning appears in the bottom left area when mold levels exceed thresholds
 
 ![Problem Detection](assets/problems.png)
 
@@ -315,6 +319,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Custom Styles`**: ability to apply custom CSS styles - thanks @marceloroloff, @ma-gu-16, @Ltek, @johannwilken
 - [x] **`Random bugs`**: pointing out issues to improve card - thanks @rickd1994, @avijavez10
 - [x] **`Occupancy Detection`**: visual indicators for room occupancy with motion/occupancy sensors - thanks @X1pheR
+- [x] **`Mold Indicator`**: animated warning indicator for mold detection with threshold-based display - thanks @ma-gu-16
 
 ## Contributing
 
