@@ -7,4 +7,5 @@ export interface EntityRegistryDisplayEntry {
   area_id: string;
   device_id: string;
   labels: string[];
+  platform?: string;
 }

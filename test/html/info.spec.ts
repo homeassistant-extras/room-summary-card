@@ -70,6 +70,7 @@ describe('info.ts', () => {
       const sensors: SensorData = {
         individual: [],
         averaged: [],
+        problemSensors: [],
       };
 
       const result = info(
@@ -96,6 +97,7 @@ describe('info.ts', () => {
       const sensors: SensorData = {
         individual: [e('sensor', 'temperature', '22')],
         averaged: [],
+        problemSensors: [],
       };
 
       const result = info(
@@ -116,7 +118,11 @@ describe('info.ts', () => {
     });
 
     it('should call renderAreaStatistics', () => {
-      const sensors: SensorData = { individual: [], averaged: [] };
+      const sensors: SensorData = {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+      };
 
       info(mockHass, mockRoomInformation, mockRoomEntity, mockConfig, sensors);
 
@@ -126,7 +132,11 @@ describe('info.ts', () => {
     });
 
     it('should apply text styles to name element', async () => {
-      const sensors: SensorData = { individual: [], averaged: [] };
+      const sensors: SensorData = {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+      };
 
       const result = info(
         mockHass,
@@ -148,7 +158,11 @@ describe('info.ts', () => {
 
     it('should handle when renderAreaStatistics returns nothing', async () => {
       renderAreaStatisticsStub.returns(nothing);
-      const sensors: SensorData = { individual: [], averaged: [] };
+      const sensors: SensorData = {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+      };
 
       const result = info(
         mockHass,
@@ -166,7 +180,11 @@ describe('info.ts', () => {
 
     it('should handle special characters in room names', async () => {
       const complexRoomInfo = { area_name: 'Master Bedroom & En-Suite' };
-      const sensors: SensorData = { individual: [], averaged: [] };
+      const sensors: SensorData = {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+      };
 
       const result = info(
         mockHass,

@@ -30,6 +30,9 @@ export interface SensorData {
 
   /** Averaged sensors grouped by device class */
   averaged: AveragedSensor[];
+
+  /** Problem entities in the area */
+  problemSensors: EntityState[];
 }
 /**
  * Represents a display-ready sensor that can be either individual or averaged

@@ -6,18 +6,15 @@ import { getBackgroundImageUrl } from '@theme/image/get-pic';
 import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
-import { getProblemEntities } from '../entities/problem-entities';
 import { getRoomEntity } from '../entities/room-entity';
 import { getSensors } from './hide-yo-sensors';
 
 export interface RoomProperties {
   roomInfo: RoomInformation;
   roomEntity: EntityInformation;
-  problemEntities: string[];
   sensors: SensorData;
   image?: string | null;
   flags: {
-    problemExists: boolean;
     occupied: boolean;
     dark: boolean;
     hot: boolean;
@@ -44,11 +41,6 @@ export const getRoomProperties = (
       config.area_name ?? getArea(hass.areas, config.area)?.name ?? config.area,
   };
   const roomEntity = getRoomEntity(hass, config);
-  const { problemEntities, problemExists } = getProblemEntities(
-    hass,
-    config.area,
-  );
-
   const sensors = getSensors(hass, config);
   const thresholds = climateThresholds(config, sensors);
   const image = getBackgroundImageUrl(hass, config);
@@ -57,11 +49,9 @@ export const getRoomProperties = (
   return {
     roomInfo,
     roomEntity,
-    problemEntities,
     sensors,
     image,
     flags: {
-      problemExists,
       occupied,
       dark: hass.themes.darkMode,
       ...thresholds,

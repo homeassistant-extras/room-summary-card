@@ -31,11 +31,9 @@ describe('card.ts', () => {
           domain: 'light',
         },
       },
-      problemEntities: [],
-      sensors: { individual: [], averaged: [] },
+      sensors: { individual: [], averaged: [], problemSensors: [] },
       image: null,
       flags: {
-        problemExists: false,
         occupied: true,
         dark: true,
         hot: false,
@@ -167,8 +165,20 @@ describe('card.ts', () => {
     });
 
     it('should render problem entities correctly', async () => {
-      card['_problemEntities'] = ['light.living_room', 'sensor.humidity'];
-      card['_problemExists'] = true;
+      card['_sensors'].problemSensors = [
+        {
+          entity_id: 'light.living_room',
+          state: 'on',
+          attributes: {},
+          domain: 'light',
+        },
+        {
+          entity_id: 'sensor.humidity',
+          state: '45',
+          attributes: {},
+          domain: 'sensor',
+        },
+      ];
       const el = await fixture(card.render() as TemplateResult);
       const problemIcon = el.querySelector('.status-entities')!;
       expect(problemIcon).to.exist;

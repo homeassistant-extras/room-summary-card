@@ -25,7 +25,11 @@ describe('climate-thresholds.ts', () => {
         .returns(true);
 
       const config: Config = { area: 'test' };
-      const sensorData: SensorData = { individual: [], averaged: [] };
+      const sensorData: SensorData = {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+      };
 
       const result = climateThresholds(config, sensorData);
 
@@ -39,6 +43,7 @@ describe('climate-thresholds.ts', () => {
         averaged: [
           // Missing both temperature and humidity sensors
         ],
+        problemSensors: [],
       };
 
       const result = climateThresholds(config, sensorData);
@@ -66,6 +71,7 @@ describe('climate-thresholds.ts', () => {
             domain: 'sensor',
           },
         ],
+        problemSensors: [],
       };
 
       const result = climateThresholds(config, sensorData);
@@ -99,6 +105,7 @@ describe('climate-thresholds.ts', () => {
             domain: 'sensor',
           },
         ],
+        problemSensors: [],
       };
 
       const result = climateThresholds(config, sensorData);
@@ -160,6 +167,7 @@ describe('climate-thresholds.ts', () => {
             domain: 'sensor',
           },
         ],
+        problemSensors: [],
       };
 
       const result = climateThresholds(config, sensorData);
@@ -214,6 +222,7 @@ describe('climate-thresholds.ts', () => {
             domain: 'sensor',
           },
         ],
+        problemSensors: [],
       };
 
       const result = climateThresholds(config, sensorData);
@@ -251,6 +260,7 @@ describe('climate-thresholds.ts', () => {
             domain: 'sensor',
           },
         ],
+        problemSensors: [],
       };
 
       const result = climateThresholds(config, sensorData);
@@ -294,6 +304,7 @@ describe('climate-thresholds.ts', () => {
             domain: 'sensor',
           },
         ],
+        problemSensors: [],
       };
 
       const result = climateThresholds(config, sensorData);

@@ -30,21 +30,22 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   // Arrays to hold different categories
   const configOrderedSensors: EntityState[] = [];
   const classSensors: EntityState[] = [];
+  const problemSensors: EntityState[] = [];
 
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
     // Check if this sensor is explicitly configured
     const isConfigSensor = config.sensors?.includes(entity.entity_id);
-
     const device = getDevice(hass.devices, entity.device_id);
-    if (
-      !isConfigSensor &&
-      ![(entity.area_id, device?.area_id)].includes(config.area)
-    )
-      return;
+    const isInArea = [entity.area_id, device?.area_id].includes(config.area);
+    if (!isInArea) return;
 
     const state = getState(hass.states, entity.entity_id);
     if (!state) return;
+
+    if (entity?.labels?.includes('problem')) {
+      problemSensors.push(state);
+    }
 
     // If it's a config sensor, always include it in individual sensors
     if (isConfigSensor) {
@@ -79,5 +80,6 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   return {
     individual: configOrderedSensors,
     averaged,
+    problemSensors,
   };
 };

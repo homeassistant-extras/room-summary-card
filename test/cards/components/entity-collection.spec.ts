@@ -1,4 +1,5 @@
 import { EntityCollection } from '@cards/components/entity-collection/entity-collection';
+import { styles } from '@cards/components/entity-collection/styles';
 import * as iconEntitiesModule from '@delegates/entities/icon-entities';
 import type { HomeAssistant } from '@hass/types';
 import * as iconModule from '@html/icon';
@@ -9,7 +10,6 @@ import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { styles } from '@cards/components/entity-collection/styles';
 
 describe('entity-collection.ts', () => {
   let element: EntityCollection;

@@ -288,5 +288,3 @@ export const styles = css`
   ${statusEntityStyles}
   ${occupancyStyles}
 `;
-
-

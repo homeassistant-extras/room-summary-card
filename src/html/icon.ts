@@ -2,6 +2,7 @@ import {
   actionHandler,
   handleClickAction,
 } from '@/delegates/action-handler-delegate';
+import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import {
   getProblemEntitiesStyle,
@@ -9,6 +10,7 @@ import {
 } from '@theme/render/icon-styles';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
+import type { SensorData } from '@type/sensor';
 import { html, nothing, type TemplateResult } from 'lit';
 
 /**
@@ -52,23 +54,24 @@ export const renderStateIcon = (
 /**
  * Renders the problem indicator icon if problems exist
  *
- * @param {string[]} problemEntities - Array of entity IDs that have problems
- * @param {boolean} problemExists - Whether there is an active problem that needs attention
+ * @param {SensorData} sensors - The sensor data
  * @returns {TemplateResult | typeof nothing} The rendered problem indicator or nothing if no problem entities exist
  */
 export const renderProblemIndicator = (
-  problemEntities: string[],
-  problemExists: boolean,
+  sensors: SensorData,
 ): TemplateResult | typeof nothing => {
-  if (problemEntities.length === 0) {
+  const { problemSensors } = sensors;
+  if (problemSensors.length === 0) {
     return nothing;
   }
+
+  const problemExists = problemSensors.some((sensor) => stateActive(sensor));
 
   const styles = getProblemEntitiesStyle(problemExists);
 
   return html`
     <ha-icon
-      .icon=${`mdi:numeric-${problemEntities.length}`}
+      .icon=${`mdi:numeric-${problemSensors.length}`}
       class="status-entities"
       style=${styles}
     />

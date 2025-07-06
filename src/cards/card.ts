@@ -49,18 +49,6 @@ export class RoomSummaryCard extends LitElement {
   private _roomEntity!: EntityInformation;
 
   /**
-   * List of entity IDs that have problems
-   */
-  @state()
-  private _problemEntities: string[] = [];
-
-  /**
-   * Indicates if any problems exist in the room
-   */
-  @state()
-  private _problemExists: boolean = false;
-
-  /**
    * The sensors to show state for
    */
   @state()
@@ -131,13 +119,11 @@ export class RoomSummaryCard extends LitElement {
     const {
       roomInfo,
       roomEntity,
-      problemEntities,
       sensors,
       image,
-      flags: { problemExists, occupied, dark, hot, humid },
+      flags: { occupied, dark, hot, humid },
     } = getRoomProperties(hass, this._config);
 
-    this._problemExists = problemExists;
     this.occupied = occupied;
     this.dark = dark;
     this.hot = hot;
@@ -152,10 +138,6 @@ export class RoomSummaryCard extends LitElement {
     }
     if (!equal(roomEntity, this._roomEntity)) {
       this._roomEntity = roomEntity;
-      shouldRender = true;
-    }
-    if (!equal(problemEntities, this._problemEntities)) {
-      this._problemEntities = problemEntities;
       shouldRender = true;
     }
     if (!equal(sensors, this._sensors)) {
@@ -241,8 +223,7 @@ export class RoomSummaryCard extends LitElement {
     );
 
     const problems = renderProblemIndicator(
-      this._problemEntities,
-      this._problemExists,
+      this._sensors,
     );
 
     const handler = actionHandler(this._roomEntity);

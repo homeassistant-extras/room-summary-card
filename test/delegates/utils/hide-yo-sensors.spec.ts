@@ -128,7 +128,7 @@ describe('get-sensors.ts', () => {
 
     const result = getSensors(mockHass, config);
 
-    expect(result).to.have.keys(['individual', 'averaged']);
+    expect(result).to.have.keys(['individual', 'averaged', 'problemSensors']);
     expect(result.individual).to.be.an('array');
     expect(result.averaged).to.equal(mockAveraged);
   });
@@ -209,9 +209,7 @@ describe('get-sensors.ts', () => {
     const result = getSensors(mockHass, config);
 
     // Should not include the kitchen sensor
-    expect(result.individual.map((s) => s.entity_id)).to.include(
-      'sensor.other_area_temp',
-    );
+    expect(result.individual.map((s) => s.entity_id)).to.be.empty;
   });
 
   it('should skip default entities when exclude_default_entities is enabled', () => {

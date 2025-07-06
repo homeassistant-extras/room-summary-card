@@ -1,12 +1,28 @@
 import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import type { HomeAssistant } from '@hass/types';
-import { renderProblemIndicator, renderStateIcon, renderRoomIcon } from '@html/icon';
+import {
+  renderProblemIndicator,
+  renderRoomIcon,
+  renderStateIcon,
+} from '@html/icon';
 import { elementUpdated, fixture } from '@open-wc/testing-helpers';
-import type { EntityInformation, EntityState } from '@type/room';
 import type { Config } from '@type/config';
+import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
+
+// Helper to create EntityState objects for testing
+const createEntityState = (
+  entityId: string,
+  state = 'on',
+  attributes = {},
+): EntityState => ({
+  entity_id: entityId,
+  state,
+  attributes,
+  domain: entityId.split('.')[0] || 'unknown',
+});
 
 describe('icon.ts', () => {
   let mockHass: HomeAssistant;
@@ -145,13 +161,17 @@ describe('icon.ts', () => {
   });
 
   describe('renderProblemIndicator', () => {
-    it('should return nothing when problemEntities array is empty', () => {
-      const result = renderProblemIndicator([], true);
+    it('should return nothing when problemSensors array is empty', () => {
+      const result = renderProblemIndicator({ individual: [], averaged: [], problemSensors: [] });
       expect(result).to.equal(nothing);
     });
 
     it('should render icon with correct number when one problem entity exists', async () => {
-      const result = renderProblemIndicator(['entity1'], true);
+      const result = renderProblemIndicator({ 
+        individual: [], 
+        averaged: [], 
+        problemSensors: [createEntityState('entity1')] 
+      });
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -160,18 +180,27 @@ describe('icon.ts', () => {
     });
 
     it('should render icon with correct number for multiple problem entities', async () => {
-      const result = renderProblemIndicator(
-        ['entity1', 'entity2', 'entity3'],
-        true,
-      );
+      const result = renderProblemIndicator({
+        individual: [],
+        averaged: [],
+        problemSensors: [
+          createEntityState('entity1'),
+          createEntityState('entity2'),
+          createEntityState('entity3'),
+        ],
+      });
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
       expect((el as any).icon).to.equal('mdi:numeric-3');
     });
 
-    it('should use green background when problemExists is false', async () => {
-      const result = renderProblemIndicator(['entity1'], false);
+    it('should use green background when no problem entities are active', async () => {
+      const result = renderProblemIndicator({ 
+        individual: [], 
+        averaged: [], 
+        problemSensors: [createEntityState('entity1', 'off')] 
+      });
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -183,8 +212,12 @@ describe('icon.ts', () => {
       ).to.equal('0.6');
     });
 
-    it('should use red background when problemExists is true', async () => {
-      const result = renderProblemIndicator(['entity1'], true);
+    it('should use red background when problem entities are active', async () => {
+      const result = renderProblemIndicator({ 
+        individual: [], 
+        averaged: [], 
+        problemSensors: [createEntityState('entity1', 'on')] 
+      });
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -198,8 +231,12 @@ describe('icon.ts', () => {
 
     // Edge cases
     it('should handle large numbers of entities correctly', async () => {
-      const manyEntities = Array(10).fill('entity');
-      const result = renderProblemIndicator(manyEntities, true);
+      const manyEntities = Array(10).fill(null).map((_, i) => createEntityState(`entity${i}`));
+      const result = renderProblemIndicator({ 
+        individual: [], 
+        averaged: [], 
+        problemSensors: manyEntities 
+      });
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -207,10 +244,14 @@ describe('icon.ts', () => {
     });
 
     it('should handle entities with special characters', async () => {
-      const result = renderProblemIndicator(
-        ['entity/with/slashes', 'entity.with.dots'],
-        true,
-      );
+      const result = renderProblemIndicator({
+        individual: [],
+        averaged: [],
+        problemSensors: [
+          createEntityState('entity/with/slashes'),
+          createEntityState('entity.with.dots'),
+        ],
+      });
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -218,7 +259,11 @@ describe('icon.ts', () => {
     });
 
     it('should properly combine multiple CSS classes', async () => {
-      const result = renderProblemIndicator(['entity1'], true);
+      const result = renderProblemIndicator({ 
+        individual: [], 
+        averaged: [], 
+        problemSensors: [createEntityState('entity1')] 
+      });
       const el = await fixture(result as TemplateResult);
 
       expect(el.className).to.include('status-entities');
@@ -268,7 +313,7 @@ describe('icon.ts', () => {
 
     it('should return template with room-state-icon element', async () => {
       const result = renderRoomIcon(mockHass, entity, config);
-      
+
       expect(result).to.not.equal(nothing);
       expect(result).to.be.instanceOf(Object);
     });
