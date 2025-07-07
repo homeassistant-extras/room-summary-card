@@ -94,6 +94,7 @@ features:
 | exclude_default_entities | Don't include default light/fan entities             |
 | skip_climate_styles      | Disable climate-based color coding & borders         |
 | skip_entity_styles       | Disable card background styling based on main entity |
+| show_entity_labels       | Show entity labels under each entity icon            |
 
 ## Sensor Classes
 

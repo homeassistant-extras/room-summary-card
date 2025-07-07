@@ -1,11 +1,14 @@
+import * as featureModule from '@/config/feature';
 import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
 import { styles } from '@cards/components/room-state-icon/styles';
 import * as actionHandlerModule from '@delegates/action-handler-delegate';
+import * as computeEntityNameModule from '@hass/common/entity/compute_entity_name';
 import type {
   MoreInfoActionConfig,
   ToggleActionConfig,
 } from '@hass/data/lovelace/config/action';
 import type { HomeAssistant } from '@hass/types';
+import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
 import * as iconStylesModule from '@theme/render/icon-styles';
 import * as styleConverterModule from '@theme/util/style-converter';
@@ -13,6 +16,7 @@ import type { Config, EntityConfig } from '@type/config';
 import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
+import { styleMap } from 'lit-html/directives/style-map.js';
 import { stub } from 'sinon';
 
 describe('room-state-icon.ts', () => {
@@ -22,6 +26,8 @@ describe('room-state-icon.ts', () => {
   let stylesToHostCssStub: sinon.SinonStub;
   let actionHandlerStub: sinon.SinonStub;
   let handleClickActionStub: sinon.SinonStub;
+  let hasFeatureStub: sinon.SinonStub;
+  let computeEntityNameStub: sinon.SinonStub;
 
   const mockEntityState: EntityState = createStateEntity(
     'light',
@@ -56,19 +62,16 @@ describe('room-state-icon.ts', () => {
       iconStylesModule,
       'renderEntityIconStyles',
     ).returns(
-      html`<style>
-        --icon-color: var(--primary-color);
-      </style>`,
+      styleMap({
+        '--icon-color': 'var(--primary-color)',
+        '--icon-opacity': '1',
+      }),
     );
     stylesToHostCssStub = stub(styleConverterModule, 'stylesToHostCss').returns(
-      html`<style>
-        :host {
-          --icon-size: 24px;
-        }
-      </style>`,
+      nothing,
     );
     actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns(
-      html`<div class="action-handler"></div>`,
+      () => {},
     );
     handleClickActionStub = stub(
       actionHandlerModule,
@@ -76,6 +79,12 @@ describe('room-state-icon.ts', () => {
     ).returns({
       handleEvent: () => {},
     });
+
+    hasFeatureStub = stub(featureModule, 'hasFeature').returns(false);
+    computeEntityNameStub = stub(
+      computeEntityNameModule,
+      'computeEntityName',
+    ).returns('Living Room Light');
 
     mockHass = {
       states: {
@@ -95,6 +104,8 @@ describe('room-state-icon.ts', () => {
     stylesToHostCssStub.restore();
     actionHandlerStub.restore();
     handleClickActionStub.restore();
+    hasFeatureStub.restore();
+    computeEntityNameStub.restore();
   });
 
   describe('properties', () => {
@@ -192,6 +203,56 @@ describe('room-state-icon.ts', () => {
       // Verify that the template includes the ha-state-icon element
       const templateString = result.strings.join('');
       expect(templateString).to.include('ha-state-icon');
+    });
+
+    it('should show entity label when show_entity_labels feature is enabled', async () => {
+      // Reset and configure the hasFeature stub for this test
+      hasFeatureStub.restore();
+      hasFeatureStub = stub(featureModule, 'hasFeature').returns(true);
+      computeEntityNameStub.returns('Living Room Light');
+
+      // Test the component instance directly
+      element.entity = mockEntity;
+      element.hass = mockHass;
+      element.config = mockConfig;
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      // Render to actual DOM using fixture
+      const el = await fixture(result);
+
+      // Verify that hasFeature was called with the correct parameters
+      expect(hasFeatureStub.calledWith(mockConfig, 'show_entity_labels')).to.be
+        .true;
+
+      // Verify that computeEntityName was called with the correct parameters
+      expect(computeEntityNameStub.calledWith(mockEntityState, mockHass)).to.be
+        .true;
+
+      // Verify that the DOM includes the entity label
+      const entityLabel = el.querySelector('.entity-label');
+      expect(entityLabel).to.exist;
+      expect(entityLabel?.textContent?.trim()).to.equal('Living Room Light');
+    });
+
+    it('should not show entity label when show_entity_labels feature is disabled', async () => {
+      // Disable the show_entity_labels feature (default behavior)
+      hasFeatureStub.withArgs(mockConfig, 'show_entity_labels').returns(false);
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      // Verify that hasFeature was called with the correct parameters
+      expect(hasFeatureStub.calledWith(mockConfig, 'show_entity_labels')).to.be
+        .true;
+
+      // Verify that computeEntityName was NOT called since the feature is disabled
+      expect(computeEntityNameStub.called).to.be.false;
+
+      // Verify that the template does NOT include the entity label
+      const templateString = result.strings.join('');
+      expect(templateString).to.not.include('class="entity-label"');
     });
   });
 

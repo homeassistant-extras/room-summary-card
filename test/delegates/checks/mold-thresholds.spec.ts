@@ -14,7 +14,9 @@ describe('mold-thresholds.ts', () => {
 
     const createConfig = (moldThreshold?: number): Config => ({
       area: 'test',
-      ...(moldThreshold !== undefined && { thresholds: { mold: moldThreshold } }),
+      ...(moldThreshold !== undefined && {
+        thresholds: { mold: moldThreshold },
+      }),
     });
 
     it('should show mold indicator when no threshold is set', () => {
@@ -177,4 +179,4 @@ describe('mold-thresholds.ts', () => {
       expect(result).to.be.true;
     });
   });
-}); 
+});

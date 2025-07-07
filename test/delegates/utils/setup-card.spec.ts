@@ -39,7 +39,11 @@ describe('setup-card.ts', () => {
 
     // Set up default stub returns
     getAreaStub.returns({ area_id: 'living_room', name: 'Living Room' });
-    getSensorsStub.returns({ individual: [], averaged: [], problemSensors: [] });
+    getSensorsStub.returns({
+      individual: [],
+      averaged: [],
+      problemSensors: [],
+    });
     getRoomEntityStub.returns({
       config: { entity_id: 'light.test' },
       state: s('light', 'test', 'on'),

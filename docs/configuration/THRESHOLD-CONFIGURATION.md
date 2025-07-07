@@ -30,6 +30,7 @@ The mold indicator provides a prominent visual warning when mold levels exceed y
 - **Hover Effects**: Scales up and intensifies animations on hover
 
 **Mold Sensor Requirements**:
+
 - Must be a sensor entity with a numeric state value
 - Should represent mold level as a percentage (0-100)
 - Will only display when the sensor value is at or above the configured threshold

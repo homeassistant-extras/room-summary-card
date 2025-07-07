@@ -74,6 +74,19 @@ styles:
     transform: 'scale(1.2)' # Make icons larger
 ```
 
+#### Hide Icon Backgrounds
+
+For cleaner icons without background fills:
+
+```yaml
+styles:
+  entity_icon:
+    '--opacity-icon-fill-inactive': 0
+    '--opacity-icon-fill-active': 0
+```
+
+This is particularly useful when using the `show_entity_labels` feature for a cleaner, more minimal appearance.
+
 ### Title Styles
 
 Customize the room name display:

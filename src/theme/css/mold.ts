@@ -64,7 +64,8 @@ export const moldStyles = css`
 
   /* Animation keyframes */
   @keyframes mold-pulse {
-    0%, 100% {
+    0%,
+    100% {
       transform: scale(1);
       box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
     }
@@ -75,7 +76,8 @@ export const moldStyles = css`
   }
 
   @keyframes mold-icon-bounce {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0);
     }
     50% {
@@ -88,12 +90,15 @@ export const moldStyles = css`
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
     100% {
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 255, 255, 0.6);
+      text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.3),
+        0 0 8px rgba(255, 255, 255, 0.6);
     }
   }
 
   @keyframes mold-glow {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.6;
       transform: scale(1);
     }
@@ -104,7 +109,8 @@ export const moldStyles = css`
   }
 
   @keyframes mold-warning-flash {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
       transform: scale(1);
     }
@@ -134,4 +140,4 @@ export const moldStyles = css`
   :host([dark]) .mold-indicator::before {
     background: linear-gradient(45deg, #d32f2f, #c62828, #d32f2f);
   }
-`; 
+`;

@@ -1,8 +1,10 @@
+import { hasFeature } from '@/config/feature';
 import {
   actionHandler,
   handleClickAction,
 } from '@/delegates/action-handler-delegate';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
+import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { stylesToHostCss } from '@theme/util/style-converter';
@@ -25,6 +27,7 @@ import { styles } from './styles';
  * - Integration with Home Assistant state management
  * - Support for custom icon configuration
  * - Proper state display delegation to the icon rendering system
+ * - Optional entity labels when show_entity_labels feature is enabled
  *
  * @version See package.json
  */
@@ -56,6 +59,8 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     if (!state) return nothing;
 
     const iconStyle = renderEntityIconStyles(this.hass, this.entity);
+    const showLabels =
+      this.config && hasFeature(this.config, 'show_entity_labels');
 
     return html`
       ${stylesToHostCss(this.config?.styles?.entity_icon)}
@@ -70,6 +75,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
           .stateObj=${state}
           .icon=${this.entity.config.icon}
         ></ha-state-icon>
+
+        ${showLabels
+          ? html`<div class="entity-label">
+              ${computeEntityName(state, this.hass)}
+            </div>`
+          : nothing}
       </div>
     `;
   }

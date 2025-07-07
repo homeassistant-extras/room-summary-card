@@ -33,4 +33,13 @@ export const styles = css`
     opacity: var(--icon-opacity);
     --mdc-icon-size: 100%;
   }
+
+  /* Entity label styling */
+  .entity-label {
+    position: absolute;
+    font-size: 0.7em;
+    text-align: center;
+    overflow: hidden;
+    margin-top: 75%;
+  }
 `;

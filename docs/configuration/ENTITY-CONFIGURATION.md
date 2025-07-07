@@ -69,3 +69,32 @@ entities:
 ```
 
 For theme color names and advanced customization, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md).
+
+## Entity Labels
+
+The `show_entity_labels` feature flag displays entity names under each entity icon:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - show_entity_labels
+```
+
+**Note**: Entity names are based on Home Assistant's entity naming logic and are not configurable through the card. To change the displayed name, update the entity's friendly name in Home Assistant's UI.
+
+### Example with Entity Labels
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - show_entity_labels
+entities:
+  - entity_id: light.living_room_lamp
+    icon: mdi:lamp
+  - entity_id: switch.living_room_tv
+    icon: mdi:television
+```
+
+This will display the friendly names of "Living Room Lamp" and "Living Room TV" under their respective icons.

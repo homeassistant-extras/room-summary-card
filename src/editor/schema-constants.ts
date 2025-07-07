@@ -61,6 +61,10 @@ export const FEATURES: HaFormSchema = {
               label: 'Skip Card Background Styles',
               value: 'skip_entity_styles',
             },
+            {
+              label: 'Show Entity Labels',
+              value: 'show_entity_labels',
+            },
           ],
         },
       },

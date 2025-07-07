@@ -128,7 +128,12 @@ describe('get-sensors.ts', () => {
 
     const result = getSensors(mockHass, config);
 
-    expect(result).to.have.keys(['individual', 'averaged', 'problemSensors', 'mold']);
+    expect(result).to.have.keys([
+      'individual',
+      'averaged',
+      'problemSensors',
+      'mold',
+    ]);
     expect(result.individual).to.be.an('array');
     expect(result.averaged).to.equal(mockAveraged);
   });

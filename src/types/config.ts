@@ -105,7 +105,8 @@ export type Features =
   | 'hide_sensor_icons'
   | 'exclude_default_entities'
   | 'skip_climate_styles'
-  | 'skip_entity_styles';
+  | 'skip_entity_styles'
+  | 'show_entity_labels';
 
 /**
  * Configuration for an individual entity including display and interaction options.

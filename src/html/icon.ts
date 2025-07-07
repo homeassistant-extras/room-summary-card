@@ -2,16 +2,14 @@ import {
   actionHandler,
   handleClickAction,
 } from '@/delegates/action-handler-delegate';
+import { shouldShowMoldIndicator } from '@delegates/checks/moldy';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
-import {
-  renderEntityIconStyles,
-} from '@theme/render/icon-styles';
+import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { html, nothing, type TemplateResult } from 'lit';
-import { shouldShowMoldIndicator } from '@delegates/checks/moldy';
 import { stateDisplay } from './state-display';
 
 /**
@@ -79,12 +77,12 @@ export const renderProblemIndicator = (
       : nothing}
     ${sensors.mold && shouldShowMoldIndicator(sensors.mold, config)
       ? html`<div class="mold-indicator">
-            <ha-state-icon
-              .hass=${hass}
-              .stateObj=${sensors.mold}
-            ></ha-state-icon>
-            <span class="mold-text">${stateDisplay(hass, sensors.mold)}</span>
-          </div>`
+          <ha-state-icon
+            .hass=${hass}
+            .stateObj=${sensors.mold}
+          ></ha-state-icon>
+          <span class="mold-text">${stateDisplay(hass, sensors.mold)}</span>
+        </div>`
       : nothing}
   </div>`;
 };

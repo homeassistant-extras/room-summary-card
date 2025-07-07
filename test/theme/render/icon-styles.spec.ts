@@ -1,7 +1,5 @@
 import * as commonStyleModule from '@theme/render/common-style';
-import {
-  renderEntityIconStyles,
-} from '@theme/render/icon-styles';
+import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
 import { nothing } from 'lit';
@@ -123,6 +121,4 @@ describe('icon-styles.ts', () => {
       );
     });
   });
-
-
 });

@@ -7,8 +7,8 @@
  */
 
 import { css } from 'lit';
-import { occupancyStyles } from './css/occupancy';
 import { moldStyles } from './css/mold';
+import { occupancyStyles } from './css/occupancy';
 import {
   colorsDark,
   colorsLight,
@@ -278,7 +278,8 @@ const statusEntityStyles = css`
 
   /* Problem pulse animation */
   @keyframes problem-pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.8;
       transform: scale(1);
     }

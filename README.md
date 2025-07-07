@@ -320,6 +320,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Random bugs`**: pointing out issues to improve card - thanks @rickd1994, @avijavez10
 - [x] **`Occupancy Detection`**: visual indicators for room occupancy with motion/occupancy sensors - thanks @X1pheR
 - [x] **`Mold Indicator`**: animated warning indicator for mold detection with threshold-based display - thanks @ma-gu-16
+- [x] **`Entity Labels`**: display entity names under icons for better identification - thanks @Ltek
 
 ## Contributing
 

@@ -164,19 +164,23 @@ describe('icon.ts', () => {
     const mockConfig: Config = { area: 'test' };
 
     it('should return empty problems div when problemSensors array is empty', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, { individual: [], averaged: [], problemSensors: [] });
+      const result = renderProblemIndicator(mockHass, mockConfig, {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+      });
       const el = await fixture(result as TemplateResult);
-      
+
       expect(el).to.exist;
       expect(el.className).to.equal('problems');
       expect(el.children.length).to.equal(0);
     });
 
     it('should render icon with correct number when one problem entity exists', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, { 
-        individual: [], 
-        averaged: [], 
-        problemSensors: [createEntityState('entity1')] 
+      const result = renderProblemIndicator(mockHass, mockConfig, {
+        individual: [],
+        averaged: [],
+        problemSensors: [createEntityState('entity1')],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -206,10 +210,10 @@ describe('icon.ts', () => {
     });
 
     it('should not have has-problems attribute when no problem entities are active', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, { 
-        individual: [], 
-        averaged: [], 
-        problemSensors: [createEntityState('entity1', 'off')] 
+      const result = renderProblemIndicator(mockHass, mockConfig, {
+        individual: [],
+        averaged: [],
+        problemSensors: [createEntityState('entity1', 'off')],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -220,10 +224,10 @@ describe('icon.ts', () => {
     });
 
     it('should have has-problems attribute when problem entities are active', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, { 
-        individual: [], 
-        averaged: [], 
-        problemSensors: [createEntityState('entity1', 'on')] 
+      const result = renderProblemIndicator(mockHass, mockConfig, {
+        individual: [],
+        averaged: [],
+        problemSensors: [createEntityState('entity1', 'on')],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -235,11 +239,13 @@ describe('icon.ts', () => {
 
     // Edge cases
     it('should handle large numbers of entities correctly', async () => {
-      const manyEntities = Array(10).fill(null).map((_, i) => createEntityState(`entity${i}`));
-      const result = renderProblemIndicator(mockHass, mockConfig, { 
-        individual: [], 
-        averaged: [], 
-        problemSensors: manyEntities 
+      const manyEntities = Array(10)
+        .fill(null)
+        .map((_, i) => createEntityState(`entity${i}`));
+      const result = renderProblemIndicator(mockHass, mockConfig, {
+        individual: [],
+        averaged: [],
+        problemSensors: manyEntities,
       });
       const el = await fixture(result as TemplateResult);
 
@@ -267,10 +273,10 @@ describe('icon.ts', () => {
     });
 
     it('should properly combine multiple CSS classes', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, { 
-        individual: [], 
-        averaged: [], 
-        problemSensors: [createEntityState('entity1')] 
+      const result = renderProblemIndicator(mockHass, mockConfig, {
+        individual: [],
+        averaged: [],
+        problemSensors: [createEntityState('entity1')],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -291,7 +297,11 @@ describe('icon.ts', () => {
         problemSensors: [],
         mold: moldSensor,
       };
-      const result = renderProblemIndicator(mockHass, configWithThreshold, sensorData);
+      const result = renderProblemIndicator(
+        mockHass,
+        configWithThreshold,
+        sensorData,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -310,7 +320,11 @@ describe('icon.ts', () => {
         problemSensors: [],
         mold: moldSensor,
       };
-      const result = renderProblemIndicator(mockHass, configWithThreshold, sensorData);
+      const result = renderProblemIndicator(
+        mockHass,
+        configWithThreshold,
+        sensorData,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;

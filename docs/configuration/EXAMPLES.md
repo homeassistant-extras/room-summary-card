@@ -217,6 +217,44 @@ features:
   - hide_sensor_icons
 ```
 
+### Entity Labels with Clean Icons
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - show_entity_labels
+styles:
+  entity_icon:
+    '--opacity-icon-fill-inactive': 0
+    '--opacity-icon-fill-active': 0
+```
+
+This configuration shows entity labels under each icon while hiding the icon backgrounds for a cleaner look.
+
+### Entity Labels with Custom Styling
+
+```yaml
+type: custom:room-summary-card
+area: office
+features:
+  - show_entity_labels
+entities:
+  - entity_id: light.office_desk
+    icon: mdi:desk-lamp
+  - entity_id: switch.office_computer
+    icon: mdi:desktop-tower
+  - entity_id: climate.office_hvac
+    icon: mdi:air-conditioner
+styles:
+  entity_icon:
+    '--opacity-icon-fill-inactive': 0.3
+    '--opacity-icon-fill-active': 0.8
+    filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.2))'
+```
+
+This example shows entity labels with custom icon styling and opacity levels.
+
 ### Problem Entities Setup
 
 To use problem detection, label entities with "problem":
