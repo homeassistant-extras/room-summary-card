@@ -11,7 +11,10 @@ const getNumericEntitiesByClass = (
 ): EntityState[] => {
   return entities.filter(
     (entity) =>
-      entity.attributes.device_class === deviceClass && isNumericState(entity),
+      entity.attributes.device_class === deviceClass &&
+      isNumericState(entity) &&
+      entity.state.trim() !== '' &&
+      !isNaN(Number(entity.state)),
   );
 };
 

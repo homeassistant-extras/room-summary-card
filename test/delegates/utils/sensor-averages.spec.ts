@@ -92,5 +92,22 @@ describe('calculate-averages.ts', () => {
       expect(result).to.have.lengthOf(1);
       expect(result[0]!.device_class).to.equal('pressure');
     });
+
+    it('should filter out entities with non-numeric states', () => {
+      const entities = [
+        createSensorEntity('sensor.temp1', '20', 'temperature', '°C'),
+        createSensorEntity('sensor.temp2', 'unavailable', 'temperature', '°C'),
+        createSensorEntity('sensor.temp3', 'unknown', 'temperature', '°C'),
+        createSensorEntity('sensor.temp4', '24', 'temperature', '°C'),
+        createSensorEntity('sensor.temp5', '', 'temperature', '°C'),
+        createSensorEntity('sensor.temp6', 'NaN', 'temperature', '°C'),
+      ];
+
+      const result = calculateAverages(entities, ['temperature']);
+
+      expect(result).to.have.lengthOf(1);
+      expect(result[0]!.average).to.equal(22); // (20 + 24) / 2
+      expect(result[0]!.states).to.have.lengthOf(2); // Only the 2 valid numeric entities
+    });
   });
 });
