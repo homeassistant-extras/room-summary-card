@@ -213,8 +213,10 @@ describe('get-sensors.ts', () => {
 
     const result = getSensors(mockHass, config);
 
-    // Should not include the kitchen sensor
-    expect(result.individual.map((s) => s.entity_id)).to.be.empty;
+    // Should include the kitchen sensor since it's explicitly configured
+    expect(result.individual.map((s) => s.entity_id)).to.deep.equal([
+      'sensor.other_area_temp',
+    ]);
   });
 
   it('should skip default entities when exclude_default_entities is enabled', () => {

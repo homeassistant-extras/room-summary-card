@@ -39,7 +39,10 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     const isConfigSensor = config.sensors?.includes(entity.entity_id);
     const device = getDevice(hass.devices, entity.device_id);
     const isInArea = [entity.area_id, device?.area_id].includes(config.area);
-    if (!isInArea) return;
+    // If it's not a config sensor and not in the area, skip it
+    // If it's a config sensor, always include it in individual sensors
+    // since the user has explicitly included it in the config
+    if (!isConfigSensor && !isInArea) return;
 
     const state = getState(hass.states, entity.entity_id);
     if (!state) return;

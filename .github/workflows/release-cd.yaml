@@ -97,12 +97,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Get Last PR Title
-        id: get-pr-title
+      - name: Get Last PR Title and Description
+        id: get-pr-info
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          PR_TITLE=$(gh api graphql -f query='
+          PR_DATA=$(gh api graphql -f query='
             query {
               repository(owner: "${{ github.repository_owner }}", name: "${{ github.event.repository.name }}") {
                 commit: object(expression: "${{ github.sha }}") {
@@ -111,6 +111,7 @@ jobs:
                       edges {
                         node {
                           title
+                          body
                         }
                       }
                     }
@@ -118,16 +119,27 @@ jobs:
                 }
               }
             }
-          ' --jq '.data.repository.commit.associatedPullRequests.edges[0].node.title')
+          ')
+          PR_TITLE=$(echo "$PR_DATA" | jq -r '.data.repository.commit.associatedPullRequests.edges[0].node.title')
+          PR_BODY=$(echo "$PR_DATA" | jq -r '.data.repository.commit.associatedPullRequests.edges[0].node.body')
           echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
+          echo "pr_body<<EOF" >> $GITHUB_OUTPUT
+          echo "$PR_BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       - uses: ncipollo/release-action@v1
         with:
           makeLatest: true
           artifacts: 'dist/**'
           generateReleaseNotes: true
           tag: ${{ needs.bump-version.outputs.newTag }}
-          body: ${{ steps.create-release-notes.outputs.release-notes }}
-          name: '${{ needs.bump-version.outputs.newTag }} - ${{ steps.get-pr-title.outputs.pr_title }}'
+          body: |
+            ${{ steps.get-pr-info.outputs.pr_body }}
+
+
+            ---
+
+            ${{ steps.create-release-notes.outputs.release-notes }}
+          name: '${{ needs.bump-version.outputs.newTag }} - ${{ steps.get-pr-info.outputs.pr_title }}'
 
   update-main:
     name: 'Update main branch with release changes'
