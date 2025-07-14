@@ -51,6 +51,7 @@ jobs:
     if: github.event.pull_request.user.login == 'dependabot[bot]'
 
     permissions:
+      contents: write
       pull-requests: write
 
     steps:
