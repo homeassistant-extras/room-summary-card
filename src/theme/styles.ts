@@ -132,12 +132,16 @@ const gridLayoutStyles = css`
   /* clickable overlay */
   .hitbox {
     grid-column: 1 / 4; /* Spans columns 1-3 */
-    grid-row: 1 / 6; /* Spans all rows */
+    grid-row: 2 / 5; /* Spans rows 2-4 */
     position: absolute;
     width: 100%;
     height: 100%;
     cursor: pointer;
     z-index: 2; /* High enough to be clickable */
+  }
+
+  .text {
+    cursor: pointer;
   }
 
   .info {

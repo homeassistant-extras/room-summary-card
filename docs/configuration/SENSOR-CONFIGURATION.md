@@ -90,6 +90,34 @@ Sensors are displayed in this order:
 
 ![Sensor Layouts](../../assets/sensors-styles.png)
 
+### Interactive Sensors
+
+Sensors in the info section now support interactive behavior:
+
+#### Clickable Individual Sensors
+
+Individual sensors (configured via `sensors`) are clickable and will open the Home Assistant "more info" dialog when tapped:
+
+```yaml
+sensors:
+  - sensor.living_room_temperature # Clickable - opens more info dialog
+  - sensor.living_room_humidity # Clickable - opens more info dialog
+```
+
+This allows you to quickly access detailed sensor information, history, and controls directly from the card.
+
+#### Non-Interactive Averaged Sensors
+
+Averaged sensors (from `sensor_classes`) are **not clickable** as they represent calculated values from multiple sensors:
+
+```yaml
+sensor_classes:
+  - temperature # Not clickable - calculated average
+  - humidity # Not clickable - calculated average
+```
+
+This design choice prevents confusion since averaged sensors don't represent a single entity that can be interacted with.
+
 ### Legacy Sensor Configuration (Deprecated)
 
 For backward compatibility, you can still use:

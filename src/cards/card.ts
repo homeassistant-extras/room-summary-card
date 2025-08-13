@@ -233,8 +233,8 @@ export class RoomSummaryCard extends LitElement {
     return html`
       <ha-card style="${cardStyle}">
         <div class="grid">
-          <div class="hitbox" @action=${action} .actionHandler=${handler}></div>
           ${info(
+            this,
             this._hass,
             this._roomInformation,
             this._roomEntity,
@@ -243,6 +243,7 @@ export class RoomSummaryCard extends LitElement {
           )}
 
           <!-- Room Icon -->
+          <div class="hitbox" @action=${action} .actionHandler=${handler}></div>
           ${roomEntity}
 
           <!-- Entities Container -->

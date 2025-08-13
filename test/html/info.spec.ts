@@ -1,3 +1,5 @@
+import * as fireEventModule from '@hass/common/dom/fire_event';
+import * as actionHandlerDirective from '@hass/panels/lovelace/common/directives/action-handler-directive';
 import type { HomeAssistant } from '@hass/types';
 import * as areaStatsModule from '@html/area-statistics';
 import { info } from '@html/info';
@@ -17,8 +19,11 @@ describe('info.ts', () => {
   let mockConfig: Config;
   let mockRoomInformation: RoomInformation;
   let mockRoomEntity: EntityInformation;
+  let mockElement: HTMLElement;
   let renderTextStylesStub: SinonStub;
   let renderAreaStatisticsStub: SinonStub;
+  let hassActionHandlerStub: SinonStub;
+  let fireEventStub: SinonStub;
 
   beforeEach(() => {
     mockHass = {
@@ -50,6 +55,8 @@ describe('info.ts', () => {
       state: e('light', 'living_room', 'on'),
     };
 
+    mockElement = document.createElement('div');
+
     renderTextStylesStub = stub(textStylesModule, 'renderTextStyles').returns(
       styleMap({ '--text-color': 'var(--primary-color)' }),
     );
@@ -58,11 +65,20 @@ describe('info.ts', () => {
       areaStatsModule,
       'renderAreaStatistics',
     ).returns(html`<span class="stats">2 devices 3 entities</span>`);
+
+    // Stub the action handler dependencies
+    hassActionHandlerStub = stub(
+      actionHandlerDirective,
+      'actionHandler',
+    ).returns(html`<div class="action-handler-stub"></div>`);
+    fireEventStub = stub(fireEventModule, 'fireEvent');
   });
 
   afterEach(() => {
     renderTextStylesStub.restore();
     renderAreaStatisticsStub.restore();
+    hassActionHandlerStub.restore();
+    fireEventStub.restore();
   });
 
   describe('info component', () => {
@@ -74,6 +90,7 @@ describe('info.ts', () => {
       };
 
       const result = info(
+        mockElement,
         mockHass,
         mockRoomInformation,
         mockRoomEntity,
@@ -101,6 +118,7 @@ describe('info.ts', () => {
       };
 
       const result = info(
+        mockElement,
         mockHass,
         mockRoomInformation,
         mockRoomEntity,
@@ -124,7 +142,14 @@ describe('info.ts', () => {
         problemSensors: [],
       };
 
-      info(mockHass, mockRoomInformation, mockRoomEntity, mockConfig, sensors);
+      info(
+        mockElement,
+        mockHass,
+        mockRoomInformation,
+        mockRoomEntity,
+        mockConfig,
+        sensors,
+      );
 
       expect(renderAreaStatisticsStub.calledOnce).to.be.true;
       expect(renderAreaStatisticsStub.calledWith(mockHass, mockConfig)).to.be
@@ -139,6 +164,7 @@ describe('info.ts', () => {
       };
 
       const result = info(
+        mockElement,
         mockHass,
         mockRoomInformation,
         mockRoomEntity,
@@ -165,6 +191,7 @@ describe('info.ts', () => {
       };
 
       const result = info(
+        mockElement,
         mockHass,
         mockRoomInformation,
         mockRoomEntity,
@@ -187,6 +214,7 @@ describe('info.ts', () => {
       };
 
       const result = info(
+        mockElement,
         mockHass,
         complexRoomInfo,
         mockRoomEntity,
@@ -198,6 +226,44 @@ describe('info.ts', () => {
       const nameElement = el.querySelector('.name.text');
       expect(nameElement!.textContent!.trim()).to.equal(
         'Master Bedroom & En-Suite',
+      );
+    });
+
+    it('should attach action handlers to the text div', async () => {
+      const sensors: SensorData = {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+      };
+
+      const result = info(
+        mockElement,
+        mockHass,
+        mockRoomInformation,
+        mockRoomEntity,
+        mockConfig,
+        sensors,
+      );
+
+      const el = await fixture(result as TemplateResult);
+
+      // Check that the text div exists and has the correct structure
+      const textDiv = el.querySelector('.text');
+      expect(textDiv).to.exist;
+
+      // Check that the text div has the action event listener attached
+      expect(textDiv).to.have.property('actionHandler');
+
+      // Check that the name element is inside the text div
+      const nameElement = textDiv!.querySelector('.name.text');
+      expect(nameElement).to.exist;
+      expect(nameElement!.textContent!.trim()).to.equal('Living Room');
+
+      // Check that the stats are inside the text div
+      const statsElement = textDiv!.querySelector('.stats');
+      expect(statsElement).to.exist;
+      expect(statsElement!.textContent!.trim()).to.equal(
+        '2 devices 3 entities',
       );
     });
   });
