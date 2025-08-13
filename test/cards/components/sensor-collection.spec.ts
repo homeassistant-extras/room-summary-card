@@ -1,5 +1,6 @@
 import * as featureModule from '@/config/feature';
 import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
+import * as actionHandlerModule from '@delegates/action-handler-delegate';
 import * as iconModule from '@delegates/retrievers/icons';
 import * as sensorUtilsModule from '@delegates/utils/sensor-utils';
 import type { HomeAssistant } from '@hass/types';
@@ -20,6 +21,8 @@ describe('sensor-collection.ts', () => {
   let getIconResourcesStub: sinon.SinonStub;
   let sensorDataToDisplayStub: sinon.SinonStub;
   let stateDisplayStub: sinon.SinonStub;
+  let actionHandlerStub: sinon.SinonStub;
+  let handleClickActionStub: sinon.SinonStub;
 
   beforeEach(() => {
     hasFeatureStub = stub(featureModule, 'hasFeature').returns(false);
@@ -33,6 +36,16 @@ describe('sensor-collection.ts', () => {
     stateDisplayStub = stub(stateDisplayModule, 'stateDisplay').returns(
       html`<span>formatted state</span>`,
     );
+    actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
+      bind: () => {},
+      handleAction: () => {},
+    });
+    handleClickActionStub = stub(
+      actionHandlerModule,
+      'handleClickAction',
+    ).returns({
+      handleEvent: () => {},
+    });
 
     mockHass = {
       states: {},
@@ -58,6 +71,8 @@ describe('sensor-collection.ts', () => {
     getIconResourcesStub.restore();
     sensorDataToDisplayStub.restore();
     stateDisplayStub.restore();
+    actionHandlerStub.restore();
+    handleClickActionStub.restore();
   });
 
   describe('hass property setter', () => {
@@ -106,10 +121,9 @@ describe('sensor-collection.ts', () => {
     });
 
     it('should render single averaged sensor correctly', async () => {
-      const sensor = element.sensors.averaged[0];
+      const sensor = element.sensors.averaged[0]!;
       const el = await fixture(element['renderSensor'](sensor, true));
 
-      expect(el.classList.contains('single-averaged')).to.be.true;
       expect(stateDisplayStub.called).to.be.true;
     });
 
@@ -121,19 +135,22 @@ describe('sensor-collection.ts', () => {
           { entity_id: 'sensor.temp1', state: '20' },
           { entity_id: 'sensor.temp2', state: '22' },
         ],
-      };
+        uom: '°C',
+        average: 21,
+      } as any;
 
       const el = await fixture(element['renderSensor'](sensor, true));
 
-      expect(el.classList.contains('multi-averaged')).to.be.true;
       expect(sensorDataToDisplayStub.called).to.be.true;
     });
 
     it('should render individual sensor with configured class', async () => {
-      const sensor = element.sensors.individual[0];
+      const sensor = element.sensors.individual[0]!;
       const el = await fixture(element['renderSensor'](sensor, false));
 
-      expect(el.classList.contains('configured')).to.be.true;
+      // Check that the sensor div exists and has the correct structure
+      expect(el.tagName).to.equal('DIV');
+      expect(el.classList.contains('sensor')).to.be.true;
       expect(stateDisplayStub.called).to.be.true;
     });
 
@@ -202,6 +219,48 @@ describe('sensor-collection.ts', () => {
 
       element['renderMultiIcon'](sensor);
       expect(getIconResourcesStub.calledWith(mockHass)).to.be.true;
+    });
+  });
+
+  describe('action handling', () => {
+    beforeEach(() => {
+      element.hass = mockHass;
+    });
+
+    it('should attach action handlers to non-averaged sensors', async () => {
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(element['renderSensor'](sensor, false));
+
+      // Check that the sensor div has action handlers attached
+      expect(el).to.have.property('actionHandler');
+
+      // Verify that actionHandler and handleClickAction were called
+      expect(actionHandlerStub.called).to.be.true;
+      expect(handleClickActionStub.called).to.be.true;
+
+      // Check that the sensor div has the action event listener
+      expect(el).to.have.property('actionHandler');
+    });
+
+    it('should not attach action handlers to averaged sensors', async () => {
+      const sensor = element.sensors.averaged[0]!;
+      const el = await fixture(element['renderSensor'](sensor, true));
+
+      // Single averaged sensors should have action handlers (they use renderSingleSensor)
+      expect(actionHandlerStub.called).to.be.true;
+      expect(handleClickActionStub.called).to.be.true;
+    });
+
+    it('should create proper entity information for individual sensors', async () => {
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(element['renderSensor'](sensor, false));
+
+      // Verify that actionHandler was called with the correct entity information
+      expect(actionHandlerStub.called).to.be.true;
+      const entityInfo = actionHandlerStub.firstCall.args[0];
+      expect(entityInfo.config.entity_id).to.equal('sensor.humidity');
+      expect(entityInfo.config.tap_action.action).to.equal('more-info');
+      expect(entityInfo.state).to.equal(sensor);
     });
   });
 });

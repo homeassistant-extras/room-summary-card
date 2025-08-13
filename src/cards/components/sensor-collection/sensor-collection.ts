@@ -1,5 +1,9 @@
 import { hasFeature } from '@/config/feature';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
+import {
+  actionHandler,
+  handleClickAction,
+} from '@delegates/action-handler-delegate';
 import { getIconResources } from '@delegates/retrievers/icons';
 import { sensorDataToDisplaySensors } from '@delegates/utils/sensor-utils';
 import {
@@ -11,7 +15,8 @@ import type { HomeAssistant } from '@hass/types';
 import { stateDisplay } from '@html/state-display';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
-import type { SensorData } from '@type/sensor';
+import type { EntityInformation, EntityState } from '@type/room';
+import type { AveragedSensor, SensorData } from '@type/sensor';
 import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
@@ -91,26 +96,49 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
     `;
   }
 
-  private renderSensor(sensor: any, isAveraged: boolean): TemplateResult {
+  private renderSensor(
+    sensor: EntityState | AveragedSensor,
+    isAveraged: boolean,
+  ): TemplateResult {
     if (isAveraged) {
-      const isMultiple = sensor.states.length > 1;
-      return html`
-        <div
-          class="sensor ${isMultiple ? 'multi-averaged' : 'single-averaged'}"
-        >
-          ${isMultiple
-            ? this.renderMultiIcon(sensor)
-            : this.renderStateIcon(sensor.states[0])}
-          ${isMultiple
-            ? sensorDataToDisplaySensors(sensor)
-            : stateDisplay(this._hass, sensor.states[0])}
-        </div>
-      `;
+      const s = sensor as AveragedSensor;
+      const isMultiple = s.states.length > 1;
+
+      if (isMultiple) {
+        return html`
+          <div class="sensor">
+            ${this.renderMultiIcon(s)} ${sensorDataToDisplaySensors(s)}
+          </div>
+        `;
+      }
+
+      // Use the first state from averaged sensor
+      const state = s.states[0]!;
+      return this.renderSingleSensor(state);
     }
 
+    // Use the sensor directly as EntityState
+    return this.renderSingleSensor(sensor as EntityState);
+  }
+
+  private renderSingleSensor(state: EntityState): TemplateResult {
+    const info: EntityInformation = {
+      config: {
+        entity_id: state.entity_id,
+        tap_action: {
+          action: 'more-info',
+        },
+      },
+      state: state,
+    };
+
     return html`
-      <div class="sensor configured">
-        ${this.renderStateIcon(sensor)} ${stateDisplay(this._hass, sensor)}
+      <div
+        class="sensor"
+        @action=${handleClickAction(this, info)}
+        .actionHandler=${actionHandler(info)}
+      >
+        ${this.renderStateIcon(state)} ${stateDisplay(this._hass, state)}
       </div>
     `;
   }
