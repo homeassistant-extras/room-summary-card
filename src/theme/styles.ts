@@ -129,17 +129,6 @@ const gridLayoutStyles = css`
     position: relative; /* For absolute positioning of clickable area */
   }
 
-  /* clickable overlay */
-  .hitbox {
-    grid-column: 1 / 4; /* Spans columns 1-3 */
-    grid-row: 2 / 5; /* Spans rows 2-4 */
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-    z-index: 2; /* High enough to be clickable */
-  }
-
   .text {
     cursor: pointer;
   }
@@ -160,6 +149,10 @@ const gridLayoutStyles = css`
     grid-area: r;
     width: var(--user-room-icon-size, 150%);
     aspect-ratio: 1 / 1;
+  }
+
+  .room.hidden {
+    opacity: 0;
   }
 `;
 
@@ -246,7 +239,6 @@ const statusEntityStyles = css`
     display: flex;
     gap: 5px;
     align-items: center;
-    z-index: 3; // above hitbox
   }
 
   /* Status entities indicator */

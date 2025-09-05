@@ -13,10 +13,6 @@ import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
 import { hasFeature } from '@config/feature';
-import {
-  actionHandler,
-  handleClickAction,
-} from '@delegates/action-handler-delegate';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
@@ -204,15 +200,13 @@ export class RoomSummaryCard extends LitElement {
     const hideIconContent =
       this._config.background?.options?.includes('hide_icon_only');
 
-    const roomEntity = hideIcon
-      ? undefined
-      : renderStateIcon(
-          this,
-          this._hass,
-          this._roomEntity,
-          ['room'],
-          hideIconContent,
-        );
+    const roomEntity = renderStateIcon(
+      this,
+      this._hass,
+      this._roomEntity,
+      ['room', hideIcon ? 'hidden' : ''],
+      hideIconContent,
+    );
 
     const cardStyle = renderCardStyles(
       this._hass,
@@ -228,8 +222,6 @@ export class RoomSummaryCard extends LitElement {
       this._sensors,
     );
 
-    const handler = actionHandler(this._roomEntity);
-    const action = handleClickAction(this, this._roomEntity);
     return html`
       <ha-card style="${cardStyle}">
         <div class="grid">
@@ -243,7 +235,6 @@ export class RoomSummaryCard extends LitElement {
           )}
 
           <!-- Room Icon -->
-          <div class="hitbox" @action=${action} .actionHandler=${handler}></div>
           ${roomEntity}
 
           <!-- Entities Container -->

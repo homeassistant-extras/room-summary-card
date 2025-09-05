@@ -185,7 +185,7 @@ describe('card.ts', () => {
       expect((problemIcon as any).icon).to.equal('mdi:numeric-2');
     });
 
-    it('should call actionHandler and handleClickAction for hitbox', async () => {
+    it('should call actionHandler and handleClickAction for room icon', async () => {
       const handleClickActionStub = stub(
         actionHandlerModule,
         'handleClickAction',
@@ -194,10 +194,10 @@ describe('card.ts', () => {
       });
 
       const el = await fixture(card.render() as TemplateResult);
-      const hitbox = el.querySelector('.hitbox');
+      const roomIcon = el.querySelector('.room.icon');
 
-      expect(hitbox).to.exist;
-      expect((hitbox as any).actionHandler).to.exist;
+      expect(roomIcon).to.exist;
+      expect((roomIcon as any).actionHandler).to.exist;
       expect(actionHandlerStub.calledWith(card['_roomEntity'])).to.be.true;
       expect(handleClickActionStub.calledWith(card, card['_roomEntity'])).to.be
         .true;

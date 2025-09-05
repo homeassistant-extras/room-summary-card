@@ -38,7 +38,6 @@ export const styles = css`
     cursor: pointer;
     position: relative;
     z-index: 0; /* create stacking context for ::before */
-    padding: 2px 6px;
     border-radius: 6px;
     transition:
       transform 150ms ease,
