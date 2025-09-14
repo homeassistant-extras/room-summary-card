@@ -12,6 +12,8 @@ export const styles = css`
     opacity: var(--text-opacity-theme, 0.4);
     margin-left: -2%;
     margin-top: 1%;
+    position: relative;
+    z-index: 10; /* Ensure sensor collection appears above room entity */
   }
 
   :host([hide-icons]) {
@@ -37,7 +39,7 @@ export const styles = css`
     --mdc-icon-size: var(--user-sensor-icon-size, 20px);
     cursor: pointer;
     position: relative;
-    z-index: 0; /* create stacking context for ::before */
+    z-index: 1; /* Ensure sensors are above room entity and create stacking context for ::before */
     border-radius: 6px;
     transition:
       transform 150ms ease,
