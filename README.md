@@ -322,6 +322,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Mold Indicator`**: animated warning indicator for mold detection with threshold-based display - thanks @ma-gu-16
 - [x] **`Entity Labels`**: display entity names under icons for better identification - thanks @Ltek
 - [x] **`Clickable Sensors`**: individual sensors in info section open more info dialog - thanks @enrico-semrau
+- [x] **`Threshold-Based Icon Coloring`**: dynamic icon colors based on sensor values with configurable thresholds and operators - thanks @fusionstream, @marcokreeft87
 
 ## Contributing
 

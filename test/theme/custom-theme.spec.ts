@@ -2,6 +2,7 @@ import type { HomeAssistant } from '@hass/types';
 import * as colorsModule from '@theme/colors';
 import { getThemeColorOverride } from '@theme/custom-theme';
 import * as rgbColorModule from '@theme/get-rgb';
+import * as thresholdColorModule from '@theme/threshold-color';
 import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
 import { stub } from 'sinon';
@@ -10,6 +11,7 @@ describe('custom-theme.ts', () => {
     let getRgbColorStub: sinon.SinonStub;
     let processMinimalistColorsStub: sinon.SinonStub;
     let processHomeAssistantColorsStub: sinon.SinonStub;
+    let getThresholdColorStub: sinon.SinonStub;
 
     const hassDefault = {
       themes: { theme: 'default' },
@@ -46,12 +48,14 @@ describe('custom-theme.ts', () => {
         colorsModule,
         'processHomeAssistantColors',
       );
+      getThresholdColorStub = stub(thresholdColorModule, 'getThresholdColor').returns(undefined);
     });
 
     afterEach(() => {
       getRgbColorStub.restore();
       processMinimalistColorsStub.restore();
       processHomeAssistantColorsStub.restore();
+      getThresholdColorStub.restore();
     });
 
     it('should return undefined when state is undefined', () => {
@@ -63,6 +67,23 @@ describe('custom-theme.ts', () => {
       expect(result).to.be.undefined;
     });
 
+    it('should prioritize threshold color over everything else', () => {
+      const entity = createEntity(
+        { on_color: 'red' },
+        { icon_color: '#FF5733', on_color: 'blue' },
+      );
+
+      getThresholdColorStub.returns('orange');
+
+      const result = getThemeColorOverride(hassDefault, entity, true);
+
+      expect(result).to.equal('orange');
+      expect(getThresholdColorStub.calledWith(entity)).to.be.true;
+      expect(getRgbColorStub.called).to.be.false;
+      expect(processMinimalistColorsStub.called).to.be.false;
+      expect(processHomeAssistantColorsStub.called).to.be.false;
+    });
+
     it('should prioritize hex icon_color over everything else', () => {
       const entity = createEntity(
         { on_color: 'red' },
@@ -72,6 +93,7 @@ describe('custom-theme.ts', () => {
       const result = getThemeColorOverride(hassDefault, entity, true);
 
       expect(result).to.equal('#FF5733');
+      expect(getThresholdColorStub.called).to.be.true;
       expect(getRgbColorStub.called).to.be.false;
       expect(processMinimalistColorsStub.called).to.be.false;
       expect(processHomeAssistantColorsStub.called).to.be.false;

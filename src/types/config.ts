@@ -124,6 +124,9 @@ export interface EntityConfig {
   /** Custom color for the off state */
   off_color?: string;
 
+  /** Threshold-based color configuration */
+  thresholds?: ThresholdConfig[];
+
   /** Action to perform on tap */
   tap_action?: ActionConfig;
 
@@ -132,6 +135,20 @@ export interface EntityConfig {
 
   /** Action to perform on double tap */
   double_tap_action?: ActionConfig;
+}
+
+/**
+ * Configuration for threshold-based coloring
+ */
+export interface ThresholdConfig {
+  /** Threshold value to compare against entity state */
+  threshold: number;
+
+  /** Color to use when this threshold condition is met */
+  icon_color: string;
+
+  /** Comparison operator (default: 'gte' for greater than or equal) */
+  operator?: 'gt' | 'gte' | 'lt' | 'lte' | 'eq';
 }
 
 /**

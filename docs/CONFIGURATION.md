@@ -55,7 +55,7 @@ See [default entities](#default-entities)
 | features       | list             | See below                  | Optional flags to toggle different features                  |
 | sensor_layout  | string           | `default`                  | Layout for sensor display: `default`, `stacked`, or `bottom` |
 | sensor_classes | array            | See below                  | Device classes to average and display sensor readings for    |
-| thresholds     | object           | `80° / 60%`                | Temperature, humidity, and mold thresholds                   |
+| thresholds     | object           | `80° / 60%`                | Climate thresholds for temperature, humidity, and mold      |
 | styles         | object           | `{}`                       | Custom CSS styles for card areas                             |
 
 ### Default Entities
@@ -119,6 +119,14 @@ entities:
   - entity_id: switch.fan
     on_color: blue
     off_color: disabled
+  - entity_id: sensor.battery_level
+    thresholds:
+      - threshold: 80
+        icon_color: green
+      - threshold: 50
+        icon_color: orange
+      - threshold: 20
+        icon_color: red
 ```
 
 ## Custom Styles

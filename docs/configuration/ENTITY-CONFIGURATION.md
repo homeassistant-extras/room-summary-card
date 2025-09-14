@@ -28,24 +28,26 @@ entities:
 
 ## Entity Configuration Options
 
-| Name              | Type   | Default                 | Description                   |
-| ----------------- | ------ | ----------------------- | ----------------------------- |
-| entity_id         | string | **Required**            | Entity ID in Home Assistant   |
-| icon              | string | entity default          | Custom MDI icon               |
-| on_color          | string | domain default          | Color when entity is active   |
-| off_color         | string | theme off color         | Color when entity is inactive |
-| tap_action        | object | `{action: "toggle"}`    | Action on single tap          |
-| hold_action       | object | `{action: "more-info"}` | Action on hold                |
-| double_tap_action | object | `{action: "none"}`      | Action on double tap          |
+| Name              | Type   | Default                 | Description                           |
+| ----------------- | ------ | ----------------------- | ------------------------------------- |
+| entity_id         | string | **Required**            | Entity ID in Home Assistant           |
+| icon              | string | entity default          | Custom MDI icon                       |
+| on_color          | string | domain default          | Color when entity is active           |
+| off_color         | string | theme off color         | Color when entity is inactive         |
+| thresholds        | array  | none                    | Dynamic colors based on sensor values |
+| tap_action        | object | `{action: "toggle"}`    | Action on single tap                  |
+| hold_action       | object | `{action: "more-info"}` | Action on hold                        |
+| double_tap_action | object | `{action: "none"}`      | Action on double tap                  |
 
 ## Color Priority
 
 Colors are applied in this order:
 
-1. **Entity config** (`on_color`, `off_color`)
-2. **Entity attributes** (set via `customize.yaml`)
-3. **Theme colors** (minimalist or HA colors)
-4. **Domain defaults** (automatic colors by entity type)
+1. **Threshold colors** (based on sensor values)
+2. **Entity config** (`on_color`, `off_color`)
+3. **Entity attributes** (set via `customize.yaml`)
+4. **Theme colors** (minimalist or HA colors)
+5. **Domain defaults** (automatic colors by entity type)
 
 ## Color Examples
 
@@ -66,6 +68,17 @@ entities:
     icon: mdi:garage
     on_color: amber
     off_color: grey
+
+  # Battery sensor with threshold-based colors
+  - entity_id: sensor.phone_battery
+    icon: mdi:battery
+    thresholds:
+      - threshold: 80
+        icon_color: green
+      - threshold: 50
+        icon_color: orange
+      - threshold: 20
+        icon_color: red
 ```
 
 For theme color names and advanced customization, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md).

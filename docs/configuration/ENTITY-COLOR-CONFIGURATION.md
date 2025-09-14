@@ -52,15 +52,53 @@ entities:
     off_color: '#404040' # Dark grey
 ```
 
+### 3. Threshold-Based Colors
+
+![Thresholds](../../assets/thresholds.gif)
+
+Configure dynamic colors based on numeric sensor values:
+
+```yaml
+entities:
+  - entity_id: sensor.battery_level
+    thresholds:
+      - threshold: 80
+        icon_color: green
+      - threshold: 50
+        icon_color: orange
+      - threshold: 20
+        icon_color: red
+```
+
+**Advanced operators:**
+
+```yaml
+entities:
+  - entity_id: sensor.temperature
+    thresholds:
+      - threshold: 25
+        icon_color: red
+        operator: gt # above 25°C
+      - threshold: 15
+        icon_color: green
+        operator: gte # 15-25°C
+      - threshold: 15
+        icon_color: blue
+        operator: lt # below 15°C
+```
+
+**Supported operators:** `gt` (>), `gte` (>=), `lt` (<), `lte` (<=), `eq` (=). Default is `gte`.
+
 ## Color Priority
 
 Colors are applied in this priority order:
 
-1. **Card config** (`entity.on_color`, `entity.off_color`, `entity.icon_color`)
-2. **Entity attributes** (`customize.yaml` settings)
-3. **RGB colors** (from entity's `rgb_color` attribute)
-4. **Theme colors** (automatic theme-based colors)
-5. **Domain colors** (default colors by entity domain)
+1. **Threshold colors** (based on sensor values)
+2. **Card config** (`entity.on_color`, `entity.off_color`, `entity.icon_color`)
+3. **Entity attributes** (`customize.yaml` settings)
+4. **RGB colors** (from entity's `rgb_color` attribute)
+5. **Theme colors** (automatic theme-based colors)
+6. **Domain colors** (default colors by entity domain)
 
 ## Examples
 
@@ -101,6 +139,59 @@ entities:
     icon: mdi:power-socket
     on_color: '#1BA3E0' # TP-Link blue
     off_color: grey
+```
+
+### Battery Level Indicators
+
+```yaml
+entities:
+  - entity_id: sensor.phone_battery
+    icon: mdi:battery
+    thresholds:
+      - threshold: 80
+        icon_color: green
+      - threshold: 50
+        icon_color: orange
+      - threshold: 30
+        icon_color: amber
+      - threshold: 15
+        icon_color: red
+```
+
+### Temperature Zones
+
+```yaml
+entities:
+  - entity_id: sensor.living_room_temperature
+    icon: mdi:thermometer
+    thresholds:
+      - threshold: 24
+        icon_color: red
+        operator: gt # Too hot
+      - threshold: 20
+        icon_color: green
+        operator: gte # Comfortable range
+      - threshold: 18
+        icon_color: blue
+        operator: lt # Too cold
+```
+
+### Humidity Control
+
+```yaml
+entities:
+  - entity_id: sensor.bathroom_humidity
+    icon: mdi:water-percent
+    thresholds:
+      - threshold: 70
+        icon_color: red
+        operator: gt # High humidity
+      - threshold: 40
+        icon_color: green
+        operator: gte # Normal range
+      - threshold: 30
+        icon_color: orange
+        operator: lt # Low humidity
 ```
 
 ## Advanced Usage

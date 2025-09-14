@@ -2,16 +2,18 @@ import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/room';
 import { processHomeAssistantColors, processMinimalistColors } from './colors';
 import { getRgbColor } from './get-rgb';
+import { getThresholdColor } from './threshold-color';
 
 /**
  * Determines the appropriate theme color override for a given entity based on its state,
  * configuration, and the current Home Assistant theme.
  *
  * The function prioritizes the following sources for the color:
- * 1. The `icon_color` attribute if it is a hex color.
- * 2. The entity's `on_color` or `off_color` configuration or state attributes, processed via `getRgbColor`.
- * 3. Minimalist theme-specific color processing if the active theme starts with "minimalist-".
- * 4. Fallback to Home Assistant's default color processing.
+ * 1. Threshold-based colors from entity configuration.
+ * 2. The `icon_color` attribute if it is a hex color.
+ * 3. The entity's `on_color` or `off_color` configuration or state attributes, processed via `getRgbColor`.
+ * 4. Minimalist theme-specific color processing if the active theme starts with "minimalist-".
+ * 5. Fallback to Home Assistant's default color processing.
  *
  * @param hass - The Home Assistant instance containing theme information.
  * @param entity - The entity information, including state and configuration.
@@ -26,7 +28,13 @@ export const getThemeColorOverride = (
   const { state } = entity;
   if (!state) return undefined;
 
-  // icon color is the first priority - hex colors
+  // threshold-based colors have the highest priority
+  const thresholdColor = getThresholdColor(entity);
+  if (thresholdColor) {
+    return thresholdColor;
+  }
+
+  // icon color is the second priority - hex colors
   const iconColor = state.attributes.icon_color;
   if (iconColor?.startsWith('#')) {
     return iconColor;

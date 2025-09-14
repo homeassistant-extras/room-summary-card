@@ -1,6 +1,8 @@
-## Threshold Configuration
+## Climate Threshold Configuration
 
 Configure climate-based border styling thresholds and mold detection:
+
+> **Note:** This covers **climate thresholds** for card styling. For **entity threshold colors** based on individual sensor values, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md#3-threshold-based-colors).
 
 ```yaml
 thresholds:
