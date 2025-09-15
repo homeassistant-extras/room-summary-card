@@ -1,5 +1,5 @@
-import type { EntityInformation } from '@type/room';
 import type { ThresholdConfig } from '@type/config';
+import type { EntityInformation } from '@type/room';
 
 /**
  * Evaluates threshold conditions and returns the appropriate color
@@ -7,10 +7,23 @@ import type { ThresholdConfig } from '@type/config';
  * @param entity - The entity information containing state and config
  * @returns The color string if a threshold matches, undefined otherwise
  */
-export const getThresholdColor = (entity: EntityInformation): string | undefined => {
+export const getThresholdColor = (
+  entity: EntityInformation,
+): string | undefined => {
   const { config, state } = entity;
 
-  if (!config.thresholds || !state) {
+  if (!state) {
+    return undefined;
+  }
+
+  // Check state-based color configuration first
+  const stateColor = getStateColor(entity);
+  if (stateColor) {
+    return stateColor;
+  }
+
+  // Fallback to threshold-based configuration
+  if (!config.thresholds) {
     return undefined;
   }
 
@@ -22,11 +35,39 @@ export const getThresholdColor = (entity: EntityInformation): string | undefined
   }
 
   // Sort thresholds by value in descending order to check highest first
-  const sortedThresholds = [...config.thresholds].sort((a, b) => b.threshold - a.threshold);
+  const sortedThresholds = [...config.thresholds].sort(
+    (a, b) => b.threshold - a.threshold,
+  );
 
   for (const threshold of sortedThresholds) {
     if (meetsThreshold(numericValue, threshold)) {
       return threshold.icon_color;
+    }
+  }
+
+  return undefined;
+};
+
+/**
+ * Evaluates state-based color configuration and returns the appropriate color
+ *
+ * @param entity - The entity information containing state and config
+ * @returns The color string if a state matches, undefined otherwise
+ */
+export const getStateColor = (
+  entity: EntityInformation,
+): string | undefined => {
+  const { config, state } = entity;
+
+  if (!config.states || !state) {
+    return undefined;
+  }
+
+  const currentState = state.state;
+
+  for (const stateConfig of config.states) {
+    if (stateConfig.state === currentState) {
+      return stateConfig.icon_color;
     }
   }
 

@@ -35,6 +35,7 @@ entities:
 | on_color          | string | domain default          | Color when entity is active           |
 | off_color         | string | theme off color         | Color when entity is inactive         |
 | thresholds        | array  | none                    | Dynamic colors based on sensor values |
+| states            | array  | none                    | Colors based on exact entity states  |
 | tap_action        | object | `{action: "toggle"}`    | Action on single tap                  |
 | hold_action       | object | `{action: "more-info"}` | Action on hold                        |
 | double_tap_action | object | `{action: "none"}`      | Action on double tap                  |
@@ -43,11 +44,12 @@ entities:
 
 Colors are applied in this order:
 
-1. **Threshold colors** (based on sensor values)
-2. **Entity config** (`on_color`, `off_color`)
-3. **Entity attributes** (set via `customize.yaml`)
-4. **Theme colors** (minimalist or HA colors)
-5. **Domain defaults** (automatic colors by entity type)
+1. **State-based colors** (exact state matches)
+2. **Threshold colors** (based on sensor values)
+3. **Entity config** (`on_color`, `off_color`)
+4. **Entity attributes** (set via `customize.yaml`)
+5. **Theme colors** (minimalist or HA colors)
+6. **Domain defaults** (automatic colors by entity type)
 
 ## Color Examples
 
@@ -79,6 +81,19 @@ entities:
         icon_color: orange
       - threshold: 20
         icon_color: red
+
+  # Washing machine with state-based colors
+  - entity_id: sensor.washing_machine_state
+    icon: mdi:washing-machine
+    states:
+      - state: running
+        icon_color: green
+      - state: rinsing
+        icon_color: orange
+      - state: spinning
+        icon_color: blue
+      - state: finished
+        icon_color: purple
 ```
 
 For theme color names and advanced customization, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md).

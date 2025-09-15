@@ -327,6 +327,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Entity Labels`**: display entity names under icons for better identification - thanks @Ltek
 - [x] **`Clickable Sensors`**: individual sensors in info section open more info dialog - thanks @enrico-semrau
 - [x] **`Threshold-Based Icon Coloring`**: dynamic icon colors based on sensor values with configurable thresholds and operators - thanks @fusionstream, @marcokreeft87
+- [x] **`State-Based Icon Coloring`**: exact state matching for non-numeric sensors like washing machines, device trackers, and status indicators - thanks @marcokreeft87
 
 ## Contributing
 

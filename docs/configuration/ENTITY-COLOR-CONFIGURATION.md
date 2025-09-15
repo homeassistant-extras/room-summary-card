@@ -52,7 +52,39 @@ entities:
     off_color: '#404040' # Dark grey
 ```
 
-### 3. Threshold-Based Colors
+### 3. State-Based Colors
+
+Configure colors that match exact entity states (perfect for non-numeric sensors):
+
+```yaml
+entities:
+  - entity_id: sensor.washing_machine_state
+    states:
+      - state: running
+        icon_color: green
+      - state: rinsing
+        icon_color: orange
+      - state: spinning
+        icon_color: blue
+      - state: finished
+        icon_color: purple
+```
+
+**State matching is case-sensitive** and works with any string state value:
+
+```yaml
+entities:
+  - entity_id: person.john
+    states:
+      - state: home
+        icon_color: green
+      - state: work
+        icon_color: blue
+      - state: away
+        icon_color: grey
+```
+
+### 4. Threshold-Based Colors
 
 ![Thresholds](../../assets/thresholds.gif)
 
@@ -93,12 +125,13 @@ entities:
 
 Colors are applied in this priority order:
 
-1. **Threshold colors** (based on sensor values)
-2. **Card config** (`entity.on_color`, `entity.off_color`, `entity.icon_color`)
-3. **Entity attributes** (`customize.yaml` settings)
-4. **RGB colors** (from entity's `rgb_color` attribute)
-5. **Theme colors** (automatic theme-based colors)
-6. **Domain colors** (default colors by entity domain)
+1. **State-based colors** (exact state matches)
+2. **Threshold colors** (based on sensor values)
+3. **Card config** (`entity.on_color`, `entity.off_color`, `entity.icon_color`)
+4. **Entity attributes** (`customize.yaml` settings)
+5. **RGB colors** (from entity's `rgb_color` attribute)
+6. **Theme colors** (automatic theme-based colors)
+7. **Domain colors** (default colors by entity domain)
 
 ## Examples
 
@@ -192,6 +225,79 @@ entities:
       - threshold: 30
         icon_color: orange
         operator: lt # Low humidity
+```
+
+### State-Based Examples
+
+**Washing Machine States:**
+
+```yaml
+entities:
+  - entity_id: sensor.washing_machine_state
+    icon: mdi:washing-machine
+    states:
+      - state: running
+        icon_color: green
+      - state: rinsing
+        icon_color: orange
+      - state: spinning
+        icon_color: blue
+      - state: finished
+        icon_color: purple
+      - state: idle
+        icon_color: grey
+```
+
+**Person Location Tracking:**
+
+```yaml
+entities:
+  - entity_id: person.john
+    icon: mdi:account
+    states:
+      - state: home
+        icon_color: green
+      - state: work
+        icon_color: blue
+      - state: gym
+        icon_color: orange
+      - state: vacation
+        icon_color: purple
+```
+
+**Device Status Monitoring:**
+
+```yaml
+entities:
+  - entity_id: sensor.printer_status
+    icon: mdi:printer
+    states:
+      - state: ready
+        icon_color: green
+      - state: printing
+        icon_color: blue
+      - state: error
+        icon_color: red
+      - state: offline
+        icon_color: grey
+```
+
+**Combining States and Thresholds:**
+
+```yaml
+entities:
+  # Non-numeric entity with states
+  - entity_id: sensor.washing_machine
+    states:
+      - state: running
+        icon_color: green
+
+  # Numeric sensor with thresholds
+  - entity_id: sensor.temperature
+    thresholds:
+      - threshold: 25
+        icon_color: red
+        operator: gt
 ```
 
 ## Advanced Usage

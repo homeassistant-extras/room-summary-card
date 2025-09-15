@@ -134,6 +134,9 @@ export interface EntityConfig {
   /** Threshold-based color configuration */
   thresholds?: ThresholdConfig[];
 
+  /** State-based color configuration */
+  states?: StateConfig[];
+
   /** Action to perform on tap */
   tap_action?: ActionConfig;
 
@@ -156,6 +159,17 @@ export interface ThresholdConfig {
 
   /** Comparison operator (default: 'gte' for greater than or equal) */
   operator?: ComparisonOperator;
+}
+
+/**
+ * Configuration for state-based coloring
+ */
+export interface StateConfig {
+  /** Entity state value to match exactly */
+  state: string;
+
+  /** Color to use when this state is active */
+  icon_color: string;
 }
 
 /**
