@@ -13,7 +13,7 @@ export const styles = css`
     margin-left: -2%;
     margin-top: 1%;
     position: relative;
-    z-index: 10; /* Ensure sensor collection appears above room entity */
+    z-index: 2; /* Ensure sensor collection appears above room entity */
   }
 
   :host([hide-icons]) {
