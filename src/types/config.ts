@@ -4,6 +4,7 @@
  */
 
 import type { ActionConfig } from '../hass/data/lovelace/config/action';
+import type { ComparisonOperator } from './comparison';
 
 /**
  * Configuration settings for entity display and behavior within Home Assistant.
@@ -55,6 +56,12 @@ export interface Config {
 
     /** Humidity entity ID for dynamic thresholds */
     humidity_entity?: string;
+
+    /** Temperature comparison operator (default: 'gt' for greater than) */
+    temperature_operator?: ComparisonOperator;
+
+    /** Humidity comparison operator (default: 'gt' for greater than) */
+    humidity_operator?: ComparisonOperator;
   };
 
   background?: {
@@ -148,7 +155,7 @@ export interface ThresholdConfig {
   icon_color: string;
 
   /** Comparison operator (default: 'gte' for greater than or equal) */
-  operator?: 'gt' | 'gte' | 'lt' | 'lte' | 'eq';
+  operator?: ComparisonOperator;
 }
 
 /**

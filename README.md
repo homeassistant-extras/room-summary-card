@@ -69,8 +69,12 @@ thresholds:
   mold: 50 # % (no default - shows whenever mold sensor is present)
   temperature_entity: sensor.living_room_temp # Specific sensor (optional)
   humidity_entity: sensor.living_room_humidity # Specific sensor (optional)
+  temperature_operator: gt # Comparison operator (default: gt)
+  humidity_operator: gt # Comparison operator (default: gt)
 ```
 
+**Comparison Operators**: Use `gt` (>), `gte` (>=), `lt` (<), `lte` (<=), or `eq` (=) to control when thresholds trigger. Perfect for heating scenarios (use `lt` for temperature) or medical conditions (use `lt` for low humidity).
+y
 **Mold Indicator**: When mold levels exceed the threshold, an animated indicator appears in the bottom left area near problem entities with pulsing effects and warning symbols.
 
 **Individual Sensor Support**: When you specify `temperature_entity` or `humidity_entity`, the card will look for that specific sensor in both:
@@ -299,7 +303,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Flags`**: ability to disable features.
 - [x] **`Multiple sensors`**: support for displaying multiple sensors in the label area. - thanks @fctruter, @LE-tarantino
 - [x] **`Climate entity icon styling`**: climate entity will light up icon - thanks @murriano
-- [x] **`Border styling for climate thresholds`**: border respects skip_climate_styles - thanks @LE-tarantino, @ma-gu-16, @wmtech-1
+- [x] **`Climate Threshold tweaks & improvements`**: making this feature better and better - thanks @LE-tarantino, @ma-gu-16, @wmtech-1, @snotgun
 - [x] **`Area name display`**: use area name instead of area ID on card - thanks @LE-tarantino
 - [x] **`Navigation with room entity`**: navigate now works with room entity set - thanks @LE-tarantino
 - [x] **`Card container sizing`**: card respects container - thanks @frdve, @Erikkyw

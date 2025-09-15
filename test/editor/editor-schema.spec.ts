@@ -422,6 +422,24 @@ describe('editor-schema.ts', () => {
                     },
                   },
                 },
+
+                {
+                  name: 'temperature_operator',
+                  label: 'Temperature Operator',
+                  required: false,
+                  selector: {
+                    select: {
+                      mode: 'dropdown' as const,
+                      options: [
+                        { value: 'gt', label: 'Greater than (>)' },
+                        { value: 'gte', label: 'Greater than or equal (≥)' },
+                        { value: 'lt', label: 'Less than (<)' },
+                        { value: 'lte', label: 'Less than or equal (≤)' },
+                        { value: 'eq', label: 'Equal (=)' },
+                      ],
+                    },
+                  },
+                },
                 {
                   name: 'humidity_entity',
                   label: 'Humidity Entity',
@@ -433,6 +451,23 @@ describe('editor-schema.ts', () => {
                       filter: {
                         device_class: 'humidity',
                       },
+                    },
+                  },
+                },
+                {
+                  name: 'humidity_operator',
+                  label: 'Humidity Operator',
+                  required: false,
+                  selector: {
+                    select: {
+                      mode: 'dropdown' as const,
+                      options: [
+                        { value: 'gt', label: 'Greater than (>)' },
+                        { value: 'gte', label: 'Greater than or equal (≥)' },
+                        { value: 'lt', label: 'Less than (<)' },
+                        { value: 'lte', label: 'Less than or equal (≤)' },
+                        { value: 'eq', label: 'Equal (=)' },
+                      ],
                     },
                   },
                 },

@@ -9,16 +9,35 @@ thresholds:
   temperature: 75 # Temperature threshold in current unit
   humidity: 55 # Humidity threshold as percentage
   mold: 50 # Mold threshold as percentage
+  temperature_operator: gt # Comparison operator for temperature (default: gt)
+  humidity_operator: gt # Comparison operator for humidity (default: gt)
 ```
 
 **How It Works**:
 
-- **Temperature sensors** with values above the threshold trigger red borders
-- **Humidity sensors** with values above the threshold trigger blue borders
+- **Temperature sensors** with values meeting the threshold condition trigger red borders
+- **Humidity sensors** with values meeting the threshold condition trigger blue borders
 - **Mold sensors** with values at or above the threshold display an animated indicator near problem entities (bottom left)
 - Thresholds respect the current unit of measurement (°F, °C, %)
 - Can be disabled with the `skip_climate_styles` feature flag
 - For advanced cases an entity can be configured as the one to trip the threshold.
+
+### Comparison Operators
+
+You can specify how the sensor values are compared to the threshold using comparison operators:
+
+- **`gt`** (Greater than): `value > threshold` - Default for both temperature and humidity
+- **`gte`** (Greater than or equal): `value >= threshold`
+- **`lt`** (Less than): `value < threshold` - Useful for heating scenarios
+- **`lte`** (Less than or equal): `value <= threshold`
+- **`eq`** (Equal): `value === threshold` - Exact match
+
+**Use Cases**:
+
+- **Cooling scenarios** (default): Use `gt` to detect when temperature is above threshold
+- **Heating scenarios**: Use `lt` to detect when temperature is below threshold
+- **Medical conditions**: Use `lt` for humidity to detect when it's too low
+- **Exact monitoring**: Use `eq` to detect specific values
 
 ### Mold Indicator
 
@@ -73,6 +92,28 @@ thresholds:
   mold: 50
   temperature_entity: sensor.living_room_temperature # Specific entity for temperature threshold
   humidity_entity: sensor.living_room_humidity # Specific entity for humidity threshold
+
+# Heating scenario - detect when temperature is below threshold
+thresholds:
+  temperature: 68
+  temperature_operator: lt # Trigger when temperature < 68°F
+
+# Medical condition - detect when humidity is too low
+thresholds:
+  humidity: 30
+  humidity_operator: lt # Trigger when humidity < 30%
+
+# Combined heating and low humidity detection
+thresholds:
+  temperature: 70
+  humidity: 35
+  temperature_operator: lt # Below 70°F
+  humidity_operator: lt # Below 35%
+
+# Exact temperature monitoring
+thresholds:
+  temperature: 72
+  temperature_operator: eq # Trigger only when exactly 72°F
 ```
 
 **Default values**: 80°F (26.7°C) for temperature, 60% for humidity, no default for mold (indicator shows whenever mold sensor is present)

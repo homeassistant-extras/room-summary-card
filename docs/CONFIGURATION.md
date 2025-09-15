@@ -55,7 +55,7 @@ See [default entities](#default-entities)
 | features       | list             | See below                  | Optional flags to toggle different features                  |
 | sensor_layout  | string           | `default`                  | Layout for sensor display: `default`, `stacked`, or `bottom` |
 | sensor_classes | array            | See below                  | Device classes to average and display sensor readings for    |
-| thresholds     | object           | `80° / 60%`                | Climate thresholds for temperature, humidity, and mold      |
+| thresholds     | object           | `80° / 60%`                | Climate thresholds for temperature, humidity, and mold       |
 | styles         | object           | `{}`                       | Custom CSS styles for card areas                             |
 
 ### Default Entities
@@ -127,6 +127,7 @@ entities:
         icon_color: orange
       - threshold: 20
         icon_color: red
+        operator: lt # Below 20%
 ```
 
 ## Custom Styles

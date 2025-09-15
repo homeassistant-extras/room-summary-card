@@ -311,5 +311,198 @@ describe('climate-thresholds.ts', () => {
 
       expect(result).to.deep.equal({ hot: false, humid: false });
     });
+
+    describe('operator functionality', () => {
+      it('should use gt operator for temperature (default)', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            temperature_operator: 'gt',
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 76, // Above threshold
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+
+      it('should use lt operator for temperature', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            temperature_operator: 'lt',
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 70, // Below threshold
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+
+      it('should use lte operator for temperature', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            temperature_operator: 'lte',
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 75, // Equal to threshold
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+
+      it('should use eq operator for temperature', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            temperature_operator: 'eq',
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 75, // Equal to threshold
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+
+      it('should use gte operator for humidity', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            humidity: 60,
+            humidity_operator: 'gte',
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'humidity',
+              average: 60, // Equal to threshold
+              uom: '%',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        expect(result).to.deep.equal({ hot: false, humid: true });
+      });
+
+      it('should use both temperature and humidity operators together', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 70,
+            humidity: 50,
+            temperature_operator: 'lt', // Below 70°F
+            humidity_operator: 'lt', // Below 50%
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 65, // Below threshold
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+            {
+              device_class: 'humidity',
+              average: 45, // Below threshold
+              uom: '%',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        expect(result).to.deep.equal({ hot: true, humid: true });
+      });
+
+      it('should default to gt operator when no operator is specified', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            // No operator specified, should default to 'gt'
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 76, // Above threshold
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+    });
   });
 });

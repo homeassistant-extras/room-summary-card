@@ -1,4 +1,5 @@
 import { hasFeature } from '@config/feature';
+import type { ComparisonOperator } from '@type/comparison';
 import type { Config } from '@type/config';
 import type { SensorData } from '@type/sensor';
 import memoizeOne from 'memoize-one';
@@ -42,6 +43,35 @@ const getSensorValue = (
 };
 
 /**
+ * Checks if a numeric value meets a threshold condition using the specified operator
+ *
+ * @param value - The numeric value to test
+ * @param threshold - The threshold value to compare against
+ * @param operator - The comparison operator to use
+ * @returns true if the condition is met
+ */
+const meetsThreshold = (
+  value: number,
+  threshold: number,
+  operator: ComparisonOperator,
+): boolean => {
+  switch (operator) {
+    case 'gt':
+      return value > threshold;
+    case 'gte':
+      return value >= threshold;
+    case 'lt':
+      return value < threshold;
+    case 'lte':
+      return value <= threshold;
+    case 'eq':
+      return value === threshold;
+    default:
+      return value > threshold; // Default to 'gt' for backward compatibility
+  }
+};
+
+/**
  * Generates border styles based on temperature and humidity thresholds
  *
  * @param {Config} config - Configuration object
@@ -72,10 +102,14 @@ export const climateThresholds = memoizeOne(
 
     const tempThreshold = config.thresholds?.temperature ?? 80;
     const humidThreshold = config.thresholds?.humidity ?? 60;
+    const tempOperator = config.thresholds?.temperature_operator ?? 'gt';
+    const humidOperator = config.thresholds?.humidity_operator ?? 'gt';
 
     return {
-      hot: temp ? temp > tempThreshold : false,
-      humid: humidity ? humidity > humidThreshold : false,
+      hot: temp ? meetsThreshold(temp, tempThreshold, tempOperator) : false,
+      humid: humidity
+        ? meetsThreshold(humidity, humidThreshold, humidOperator)
+        : false,
     };
   },
 );
