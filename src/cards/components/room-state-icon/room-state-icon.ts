@@ -7,6 +7,7 @@ import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
+import { getThresholdIcon } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
@@ -59,6 +60,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     if (!state) return nothing;
 
     const iconStyle = renderEntityIconStyles(this.hass, this.entity);
+    const thresholdIcon = getThresholdIcon(this.entity);
     const showLabels =
       this.config && hasFeature(this.config, 'show_entity_labels');
 
@@ -73,7 +75,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
         <ha-state-icon
           .hass=${this.hass}
           .stateObj=${state}
-          .icon=${this.entity.config.icon}
+          .icon=${thresholdIcon || this.entity.config.icon}
         ></ha-state-icon>
 
         ${showLabels

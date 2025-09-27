@@ -48,7 +48,10 @@ describe('custom-theme.ts', () => {
         colorsModule,
         'processHomeAssistantColors',
       );
-      getThresholdColorStub = stub(thresholdColorModule, 'getThresholdColor').returns(undefined);
+      getThresholdColorStub = stub(
+        thresholdColorModule,
+        'getThresholdColor',
+      ).returns(undefined);
     });
 
     afterEach(() => {

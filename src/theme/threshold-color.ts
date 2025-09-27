@@ -1,25 +1,35 @@
-import type { ThresholdConfig } from '@type/config';
+import type { ThresholdConfig } from '@type/config/entity';
 import type { EntityInformation } from '@type/room';
 
 /**
- * Evaluates threshold conditions and returns the appropriate color
+ * Result of threshold/state evaluation containing both color and icon
+ */
+export interface ThresholdResult {
+  /** The color to apply */
+  color?: string;
+  /** The icon to apply */
+  icon?: string;
+}
+
+/**
+ * Evaluates threshold conditions and returns the appropriate result
  *
  * @param entity - The entity information containing state and config
- * @returns The color string if a threshold matches, undefined otherwise
+ * @returns ThresholdResult with color and icon if a threshold matches, undefined otherwise
  */
-export const getThresholdColor = (
+export const getThresholdResult = (
   entity: EntityInformation,
-): string | undefined => {
+): ThresholdResult | undefined => {
   const { config, state } = entity;
 
   if (!state) {
     return undefined;
   }
 
-  // Check state-based color configuration first
-  const stateColor = getStateColor(entity);
-  if (stateColor) {
-    return stateColor;
+  // Check state-based result configuration first
+  const stateResult = getStateResult(entity);
+  if (stateResult) {
+    return stateResult;
   }
 
   // Fallback to threshold-based configuration
@@ -41,7 +51,10 @@ export const getThresholdColor = (
 
   for (const threshold of sortedThresholds) {
     if (meetsThreshold(numericValue, threshold)) {
-      return threshold.icon_color;
+      return {
+        color: threshold.icon_color,
+        icon: threshold.icon,
+      };
     }
   }
 
@@ -49,14 +62,24 @@ export const getThresholdColor = (
 };
 
 /**
- * Evaluates state-based color configuration and returns the appropriate color
- *
- * @param entity - The entity information containing state and config
- * @returns The color string if a state matches, undefined otherwise
+ * Evaluates threshold conditions and returns the appropriate color
+ * @deprecated Use getThresholdResult() instead for both color and icon
  */
-export const getStateColor = (
+export const getThresholdColor = (
   entity: EntityInformation,
 ): string | undefined => {
+  return getThresholdResult(entity)?.color;
+};
+
+/**
+ * Evaluates state-based configuration and returns the appropriate result
+ *
+ * @param entity - The entity information containing state and config
+ * @returns ThresholdResult with color and icon if a state matches, undefined otherwise
+ */
+export const getStateResult = (
+  entity: EntityInformation,
+): ThresholdResult | undefined => {
   const { config, state } = entity;
 
   if (!config.states || !state) {
@@ -67,11 +90,24 @@ export const getStateColor = (
 
   for (const stateConfig of config.states) {
     if (stateConfig.state === currentState) {
-      return stateConfig.icon_color;
+      return {
+        color: stateConfig.icon_color,
+        icon: stateConfig.icon,
+      };
     }
   }
 
   return undefined;
+};
+
+/**
+ * Evaluates state-based color configuration and returns the appropriate color
+ * @deprecated Use getStateResult() instead for both color and icon
+ */
+export const getStateColor = (
+  entity: EntityInformation,
+): string | undefined => {
+  return getStateResult(entity)?.color;
 };
 
 /**
@@ -98,4 +134,17 @@ const meetsThreshold = (value: number, threshold: ThresholdConfig): boolean => {
     default:
       return value >= threshold.threshold;
   }
+};
+
+/**
+ * Gets the icon override from threshold/state configuration
+ *
+ * @param entity - The entity information containing state and config
+ * @returns The icon string if a condition matches, undefined otherwise
+ * @deprecated Use getThresholdResult() instead for both color and icon
+ */
+export const getThresholdIcon = (
+  entity: EntityInformation,
+): string | undefined => {
+  return getThresholdResult(entity)?.icon;
 };

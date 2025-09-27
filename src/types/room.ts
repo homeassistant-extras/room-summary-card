@@ -1,4 +1,4 @@
-import type { EntityConfig } from './config';
+import type { EntityConfig } from './config/entity';
 
 export interface RoomInformation {
   /** The area name */
