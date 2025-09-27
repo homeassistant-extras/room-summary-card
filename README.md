@@ -110,6 +110,8 @@ In this example, the climate thresholds will use the individual temperature and 
 
 ![Entity Icons](assets/icons.png)
 
+📖 **See [Entity Icons Example](docs/advanced/README-EXAMPLES.md#entity-icons) for configuration details.**
+
 ### Problem Detection
 
 - Automatically detects entities labeled as "problem" in the area
@@ -118,6 +120,8 @@ In this example, the climate thresholds will use the individual temperature and 
 - **Mold Indicator**: Animated warning appears in the bottom left area when mold levels exceed thresholds
 
 ![Problem Detection](assets/problems.png)
+
+📖 **See [Problem Detection Example](docs/advanced/README-EXAMPLES.md#problem-detection) for configuration details.**
 
 ### Occupancy Detection
 
@@ -128,6 +132,8 @@ In this example, the climate thresholds will use the individual temperature and 
 - Granular control over which visual effects are applied
 
 ![Occupancy](assets/occupancy.png)
+
+📖 **See [Occupancy Detection Example](docs/advanced/README-EXAMPLES.md#occupancy-detection) for configuration details.**
 
 ### Room Statistics
 
@@ -145,6 +151,8 @@ Choose from different sensor display options:
 
 ![Sensor Layouts](assets/sensors-styles.png)
 
+📖 **See [Sensor Layouts Examples](docs/advanced/README-EXAMPLES.md#sensor-layouts) for configuration details.**
+
 ### Background Images
 
 Multiple background image sources with automatic fallbacks:
@@ -160,6 +168,8 @@ Multiple background image sources with automatic fallbacks:
 | -------------------------------- | ------------------------------------ | ------------------------------------------ |
 | ![area](assets/area-picture.png) | ![entity](assets/entity-picture.png) | ![background](assets/background-image.png) |
 
+📖 **See [Background Images Examples](docs/advanced/README-EXAMPLES.md#background-images) for configuration details.**
+
 📖 **See [Background Configuration](docs/configuration/BACKGROUND-CONFIGURATION.md) for detailed examples and advanced usage.**
 
 ### RGB Color Support
@@ -167,6 +177,8 @@ Multiple background image sources with automatic fallbacks:
 Direct RGB color values from entities with `rgb_color` attributes for accurate color representation.
 
 ![RGB Light Colors](assets/light-rgb.png)
+
+📖 **See [RGB Color Support Example](docs/advanced/README-EXAMPLES.md#rgb-color-support) for configuration details.**
 
 ### Custom Icon Color Integration
 
@@ -178,6 +190,8 @@ Support for the [custom-icon-color integration](https://github.com/Mariusthvdb/c
 - **Cross-Theme Support**: Works with multiple theme systems
 
 ![Custom Icon Colors](assets/icon-color.png)
+
+📖 **See [Custom Icon Colors Example](docs/advanced/README-EXAMPLES.md#custom-icon-colors) for configuration details.**
 
 ### Climate Entity Styling
 
@@ -207,6 +221,8 @@ Customize the appearance with CSS styles the way you like.
 - **Theme Integration**: Works alongside existing themes while allowing complete visual override
 
 ![styles](assets/custom-styles.png)
+
+📖 **See [Custom Styling Example](docs/advanced/README-EXAMPLES.md#custom-styling) for configuration details.**
 
 ### Card Editor
 

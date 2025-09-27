@@ -52,9 +52,9 @@ entities:
     off_color: '#404040' # Dark grey
 ```
 
-### 3. State-Based Colors
+### 3. State-Based Colors and Icons
 
-Configure colors that match exact entity states (perfect for non-numeric sensors):
+Configure colors and icons that match exact entity states (perfect for non-numeric sensors):
 
 ```yaml
 entities:
@@ -62,12 +62,16 @@ entities:
     states:
       - state: running
         icon_color: green
+        icon: mdi:play
       - state: rinsing
         icon_color: orange
+        icon: mdi:sync
       - state: spinning
         icon_color: blue
+        icon: mdi:rotate-3d-variant
       - state: finished
         icon_color: purple
+        icon: mdi:check-circle
 ```
 
 **State matching is case-sensitive** and works with any string state value:
@@ -84,11 +88,11 @@ entities:
         icon_color: grey
 ```
 
-### 4. Threshold-Based Colors
+### 4. Threshold-Based Colors and Icons
 
 ![Thresholds](../../assets/thresholds.gif)
 
-Configure dynamic colors based on numeric sensor values:
+Configure dynamic colors and icons based on numeric sensor values:
 
 ```yaml
 entities:
@@ -96,10 +100,13 @@ entities:
     thresholds:
       - threshold: 80
         icon_color: green
+        icon: mdi:battery-high
       - threshold: 50
         icon_color: orange
+        icon: mdi:battery-medium
       - threshold: 20
         icon_color: red
+        icon: mdi:battery-low
 ```
 
 **Advanced operators:**
@@ -183,12 +190,16 @@ entities:
     thresholds:
       - threshold: 80
         icon_color: green
+        icon: mdi:battery-high
       - threshold: 50
         icon_color: orange
+        icon: mdi:battery-medium
       - threshold: 30
         icon_color: amber
+        icon: mdi:battery-low
       - threshold: 15
         icon_color: red
+        icon: mdi:battery-alert
 ```
 
 ### Temperature Zones
@@ -238,15 +249,22 @@ entities:
     states:
       - state: running
         icon_color: green
+        icon: mdi:play
       - state: rinsing
         icon_color: orange
+        icon: mdi:sync
       - state: spinning
         icon_color: blue
+        icon: mdi:rotate-3d-variant
       - state: finished
         icon_color: purple
+        icon: mdi:check-circle
       - state: idle
         icon_color: grey
+        icon: mdi:pause
 ```
+
+![States](../../assets/states.gif)
 
 **Person Location Tracking:**
 
@@ -257,12 +275,16 @@ entities:
     states:
       - state: home
         icon_color: green
+        icon: mdi:home
       - state: work
         icon_color: blue
+        icon: mdi:briefcase
       - state: gym
         icon_color: orange
+        icon: mdi:dumbbell
       - state: vacation
         icon_color: purple
+        icon: mdi:palm-tree
 ```
 
 **Device Status Monitoring:**
@@ -274,12 +296,16 @@ entities:
     states:
       - state: ready
         icon_color: green
+        icon: mdi:check-circle
       - state: printing
         icon_color: blue
+        icon: mdi:printer-3d
       - state: error
         icon_color: red
+        icon: mdi:alert-circle
       - state: offline
         icon_color: grey
+        icon: mdi:power-plug-off
 ```
 
 **Combining States and Thresholds:**

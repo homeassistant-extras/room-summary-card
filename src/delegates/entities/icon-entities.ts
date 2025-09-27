@@ -1,7 +1,8 @@
 import { hasFeature } from '@config/feature';
 import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, EntityConfig } from '@type/config';
+import type { Config } from '@type/config';
+import type { EntityConfig } from '@type/config/entity';
 import type { EntityInformation } from '@type/room';
 
 const climateIcons = {

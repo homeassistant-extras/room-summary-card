@@ -1,7 +1,7 @@
-import type { Config } from '@/types/config';
 import { getIconEntities } from '@delegates/entities/icon-entities';
 import type { HomeAssistant } from '@hass/types';
 import { createStateEntity as e } from '@test/test-helpers';
+import type { Config } from '@type/config';
 import { expect } from 'chai';
 
 describe('icon-entities.ts', () => {

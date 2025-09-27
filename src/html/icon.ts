@@ -6,6 +6,7 @@ import { shouldShowMoldIndicator } from '@delegates/checks/moldy';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
+import { getThresholdIcon } from '@theme/threshold-color';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
@@ -33,6 +34,7 @@ export const renderStateIcon = (
   if (!state) return nothing;
 
   const iconStyle = renderEntityIconStyles(hass, entity);
+  const thresholdIcon = getThresholdIcon(entity);
 
   return html`<div
     class="${['icon', ...classes].join(' ')}"
@@ -45,7 +47,7 @@ export const renderStateIcon = (
       : html`<ha-state-icon
           .hass=${hass}
           .stateObj=${state}
-          .icon=${entity.config.icon}
+          .icon=${thresholdIcon || entity.config.icon}
         ></ha-state-icon>`}
   </div>`;
 };

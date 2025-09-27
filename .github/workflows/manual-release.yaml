@@ -37,10 +37,14 @@ jobs:
             echo "release_type=Pre-release" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build
-        uses: anna-money/github-actions-npm@master
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          target: 'build'
+          node-version: '20'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
 
       - name: Generate release notes
         id: create-release-notes
