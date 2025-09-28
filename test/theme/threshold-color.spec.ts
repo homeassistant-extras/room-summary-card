@@ -1,4 +1,10 @@
-import { getStateColor, getThresholdColor, getThresholdIcon, getThresholdResult, getStateResult } from '@theme/threshold-color';
+import {
+  getStateColor,
+  getStateResult,
+  getThresholdColor,
+  getThresholdIcon,
+  getThresholdResult,
+} from '@theme/threshold-color';
 import type { StateConfig, ThresholdConfig } from '@type/config/entity';
 import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
@@ -314,7 +320,9 @@ describe('threshold-color.ts', () => {
       const entity = {
         config: {
           entity_id: 'sensor.test',
-          thresholds: [{ threshold: 50, icon_color: 'green', icon: 'mdi:thermometer' }],
+          thresholds: [
+            { threshold: 50, icon_color: 'green', icon: 'mdi:thermometer' },
+          ],
         },
         state: undefined,
       };
@@ -342,7 +350,9 @@ describe('threshold-color.ts', () => {
       const thresholds: ThresholdConfig[] = [
         { threshold: 50, icon_color: 'red', icon: 'mdi:fire' },
       ];
-      const states: StateConfig[] = [{ state: 'running', icon_color: 'green', icon: 'mdi:play' }];
+      const states: StateConfig[] = [
+        { state: 'running', icon_color: 'green', icon: 'mdi:play' },
+      ];
 
       const entity = createEntity('running', thresholds, states);
       const result = getThresholdResult(entity);
@@ -407,9 +417,7 @@ describe('threshold-color.ts', () => {
     });
 
     it('should return only color when state matches but no icon defined', () => {
-      const states: StateConfig[] = [
-        { state: 'running', icon_color: 'green' },
-      ];
+      const states: StateConfig[] = [{ state: 'running', icon_color: 'green' }];
       const entity = createEntity('running', states);
       const result = getStateResult(entity);
       expect(result).to.deep.equal({ color: 'green', icon: undefined });

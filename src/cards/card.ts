@@ -11,8 +11,7 @@
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
-import { renderProblemIndicator, renderStateIcon } from '@/html/icon';
-import { hasFeature } from '@config/feature';
+import { renderProblemIndicator, renderRoomIcon } from '@/html/icon';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
@@ -196,16 +195,11 @@ export class RoomSummaryCard extends LitElement {
       return nothing;
     }
 
-    const hideIcon = hasFeature(this._config, 'hide_room_icon');
-    const hideIconContent =
-      this._config.background?.options?.includes('hide_icon_only');
-
-    const roomEntity = renderStateIcon(
-      this,
+    const roomEntity = renderRoomIcon(
       this._hass,
       this._roomEntity,
-      ['room', hideIcon ? 'hidden' : ''],
-      hideIconContent,
+      this._config,
+      true,
     );
 
     const cardStyle = renderCardStyles(

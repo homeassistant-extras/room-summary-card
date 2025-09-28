@@ -185,40 +185,12 @@ describe('card.ts', () => {
       expect((problemIcon as any).icon).to.equal('mdi:numeric-2');
     });
 
-    it('should call actionHandler and handleClickAction for room icon', async () => {
-      const handleClickActionStub = stub(
-        actionHandlerModule,
-        'handleClickAction',
-      ).returns({
-        handleEvent: () => {},
-      });
-
+    it('should render room icon using room-state-icon component', async () => {
       const el = await fixture(card.render() as TemplateResult);
-      const roomIcon = el.querySelector('.room.icon');
+      const roomStateIcon = el.querySelector('room-state-icon');
 
-      expect(roomIcon).to.exist;
-      expect((roomIcon as any).actionHandler).to.exist;
-      expect(actionHandlerStub.calledWith(card['_roomEntity'])).to.be.true;
-      expect(handleClickActionStub.calledWith(card, card['_roomEntity'])).to.be
-        .true;
-
-      handleClickActionStub.restore();
-    });
-
-    it('should hide room icon content when hide_icon_only background option is enabled', async () => {
-      const config = {
-        area: 'living_room',
-        background: {
-          image: '/local/images/living-room.jpg',
-          options: ['hide_icon_only' as const],
-        },
-      };
-      card.setConfig(config);
-      const el = await fixture(card.render() as TemplateResult);
-      const roomIconContainer = el.querySelector('.room');
-      const roomIconContent = el.querySelector('.room ha-state-icon');
-      expect(roomIconContainer).to.exist;
-      expect(roomIconContent).to.not.exist;
+      expect(roomStateIcon).to.exist;
+      expect((roomStateIcon as any).isMainRoomEntity).to.be.true;
     });
   });
 

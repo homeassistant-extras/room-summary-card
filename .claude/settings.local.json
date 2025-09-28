@@ -1,6 +1,11 @@
 {
   "permissions": {
-    "allow": ["Bash(npm test:*)"],
+    "allow": [
+      "Bash(yarn test)",
+      "Bash(yarn build)",
+      "Bash(npm run typecheck:*)",
+      "Bash(yarn format)"
+    ],
     "deny": [],
     "ask": []
   }

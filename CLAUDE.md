@@ -2,20 +2,24 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Package Manager
+
+This is a **Yarn project**. Use `yarn` commands instead of `npm` for consistency.
+
 ## Development Commands
 
 ### Build and Development
 
-- `npm run build` - Build the project using Parcel (outputs to dist/)
-- `npm run watch` - Watch mode for development (rebuilds on changes)
-- `npm run format` - Format code using Prettier
-- `npm run update` - Update dependencies with npm-check-updates
+- `yarn build` - Build the project using Parcel (outputs to dist/)
+- `yarn watch` - Watch mode for development (rebuilds on changes)
+- `yarn format` - Format code using Prettier
+- `yarn update` - Update dependencies with npm-check-updates
 
 ### Testing
 
-- `npm run test` - Run tests using Mocha with TypeScript
-- `npm run test:coverage` - Run tests with NYC coverage reporting
-- `npm run test:watch` - Run tests in watch mode for development
+- `yarn test` - Run tests using Mocha with TypeScript
+- `yarn test:coverage` - Run tests with NYC coverage reporting
+- `yarn test:watch` - Run tests in watch mode for development
 
 ### Single Test Execution
 

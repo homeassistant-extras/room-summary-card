@@ -49,6 +49,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   @property({ type: Object }) config?: Config;
 
   /**
+   * Whether this is the main room entity (for applying room-specific hiding logic)
+   */
+  @property({ type: Boolean, reflect: true, attribute: 'room' })
+  isMainRoomEntity: boolean = false;
+
+  /**
    * Returns the component's styles
    */
   static override get styles(): CSSResult {
@@ -58,6 +64,19 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   public override render(): TemplateResult | typeof nothing {
     const { state } = this.entity;
     if (!state) return nothing;
+
+    // Calculate hiding logic for main room entity
+    let hideIcon = false;
+    let hideIconContent = false;
+
+    if (this.isMainRoomEntity && this.config) {
+      hideIcon = hasFeature(this.config, 'hide_room_icon');
+      hideIconContent =
+        this.config.background?.options?.includes('hide_icon_only') || false;
+    }
+
+    // If the icon should be completely hidden, return nothing
+    if (hideIcon) return nothing;
 
     const iconStyle = renderEntityIconStyles(this.hass, this.entity);
     const thresholdIcon = getThresholdIcon(this.entity);
@@ -72,12 +91,13 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
         @action=${handleClickAction(this, this.entity)}
         .actionHandler=${actionHandler(this.entity)}
       >
-        <ha-state-icon
-          .hass=${this.hass}
-          .stateObj=${state}
-          .icon=${thresholdIcon || this.entity.config.icon}
-        ></ha-state-icon>
-
+        ${hideIconContent
+          ? nothing
+          : html`<ha-state-icon
+              .hass=${this.hass}
+              .stateObj=${state}
+              .icon=${thresholdIcon || this.entity.config.icon}
+            ></ha-state-icon>`}
         ${showLabels
           ? html`<div class="entity-label">
               ${computeEntityName(state, this.hass)}

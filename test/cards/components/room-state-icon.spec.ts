@@ -157,13 +157,18 @@ describe('room-state-icon.ts', () => {
     });
 
     it('should render with correct HTML structure', async () => {
+      // Ensure the component is not a main room entity
+      element.isMainRoomEntity = false;
+
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
 
-      // Verify that the template contains the expected structure
-      const templateString = result.strings.join('');
-      expect(templateString).to.include('class="icon"');
-      expect(templateString).to.include('ha-state-icon');
+      // Use fixture to actually render and test the DOM
+      const el = await fixture(result);
+
+      // The fixture renders our component's template directly
+      expect(el.classList.contains('icon')).to.be.true;
+      expect(el.querySelector('ha-state-icon')).to.exist;
     });
 
     it('should handle config without styles', async () => {
@@ -182,13 +187,17 @@ describe('room-state-icon.ts', () => {
         config: { entity_id: 'light.living_room' },
       };
       element.entity = entityWithoutIcon;
+      element.isMainRoomEntity = false;
 
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
 
-      // Verify that the template includes the ha-state-icon element
-      const templateString = result.strings.join('');
-      expect(templateString).to.include('ha-state-icon');
+      // Use fixture to actually render and test the DOM
+      const el = await fixture(result);
+      expect(
+        el.querySelector('ha-state-icon') ||
+          el.firstElementChild?.querySelector('ha-state-icon'),
+      ).to.exist;
     });
 
     it('should handle entity with custom icon', async () => {
@@ -197,13 +206,17 @@ describe('room-state-icon.ts', () => {
         config: { entity_id: 'light.living_room', icon: 'mdi:custom-icon' },
       };
       element.entity = entityWithIcon;
+      element.isMainRoomEntity = false;
 
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
 
-      // Verify that the template includes the ha-state-icon element
-      const templateString = result.strings.join('');
-      expect(templateString).to.include('ha-state-icon');
+      // Use fixture to actually render and test the DOM
+      const el = await fixture(result);
+      expect(
+        el.querySelector('ha-state-icon') ||
+          el.firstElementChild?.querySelector('ha-state-icon'),
+      ).to.exist;
     });
 
     it('should show entity label when show_entity_labels feature is enabled', async () => {
@@ -328,21 +341,33 @@ describe('room-state-icon.ts', () => {
 
   describe('integration with Home Assistant', () => {
     it('should pass hass instance to ha-state-icon', async () => {
+      element.isMainRoomEntity = false;
+
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
 
-      // Verify that the template includes the hass property
-      const templateString = result.strings.join('');
-      expect(templateString).to.include('ha-state-icon');
+      // Use fixture to actually render and test the DOM
+      const el = await fixture(result);
+      const haStateIcon =
+        el.querySelector('ha-state-icon') ||
+        el.firstElementChild?.querySelector('ha-state-icon');
+      expect(haStateIcon).to.exist;
+      expect((haStateIcon as any).hass).to.equal(element.hass);
     });
 
     it('should pass state object to ha-state-icon', async () => {
+      element.isMainRoomEntity = false;
+
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
 
-      // Verify that the template includes the stateObj property
-      const templateString = result.strings.join('');
-      expect(templateString).to.include('ha-state-icon');
+      // Use fixture to actually render and test the DOM
+      const el = await fixture(result);
+      const haStateIcon =
+        el.querySelector('ha-state-icon') ||
+        el.firstElementChild?.querySelector('ha-state-icon');
+      expect(haStateIcon).to.exist;
+      expect((haStateIcon as any).stateObj).to.equal(element.entity.state);
     });
 
     it('should handle different entity states', () => {

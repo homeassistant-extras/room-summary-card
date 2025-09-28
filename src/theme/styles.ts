@@ -145,13 +145,14 @@ const gridLayoutStyles = css`
   }
 
   /* Room area styling - Large square shape */
-  .room {
+  room-state-icon[room] {
     grid-area: r;
     width: var(--user-room-icon-size, 150%);
     aspect-ratio: 1 / 1;
+    align-self: center;
   }
 
-  .room.hidden {
+  room-state-icon[room].hidden {
     opacity: 0;
   }
 `;

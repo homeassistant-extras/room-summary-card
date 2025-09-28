@@ -14,7 +14,7 @@ export const occupancyStyles = css`
   }
 
   /* Icon styling when occupied */
-  :host([occupied]) .room::before {
+  :host([occupied]) room-state-icon[room]::before {
     animation: var(--occupancy-icon-animation);
     background-color: var(--occupancy-icon-color, var(--background-color-icon));
     transition: all 0.3s ease;
