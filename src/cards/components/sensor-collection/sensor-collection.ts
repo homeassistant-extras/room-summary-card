@@ -83,6 +83,8 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
 
   public override render(): TemplateResult | typeof nothing {
     d(this.config, 'sensor-collection', 'render');
+    d(this.config, 'sensor-collection', 'config', this.config);
+    d(this.config, 'sensor-collection', 'sensors', this.sensors);
     if (!this._hass || hasFeature(this.config, 'hide_climate_label')) {
       return nothing;
     }
