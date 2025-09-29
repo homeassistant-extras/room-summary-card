@@ -9,6 +9,7 @@ export type Selector =
   | BooleanSelector
   | EntitySelector
   | ImageSelector
+  | NavigationSelector
   | NumberSelector
   | ObjectSelector
   | SelectSelector
@@ -39,6 +40,10 @@ export interface EntitySelector {
     include_entities?: string[];
     filter?: EntitySelectorFilter | readonly EntitySelectorFilter[];
   } | null;
+}
+
+export interface NavigationSelector {
+  navigation: {} | null;
 }
 
 export interface NumberSelector {

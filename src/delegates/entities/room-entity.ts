@@ -6,6 +6,15 @@ import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 
 /**
+ * Checks if a string is a URL (starts with http:// or https://)
+ * @param {string} str - The string to check
+ * @returns {boolean} True if the string is a URL
+ */
+const isUrl = (str: string): boolean => {
+  return str.startsWith('http://') || str.startsWith('https://');
+};
+
+/**
  * Gets the room entity information
  *
  * @param {HomeAssistant} hass - The Home Assistant instance
@@ -17,11 +26,23 @@ export const getRoomEntity = (
   config: Config,
 ): EntityInformation => {
   const roomEntityId = `light.${config.area}_light`;
+
+  // Determine the navigation target
+  const navigationTarget = config.navigate ?? config.area.replace('_', '-');
+
+  // Create appropriate action based on whether the target is a URL or path
+  const tapAction: ActionConfig = isUrl(navigationTarget)
+    ? {
+        action: 'url',
+        url_path: navigationTarget,
+      }
+    : {
+        action: 'navigate',
+        navigation_path: navigationTarget,
+      };
+
   const actionConfig = {
-    tap_action: {
-      action: 'navigate',
-      navigation_path: config.navigate ?? config.area.replace('_', '-'),
-    } as ActionConfig,
+    tap_action: tapAction,
     hold_action: { action: 'more-info' } as ActionConfig,
     double_tap_action: { action: 'none' } as ActionConfig,
   };

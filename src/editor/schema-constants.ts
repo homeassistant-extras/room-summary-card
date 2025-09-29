@@ -87,7 +87,7 @@ export const INTERACTIONS: HaFormSchema = {
       name: 'navigate',
       label: 'Navigate path when card tapped',
       required: false,
-      selector: { text: { type: 'url' as const } },
+      selector: { navigation: {} },
     },
   ],
 };

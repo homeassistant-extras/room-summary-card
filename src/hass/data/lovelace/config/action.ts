@@ -20,6 +20,11 @@ export interface NoActionConfig extends BaseActionConfig {
   action: 'none';
 }
 
+export interface UrlActionConfig extends BaseActionConfig {
+  action: 'url';
+  url_path: string;
+}
+
 export interface BaseActionConfig {
   action: string;
 }
@@ -28,4 +33,5 @@ export type ActionConfig =
   | ToggleActionConfig
   | NavigateActionConfig
   | NoActionConfig
-  | MoreInfoActionConfig;
+  | MoreInfoActionConfig
+  | UrlActionConfig;
