@@ -78,6 +78,9 @@ export interface Config {
     options?: ('disable' | 'icon_background' | 'hide_icon_only')[];
   };
 
+  /** Light entities to track for multi-light background (overrides automatic discovery) */
+  lights?: string[];
+
   /** Custom styling configuration */
   styles?: {
     /** CSS properties for the card container */
@@ -113,7 +116,8 @@ export type Features =
   | 'exclude_default_entities'
   | 'skip_climate_styles'
   | 'skip_entity_styles'
-  | 'show_entity_labels';
+  | 'show_entity_labels'
+  | 'multi_light_background';
 
 /**
  * @file Occupancy Configuration Types

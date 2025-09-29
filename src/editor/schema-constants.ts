@@ -65,6 +65,10 @@ export const FEATURES: HaFormSchema = {
               label: 'Show Entity Labels',
               value: 'show_entity_labels',
             },
+            {
+              label: 'Multi-Light Background',
+              value: 'multi_light_background',
+            },
           ],
         },
       },

@@ -1,38 +1,27 @@
 import * as featureModule from '@config/feature';
-import * as stateActiveModule from '@hass/common/entity/state_active';
 import { getBackgroundOpacity } from '@theme/background/background-bits';
 import type { Config } from '@type/config';
-import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 import { stub, type SinonStub } from 'sinon';
 
 describe('background-bits.ts', () => {
-  let mockHass: any;
   let hasFeatureStub: SinonStub;
-  let stateActiveStub: SinonStub;
 
   beforeEach(() => {
     hasFeatureStub = stub(featureModule, 'hasFeature');
-    stateActiveStub = stub(stateActiveModule, 'stateActive');
 
-    // Default stub behaviors
+    // Default stub behavior
     hasFeatureStub.returns(false);
-    stateActiveStub.returns(false);
-
-    mockHass = {
-      themes: { darkMode: false },
-    };
   });
 
   afterEach(() => {
     hasFeatureStub.restore();
-    stateActiveStub.restore();
   });
 
   describe('getBackgroundOpacity', () => {
-    it('should return configured opacit', () => {
+    it('should return configured opacity', () => {
       const config: Config = { area: 'test', background: { opacity: 50 } };
-      const result = getBackgroundOpacity(mockHass, config);
+      const result = getBackgroundOpacity(config, false);
 
       expect(result).to.deep.equal({
         '--opacity-theme': 0.5,
@@ -42,7 +31,7 @@ describe('background-bits.ts', () => {
 
     it('should return inactive opacity by default', () => {
       const config: Config = { area: 'test' };
-      const result = getBackgroundOpacity(mockHass, config);
+      const result = getBackgroundOpacity(config, false);
 
       expect(result).to.deep.equal({
         '--opacity-theme': undefined,
@@ -50,17 +39,9 @@ describe('background-bits.ts', () => {
       });
     });
 
-    it('should return active opacity in dark mode when entity is active', () => {
-      mockHass.themes.darkMode = true;
-      stateActiveStub.returns(true);
-
+    it('should return active opacity when active is true', () => {
       const config: Config = { area: 'test' };
-      const mockState = {
-        entity_id: 'light.test',
-        state: 'on',
-        domain: 'light',
-      } as EntityState;
-      const result = getBackgroundOpacity(mockHass, config, mockState);
+      const result = getBackgroundOpacity(config, true);
 
       expect(result).to.deep.equal({
         '--opacity-theme': undefined,
@@ -69,19 +50,12 @@ describe('background-bits.ts', () => {
     });
 
     it('should use inactive opacity when skip_entity_styles is enabled', () => {
-      mockHass.themes.darkMode = true;
-      stateActiveStub.returns(true);
       hasFeatureStub
         .withArgs({ area: 'test' }, 'skip_entity_styles')
         .returns(true);
 
       const config: Config = { area: 'test' };
-      const mockState = {
-        entity_id: 'light.test',
-        state: 'on',
-        domain: 'light',
-      } as EntityState;
-      const result = getBackgroundOpacity(mockHass, config, mockState);
+      const result = getBackgroundOpacity(config, true);
 
       expect(result).to.deep.equal({
         '--opacity-theme': undefined,

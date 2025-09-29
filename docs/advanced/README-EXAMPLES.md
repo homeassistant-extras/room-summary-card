@@ -200,6 +200,46 @@ entities:
   - sensor.plex
 ```
 
+## Multi-Light Background
+
+![Multi-Light](../../assets/multi-light.gif)
+
+The above demonstration shows three different multi-light configurations:
+
+```yaml
+# Card 1: Mixed entity types with manual light specification
+- type: custom:room-summary-card
+  area: dining_room
+  features:
+    - multi_light_background
+  entity: light.kitchen_bulb_1
+  entities:
+    - switch.sconce
+    - light.kitchen_bulb_1
+  lights:
+    - light.dining_room_light
+    - switch.sconce
+    - light.kitchen_bulb_1
+
+# Card 2: Automatic discovery with default entities excluded
+- type: custom:room-summary-card
+  area: dining_room
+  features:
+    - multi_light_background
+    - exclude_default_entities
+
+# Card 3: Custom entity as light source
+- type: custom:room-summary-card
+  area: dining_room
+  features:
+    - multi_light_background
+  entity: input_boolean.gina_mute
+  entities:
+    - input_boolean.gina_mute
+  lights:
+    - input_boolean.gina_mute
+```
+
 ## Custom Styling
 
 ![Custom Styles](../../assets/custom-styles.png)

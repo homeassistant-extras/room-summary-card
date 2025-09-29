@@ -1,6 +1,7 @@
 import { getOccupancyState } from '@delegates/checks/occupancy';
 import { climateThresholds } from '@delegates/checks/thresholds';
 import { getArea } from '@delegates/retrievers/area';
+import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import { getBackgroundImageUrl } from '@theme/image/get-pic';
 import type { Config } from '@type/config';
@@ -14,6 +15,7 @@ export interface RoomProperties {
   roomEntity: EntityInformation;
   sensors: SensorData;
   image?: string | null;
+  isActive: boolean;
   flags: {
     occupied: boolean;
     dark: boolean;
@@ -26,7 +28,8 @@ export interface RoomProperties {
  * Retrieves and assembles various properties and entities related to a room based on the provided Home Assistant instance and configuration.
  *
  * This function gathers information such as the room's name, associated entities for icons, the main room entity, problem entities (and whether any problems exist),
- * as well as sensor data including both individual sensors and averaged readings by device class. It also determines if dark mode is enabled in the Home Assistant themes.
+ * as well as sensor data including both individual sensors and averaged readings by device class. It also determines if dark mode is enabled in the Home Assistant themes,
+ * and calculates whether the room should be considered "active" based on either the main room entity or any light entities.
  *
  * @param hass - The Home Assistant instance containing state and configuration data.
  * @param config - The configuration object specifying area, sensors, and other options for the room.
@@ -46,11 +49,17 @@ export const getRoomProperties = (
   const image = getBackgroundImageUrl(hass, config);
   const occupied = getOccupancyState(hass, config.occupancy);
 
+  // Calculate if room is active - either room entity is active or any light is active
+  const isActive =
+    (roomEntity.state && stateActive(roomEntity.state)) ||
+    sensors.lightEntities.some((entityState) => stateActive(entityState));
+
   return {
     roomInfo,
     roomEntity,
     sensors,
     image,
+    isActive,
     flags: {
       occupied,
       dark: hass.themes.darkMode,

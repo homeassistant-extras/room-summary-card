@@ -321,3 +321,85 @@ styles:
   sensors:
     color: 'rgba(255, 255, 255, 0.8)'
 ```
+
+## Multi-Light Background Examples
+
+### Basic Multi-Light Setup
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+features:
+  - multi_light_background
+```
+
+This automatically tracks all light entities in the kitchen area and shows a lit background when any are on.
+
+### Kitchen with Multiple Light Types
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+features:
+  - multi_light_background
+lights:
+  - light.kitchen_main
+  - light.kitchen_under_cabinet
+  - light.kitchen_island
+  - switch.kitchen_pendant
+```
+
+### Bedroom with Mixed Entities
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+features:
+  - multi_light_background
+lights:
+  - light.bedroom_ceiling
+  - light.bedroom_bedside_left
+  - light.bedroom_bedside_right
+  - switch.bedroom_accent_lighting
+background:
+  image: /local/images/bedroom.jpg
+  opacity: 25
+```
+
+### Living Room with Background Image
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - multi_light_background
+lights:
+  - light.living_room_main
+  - light.living_room_lamp
+  - light.living_room_accent
+background:
+  image: /local/images/living-room.jpg
+  opacity: 30
+occupancy:
+  entities:
+    - binary_sensor.living_room_motion
+  card_border_color: '#4CAF50'
+```
+
+### Office with Auto-Discovery
+
+```yaml
+type: custom:room-summary-card
+area: office
+features:
+  - multi_light_background
+  - hide_area_stats
+entity:
+  entity_id: light.office_main
+  icon: mdi:ceiling-light
+entities:
+  - switch.office_computer
+  - light.office_desk_lamp
+```
+
+This example uses automatic light discovery while still displaying specific entities in the card.

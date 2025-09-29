@@ -41,6 +41,7 @@ describe('icon.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -54,6 +55,7 @@ describe('icon.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [createEntityState('entity1')],
+        lightEntities: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -73,6 +75,7 @@ describe('icon.ts', () => {
           createEntityState('entity2'),
           createEntityState('entity3'),
         ],
+        lightEntities: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -87,6 +90,7 @@ describe('icon.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [createEntityState('entity1', 'off')],
+        lightEntities: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -101,6 +105,7 @@ describe('icon.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [createEntityState('entity1', 'on')],
+        lightEntities: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -119,6 +124,7 @@ describe('icon.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: manyEntities,
+        lightEntities: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -136,6 +142,7 @@ describe('icon.ts', () => {
           createEntityState('entity/with/slashes'),
           createEntityState('entity.with.dots'),
         ],
+        lightEntities: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -150,6 +157,7 @@ describe('icon.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [createEntityState('entity1')],
+        lightEntities: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -168,6 +176,7 @@ describe('icon.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
         mold: moldSensor,
       };
       const result = renderProblemIndicator(
@@ -191,6 +200,7 @@ describe('icon.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
         mold: moldSensor,
       };
       const result = renderProblemIndicator(
@@ -241,16 +251,23 @@ describe('icon.ts', () => {
 
     it('should return nothing when state is not present', () => {
       entity.state = undefined;
-      const result = renderRoomIcon(mockHass, entity, config);
+      const result = renderRoomIcon(mockHass, entity, config, true, true);
 
       expect(result).to.equal(nothing);
     });
 
-    it('should return template with room-state-icon element', async () => {
-      const result = renderRoomIcon(mockHass, entity, config);
+    it('should return template with room-state-icon element and pass isActive parameter', async () => {
+      const result = renderRoomIcon(mockHass, entity, config, true, true);
+      const el = await fixture(result as TemplateResult);
 
       expect(result).to.not.equal(nothing);
       expect(result).to.be.instanceOf(Object);
+
+      // The fixture creates the room-state-icon element directly
+      expect(el.tagName.toLowerCase()).to.equal('room-state-icon');
+      // Verify that the isActive property is set correctly
+      expect((el as any).isActive).to.be.true;
+      expect((el as any).isMainRoomEntity).to.be.true;
     });
   });
 });

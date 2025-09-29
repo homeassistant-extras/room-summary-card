@@ -69,7 +69,7 @@ describe('state_color.ts', () => {
 
     it('should respect provided state parameter over entity state', () => {
       const stateObj = createStateObj('light.test', 'on');
-      expect(stateColorCss(stateObj, 'test', UNAVAILABLE)).to.equal(
+      expect(stateColorCss(stateObj, 'test', true, UNAVAILABLE)).to.equal(
         'var(--state-unavailable-color)',
       );
     });
@@ -83,7 +83,7 @@ describe('state_color.ts', () => {
       ).returns(['--some-color-property']);
       computeCssVariableStub.returns('var(--some-color-property)');
 
-      expect(stateColorCss(stateObj, 'test')).to.equal(
+      expect(stateColorCss(stateObj, 'test', true)).to.equal(
         'var(--some-color-property)',
       );
       expect(computeCssVariableStub.calledWith(['--some-color-property'])).to.be
@@ -97,7 +97,7 @@ describe('state_color.ts', () => {
         'stateColorProperties',
       ).returns(undefined);
 
-      expect(stateColorCss(stateObj, 'test')).to.be.undefined;
+      expect(stateColorCss(stateObj, 'test', false)).to.be.undefined;
     });
   });
 
@@ -106,7 +106,12 @@ describe('state_color.ts', () => {
       const stateObj = createStateObj('light.test', 'on');
       stateActiveStub.returns(true);
 
-      const result = domainStateColorProperties('light', stateObj, 'test');
+      const result = domainStateColorProperties(
+        'light',
+        stateObj,
+        'test',
+        true,
+      );
       expect(result[0]).to.equal('--state-color-test-theme');
     });
 
@@ -120,6 +125,7 @@ describe('state_color.ts', () => {
         'binary_sensor',
         stateObj,
         'test',
+        true,
       );
       expect(result).to.include('--state-binary_sensor-motion-on-color');
     });
@@ -128,7 +134,12 @@ describe('state_color.ts', () => {
       const stateObj = createStateObj('light.test', 'on');
       stateActiveStub.returns(true);
 
-      const result = domainStateColorProperties('light', stateObj, 'test');
+      const result = domainStateColorProperties(
+        'light',
+        stateObj,
+        'test',
+        true,
+      );
       expect(result).to.include('--state-light-on-color');
     });
 
@@ -136,7 +147,12 @@ describe('state_color.ts', () => {
       const stateObj = createStateObj('light.test', 'on');
       stateActiveStub.returns(true);
 
-      const result = domainStateColorProperties('light', stateObj, 'test');
+      const result = domainStateColorProperties(
+        'light',
+        stateObj,
+        'test',
+        true,
+      );
       expect(result).to.include('--state-light-active-color');
       expect(result).to.include('--state-active-color');
     });
@@ -145,7 +161,12 @@ describe('state_color.ts', () => {
       const stateObj = createStateObj('climate.test', 'heat_cool');
       stateActiveStub.returns(true);
 
-      const result = domainStateColorProperties('climate', stateObj, 'test');
+      const result = domainStateColorProperties(
+        'climate',
+        stateObj,
+        'test',
+        true,
+      );
       expect(result).to.include('--state-climate-heat_cool-color');
     });
 
@@ -157,6 +178,7 @@ describe('state_color.ts', () => {
         'light',
         stateObj,
         'test',
+        false,
         'off',
       );
       expect(result).to.include('--state-light-off-color');
@@ -170,7 +192,7 @@ describe('state_color.ts', () => {
       });
       batteryStateColorStub.returns('--state-sensor-battery-high-color');
 
-      const result = stateColorProperties(stateObj, 'test');
+      const result = stateColorProperties(stateObj, 'test', true);
       expect(result).to.deep.equal([
         '--state-color-test-theme',
         '--state-sensor-battery-high-color',
@@ -189,13 +211,14 @@ describe('state_color.ts', () => {
       );
       domainStateColorPropertiesStub.returns(['--test-property']);
 
-      const result = stateColorProperties(stateObj, 'test');
+      const result = stateColorProperties(stateObj, 'test', true);
       expect(computeGroupDomainStub.calledWith(stateObj)).to.be.true;
       expect(
         domainStateColorPropertiesStub.calledWith(
           'light',
           stateObj,
           'test',
+          true,
           undefined,
         ),
       ).to.be.true;
@@ -212,12 +235,13 @@ describe('state_color.ts', () => {
       );
       domainStateColorPropertiesStub.returns(['--test-property']);
 
-      const result = stateColorProperties(stateObj, 'test');
+      const result = stateColorProperties(stateObj, 'test', false);
       expect(
         domainStateColorPropertiesStub.calledWith(
           'light',
           stateObj,
           'test',
+          false,
           undefined,
         ),
       ).to.be.true;
@@ -226,7 +250,7 @@ describe('state_color.ts', () => {
 
     it('should return undefined for unsupported domains', () => {
       const stateObj = createStateObj('input_text.test', 'value');
-      const result = stateColorProperties(stateObj, 'test');
+      const result = stateColorProperties(stateObj, 'test', false);
       expect(result).to.be.undefined;
     });
 
@@ -240,12 +264,13 @@ describe('state_color.ts', () => {
       );
       domainStateColorPropertiesStub.returns(['--test-property']);
 
-      stateColorProperties(stateObj, 'test', 'off');
+      stateColorProperties(stateObj, 'test', true, 'off');
       expect(
         domainStateColorPropertiesStub.calledWith(
           'light',
           stateObj,
           'test',
+          true,
           'off',
         ),
       ).to.be.true;
@@ -257,7 +282,7 @@ describe('state_color.ts', () => {
       });
       batteryStateColorStub.returns(undefined);
 
-      const result = stateColorProperties(stateObj, 'test');
+      const result = stateColorProperties(stateObj, 'test', false);
       expect(result).to.be.undefined;
     });
   });

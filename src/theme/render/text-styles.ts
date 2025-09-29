@@ -18,6 +18,7 @@ import { getStyleData } from './common-style';
  * @param hass - The Home Assistant instance providing state and theme information.
  * @param config - The configuration object that may include feature flags and style preferences.
  * @param entity - Information about the entity for which styles are being rendered.
+ * @param isActive - Whether the room is considered active (for styling).
  * @returns A `DirectiveResult` containing a style map with CSS variables for text color and theme override,
  *          or `nothing` if styles should not be applied.
  */
@@ -25,10 +26,11 @@ export const renderTextStyles = (
   hass: HomeAssistant,
   config: Config,
   entity: EntityInformation,
+  isActive?: boolean,
 ): DirectiveResult<typeof StyleMapDirective> | typeof nothing => {
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   if (skipStyles) return nothing;
-  const styleData = getStyleData(hass, 'text', entity);
+  const styleData = getStyleData(hass, 'text', entity, isActive);
 
   if (!styleData) return nothing;
 

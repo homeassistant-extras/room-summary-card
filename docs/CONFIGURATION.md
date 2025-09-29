@@ -15,6 +15,7 @@ Some of these go to their own documents - so use this ToC as a guide.
 - [Sensor Configuration](configuration/SENSOR-CONFIGURATION.md)
 - [Threshold Configuration](configuration/THRESHOLD-CONFIGURATION.md)
 - [Occupancy Configuration](configuration/OCCUPANCY-CONFIGURATION.md)
+- [Multi-Light Background Configuration](configuration/MULTI-LIGHT-BACKGROUND.md)
 - [Action Configuration](configuration/ACTION-CONFIGURATION.md)
 - [Entity Attributes](configuration/ENTITY-ATTRIBUTES.md)
 - [Setting Up Area Pictures](configuration/AREA-PICTURES.md)
@@ -49,6 +50,7 @@ See [default entities](#default-entities)
 | entity         | string \| object | `light.<area>_light`       | Main entity for the room                                     |
 | entities       | array            | See below                  | Additional entities to display                               |
 | sensors        | array            | See below                  | Array of sensor entities to display in the card label area   |
+| lights         | array            | auto-discovered            | Array of light entities for multi-light background           |
 | navigate       | string           | area name (dash-separated) | Custom navigation path when clicking the room name / icon    |
 | background     | object           | See below                  | Background image configuration                               |
 | occupancy      | object           | See below                  | Occupancy detection configuration                            |
@@ -83,18 +85,20 @@ features:
   - exclude_default_entities
   - skip_climate_styles
   - skip_entity_styles
+  - multi_light_background
 ```
 
-| Feature                  | Description                                          |
-| ------------------------ | ---------------------------------------------------- |
-| hide_climate_label       | Hide the climate/sensor information                  |
-| hide_area_stats          | Hide the area statistics (device/entity counts)      |
-| hide_room_icon           | Hide the room icon (for cleaner layouts)             |
-| hide_sensor_icons        | Hide the icons next to sensor values                 |
-| exclude_default_entities | Don't include default light/fan entities             |
-| skip_climate_styles      | Disable climate-based color coding & borders         |
-| skip_entity_styles       | Disable card background styling based on main entity |
-| show_entity_labels       | Show entity labels under each entity icon            |
+| Feature                  | Description                                                 |
+| ------------------------ | ----------------------------------------------------------- |
+| hide_climate_label       | Hide the climate/sensor information                         |
+| hide_area_stats          | Hide the area statistics (device/entity counts)             |
+| hide_room_icon           | Hide the room icon (for cleaner layouts)                    |
+| hide_sensor_icons        | Hide the icons next to sensor values                        |
+| exclude_default_entities | Don't include default light/fan entities                    |
+| skip_climate_styles      | Disable climate-based color coding & borders                |
+| skip_entity_styles       | Disable card background styling based on main entity        |
+| show_entity_labels       | Show entity labels under each entity icon                   |
+| multi_light_background   | Enable background lighting when any light in the room is on |
 
 ## Sensor Classes
 
@@ -183,6 +187,29 @@ occupancy:
 - Customizable styling options
 
 See [Occupancy Configuration](configuration/OCCUPANCY-CONFIGURATION.md) for complete documentation and examples.
+
+## Multi-Light Background
+
+The multi-light background feature allows the card background to light up when any light entity in the room is on, instead of only when the main room entity is on. This is particularly useful for rooms with multiple lights where you want the background to reflect the actual lighting state of the room.
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+features:
+  - multi_light_background
+lights:
+  - light.kitchen_main
+  - light.kitchen_under_cabinet
+  - switch.kitchen_pendant
+```
+
+**Features:**
+- Automatic discovery of all light entities in the area
+- Manual override with custom entity lists
+- Support for mixed entity types (lights, switches, sensors)
+- Smart background lighting when ANY tracked light is on
+
+See [Multi-Light Background Configuration](configuration/MULTI-LIGHT-BACKGROUND.md) for complete documentation and examples.
 
 ## Next Steps
 

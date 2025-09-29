@@ -87,6 +87,7 @@ describe('info.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
       };
 
       const result = info(
@@ -115,6 +116,7 @@ describe('info.ts', () => {
         individual: [e('sensor', 'temperature', '22')],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
       };
 
       const result = info(
@@ -140,6 +142,7 @@ describe('info.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
       };
 
       info(
@@ -161,6 +164,7 @@ describe('info.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
       };
 
       const result = info(
@@ -188,6 +192,7 @@ describe('info.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
       };
 
       const result = info(
@@ -211,6 +216,7 @@ describe('info.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
       };
 
       const result = info(
@@ -234,6 +240,7 @@ describe('info.ts', () => {
         individual: [],
         averaged: [],
         problemSensors: [],
+        lightEntities: [],
       };
 
       const result = info(

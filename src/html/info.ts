@@ -19,6 +19,7 @@ import { renderAreaStatistics } from './area-statistics';
  * @param roomEntity - The main entity representing the room.
  * @param config - Card configuration options.
  * @param sensors - A list of sensor entity states relevant to the room.
+ * @param isActive - Whether the room is considered active (for styling).
  * @returns A lit-html template representing the room information section.
  */
 export const info = (
@@ -28,8 +29,9 @@ export const info = (
   roomEntity: EntityInformation,
   config: Config,
   sensors: SensorData,
+  isActive?: boolean,
 ) => {
-  const textStyle = renderTextStyles(hass, config, roomEntity);
+  const textStyle = renderTextStyles(hass, config, roomEntity, isActive);
   const stats = renderAreaStatistics(hass, config);
 
   const handler = actionHandler(roomEntity);

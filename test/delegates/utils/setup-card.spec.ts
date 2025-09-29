@@ -89,6 +89,7 @@ describe('setup-card.ts', () => {
         'roomEntity',
         'sensors',
         'image',
+        'isActive',
         'flags',
       ]);
       expect(result.image).to.equal('/local/bg.jpg');
@@ -105,6 +106,119 @@ describe('setup-card.ts', () => {
 
       expect(result.roomInfo.area_name).to.equal('Custom Name');
       expect(getAreaStub.called).to.be.false;
+    });
+
+    describe('isActive calculation', () => {
+      it('should return true when room entity is active', () => {
+        const config: Config = { area: 'living_room' };
+
+        // Mock room entity as active
+        getRoomEntityStub.returns({
+          config: { entity_id: 'light.living_room' },
+          state: s('light', 'living_room', 'on'),
+        });
+
+        // Mock sensors with no active lights
+        getSensorsStub.returns({
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [s('light', 'bedroom', 'off')],
+        });
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.isActive).to.be.true;
+      });
+
+      it('should return true when room entity is inactive but light entities are active', () => {
+        const config: Config = { area: 'living_room' };
+
+        // Mock room entity as inactive
+        getRoomEntityStub.returns({
+          config: { entity_id: 'light.living_room' },
+          state: s('light', 'living_room', 'off'),
+        });
+
+        // Mock sensors with active lights
+        getSensorsStub.returns({
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [
+            s('light', 'bedroom', 'off'),
+            s('light', 'kitchen', 'on'),
+          ],
+        });
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.isActive).to.be.true;
+      });
+
+      it('should return false when both room entity and light entities are inactive', () => {
+        const config: Config = { area: 'living_room' };
+
+        // Mock room entity as inactive
+        getRoomEntityStub.returns({
+          config: { entity_id: 'light.living_room' },
+          state: s('light', 'living_room', 'off'),
+        });
+
+        // Mock sensors with no active lights
+        getSensorsStub.returns({
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [
+            s('light', 'bedroom', 'off'),
+            s('light', 'kitchen', 'off'),
+          ],
+        });
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.isActive).to.be.false;
+      });
+
+      it('should return false when room entity has no state and no light entities are active', () => {
+        const config: Config = { area: 'living_room' };
+
+        // Mock room entity with no state
+        getRoomEntityStub.returns({
+          config: { entity_id: 'light.living_room' },
+          state: undefined,
+        });
+
+        // Mock sensors with no active lights
+        getSensorsStub.returns({
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [s('light', 'bedroom', 'off')],
+        });
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.isActive).to.be.false;
+      });
+
+      it('should return false when lightEntities array is empty', () => {
+        const config: Config = { area: 'living_room' };
+
+        // Mock room entity as inactive
+        getRoomEntityStub.returns({
+          config: { entity_id: 'light.living_room' },
+          state: s('light', 'living_room', 'off'),
+        });
+
+        // Mock sensors with empty lightEntities array
+        getSensorsStub.returns({
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+        });
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.isActive).to.be.false;
+      });
     });
   });
 });

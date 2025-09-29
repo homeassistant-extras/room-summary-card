@@ -31,8 +31,14 @@ describe('card.ts', () => {
           domain: 'light',
         },
       },
-      sensors: { individual: [], averaged: [], problemSensors: [] },
+      sensors: {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+      },
       image: null,
+      isActive: true,
       flags: {
         occupied: true,
         dark: true,
@@ -143,6 +149,42 @@ describe('card.ts', () => {
 
       card.hass = newHass;
       expect(card['_hass']).to.equal(newHass);
+    });
+
+    it('should set _isActive based on getRoomProperties result', () => {
+      // Test with isActive: true from mock
+      expect(card['_isActive']).to.be.true;
+
+      // Update mock to return isActive: false
+      getRoomPropertiesStub.returns({
+        roomInfo: { area_name: 'Living Room' },
+        roomEntity: {
+          config: { entity_id: 'light.test' },
+          state: {
+            entity_id: 'light.test',
+            state: 'off',
+            attributes: {},
+            domain: 'light',
+          },
+        },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+        },
+        image: null,
+        isActive: false,
+        flags: {
+          occupied: false,
+          dark: false,
+          hot: false,
+          humid: false,
+        },
+      });
+
+      card.hass = mockHass;
+      expect(card['_isActive']).to.be.false;
     });
   });
 

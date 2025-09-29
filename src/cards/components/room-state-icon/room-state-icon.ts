@@ -55,6 +55,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   isMainRoomEntity: boolean = false;
 
   /**
+   * Whether the room is considered active (for styling)
+   */
+  @property({ type: Boolean })
+  isActive?: boolean;
+
+  /**
    * Returns the component's styles
    */
   static override get styles(): CSSResult {
@@ -78,7 +84,11 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     // If the icon should be completely hidden, return nothing
     if (hideIcon) return nothing;
 
-    const iconStyle = renderEntityIconStyles(this.hass, this.entity);
+    const iconStyle = renderEntityIconStyles(
+      this.hass,
+      this.entity,
+      this.isActive,
+    );
     const thresholdIcon = getThresholdIcon(this.entity);
     const showLabels =
       this.config && hasFeature(this.config, 'show_entity_labels');

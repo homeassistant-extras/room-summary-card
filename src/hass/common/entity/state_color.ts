@@ -1,5 +1,7 @@
 /**
  * https://github.com/home-assistant/frontend/blob/dev/src/common/entity/state_color.ts
+ * This file is modified to allow for light entities to be included in the state color calculation
+ * so that the multi-light background feature can work
  */
 
 import { batteryStateColorProperty } from '@hass/common/entity/color/battery_color';
@@ -48,6 +50,7 @@ const STATE_COLORED_DOMAIN = new Set([
 export const stateColorCss = (
   stateObj: HassEntity,
   scope: string,
+  active?: boolean,
   state?: string,
 ) => {
   const compareState = state ?? stateObj?.state;
@@ -55,7 +58,7 @@ export const stateColorCss = (
     return `var(--state-unavailable-color)`;
   }
 
-  const properties = stateColorProperties(stateObj, scope, state);
+  const properties = stateColorProperties(stateObj, scope, active, state);
   if (properties) {
     return computeCssVariable(properties);
   }
@@ -70,16 +73,20 @@ export const domainStateColorProperties = (
   domain: string,
   stateObj: HassEntity,
   scope: string,
+  active?: boolean,
   state?: string,
 ): string[] => {
   const compareState = state ?? stateObj.state;
-  const active = stateActive(stateObj, state);
+  // active is only passed in for the main room entity
+  // so if it's not passed in, we use the stateActive function to determine if the entity is active
+  // we don't care about the theme in this context
+  const isActive = active ?? stateActive(stateObj, state);
 
   // allow for theme override
   const properties: string[] = [`--state-color-${scope}-theme`];
 
   const stateKey = slugify(compareState, '_');
-  const activeKey = active ? 'active' : 'inactive';
+  const activeKey = isActive ? 'active' : 'inactive';
 
   const dc = stateObj.attributes.device_class;
 
@@ -100,6 +107,7 @@ export const domainStateColorProperties = (
 export const stateColorProperties = (
   stateObj: HassEntity,
   scope: string,
+  active?: boolean,
   state?: string,
 ): string[] | undefined => {
   const compareState = state ?? stateObj?.state;
@@ -118,12 +126,18 @@ export const stateColorProperties = (
   if (domain === 'group') {
     const groupDomain = computeGroupDomain(stateObj as GroupEntity);
     if (groupDomain && STATE_COLORED_DOMAIN.has(groupDomain)) {
-      return domainStateColorProperties(groupDomain, stateObj, scope, state);
+      return domainStateColorProperties(
+        groupDomain,
+        stateObj,
+        scope,
+        active,
+        state,
+      );
     }
   }
 
   if (STATE_COLORED_DOMAIN.has(domain)) {
-    return domainStateColorProperties(domain, stateObj, scope, state);
+    return domainStateColorProperties(domain, stateObj, scope, active, state);
   }
 
   return undefined;

@@ -24,7 +24,7 @@ export const getThemeColorOverride = (
   hass: HomeAssistant,
   entity: EntityInformation,
   active?: boolean,
-) => {
+): string | undefined => {
   const { state } = entity;
   if (!state) return undefined;
 

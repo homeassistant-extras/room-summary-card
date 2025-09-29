@@ -326,6 +326,18 @@ export const getSchema = async (
             },
           },
         },
+        {
+          name: 'lights',
+          label: 'Light entities (optional for multi-light background)',
+          required: false,
+          selector: {
+            entity: {
+              multiple: true,
+              include_entities: entities,
+              filter: { domain: ['light', 'switch'] },
+            },
+          },
+        },
       ],
     },
     OCCUPANCY,

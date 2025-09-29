@@ -133,6 +133,7 @@ describe('get-sensors.ts', () => {
       'averaged',
       'problemSensors',
       'mold',
+      'lightEntities',
     ]);
     expect(result.individual).to.be.an('array');
     expect(result.averaged).to.equal(mockAveraged);
@@ -301,5 +302,105 @@ describe('get-sensors.ts', () => {
     expect(result.individual).to.be.an('array');
     expect(result.individual).to.have.lengthOf(0);
     expect(result.averaged).to.be.an('array');
+    expect(result.lightEntities).to.be.an('array');
+    expect(result.lightEntities).to.have.lengthOf(0);
+  });
+
+  it('should collect light entities when multi_light_background feature is enabled', () => {
+    // Add light entities to the mock
+    mockHass.states['light.living_room_main'] = e('light', 'living_room_main', 'on');
+    mockHass.states['light.living_room_lamp'] = e('light', 'living_room_lamp', 'off');
+    mockHass.states['light.kitchen_light'] = e('light', 'kitchen_light', 'on');
+    
+    mockHass.entities['light.living_room_main'] = {
+      entity_id: 'light.living_room_main',
+      device_id: 'device_7',
+      area_id: 'living_room',
+      labels: [],
+    };
+    mockHass.entities['light.living_room_lamp'] = {
+      entity_id: 'light.living_room_lamp',
+      device_id: 'device_8',
+      area_id: 'living_room',
+      labels: [],
+    };
+    mockHass.entities['light.kitchen_light'] = {
+      entity_id: 'light.kitchen_light',
+      device_id: 'device_9',
+      area_id: 'kitchen',
+      labels: [],
+    };
+
+    const config: Config = {
+      area: 'living_room',
+      features: ['multi_light_background'],
+    };
+
+    const result = getSensors(mockHass, config);
+
+    expect(result.lightEntities).to.be.an('array');
+    expect(result.lightEntities).to.have.lengthOf(2);
+    expect(result.lightEntities.map((l) => l.entity_id)).to.include.members([
+      'light.living_room_main',
+      'light.living_room_lamp',
+    ]);
+    expect(result.lightEntities.map((l) => l.entity_id)).to.not.include(
+      'light.kitchen_light'
+    );
+  });
+
+  it('should collect configured light entities even from other areas', () => {
+    // Add light entities to the mock
+    mockHass.states['light.kitchen_light'] = e('light', 'kitchen_light', 'on');
+    mockHass.states['light.bedroom_light'] = e('light', 'bedroom_light', 'off');
+    
+    mockHass.entities['light.kitchen_light'] = {
+      entity_id: 'light.kitchen_light',
+      device_id: 'device_9',
+      area_id: 'kitchen',
+      labels: [],
+    };
+    mockHass.entities['light.bedroom_light'] = {
+      entity_id: 'light.bedroom_light',
+      device_id: 'device_10',
+      area_id: 'bedroom',
+      labels: [],
+    };
+
+    const config: Config = {
+      area: 'living_room',
+      features: ['multi_light_background'],
+      lights: ['light.kitchen_light', 'light.bedroom_light'],
+    };
+
+    const result = getSensors(mockHass, config);
+
+    expect(result.lightEntities).to.be.an('array');
+    expect(result.lightEntities).to.have.lengthOf(2);
+    expect(result.lightEntities.map((l) => l.entity_id)).to.include.members([
+      'light.kitchen_light',
+      'light.bedroom_light',
+    ]);
+  });
+
+  it('should not collect light entities when multi_light_background feature is disabled', () => {
+    // Add light entities to the mock
+    mockHass.states['light.living_room_main'] = e('light', 'living_room_main', 'on');
+    mockHass.entities['light.living_room_main'] = {
+      entity_id: 'light.living_room_main',
+      device_id: 'device_7',
+      area_id: 'living_room',
+      labels: [],
+    };
+
+    const config: Config = {
+      area: 'living_room',
+      // No multi_light_background feature
+    };
+
+    const result = getSensors(mockHass, config);
+
+    expect(result.lightEntities).to.be.an('array');
+    expect(result.lightEntities).to.have.lengthOf(0);
   });
 });

@@ -36,6 +36,9 @@ export interface SensorData {
 
   /** Mold sensor in the area */
   mold?: EntityState;
+
+  /** Light entities in the area (for multi-light background feature) */
+  lightEntities: EntityState[];
 }
 /**
  * Represents a display-ready sensor that can be either individual or averaged

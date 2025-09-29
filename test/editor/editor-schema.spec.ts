@@ -169,6 +169,18 @@ describe('editor-schema.ts', () => {
                 },
               },
             },
+            {
+              name: 'lights',
+              label: 'Light entities (optional for multi-light background)',
+              required: false,
+              selector: {
+                entity: {
+                  multiple: true,
+                  include_entities: entities,
+                  filter: { domain: ['light', 'switch'] },
+                },
+              },
+            },
           ],
         },
         {
@@ -275,6 +287,10 @@ describe('editor-schema.ts', () => {
                     {
                       label: 'Show Entity Labels',
                       value: 'show_entity_labels',
+                    },
+                    {
+                      label: 'Multi-Light Background',
+                      value: 'multi_light_background',
                     },
                   ],
                 },

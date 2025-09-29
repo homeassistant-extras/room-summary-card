@@ -31,20 +31,23 @@ export const getStyleData = (
   hass: HomeAssistant,
   scope: string,
   entity: EntityInformation,
+  active?: boolean,
 ): StyleData | null => {
-  const { state } = entity;
+  const { state } = entity as { state: HassEntity };
   if (!state) return null;
 
-  const stateObj = state as any as HassEntity;
-  const active = stateActive(stateObj);
-  const activeClass = active ? 'active' : 'inactive';
-  const themeOverride = getThemeColorOverride(hass, entity, active);
+  // active is only passed in for the main room entity
+  // so if it's not passed in, we use the stateActive function to determine if the entity is active
+  // we don't care about the theme in this context
+  const isActive = active ?? stateActive(state);
+  const activeClass = isActive ? 'active' : 'inactive';
+  const themeOverride = getThemeColorOverride(hass, entity, isActive);
   const cssColor =
-    stateColorCss(stateObj, scope) ??
+    stateColorCss(state, scope, isActive) ??
     (themeOverride ? `var(--state-color-${scope}-theme)` : undefined);
 
   return {
-    active,
+    active: isActive,
     cssColor,
     themeOverride,
     activeClass,

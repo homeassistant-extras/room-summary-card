@@ -79,11 +79,16 @@ describe('card-styles.ts', () => {
   describe('renderCardStyles', () => {
     it('should render basic inactive styles', () => {
       const entity = createEntityInfo('light.test');
-      const styles = renderCardStyles(mockHass, mockConfig, entity, false);
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        undefined,
+        false,
+      );
 
-      expect(
-        getBackgroundOpacityStub.calledWith(mockHass, mockConfig, entity.state),
-      ).to.be.true;
+      expect(getBackgroundOpacityStub.calledWith(mockConfig, false)).to.be.true;
       expect(getOccupancyCssVarsStub.calledWith(false, mockConfig.occupancy)).to
         .be.true;
       expect(styles).to.deep.equal(
@@ -117,6 +122,7 @@ describe('card-styles.ts', () => {
         entity,
         false,
         image,
+        true,
       );
 
       expect(styles).to.deep.equal(
@@ -141,11 +147,18 @@ describe('card-styles.ts', () => {
       });
 
       const entity = createEntityInfo('light.test', 'on');
-      const styles = renderCardStyles(mockHass, mockConfig, entity, false);
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        undefined,
+        true,
+      );
 
       expect(styles).to.deep.equal(
         styleMap({
-          '--background-color-card': undefined, // Should be undefined due to skipStyles
+          '--background-color-card': undefined, // Should be undefined due to active being false
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-image': undefined,
           '--background-opacity-card': 'var(--opacity-background-active)',
@@ -163,7 +176,14 @@ describe('card-styles.ts', () => {
       getOccupancyCssVarsStub.returns(occupancyStyles);
 
       const entity = createEntityInfo('light.test');
-      const styles = renderCardStyles(mockHass, mockConfig, entity, true);
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        true,
+        undefined,
+        false,
+      );
 
       expect(getOccupancyCssVarsStub.calledWith(true, mockConfig.occupancy)).to
         .be.true;

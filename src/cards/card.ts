@@ -50,6 +50,12 @@ export class RoomSummaryCard extends LitElement {
   private _sensors!: SensorData;
 
   /**
+   * Whether the room is considered active (for styling)
+   */
+  @state()
+  private _isActive: boolean = false;
+
+  /**
    * Flags for various states
    */
   @property({ type: Boolean, reflect: true })
@@ -116,6 +122,7 @@ export class RoomSummaryCard extends LitElement {
       roomEntity,
       sensors,
       image,
+      isActive,
       flags: { occupied, dark, hot, humid },
     } = getRoomProperties(hass, this._config);
 
@@ -125,6 +132,7 @@ export class RoomSummaryCard extends LitElement {
     this.humid = humid;
     this.image = !!image;
     this._image = image;
+    this._isActive = isActive;
     // Update states only if they've changed
     let shouldRender = false;
     if (!equal(roomInfo, this._roomInformation)) {
@@ -200,6 +208,7 @@ export class RoomSummaryCard extends LitElement {
       this._roomEntity,
       this._config,
       true,
+      this._isActive,
     );
 
     const cardStyle = renderCardStyles(
@@ -208,6 +217,7 @@ export class RoomSummaryCard extends LitElement {
       this._roomEntity,
       this.occupied,
       this._image,
+      this._isActive,
     );
 
     const problems = renderProblemIndicator(
@@ -226,6 +236,7 @@ export class RoomSummaryCard extends LitElement {
             this._roomEntity,
             this._config,
             this._sensors,
+            this._isActive,
           )}
 
           <!-- Room Icon -->
