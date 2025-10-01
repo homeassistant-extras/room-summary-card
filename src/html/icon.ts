@@ -52,6 +52,7 @@ export const renderProblemIndicator = (
  * @param {Config} config - The configuration object
  * @param {boolean} isMainRoomEntity - Whether this is the main room entity (will handle hiding logic internally)
  * @param {boolean} isActive - Whether the room is considered active (for styling)
+ * @param {boolean} hasImage - Whether the room has a background image
  * @returns {TemplateResult | typeof nothing} A Lit template containing the room icon element or nothing if state doesn't exist
  */
 export const renderRoomIcon = (
@@ -60,6 +61,7 @@ export const renderRoomIcon = (
   config: Config,
   isMainRoomEntity: boolean = false,
   isActive?: boolean,
+  hasImage?: boolean,
 ): TemplateResult | typeof nothing => {
   const { state } = entity;
   if (!state) return nothing;
@@ -70,5 +72,6 @@ export const renderRoomIcon = (
     .config=${config}
     .isMainRoomEntity=${isMainRoomEntity}
     .isActive=${isActive}
+    .image=${hasImage}
   ></room-state-icon>`;
 };

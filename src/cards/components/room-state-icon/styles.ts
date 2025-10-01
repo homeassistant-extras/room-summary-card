@@ -26,6 +26,23 @@ export const styles = css`
     opacity: var(--background-opacity-icon);
   }
 
+  /* Icon background image styling */
+  :host([image][icon-bg]) .icon::before {
+    background-image:
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.4),
+        rgba(0, 0, 0, 0.3),
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0)
+      ),
+      var(--background-image);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+  }
+
   /* State icon styling */
   .icon ha-state-icon {
     width: 50%;

@@ -113,7 +113,7 @@ describe('room-state-icon.ts', () => {
     it('should have correct property types', () => {
       expect(element.hass).to.equal(mockHass);
       expect(element.entity).to.equal(mockEntity);
-      expect(element.config).to.equal(mockConfig);
+      expect(element['_config']).to.equal(mockConfig);
     });
 
     it('should have static styles', () => {
@@ -420,6 +420,31 @@ describe('room-state-icon.ts', () => {
 
       const result = element.render();
       expect(result).to.not.equal(nothing); // Should still render, just may not work properly
+    });
+  });
+
+  describe('background image configuration', () => {
+    it('should set iconBackground property when config has icon_background option', () => {
+      element.config = {
+        area: 'living_room',
+        background: {
+          options: ['icon_background'],
+          image: '/local/test.jpg',
+        },
+      } as Config;
+
+      expect(element['iconBackground']).to.be.true;
+    });
+
+    it('should not set iconBackground property when config has no icon_background option', () => {
+      element.config = {
+        area: 'living_room',
+        background: {
+          image: '/local/test.jpg',
+        },
+      } as Config;
+
+      expect(element['iconBackground']).to.be.false;
     });
   });
 });

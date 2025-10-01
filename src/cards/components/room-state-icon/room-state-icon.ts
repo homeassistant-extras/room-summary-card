@@ -12,8 +12,9 @@ import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import { styles } from './styles';
+const equal = require('fast-deep-equal');
 
 /**
  * Room State Icon Component
@@ -34,6 +35,12 @@ import { styles } from './styles';
  */
 export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   /**
+   * Card configuration object
+   */
+  @state()
+  private _config!: Config;
+
+  /**
    * Home Assistant instance
    */
   @property({ type: Object }) override hass!: HomeAssistant;
@@ -44,15 +51,22 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   @property({ type: Object }) entity!: EntityInformation;
 
   /**
-   * Card configuration object containing style settings
-   */
-  @property({ type: Object }) config?: Config;
-
-  /**
    * Whether this is the main room entity (for applying room-specific hiding logic)
    */
   @property({ type: Boolean, reflect: true, attribute: 'room' })
   isMainRoomEntity: boolean = false;
+
+  /**
+   * Whether the room has a background image
+   */
+  @property({ type: Boolean, reflect: true })
+  image!: boolean;
+
+  /**
+   * Whether the icon background is enabled
+   */
+  @property({ type: Boolean, reflect: true, attribute: 'icon-bg' })
+  private iconBackground!: boolean;
 
   /**
    * Whether the room is considered active (for styling)
@@ -67,6 +81,19 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     return styles;
   }
 
+  /**
+   * Sets up the card configuration
+   * @param {Config} config - The card configuration
+   */
+  set config(config: Config) {
+    if (!equal(config, this._config)) {
+      this.iconBackground =
+        config.background?.options?.includes('icon_background') ?? false;
+
+      this._config = config;
+    }
+  }
+
   public override render(): TemplateResult | typeof nothing {
     const { state } = this.entity;
     if (!state) return nothing;
@@ -75,10 +102,10 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     let hideIcon = false;
     let hideIconContent = false;
 
-    if (this.isMainRoomEntity && this.config) {
-      hideIcon = hasFeature(this.config, 'hide_room_icon');
+    if (this.isMainRoomEntity && this._config) {
+      hideIcon = hasFeature(this._config, 'hide_room_icon');
       hideIconContent =
-        this.config.background?.options?.includes('hide_icon_only') || false;
+        this._config.background?.options?.includes('hide_icon_only') || false;
     }
 
     // If the icon should be completely hidden, return nothing
@@ -91,10 +118,10 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     );
     const thresholdIcon = getThresholdIcon(this.entity);
     const showLabels =
-      this.config && hasFeature(this.config, 'show_entity_labels');
+      this._config && hasFeature(this._config, 'show_entity_labels');
 
     return html`
-      ${stylesToHostCss(this.config?.styles?.entity_icon)}
+      ${stylesToHostCss(this._config?.styles?.entity_icon)}
       <div
         class="icon"
         style=${iconStyle}
