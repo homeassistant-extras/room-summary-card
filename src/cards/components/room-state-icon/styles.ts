@@ -59,4 +59,12 @@ export const styles = css`
     overflow: hidden;
     margin-top: 75%;
   }
+
+  .box {
+    cursor: pointer;
+    align-self: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
 `;

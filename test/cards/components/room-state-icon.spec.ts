@@ -447,4 +447,28 @@ describe('room-state-icon.ts', () => {
       expect(element['iconBackground']).to.be.false;
     });
   });
+
+  describe('hide icon behavior', () => {
+    it('should render empty div with action handlers when hideIcon is true', async () => {
+      // Configure as main room entity with hide_room_icon feature enabled
+      element.isMainRoomEntity = true;
+      hasFeatureStub.withArgs(mockConfig, 'hide_room_icon').returns(true);
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      // Use fixture to actually render and test the DOM
+      const el = await fixture(result);
+
+      // Should render a div with class "box"
+      expect(el.classList.contains('box')).to.be.true;
+
+      // Should not contain ha-state-icon since the icon is hidden
+      expect(el.querySelector('ha-state-icon')).to.not.exist;
+
+      // Verify action handlers are still set up
+      expect(actionHandlerStub.calledWith(mockEntity)).to.be.true;
+      expect(handleClickActionStub.calledWith(element, mockEntity)).to.be.true;
+    });
+  });
 });

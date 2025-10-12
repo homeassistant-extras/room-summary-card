@@ -109,7 +109,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     }
 
     // If the icon should be completely hidden, return nothing
-    if (hideIcon) return nothing;
+    if (hideIcon)
+      return html`<div
+        class="box"
+        @action=${handleClickAction(this, this.entity)}
+        .actionHandler=${actionHandler(this.entity)}
+      ></div>`;
 
     const iconStyle = renderEntityIconStyles(
       this.hass,
