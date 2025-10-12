@@ -75,6 +75,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   isActive?: boolean;
 
   /**
+   * Whether the room is occupied (for occupancy styling)
+   */
+  @property({ type: Boolean, reflect: true })
+  occupied?: boolean;
+
+  /**
    * Returns the component's styles
    */
   static override get styles(): CSSResult {

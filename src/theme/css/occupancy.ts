@@ -13,13 +13,6 @@ export const occupancyStyles = css`
       box-shadow 0.3s ease;
   }
 
-  /* Icon styling when occupied */
-  :host([occupied]) room-state-icon[room]::before {
-    animation: var(--occupancy-icon-animation);
-    background-color: var(--occupancy-icon-color, var(--background-color-icon));
-    transition: all 0.3s ease;
-  }
-
   /* Animation keyframes */
   @keyframes occupancy-pulse {
     0% {
@@ -29,17 +22,6 @@ export const occupancyStyles = css`
     100% {
       box-shadow: 0 0 20px
         var(--occupancy-card-border-color, var(--success-color));
-    }
-  }
-
-  @keyframes icon-breathe {
-    0% {
-      transform: scale(1);
-      opacity: 0.1;
-    }
-    100% {
-      transform: scale(1.1);
-      opacity: 0.4;
     }
   }
 `;

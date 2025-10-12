@@ -199,6 +199,7 @@ export class RoomSummaryCard extends LitElement {
       true,
       this._isActive,
       this.image,
+      this.occupied,
     );
 
     const cardStyle = renderCardStyles(

@@ -67,4 +67,23 @@ export const styles = css`
     width: 100%;
     height: 100%;
   }
+
+  /* Occupancy styling - applies when the room is occupied */
+  :host([room][occupied]) .icon::before {
+    animation: var(--occupancy-icon-animation);
+    background-color: var(--occupancy-icon-color, var(--background-color-icon));
+    transition: all 0.3s ease;
+  }
+
+  /* Animation keyframes for occupancy indicator */
+  @keyframes icon-breathe {
+    0% {
+      transform: scale(1);
+      opacity: 0.1;
+    }
+    100% {
+      transform: scale(1.1);
+      opacity: 0.4;
+    }
+  }
 `;
