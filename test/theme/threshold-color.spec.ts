@@ -2,7 +2,6 @@ import {
   getStateColor,
   getStateResult,
   getThresholdColor,
-  getThresholdIcon,
   getThresholdResult,
 } from '@theme/threshold-color';
 import type { StateConfig, ThresholdConfig } from '@type/config/entity';
@@ -158,7 +157,9 @@ describe('threshold-color.ts', () => {
       const thresholds: ThresholdConfig[] = [
         { threshold: 50, icon_color: 'red' },
       ];
-      const states: StateConfig[] = [{ state: 'running', icon_color: 'green' }];
+      const states: StateConfig[] = [
+        { state: 'running', icon_color: 'green', styles: {} },
+      ];
 
       const entity = createEntity('running', thresholds, states);
       const result = getThresholdColor(entity);
@@ -169,7 +170,9 @@ describe('threshold-color.ts', () => {
       const thresholds: ThresholdConfig[] = [
         { threshold: 50, icon_color: 'red' },
       ];
-      const states: StateConfig[] = [{ state: 'running', icon_color: 'green' }];
+      const states: StateConfig[] = [
+        { state: 'running', icon_color: 'green', styles: {} },
+      ];
 
       const entity = createEntity('75', thresholds, states);
       const result = getThresholdColor(entity);
@@ -204,7 +207,7 @@ describe('threshold-color.ts', () => {
       const entity = {
         config: {
           entity_id: 'sensor.test',
-          states: [{ state: 'running', icon_color: 'green' }],
+          states: [{ state: 'running', icon_color: 'green', styles: {} }],
         },
         state: undefined,
       };
@@ -214,8 +217,8 @@ describe('threshold-color.ts', () => {
 
     it('should return color when state matches exactly', () => {
       const states: StateConfig[] = [
-        { state: 'running', icon_color: 'green' },
-        { state: 'idle', icon_color: 'blue' },
+        { state: 'running', icon_color: 'green', styles: {} },
+        { state: 'idle', icon_color: 'blue', styles: {} },
       ];
       const entity = createEntity('running', states);
       const result = getStateColor(entity);
@@ -224,8 +227,8 @@ describe('threshold-color.ts', () => {
 
     it('should return undefined when no state matches', () => {
       const states: StateConfig[] = [
-        { state: 'running', icon_color: 'green' },
-        { state: 'idle', icon_color: 'blue' },
+        { state: 'running', icon_color: 'green', styles: {} },
+        { state: 'idle', icon_color: 'blue', styles: {} },
       ];
       const entity = createEntity('stopped', states);
       const result = getStateColor(entity);
@@ -233,7 +236,9 @@ describe('threshold-color.ts', () => {
     });
 
     it('should handle case-sensitive state matching', () => {
-      const states: StateConfig[] = [{ state: 'Running', icon_color: 'green' }];
+      const states: StateConfig[] = [
+        { state: 'Running', icon_color: 'green', styles: {} },
+      ];
       const entity = createEntity('running', states);
       const result = getStateColor(entity);
       expect(result).to.be.undefined;
@@ -241,10 +246,10 @@ describe('threshold-color.ts', () => {
 
     it('should work with washing machine example states', () => {
       const states: StateConfig[] = [
-        { state: 'running', icon_color: 'green' },
-        { state: 'rinsing', icon_color: 'orange' },
-        { state: 'spinning', icon_color: 'blue' },
-        { state: 'finished', icon_color: 'purple' },
+        { state: 'running', icon_color: 'green', styles: {} },
+        { state: 'rinsing', icon_color: 'orange', styles: {} },
+        { state: 'spinning', icon_color: 'blue', styles: {} },
+        { state: 'finished', icon_color: 'purple', styles: {} },
       ];
 
       expect(getStateColor(createEntity('running', states))).to.equal('green');
@@ -258,8 +263,8 @@ describe('threshold-color.ts', () => {
 
     it('should handle numeric string states', () => {
       const states: StateConfig[] = [
-        { state: '0', icon_color: 'red' },
-        { state: '1', icon_color: 'green' },
+        { state: '0', icon_color: 'red', styles: {} },
+        { state: '1', icon_color: 'green', styles: {} },
       ];
 
       expect(getStateColor(createEntity('0', states))).to.equal('red');
@@ -269,8 +274,8 @@ describe('threshold-color.ts', () => {
 
     it('should handle special characters in states', () => {
       const states: StateConfig[] = [
-        { state: 'on-standby', icon_color: 'yellow' },
-        { state: 'off/idle', icon_color: 'gray' },
+        { state: 'on-standby', icon_color: 'yellow', styles: {} },
+        { state: 'off/idle', icon_color: 'gray', styles: {} },
       ];
 
       expect(getStateColor(createEntity('on-standby', states))).to.equal(
@@ -281,8 +286,8 @@ describe('threshold-color.ts', () => {
 
     it('should return the first matching state when duplicates exist', () => {
       const states: StateConfig[] = [
-        { state: 'running', icon_color: 'green' },
-        { state: 'running', icon_color: 'red' },
+        { state: 'running', icon_color: 'green', styles: {} },
+        { state: 'running', icon_color: 'red', styles: {} },
       ];
 
       const entity = createEntity('running', states);
@@ -335,7 +340,11 @@ describe('threshold-color.ts', () => {
         { threshold: 50, icon_color: 'orange', icon: 'mdi:fire' },
       ]);
       const result = getThresholdResult(entity);
-      expect(result).to.deep.equal({ color: 'orange', icon: 'mdi:fire' });
+      expect(result).to.deep.equal({
+        color: 'orange',
+        icon: 'mdi:fire',
+        styles: undefined,
+      });
     });
 
     it('should return only color when threshold matches but no icon defined', () => {
@@ -343,7 +352,11 @@ describe('threshold-color.ts', () => {
         { threshold: 50, icon_color: 'orange' },
       ]);
       const result = getThresholdResult(entity);
-      expect(result).to.deep.equal({ color: 'orange', icon: undefined });
+      expect(result).to.deep.equal({
+        color: 'orange',
+        icon: undefined,
+        styles: undefined,
+      });
     });
 
     it('should prioritize state-based results over threshold-based results', () => {
@@ -351,23 +364,33 @@ describe('threshold-color.ts', () => {
         { threshold: 50, icon_color: 'red', icon: 'mdi:fire' },
       ];
       const states: StateConfig[] = [
-        { state: 'running', icon_color: 'green', icon: 'mdi:play' },
+        { state: 'running', icon_color: 'green', icon: 'mdi:play', styles: {} },
       ];
 
       const entity = createEntity('running', thresholds, states);
       const result = getThresholdResult(entity);
-      expect(result).to.deep.equal({ color: 'green', icon: 'mdi:play' });
+      expect(result).to.deep.equal({
+        color: 'green',
+        icon: 'mdi:play',
+        styles: {},
+      });
     });
 
     it('should fall back to threshold results when no state matches', () => {
       const thresholds: ThresholdConfig[] = [
         { threshold: 50, icon_color: 'red', icon: 'mdi:fire' },
       ];
-      const states: StateConfig[] = [{ state: 'running', icon_color: 'green' }];
+      const states: StateConfig[] = [
+        { state: 'running', icon_color: 'green', styles: {} },
+      ];
 
       const entity = createEntity('75', thresholds, states);
       const result = getThresholdResult(entity);
-      expect(result).to.deep.equal({ color: 'red', icon: 'mdi:fire' });
+      expect(result).to.deep.equal({
+        color: 'red',
+        icon: 'mdi:fire',
+        styles: undefined,
+      });
     });
   });
 
@@ -398,7 +421,14 @@ describe('threshold-color.ts', () => {
       const entity = {
         config: {
           entity_id: 'sensor.test',
-          states: [{ state: 'running', icon_color: 'green', icon: 'mdi:play' }],
+          states: [
+            {
+              state: 'running',
+              icon_color: 'green',
+              icon: 'mdi:play',
+              styles: {},
+            },
+          ],
         },
         state: undefined,
       };
@@ -408,64 +438,38 @@ describe('threshold-color.ts', () => {
 
     it('should return color and icon when state matches', () => {
       const states: StateConfig[] = [
-        { state: 'running', icon_color: 'green', icon: 'mdi:play' },
-        { state: 'idle', icon_color: 'blue', icon: 'mdi:pause' },
+        { state: 'running', icon_color: 'green', icon: 'mdi:play', styles: {} },
+        { state: 'idle', icon_color: 'blue', icon: 'mdi:pause', styles: {} },
       ];
       const entity = createEntity('running', states);
       const result = getStateResult(entity);
-      expect(result).to.deep.equal({ color: 'green', icon: 'mdi:play' });
+      expect(result).to.deep.equal({
+        color: 'green',
+        icon: 'mdi:play',
+        styles: {},
+      });
     });
 
     it('should return only color when state matches but no icon defined', () => {
-      const states: StateConfig[] = [{ state: 'running', icon_color: 'green' }];
+      const states: StateConfig[] = [
+        { state: 'running', icon_color: 'green', styles: {} },
+      ];
       const entity = createEntity('running', states);
       const result = getStateResult(entity);
-      expect(result).to.deep.equal({ color: 'green', icon: undefined });
+      expect(result).to.deep.equal({
+        color: 'green',
+        icon: undefined,
+        styles: {},
+      });
     });
 
     it('should return undefined when no state matches', () => {
       const states: StateConfig[] = [
-        { state: 'running', icon_color: 'green', icon: 'mdi:play' },
-        { state: 'idle', icon_color: 'blue', icon: 'mdi:pause' },
+        { state: 'running', icon_color: 'green', icon: 'mdi:play', styles: {} },
+        { state: 'idle', icon_color: 'blue', icon: 'mdi:pause', styles: {} },
       ];
       const entity = createEntity('stopped', states);
       const result = getStateResult(entity);
-      expect(result).to.be.undefined;
-    });
-  });
-
-  describe('getThresholdIcon', () => {
-    const createEntity = (
-      state: string,
-      thresholds?: ThresholdConfig[],
-      states?: StateConfig[],
-    ): EntityInformation => ({
-      config: {
-        entity_id: 'sensor.test',
-        thresholds,
-        states,
-      },
-      state: {
-        entity_id: 'sensor.test',
-        state,
-        domain: 'sensor',
-        attributes: {},
-      },
-    });
-
-    it('should return icon from getThresholdResult', () => {
-      const entity = createEntity('75', [
-        { threshold: 50, icon_color: 'orange', icon: 'mdi:fire' },
-      ]);
-      const result = getThresholdIcon(entity);
-      expect(result).to.equal('mdi:fire');
-    });
-
-    it('should return undefined when no icon in result', () => {
-      const entity = createEntity('75', [
-        { threshold: 50, icon_color: 'orange' },
-      ]);
-      const result = getThresholdIcon(entity);
       expect(result).to.be.undefined;
     });
   });

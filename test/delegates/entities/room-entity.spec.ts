@@ -85,9 +85,9 @@ describe('room-entity.ts', () => {
     const roomEntity = getRoomEntity(mockHass, config);
 
     expect(roomEntity.config.tap_action?.action).to.equal('url');
-    expect(
-      (roomEntity.config.tap_action as any)?.url_path,
-    ).to.equal('https://example.com');
+    expect((roomEntity.config.tap_action as any)?.url_path).to.equal(
+      'https://example.com',
+    );
   });
 
   it('should use url action when navigate is http URL', () => {
@@ -99,9 +99,9 @@ describe('room-entity.ts', () => {
     const roomEntity = getRoomEntity(mockHass, config);
 
     expect(roomEntity.config.tap_action?.action).to.equal('url');
-    expect(
-      (roomEntity.config.tap_action as any)?.url_path,
-    ).to.equal('http://example.com');
+    expect((roomEntity.config.tap_action as any)?.url_path).to.equal(
+      'http://example.com',
+    );
   });
 
   it('should return room entity with string entity configuration', () => {

@@ -10,6 +10,11 @@ import memoizeOne from 'memoize-one';
  * Converts a styles object to a <style> tag with :host selector
  * Memoized for performance when the same styles object is passed repeatedly
  *
+ * Special handling for keyframes:
+ * - Use "keyframes" key with animation definitions as value
+ * - Format: { keyframes: "breathing { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }" }
+ * - Multiple animations can be separated with a delimiter or as separate entries
+ *
  * @param styles - Object with CSS property key-value pairs
  * @returns lit-html template with <style>:host{...}</style> or nothing if no styles
  */
@@ -17,12 +22,26 @@ export const stylesToHostCss = memoizeOne(
   (styles?: Record<string, string>): TemplateResult | typeof nothing => {
     if (!styles || Object.keys(styles).length === 0) return nothing;
 
-    const cssString = Object.entries(styles)
-      .map(([key, value]) => `${key}: ${value};`)
-      .join(' ');
+    // Separate keyframes from regular styles
+    const keyframesEntries: string[] = [];
+    const regularStyles: string[] = [];
+
+    Object.entries(styles).forEach(([key, value]) => {
+      if (key === 'keyframes') {
+        // Handle keyframes specially
+        keyframesEntries.push(`@keyframes ${value}`);
+      } else {
+        // Regular CSS property
+        regularStyles.push(`${key}: ${value};`);
+      }
+    });
+
+    const cssString = regularStyles.join(' ');
+    const keyframesString = keyframesEntries.join('\n');
 
     return html`
       <style>
+        ${keyframesString}
         :host {
           ${cssString}
         }

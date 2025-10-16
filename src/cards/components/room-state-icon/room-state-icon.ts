@@ -7,7 +7,7 @@ import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
-import { getThresholdIcon } from '@theme/threshold-color';
+import { getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
@@ -122,17 +122,23 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
         .actionHandler=${actionHandler(this.entity)}
       ></div>`;
 
+    const thresholdResult = getThresholdResult(this.entity);
+
     const iconStyle = renderEntityIconStyles(
       this.hass,
       this.entity,
       this.isActive,
     );
-    const thresholdIcon = getThresholdIcon(this.entity);
     const showLabels =
       this._config && hasFeature(this._config, 'show_entity_labels');
 
+    const iconStyles = {
+      ...this._config?.styles?.entity_icon,
+      ...thresholdResult?.styles,
+    };
+
     return html`
-      ${stylesToHostCss(this._config?.styles?.entity_icon)}
+      ${stylesToHostCss(iconStyles)}
       <div
         class="icon"
         style=${iconStyle}
@@ -144,7 +150,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
           : html`<ha-state-icon
               .hass=${this.hass}
               .stateObj=${state}
-              .icon=${thresholdIcon || this.entity.config.icon}
+              .icon=${thresholdResult?.icon || this.entity.config.icon}
             ></ha-state-icon>`}
         ${showLabels
           ? html`<div class="entity-label">

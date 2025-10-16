@@ -48,14 +48,16 @@ entities:
 | icon_color | string | **Required** | Color to use when this threshold condition is met   |
 | icon       | string | none         | Icon to use when this threshold condition is met    |
 | operator   | string | `gte`        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq` |
+| styles     | object | none         | Custom CSS styles to apply to entity icon           |
 
 ### State Configuration Options
 
-| Name       | Type   | Default      | Description                            |
-| ---------- | ------ | ------------ | -------------------------------------- |
-| state      | string | **Required** | Entity state value to match exactly    |
-| icon_color | string | **Required** | Color to use when this state is active |
-| icon       | string | none         | Icon to use when this state is active  |
+| Name       | Type   | Default      | Description                               |
+| ---------- | ------ | ------------ | ----------------------------------------- |
+| state      | string | **Required** | Entity state value to match exactly       |
+| icon_color | string | **Required** | Color to use when this state is active    |
+| icon       | string | none         | Icon to use when this state is active     |
+| styles     | object | none         | Custom CSS styles to apply to entity icon |
 
 ### Action Configuration
 
@@ -105,6 +107,14 @@ entities:
       - threshold: 20
         icon_color: red
         icon: mdi:battery-low
+        styles:
+          animation: pulse 2s ease-in-out infinite
+      - threshold: 10
+        icon_color: red
+        icon: mdi:battery-alert
+        styles:
+          animation: shake 1s ease-in-out infinite
+          transform: scale(1.1)
 
   # Washing machine with state-based colors and icons
   - entity_id: sensor.washing_machine_state
@@ -113,20 +123,31 @@ entities:
       - state: running
         icon_color: green
         icon: mdi:play
+        styles:
+          transform: scale(1.1)
       - state: rinsing
         icon_color: orange
         icon: mdi:sync
       - state: spinning
         icon_color: blue
         icon: mdi:rotate-3d-variant
+        styles:
+          animation: spin 2s linear infinite
       - state: finished
         icon_color: purple
         icon: mdi:check-circle
+        styles:
+          border: 2px solid var(--primary-color)
+          border-radius: 50%
 ```
 
 For theme color names and advanced customization, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md).
 
 ![States](../../assets/states.gif)
+
+![Entity Styles](../../assets/entity-styles.gif)
+
+📖 **See [State based CSS styling for entities](../advanced/README-EXAMPLES.md#state-based-css-styling-for-entities) for configuration details.**
 
 ## Entity Labels
 

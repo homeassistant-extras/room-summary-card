@@ -204,6 +204,7 @@ lights:
 ```
 
 **Features:**
+
 - Automatic discovery of all light entities in the area
 - Manual override with custom entity lists
 - Support for mixed entity types (lights, switches, sensors)

@@ -9,6 +9,8 @@ export interface ThresholdResult {
   color?: string;
   /** The icon to apply */
   icon?: string;
+  /** The CSS properties to apply to the entity */
+  styles?: Record<string, string>;
 }
 
 /**
@@ -54,6 +56,7 @@ export const getThresholdResult = (
       return {
         color: threshold.icon_color,
         icon: threshold.icon,
+        styles: threshold.styles,
       };
     }
   }
@@ -93,6 +96,7 @@ export const getStateResult = (
       return {
         color: stateConfig.icon_color,
         icon: stateConfig.icon,
+        styles: stateConfig.styles,
       };
     }
   }
@@ -134,17 +138,4 @@ const meetsThreshold = (value: number, threshold: ThresholdConfig): boolean => {
     default:
       return value >= threshold.threshold;
   }
-};
-
-/**
- * Gets the icon override from threshold/state configuration
- *
- * @param entity - The entity information containing state and config
- * @returns The icon string if a condition matches, undefined otherwise
- * @deprecated Use getThresholdResult() instead for both color and icon
- */
-export const getThresholdIcon = (
-  entity: EntityInformation,
-): string | undefined => {
-  return getThresholdResult(entity)?.icon;
 };

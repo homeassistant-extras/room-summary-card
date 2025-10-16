@@ -115,6 +115,574 @@ entities:
     off_color: grey
 ```
 
+### State-Based Styling with Custom CSS
+
+Apply custom CSS styles that respond to entity states for enhanced visual feedback:
+
+```yaml
+type: custom:room-summary-card
+area: laundry_room
+entities:
+  # Washing machine with animated states
+  - entity_id: sensor.washing_machine_state
+    icon: mdi:washing-machine
+    states:
+      - state: running
+        icon_color: green
+        icon: mdi:play
+        styles:
+          transform: scale(1.15)
+          filter: brightness(1.2)
+      - state: spinning
+        icon_color: blue
+        icon: mdi:rotate-3d-variant
+        styles:
+          animation: spin 2s linear infinite
+      - state: finished
+        icon_color: purple
+        icon: mdi:check-circle
+        styles:
+          border: 2px solid var(--primary-color)
+          border-radius: 50%
+          box-shadow: 0 0 10px var(--primary-color)
+      - state: idle
+        icon_color: grey
+        icon: mdi:pause
+        styles:
+          opacity: '0.6'
+
+  # Door sensor with rotation effects
+  - entity_id: binary_sensor.laundry_door
+    icon: mdi:door
+    states:
+      - state: 'on'
+        icon_color: red
+        icon: mdi:door-open
+        styles:
+          transform: rotate(-15deg)
+          transition: all 0.3s ease
+      - state: 'off'
+        icon_color: green
+        icon: mdi:door-closed
+        styles:
+          transform: rotate(0deg)
+          transition: all 0.3s ease
+
+  # Dryer with heat visualization
+  - entity_id: sensor.dryer_state
+    icon: mdi:tumble-dryer
+    states:
+      - state: heating
+        icon_color: orange
+        icon: mdi:fire
+        styles:
+          box-shadow: 0 0 15px rgba(255, 140, 0, 0.8)
+          filter: brightness(1.3)
+      - state: cooling
+        icon_color: blue
+        icon: mdi:snowflake
+        styles:
+          animation: pulse 2s ease-in-out infinite
+      - state: complete
+        icon_color: green
+        icon: mdi:check-circle
+        styles:
+          border: 2px solid green
+          border-radius: 50%
+```
+
+### Security System with State Styles
+
+```yaml
+type: custom:room-summary-card
+area: security
+entities:
+  # Alarm panel with border states
+  - entity_id: alarm_control_panel.home
+    icon: mdi:shield
+    states:
+      - state: armed_away
+        icon_color: red
+        icon: mdi:shield-lock
+        styles:
+          border: 3px solid red
+          border-radius: 50%
+          animation: pulse 2s ease-in-out infinite
+      - state: armed_home
+        icon_color: orange
+        icon: mdi:shield-home
+        styles:
+          border: 3px solid orange
+          border-radius: 50%
+      - state: disarmed
+        icon_color: green
+        icon: mdi:shield-off
+        styles:
+          opacity: '0.7'
+          filter: grayscale(50%)
+
+  # Motion sensor with glow effect
+  - entity_id: binary_sensor.motion
+    icon: mdi:motion-sensor
+    states:
+      - state: 'on'
+        icon_color: yellow
+        icon: mdi:run
+        styles:
+          box-shadow: 0 0 20px rgba(255, 215, 0, 0.8)
+          filter: brightness(1.3)
+          animation: pulse 1s ease-in-out infinite
+      - state: 'off'
+        icon_color: grey
+        icon: mdi:motion-sensor-off
+        styles:
+          opacity: '0.5'
+
+  # Camera recording indicator
+  - entity_id: camera.front_door
+    states:
+      - state: recording
+        icon_color: red
+        icon: mdi:record-rec
+        styles:
+          animation: pulse 1.5s ease-in-out infinite
+      - state: idle
+        icon_color: blue
+        icon: mdi:camera
+```
+
+### Smart Home Automation States
+
+```yaml
+type: custom:room-summary-card
+area: home
+entities:
+  # Notification counter with custom keyframe animations
+  - entity_id: sensor.notification_count
+    icon: mdi:bell
+    states:
+      - state: '0'
+        icon_color: grey
+        icon: mdi:bell-outline
+        styles:
+          opacity: '0.5'
+      - state: '1'
+        icon_color: blue
+        icon: mdi:bell-ring
+        styles:
+          keyframes: |-
+            gentle-pulse {
+              0%, 100% { transform: scale(1); opacity: 1; }
+              50% { transform: scale(1.05); opacity: 0.9; }
+            }
+          animation: gentle-pulse 2s ease-in-out infinite
+      - state: '5'
+        icon_color: orange
+        icon: mdi:bell-ring
+        styles:
+          keyframes: |-
+            urgent-shake {
+              0%, 100% { transform: translateX(0) scale(1.1); }
+              25% { transform: translateX(-3px) scale(1.1); }
+              75% { transform: translateX(3px) scale(1.1); }
+            }
+          animation: urgent-shake 0.8s ease-in-out infinite
+      - state: '10'
+        icon_color: red
+        icon: mdi:bell-alert
+        styles:
+          keyframes: |-
+            critical-alert {
+              0%, 100% { transform: scale(1.2) rotate(-5deg); }
+              25% { transform: scale(1.25) rotate(5deg); }
+              50% { transform: scale(1.2) rotate(-5deg); }
+              75% { transform: scale(1.25) rotate(5deg); }
+            }
+          animation: critical-alert 0.5s ease-in-out infinite
+          filter: brightness(1.3)
+
+  # Printer with operational states
+  - entity_id: sensor.printer_status
+    icon: mdi:printer
+    states:
+      - state: ready
+        icon_color: green
+        icon: mdi:check-circle
+      - state: printing
+        icon_color: blue
+        icon: mdi:printer-3d
+        styles:
+          transform: scale(1.1)
+          animation: pulse 1s ease-in-out infinite
+      - state: error
+        icon_color: red
+        icon: mdi:alert-circle
+        styles:
+          animation: shake 0.5s ease-in-out infinite
+      - state: offline
+        icon_color: grey
+        icon: mdi:power-plug-off
+        styles:
+          opacity: '0.5'
+          filter: grayscale(100%)
+```
+
+### Threshold-Based Styling with Custom CSS
+
+Apply custom CSS styles that respond to numeric sensor thresholds for dynamic visual feedback:
+
+```yaml
+type: custom:room-summary-card
+area: server_room
+entities:
+  # Server temperature with escalating warnings
+  - entity_id: sensor.server_temperature
+    icon: mdi:server
+    thresholds:
+      - threshold: 35
+        icon_color: red
+        icon: mdi:fire-alert
+        operator: gt # Critical - above 35°C
+        styles:
+          animation: shake 0.5s ease-in-out infinite
+          transform: scale(1.2)
+          box-shadow: 0 0 20px rgba(255, 0, 0, 0.9)
+      - threshold: 30
+        icon_color: red
+        icon: mdi:fire
+        operator: gte # Warning - 30-35°C
+        styles:
+          animation: pulse 1s ease-in-out infinite
+          filter: brightness(1.3)
+      - threshold: 25
+        icon_color: orange
+        icon: mdi:thermometer-alert
+        operator: gte # Warm - 25-30°C
+        styles:
+          transform: scale(1.1)
+      - threshold: 20
+        icon_color: green
+        icon: mdi:thermometer
+        operator: gte # Normal - 20-25°C
+      - threshold: 20
+        icon_color: blue
+        icon: mdi:snowflake
+        operator: lt # Cold - below 20°C
+        styles:
+          opacity: '0.7'
+          filter: hue-rotate(180deg)
+
+  # UPS battery with progressive urgency
+  - entity_id: sensor.ups_battery_level
+    icon: mdi:battery
+    thresholds:
+      - threshold: 75
+        icon_color: green
+        icon: mdi:battery-high
+        operator: gte
+      - threshold: 50
+        icon_color: green
+        icon: mdi:battery-medium
+        operator: gte
+      - threshold: 25
+        icon_color: orange
+        icon: mdi:battery-low
+        operator: gte
+        styles:
+          animation: pulse 3s ease-in-out infinite
+          transform: scale(1.05)
+      - threshold: 15
+        icon_color: red
+        icon: mdi:battery-alert
+        operator: gte
+        styles:
+          animation: pulse 1.5s ease-in-out infinite
+          filter: brightness(1.2)
+      - threshold: 15
+        icon_color: red
+        icon: mdi:battery-alert-variant-outline
+        operator: lt # Critical
+        styles:
+          animation: shake 0.5s ease-in-out infinite
+          transform: scale(1.2)
+          border: 2px solid red
+          border-radius: 50%
+
+  # Network signal strength
+  - entity_id: sensor.wifi_signal_strength
+    icon: mdi:wifi
+    thresholds:
+      - threshold: -50
+        icon_color: green
+        icon: mdi:wifi-strength-4
+        operator: gte # Excellent
+        styles:
+          filter: brightness(1.2)
+      - threshold: -60
+        icon_color: green
+        icon: mdi:wifi-strength-3
+        operator: gte # Good
+      - threshold: -70
+        icon_color: orange
+        icon: mdi:wifi-strength-2
+        operator: gte # Fair
+        styles:
+          opacity: '0.8'
+      - threshold: -70
+        icon_color: red
+        icon: mdi:wifi-strength-1
+        operator: lt # Poor
+        styles:
+          animation: pulse 2s ease-in-out infinite
+          opacity: '0.6'
+          filter: grayscale(50%)
+```
+
+### Environmental Monitoring with Thresholds
+
+```yaml
+type: custom:room-summary-card
+area: greenhouse
+entities:
+  # Soil moisture with zone styling
+  - entity_id: sensor.soil_moisture
+    icon: mdi:water
+    thresholds:
+      - threshold: 80
+        icon_color: blue
+        icon: mdi:water-alert
+        operator: gt # Over-watered
+        styles:
+          box-shadow: 0 0 15px rgba(0, 100, 255, 0.7)
+          animation: pulse 2s ease-in-out infinite
+      - threshold: 60
+        icon_color: green
+        icon: mdi:water-check
+        operator: gte # Optimal
+      - threshold: 30
+        icon_color: orange
+        icon: mdi:water-minus
+        operator: gte # Dry
+        styles:
+          opacity: '0.8'
+      - threshold: 30
+        icon_color: red
+        icon: mdi:water-off
+        operator: lt # Critical - needs water
+        styles:
+          animation: shake 1s ease-in-out infinite
+          filter: brightness(1.2)
+
+  # Light level indicator
+  - entity_id: sensor.greenhouse_light_level
+    icon: mdi:white-balance-sunny
+    thresholds:
+      - threshold: 1000
+        icon_color: yellow
+        icon: mdi:weather-sunny
+        operator: gte # Bright
+        styles:
+          box-shadow: 0 0 15px rgba(255, 215, 0, 0.6)
+          filter: brightness(1.3)
+      - threshold: 500
+        icon_color: orange
+        icon: mdi:weather-partly-cloudy
+        operator: gte # Medium
+      - threshold: 500
+        icon_color: grey
+        icon: mdi:weather-night
+        operator: lt # Low light
+        styles:
+          opacity: '0.6'
+          filter: grayscale(40%)
+
+  # CO2 levels
+  - entity_id: sensor.greenhouse_co2
+    icon: mdi:molecule-co2
+    thresholds:
+      - threshold: 1500
+        icon_color: red
+        operator: gt # Too high
+        styles:
+          animation: pulse 1.5s ease-in-out infinite
+          transform: scale(1.1)
+      - threshold: 1000
+        icon_color: orange
+        operator: gte # Elevated
+        styles:
+          filter: brightness(1.1)
+      - threshold: 400
+        icon_color: green
+        operator: gte # Normal
+      - threshold: 400
+        icon_color: blue
+        operator: lt # Low
+        styles:
+          opacity: '0.7'
+```
+
+### Custom Keyframe Animations
+
+Define custom CSS animations using the `keyframes` property for completely unique visual effects:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+entities:
+  # Breathing effect for motion sensor
+  - entity_id: binary_sensor.motion_sensor
+    states:
+      - state: 'on'
+        icon_color: yellow
+        icon: mdi:motion-sensor
+        styles:
+          keyframes: |-
+            breathing {
+              0%, 100% { transform: scale(1); opacity: 1; }
+              50% { transform: scale(1.2); opacity: 0.7; }
+            }
+          animation: breathing 2s ease-in-out infinite
+      - state: 'off'
+        icon_color: grey
+        icon: mdi:motion-sensor-off
+
+  # Spinning wash cycle
+  - entity_id: sensor.washing_machine_state
+    states:
+      - state: spinning
+        icon_color: blue
+        icon: mdi:rotate-3d-variant
+        styles:
+          keyframes: |-
+            spin {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+          animation: spin 2s linear infinite
+
+  # Multiple animations combined (flash + shake for alarm)
+  - entity_id: binary_sensor.smoke_alarm
+    states:
+      - state: 'on'
+        icon_color: red
+        icon: mdi:fire-alert
+        styles:
+          keyframes: |-
+            flash {
+              0%, 50%, 100% { opacity: 1; }
+              25%, 75% { opacity: 0.3; }
+            }
+            shake {
+              0%, 100% { transform: translateX(0); }
+              10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+              20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+          animation: flash 0.5s infinite, shake 0.5s infinite
+
+  # Glow effect for active devices
+  - entity_id: light.rgb_bulb
+    states:
+      - state: 'on'
+        icon_color: var(--primary-color)
+        styles:
+          keyframes: |-
+            glow {
+              0%, 100% {
+                box-shadow: 0 0 5px currentColor;
+                filter: brightness(1);
+              }
+              50% {
+                box-shadow: 0 0 20px currentColor;
+                filter: brightness(1.5);
+              }
+            }
+          animation: glow 2s ease-in-out infinite
+
+  # Bounce effect for notifications
+  - entity_id: sensor.unread_messages
+    states:
+      - state: '1'
+        icon_color: blue
+        icon: mdi:message
+        styles:
+          keyframes: |-
+            bounce {
+              0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+              40% { transform: translateY(-10px); }
+              60% { transform: translateY(-5px); }
+            }
+          animation: bounce 2s ease-in-out infinite
+
+  # Wiggle effect for door sensor
+  - entity_id: binary_sensor.front_door
+    states:
+      - state: 'on'
+        icon_color: red
+        icon: mdi:door-open
+        styles:
+          keyframes: |-
+            wiggle {
+              0%, 100% { transform: rotate(0deg); }
+              25% { transform: rotate(-10deg); }
+              75% { transform: rotate(10deg); }
+            }
+          animation: wiggle 0.8s ease-in-out infinite
+```
+
+**Advanced keyframe techniques:**
+
+```yaml
+entities:
+  # Color cycling effect
+  - entity_id: light.mood_light
+    states:
+      - state: 'on'
+        styles:
+          keyframes: |-
+            color-cycle {
+              0% { filter: hue-rotate(0deg); }
+              100% { filter: hue-rotate(360deg); }
+            }
+          animation: color-cycle 10s linear infinite
+
+  # Heartbeat effect
+  - entity_id: binary_sensor.person_home
+    states:
+      - state: 'on'
+        icon_color: red
+        icon: mdi:heart
+        styles:
+          keyframes: |-
+            heartbeat {
+              0%, 100% { transform: scale(1); }
+              10% { transform: scale(1.2); }
+              20% { transform: scale(1); }
+              30% { transform: scale(1.2); }
+              40% { transform: scale(1); }
+            }
+          animation: heartbeat 2s ease-in-out infinite
+
+  # Fade in-out with scale
+  - entity_id: sensor.signal_strength
+    thresholds:
+      - threshold: -70
+        icon_color: red
+        operator: lt # Weak signal
+        styles:
+          keyframes: |-
+            fade-pulse {
+              0%, 100% {
+                opacity: 0.4;
+                transform: scale(0.9);
+              }
+              50% {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+          animation: fade-pulse 1.5s ease-in-out infinite
+```
+
 ### Custom Colors Example
 
 ```yaml

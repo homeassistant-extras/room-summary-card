@@ -178,7 +178,7 @@ describe('room-state-icon.ts', () => {
       expect(result).to.not.equal(nothing);
 
       // Should still call stylesToHostCss but with undefined
-      expect(stylesToHostCssStub.calledWith(undefined)).to.be.true;
+      expect(stylesToHostCssStub.calledWith({})).to.be.true;
     });
 
     it('should handle entity without custom icon', async () => {

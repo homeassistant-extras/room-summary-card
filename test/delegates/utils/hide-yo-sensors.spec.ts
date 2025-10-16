@@ -308,10 +308,18 @@ describe('get-sensors.ts', () => {
 
   it('should collect light entities when multi_light_background feature is enabled', () => {
     // Add light entities to the mock
-    mockHass.states['light.living_room_main'] = e('light', 'living_room_main', 'on');
-    mockHass.states['light.living_room_lamp'] = e('light', 'living_room_lamp', 'off');
+    mockHass.states['light.living_room_main'] = e(
+      'light',
+      'living_room_main',
+      'on',
+    );
+    mockHass.states['light.living_room_lamp'] = e(
+      'light',
+      'living_room_lamp',
+      'off',
+    );
     mockHass.states['light.kitchen_light'] = e('light', 'kitchen_light', 'on');
-    
+
     mockHass.entities['light.living_room_main'] = {
       entity_id: 'light.living_room_main',
       device_id: 'device_7',
@@ -345,7 +353,7 @@ describe('get-sensors.ts', () => {
       'light.living_room_lamp',
     ]);
     expect(result.lightEntities.map((l) => l.entity_id)).to.not.include(
-      'light.kitchen_light'
+      'light.kitchen_light',
     );
   });
 
@@ -353,7 +361,7 @@ describe('get-sensors.ts', () => {
     // Add light entities to the mock
     mockHass.states['light.kitchen_light'] = e('light', 'kitchen_light', 'on');
     mockHass.states['light.bedroom_light'] = e('light', 'bedroom_light', 'off');
-    
+
     mockHass.entities['light.kitchen_light'] = {
       entity_id: 'light.kitchen_light',
       device_id: 'device_9',
@@ -385,7 +393,11 @@ describe('get-sensors.ts', () => {
 
   it('should not collect light entities when multi_light_background feature is disabled', () => {
     // Add light entities to the mock
-    mockHass.states['light.living_room_main'] = e('light', 'living_room_main', 'on');
+    mockHass.states['light.living_room_main'] = e(
+      'light',
+      'living_room_main',
+      'on',
+    );
     mockHass.entities['light.living_room_main'] = {
       entity_id: 'light.living_room_main',
       device_id: 'device_7',

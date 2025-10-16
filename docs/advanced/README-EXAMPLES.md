@@ -309,3 +309,50 @@ The above demonstration shows three different multi-light configurations:
       text-shadow: '0 0 5px #ffff00'
       '--user-icon-size': 18px
 ```
+
+## State based CSS styling for entities
+
+![Entity Styles](../../assets/entity-styles.gif)
+
+```yaml
+type: custom:room-summary-card
+area: dining_room
+entities:
+  - entity_id: input_boolean.gina_mute
+    states:
+      - state: 'on'
+        icon_color: '#FFD700'
+        styles:
+          keyframes: |-
+            print {
+              0%, 100% { clip-path: polygon(0 0, 0 51%, 20% 51%, 51% 33%, 81% 53%, 100% 53%, 100% 0); }
+              10% { clip-path: polygon(0 0, 0 100%, 49% 100%, 85% 83%, 49% 98%, 50% 89%, 51% 82%, 46% 79%, 36% 73%, 17% 82%, 20% 50%, 51% 33%, 81% 52%, 100% 52%, 100% 0); }
+              20% { clip-path: polygon(0 0, 0 100%, 100% 100%, 85% 83%, 66% 73%, 56% 79%, 51% 83%, 46% 79%, 36% 73%, 17% 82%, 20% 50%, 51% 33%, 81% 52%, 100% 52%, 100% 0); }
+              30% { clip-path: polygon(0 0, 0 100%, 100% 100%, 85% 83%, 66% 73%, 54% 69%, 50% 61%, 45% 69%, 36% 73%, 17% 82%, 20% 50%, 51% 33%, 81% 52%, 100% 52%, 100% 0); }
+              40% { clip-path: polygon(0 0, 0 100%, 100% 100%, 85% 83%, 66% 73%, 54% 69%, 50% 61%, 45% 69%, 34% 63%, 25% 54%, 20% 50%, 51% 33%, 81% 52%, 100% 52%, 100% 0); }
+              50% { clip-path: polygon(0 0, 0 100%, 100% 100%, 76% 51%, 66% 63%, 54% 69%, 50% 61%, 45% 69%, 34% 63%, 25% 54%, 20% 50%, 51% 33%, 81% 52%, 100% 52%, 100% 0); }
+              60% { clip-path: polygon(0 0, 0 100%, 100% 100%, 76% 51%, 66% 63%, 55% 69%, 50% 61%, 39% 55%, 32% 55%, 25% 54%, 20% 50%, 51% 33%, 81% 52%, 100% 52%, 100% 0); }
+              70% { clip-path: polygon(0 0, 0 100%, 100% 100%, 76% 51%, 68% 53%, 60% 55%, 50% 61%, 39% 55%, 32% 55%, 25% 54%, 20% 50%, 51% 33%, 81% 52%, 100% 52%, 100% 0); }
+              80% { clip-path: polygon(0 0, 0 100%, 100% 100%, 76% 51%, 68% 53%, 60% 55%, 50% 61%, 50% 50%, 51% 37%, 31% 44%, 30% 35%, 51% 33%, 81% 52%, 100% 52%, 100% 0); }
+              90% { clip-path: polygon(0 0, 0 100%, 100% 100%, 77% 51%, 67% 42%, 64% 34%, 56% 34%, 50% 36%, 39% 40%, 31% 44%, 30% 35%, 41% 33%, 85% 53%, 100% 52%, 100% 0); }
+            }
+          animation: print 2s infinite
+      - state: 'off'
+        icon_color: '#888888'
+        styles:
+          animation: breathing 3s ease-in-out infinite;
+          keyframes: |-
+            breathing {
+              0%, 100% {
+                transform: scale(1);
+                background-color: #ff5722; /* Start with orange */
+                box-shadow: 0 0 20px #ff5722;
+              }
+              50% {
+                transform: scale(1.5); /* Grows larger */
+                background-color: #ffeb3b; /* Transition to yellow */
+                box-shadow: 0 0 40px #ffeb3b; /* Brighter glow */
+                border-radius: 50%;
+              }
+            }
+```

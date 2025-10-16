@@ -72,6 +72,86 @@ describe('styles-converter.ts', () => {
       expect(result1).to.not.equal(nothing);
     });
 
+    it('should handle keyframes in style tag', async () => {
+      const styles = {
+        keyframes:
+          'breathing { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }',
+      };
+      const result = stylesToHostCss(styles) as TemplateResult;
+      const el = await fixture(result);
+
+      expect(el.tagName).to.equal('STYLE');
+      const content = el.textContent?.trim() || '';
+      expect(content).to.include('@keyframes breathing');
+      expect(content).to.include('0%, 100% { transform: scale(1); }');
+      expect(content).to.include('50% { transform: scale(1.2); }');
+    });
+
+    it('should handle mixed styles with keyframes and regular properties', async () => {
+      const styles = {
+        'font-size': '14px',
+        color: 'red',
+        keyframes: 'fadeIn { from { opacity: 0; } to { opacity: 1; } }',
+      };
+      const result = stylesToHostCss(styles) as TemplateResult;
+      const el = await fixture(result);
+
+      expect(el.tagName).to.equal('STYLE');
+      const content = el.textContent?.trim() || '';
+
+      // Should contain keyframes
+      expect(content).to.include('@keyframes fadeIn');
+      expect(content).to.include('from { opacity: 0; }');
+      expect(content).to.include('to { opacity: 1; }');
+
+      // Should contain regular styles in :host
+      expect(content).to.include(':host');
+      expect(content).to.include('font-size: 14px;');
+      expect(content).to.include('color: red;');
+    });
+
+    it('should handle multiple keyframes entries', async () => {
+      const styles = {
+        keyframes: 'fadeIn { from { opacity: 0; } to { opacity: 1; } }',
+        'animation-2':
+          'slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }',
+      };
+      const result = stylesToHostCss(styles) as TemplateResult;
+      const el = await fixture(result);
+
+      expect(el.tagName).to.equal('STYLE');
+      const content = el.textContent?.trim() || '';
+
+      // Should contain the keyframes (only the 'keyframes' key is processed as keyframes)
+      expect(content).to.include('@keyframes fadeIn');
+      expect(content).to.include('from { opacity: 0; }');
+      expect(content).to.include('to { opacity: 1; }');
+
+      // The 'animation-2' key should be treated as a regular CSS property
+      expect(content).to.include(':host');
+      expect(content).to.include(
+        'animation-2: slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } };',
+      );
+    });
+
+    it('should handle complex keyframes with multiple steps', async () => {
+      const styles = {
+        keyframes:
+          'bounce { 0% { transform: translateY(0); } 25% { transform: translateY(-10px); } 50% { transform: translateY(0); } 75% { transform: translateY(-5px); } 100% { transform: translateY(0); } }',
+      };
+      const result = stylesToHostCss(styles) as TemplateResult;
+      const el = await fixture(result);
+
+      expect(el.tagName).to.equal('STYLE');
+      const content = el.textContent?.trim() || '';
+      expect(content).to.include('@keyframes bounce');
+      expect(content).to.include('0% { transform: translateY(0); }');
+      expect(content).to.include('25% { transform: translateY(-10px); }');
+      expect(content).to.include('50% { transform: translateY(0); }');
+      expect(content).to.include('75% { transform: translateY(-5px); }');
+      expect(content).to.include('100% { transform: translateY(0); }');
+    });
+
     it('should return different results for different objects', () => {
       const styles1 = { 'font-size': '14px' };
       const styles2 = { 'font-size': '16px' };
