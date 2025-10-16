@@ -276,7 +276,8 @@ const statusEntityStyles = css`
 const sensorLabelStyles = css`
   /* Room name styling */
   .name {
-    font-size: clamp(1rem, 6cqw, 2rem);
+    font-size: clamp(1.2rem, 6cqw, 2rem);
+    font-weight: 500;
     color: var(--text-color);
   }
 `;
