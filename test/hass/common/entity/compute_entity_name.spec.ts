@@ -2,6 +2,7 @@ import {
   computeEntityEntryName,
   computeEntityName,
 } from '@hass/common/entity/compute_entity_name';
+import type { Config } from '@type/config';
 import { expect } from 'chai';
 
 describe('compute_entity_name.ts', () => {
@@ -17,7 +18,9 @@ describe('compute_entity_name.ts', () => {
         states: {},
       } as any;
 
-      expect(computeEntityName(stateObj, hass)).to.equal('Living Room Light');
+      expect(computeEntityName(stateObj, hass, {} as Config)).to.equal(
+        'Living Room Light',
+      );
     });
 
     it('should compute entity name from registry entry', () => {
@@ -41,7 +44,9 @@ describe('compute_entity_name.ts', () => {
         states: {},
       } as any;
 
-      expect(computeEntityName(stateObj, hass)).to.equal('Living Room Light');
+      expect(computeEntityName(stateObj, hass, {} as Config)).to.equal(
+        'Living Room Light',
+      );
     });
   });
 
@@ -57,7 +62,9 @@ describe('compute_entity_name.ts', () => {
         states: {},
       } as any;
 
-      expect(computeEntityEntryName(entry, hass)).to.equal('Living Room Light');
+      expect(computeEntityEntryName(entry, hass, {} as Config)).to.equal(
+        'Living Room Light',
+      );
     });
 
     it('should return state name when no entity name and device', () => {
@@ -75,7 +82,9 @@ describe('compute_entity_name.ts', () => {
         },
       } as any;
 
-      expect(computeEntityEntryName(entry, hass)).to.equal('Living Room Light');
+      expect(computeEntityEntryName(entry, hass, {} as Config)).to.equal(
+        'Living Room Light',
+      );
     });
 
     it('should return undefined when entity name equals device name', () => {
@@ -93,7 +102,7 @@ describe('compute_entity_name.ts', () => {
         states: {},
       } as any;
 
-      expect(computeEntityEntryName(entry, hass)).to.be.undefined;
+      expect(computeEntityEntryName(entry, hass, {} as Config)).to.be.undefined;
     });
 
     it('should strip device name from entity name', () => {
@@ -111,7 +120,9 @@ describe('compute_entity_name.ts', () => {
         states: {},
       } as any;
 
-      expect(computeEntityEntryName(entry, hass)).to.equal('Light');
+      expect(computeEntityEntryName(entry, hass, {} as Config)).to.equal(
+        'Light',
+      );
     });
 
     it('should return entity name when device name cannot be stripped', () => {
@@ -129,7 +140,9 @@ describe('compute_entity_name.ts', () => {
         states: {},
       } as any;
 
-      expect(computeEntityEntryName(entry, hass)).to.equal('Kitchen Light');
+      expect(computeEntityEntryName(entry, hass, {} as Config)).to.equal(
+        'Kitchen Light',
+      );
     });
 
     it('should return device name when no entity name', () => {
@@ -146,7 +159,7 @@ describe('compute_entity_name.ts', () => {
         states: {},
       } as any;
 
-      expect(computeEntityEntryName(entry, hass)).to.equal(
+      expect(computeEntityEntryName(entry, hass, {} as Config)).to.equal(
         'Living Room Device',
       );
     });

@@ -154,7 +154,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
             ></ha-state-icon>`}
         ${showLabels
           ? html`<div class="entity-label">
-              ${computeEntityName(state, this.hass)}
+              ${computeEntityName(state, this.hass, this._config)}
             </div>`
           : nothing}
       </div>
