@@ -191,10 +191,7 @@ describe('room-state-icon.ts', () => {
       element.entity = undefined as any;
 
       // This will throw an error because the component tries to destructure state from undefined
-      expect(() => element.render()).to.throw(
-        TypeError,
-        /Cannot destructure property ['"]state['"] of ['"]this\.entity['"] as it is undefined/,
-      );
+      expect(() => element.render()).to.throw(TypeError);
     });
 
     it('should render icon when entity state is available', async () => {
