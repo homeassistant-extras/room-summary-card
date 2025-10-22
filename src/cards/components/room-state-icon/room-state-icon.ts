@@ -1,9 +1,9 @@
-import { hasFeature } from '@/config/feature';
+import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
+import { hasEntityFeature, hasFeature } from '@config/feature';
 import {
   actionHandler,
   handleClickAction,
-} from '@/delegates/action-handler-delegate';
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
+} from '@delegates/action-handler-delegate';
 import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
@@ -35,15 +35,33 @@ const equal = require('fast-deep-equal');
  */
 export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   /**
+   * Home Assistant instance
+   */
+  @state()
+  private _hass!: HomeAssistant;
+
+  /**
    * Card configuration object
    */
   @state()
   private _config!: Config;
 
   /**
-   * Home Assistant instance
+   * Whether to show entity labels
    */
-  @property({ type: Object }) override hass!: HomeAssistant;
+  @state()
+  private _showLabels!: boolean;
+
+  /**
+   * Whether to hide the icon
+   */
+  @state()
+  private _hideRoomIcon!: boolean;
+  /**
+   * Whether to hide the icon content
+   */
+  @state()
+  private _hideIconContent!: boolean;
 
   /**
    * Entity information containing state and configuration
@@ -61,6 +79,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
    */
   @property({ type: Boolean, reflect: true })
   image!: boolean;
+  private _image?: string | null;
 
   /**
    * Whether the icon background is enabled
@@ -96,26 +115,45 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       this.iconBackground =
         config.background?.options?.includes('icon_background') ?? false;
 
+      this._showLabels =
+        config.features?.includes('show_entity_labels') ?? false;
+
+      // Calculate hiding logic for main room entity
+      if (this.isMainRoomEntity) {
+        this._hideRoomIcon = hasFeature(config, 'hide_room_icon');
+        this._hideIconContent =
+          config.background?.options?.includes('hide_icon_only') || false;
+      }
+
       this._config = config;
     }
+  }
+
+  /**
+   * Updates the card's state when Home Assistant state changes
+   * @param {HomeAssistant} hass - The Home Assistant instance
+   */
+  // @ts-ignore
+  override set hass(hass: HomeAssistant) {
+    this._image = hasEntityFeature(this.entity, 'use_entity_icon')
+      ? undefined
+      : this.entity?.state?.attributes?.entity_picture;
+
+    if (this._image) {
+      this.image = true;
+      this.iconBackground = true;
+      this._hideIconContent = true;
+    }
+
+    this._hass = hass;
   }
 
   public override render(): TemplateResult | typeof nothing {
     const { state } = this.entity;
     if (!state) return nothing;
 
-    // Calculate hiding logic for main room entity
-    let hideIcon = false;
-    let hideIconContent = false;
-
-    if (this.isMainRoomEntity && this._config) {
-      hideIcon = hasFeature(this._config, 'hide_room_icon');
-      hideIconContent =
-        this._config.background?.options?.includes('hide_icon_only') || false;
-    }
-
     // If the icon should be completely hidden, return nothing
-    if (hideIcon)
+    if (this._hideRoomIcon)
       return html`<div
         class="box"
         @action=${handleClickAction(this, this.entity)}
@@ -125,12 +163,11 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     const thresholdResult = getThresholdResult(this.entity);
 
     const iconStyle = renderEntityIconStyles(
-      this.hass,
+      this._hass,
       this.entity,
       this.isActive,
+      this._image,
     );
-    const showLabels =
-      this._config && hasFeature(this._config, 'show_entity_labels');
 
     const iconStyles = {
       ...this._config?.styles?.entity_icon,
@@ -145,16 +182,16 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
         @action=${handleClickAction(this, this.entity)}
         .actionHandler=${actionHandler(this.entity)}
       >
-        ${hideIconContent
+        ${this._hideIconContent
           ? nothing
           : html`<ha-state-icon
-              .hass=${this.hass}
+              .hass=${this._hass}
               .stateObj=${state}
               .icon=${thresholdResult?.icon || this.entity.config.icon}
             ></ha-state-icon>`}
-        ${showLabels
+        ${this._showLabels
           ? html`<div class="entity-label">
-              ${computeEntityName(state, this.hass, this._config)}
+              ${computeEntityName(state, this._hass, this._config)}
             </div>`
           : nothing}
       </div>

@@ -1,5 +1,5 @@
-import { hasFeature } from '@/config/feature';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
+import { hasFeature } from '@config/feature';
 import {
   actionHandler,
   handleClickAction,

@@ -1,4 +1,4 @@
-import * as featureModule from '@/config/feature';
+import * as featureModule from '@config/feature';
 import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { stub } from 'sinon';

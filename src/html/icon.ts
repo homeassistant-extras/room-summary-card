@@ -68,13 +68,17 @@ export const renderRoomIcon = (
   const { state } = entity;
   if (!state) return nothing;
 
+  /*
+   * Order of properties is important for logic checks
+   * Set config and hass last
+   */
   return html`<room-state-icon
-    .entity=${entity}
-    .hass=${hass}
-    .config=${config}
     .isMainRoomEntity=${isMainRoomEntity}
     .isActive=${isActive}
     .image=${hasImage}
     .occupied=${occupied}
+    .entity=${entity}
+    .config=${config}
+    .hass=${hass}
   ></room-state-icon>`;
 };

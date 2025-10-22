@@ -39,10 +39,10 @@ export const getThresholdResult = (
     return undefined;
   }
 
-  const numericValue = parseFloat(state.state);
+  const numericValue = Number.parseFloat(state.state);
 
   // Skip if state is not a valid number
-  if (isNaN(numericValue)) {
+  if (Number.isNaN(numericValue)) {
     return undefined;
   }
 

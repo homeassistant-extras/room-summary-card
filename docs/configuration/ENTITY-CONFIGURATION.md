@@ -36,6 +36,7 @@ entities:
 | off_color         | string | theme off color         | Color when entity is inactive               |
 | thresholds        | array  | none                    | Dynamic colors/icons based on sensor values |
 | states            | array  | none                    | Colors/icons based on exact entity states   |
+| features          | array  | none                    | Feature flags for this entity               |
 | tap_action        | object | `{action: "toggle"}`    | Action on single tap                        |
 | hold_action       | object | `{action: "more-info"}` | Action on hold                              |
 | double_tap_action | object | `{action: "none"}`      | Action on double tap                        |
@@ -59,10 +60,40 @@ entities:
 | icon       | string | none         | Icon to use when this state is active     |
 | styles     | object | none         | Custom CSS styles to apply to entity icon |
 
+### Entity Features
+
+The `features` array allows you to enable specific behaviors for individual entities:
+
+| Feature         | Description                                     |
+| --------------- | ----------------------------------------------- |
+| use_entity_icon | Display entity icon instead of `entity_picture` |
+
 ### Action Configuration
 
 For `tap_action`, `hold_action`, and `double_tap_action` configuration options, see the [Home Assistant Actions Documentation](https://www.home-assistant.io/dashboards/actions/).
 
+## Entity Picture Display
+
+By default, entities will display their `entity_picture` attribute (if available) instead of an icon. This is particularly useful for media players that have service-specific icons (Netflix, Hulu, Spotify, etc.).
+
+![Entity Styles](../../assets/entity-picture-attributes.png)
+
+📖 **See [State based CSS styling for entities](../advanced/README-EXAMPLES.md#entity-picture-attributes) for configuration details.**
+
+### Disabling Entity Pictures
+
+To force an entity to use its icon instead of its entity picture, add the `use_entity_icon` feature:
+
+````yaml
+entities:
+  # Display entity picture (default behavior)
+  - entity_id: media_player.tv
+
+  # Force icon display even if entity_picture exists
+  - entity_id: media_player.second_tv
+    features:
+      - use_entity_icon
+```
 ## Color Priority
 
 Colors are applied in this order:
@@ -139,7 +170,7 @@ entities:
         styles:
           border: 2px solid var(--primary-color)
           border-radius: 50%
-```
+````
 
 For theme color names and advanced customization, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md).
 

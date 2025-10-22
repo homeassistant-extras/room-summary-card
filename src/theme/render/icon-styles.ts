@@ -15,12 +15,14 @@ import { getStyleData } from './common-style';
  * @param hass - The Home Assistant instance containing theme and state information.
  * @param entity - The entity information used to determine icon styling.
  * @param isActive - Whether the room is considered active (for styling).
+ * @param image - The image to use for the icon background.
  * @returns A lit-html style map directive with CSS custom properties for icon color, opacity, and theme overrides.
  */
 export const renderEntityIconStyles = (
   hass: HomeAssistant,
   entity: EntityInformation,
   isActive?: boolean,
+  image?: string | null,
 ): DirectiveResult<typeof StyleMapDirective> | typeof nothing => {
   const styleData = getStyleData(hass, 'icon', entity, isActive);
 
@@ -30,7 +32,10 @@ export const renderEntityIconStyles = (
     '--icon-color': styleData.cssColor,
     '--icon-opacity': `var(--opacity-icon-${styleData.activeClass})`,
     '--background-color-icon': styleData.cssColor,
-    '--background-opacity-icon': `var(--opacity-icon-fill-${styleData.activeClass})`,
+    '--background-opacity-icon': image
+      ? '1'
+      : `var(--opacity-icon-fill-${styleData.activeClass})`,
     '--state-color-icon-theme': styleData.themeOverride,
+    '--background-image': image ? `url(${image})` : undefined,
   });
 };

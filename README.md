@@ -345,6 +345,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Threshold-Based Icon Coloring`**: dynamic icon colors based on sensor values with configurable thresholds and operators - thanks @fusionstream, @marcokreeft87
 - [x] **`State-Based Icon Coloring`**: exact state matching for non-numeric sensors like washing machines, device trackers, and status indicators - thanks @marcokreeft87
 - [x] **`Multi-Light Background`**: card background lights up when any light entity in the room is on - thanks @joshkay
+- [x] **`Entity Picture Display`**: automatic display of entity pictures with optional override - thanks @Zipp0KMS
 
 ## Contributing
 

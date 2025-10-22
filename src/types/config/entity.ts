@@ -31,7 +31,13 @@ export interface EntityConfig {
 
   /** Action to perform on double tap */
   double_tap_action?: ActionConfig;
+
+  /** Features to enable or disable for the entity */
+  features?: EntityFeatures[];
 }
+
+/** Features to enable or disable for the entity */
+export type EntityFeatures = 'use_entity_icon';
 
 /**
  * Common icon properties for state and threshold configurations

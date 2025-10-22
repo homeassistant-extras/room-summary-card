@@ -98,10 +98,10 @@ export class RoomSummaryCardEditor extends LitElement {
     const obj = config[key];
     if (!obj || typeof obj !== 'object') return;
 
-    Object.keys(obj).forEach((k) => {
+    for (const k of Object.keys(obj)) {
       !obj[k] && delete obj[k];
       this._cleanEmptyArrays(obj, k);
-    });
+    }
     if (!Object.keys(obj).length) delete config[key];
   }
 }

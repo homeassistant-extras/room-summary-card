@@ -1,6 +1,6 @@
-import * as featureModule from '@/config/feature';
 import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
 import { styles } from '@cards/components/room-state-icon/styles';
+import * as featureModule from '@config/feature';
 import * as actionHandlerModule from '@delegates/action-handler-delegate';
 import * as computeEntityNameModule from '@hass/common/entity/compute_entity_name';
 import type {
@@ -111,13 +111,68 @@ describe('room-state-icon.ts', () => {
 
   describe('properties', () => {
     it('should have correct property types', () => {
-      expect(element.hass).to.equal(mockHass);
+      expect(element['_hass']).to.equal(mockHass);
       expect(element.entity).to.equal(mockEntity);
       expect(element['_config']).to.equal(mockConfig);
     });
 
     it('should have static styles', () => {
       expect(RoomStateIcon.styles).to.equal(styles);
+    });
+
+    it('should update hass setter correctly', () => {
+      const newHass = {
+        states: {
+          'light.living_room': mockEntityState,
+        },
+        formatEntityState: () => 'formatted state',
+      } as any as HomeAssistant;
+
+      element.hass = newHass;
+      expect(element['_hass']).to.equal(newHass);
+    });
+
+    it('should update config setter correctly', () => {
+      const newConfig = {
+        area: 'bedroom',
+        features: ['show_entity_labels'],
+        background: {
+          options: ['icon_background'],
+          image: '/local/test.jpg',
+        },
+      } as Config;
+
+      element.config = newConfig;
+      expect(element['_config']).to.equal(newConfig);
+      expect(element['_showLabels']).to.be.true;
+      expect(element['iconBackground']).to.be.true;
+    });
+
+    it('should handle config setter with hide_room_icon feature for main room entity', () => {
+      // Configure hasFeature stub to return true for this test
+      hasFeatureStub.returns(true);
+
+      element.isMainRoomEntity = true;
+      const configWithHideIcon = {
+        area: 'living_room',
+        features: ['hide_room_icon'],
+      } as Config;
+
+      element.config = configWithHideIcon;
+      expect(element['_hideRoomIcon']).to.be.true;
+    });
+
+    it('should handle config setter with hide_icon_only background option for main room entity', () => {
+      element.isMainRoomEntity = true;
+      const configWithHideIconOnly = {
+        area: 'living_room',
+        background: {
+          options: ['hide_icon_only'],
+        },
+      } as Config;
+
+      element.config = configWithHideIconOnly;
+      expect(element['_hideIconContent']).to.be.true;
     });
   });
 
@@ -136,7 +191,10 @@ describe('room-state-icon.ts', () => {
       element.entity = undefined as any;
 
       // This will throw an error because the component tries to destructure state from undefined
-      expect(() => element.render()).to.throw();
+      expect(() => element.render()).to.throw(
+        TypeError,
+        "Cannot destructure property 'state' of 'this.entity' as it is undefined.",
+      );
     });
 
     it('should render icon when entity state is available', async () => {
@@ -220,25 +278,19 @@ describe('room-state-icon.ts', () => {
     });
 
     it('should show entity label when show_entity_labels feature is enabled', async () => {
-      // Reset and configure the hasFeature stub for this test
-      hasFeatureStub.restore();
-      hasFeatureStub = stub(featureModule, 'hasFeature').returns(true);
+      // Set up config with show_entity_labels feature enabled
+      const configWithLabels = {
+        ...mockConfig,
+        features: ['show_entity_labels'],
+      } as Config;
+      element.config = configWithLabels;
       computeEntityNameStub.returns('Living Room Light');
-
-      // Test the component instance directly
-      element.entity = mockEntity;
-      element.hass = mockHass;
-      element.config = mockConfig;
 
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
 
       // Render to actual DOM using fixture
       const el = await fixture(result);
-
-      // Verify that hasFeature was called with the correct parameters
-      expect(hasFeatureStub.calledWith(mockConfig, 'show_entity_labels')).to.be
-        .true;
 
       // Verify that computeEntityName was called with the correct parameters
       expect(computeEntityNameStub.calledWith(mockEntityState, mockHass)).to.be
@@ -251,15 +303,11 @@ describe('room-state-icon.ts', () => {
     });
 
     it('should not show entity label when show_entity_labels feature is disabled', async () => {
-      // Disable the show_entity_labels feature (default behavior)
-      hasFeatureStub.withArgs(mockConfig, 'show_entity_labels').returns(false);
+      // Use default config without show_entity_labels feature
+      element.config = mockConfig;
 
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
-
-      // Verify that hasFeature was called with the correct parameters
-      expect(hasFeatureStub.calledWith(mockConfig, 'show_entity_labels')).to.be
-        .true;
 
       // Verify that computeEntityName was NOT called since the feature is disabled
       expect(computeEntityNameStub.called).to.be.false;
@@ -352,7 +400,7 @@ describe('room-state-icon.ts', () => {
         el.querySelector('ha-state-icon') ||
         el.firstElementChild?.querySelector('ha-state-icon');
       expect(haStateIcon).to.exist;
-      expect((haStateIcon as any).hass).to.equal(element.hass);
+      expect((haStateIcon as any).hass).to.equal(element['_hass']);
     });
 
     it('should pass state object to ha-state-icon', async () => {
@@ -412,7 +460,10 @@ describe('room-state-icon.ts', () => {
       element.entity = entityWithNullConfig;
 
       // This will throw an error because the component tries to access config.icon
-      expect(() => element.render()).to.throw();
+      expect(() => element.render()).to.throw(
+        TypeError,
+        "Cannot read properties of null (reading 'states')",
+      );
     });
 
     it('should handle undefined hass', () => {
@@ -450,9 +501,16 @@ describe('room-state-icon.ts', () => {
 
   describe('hide icon behavior', () => {
     it('should render empty div with action handlers when hideIcon is true', async () => {
+      // Configure hasFeature stub to return true for this test
+      hasFeatureStub.returns(true);
+
       // Configure as main room entity with hide_room_icon feature enabled
       element.isMainRoomEntity = true;
-      hasFeatureStub.withArgs(mockConfig, 'hide_room_icon').returns(true);
+      const configWithHideIcon = {
+        ...mockConfig,
+        features: ['hide_room_icon'],
+      } as Config;
+      element.config = configWithHideIcon;
 
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);

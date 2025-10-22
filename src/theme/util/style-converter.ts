@@ -26,7 +26,7 @@ export const stylesToHostCss = memoizeOne(
     const keyframesEntries: string[] = [];
     const regularStyles: string[] = [];
 
-    Object.entries(styles).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(styles)) {
       if (key === 'keyframes') {
         // Handle keyframes specially
         keyframesEntries.push(`@keyframes ${value}`);
@@ -34,7 +34,7 @@ export const stylesToHostCss = memoizeOne(
         // Regular CSS property
         regularStyles.push(`${key}: ${value};`);
       }
-    });
+    }
 
     const cssString = regularStyles.join(' ');
     const keyframesString = keyframesEntries.join('\n');

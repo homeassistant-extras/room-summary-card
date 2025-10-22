@@ -4,6 +4,10 @@ import { css } from 'lit';
  * Icon and visual indicator styles
  */
 export const styles = css`
+  :host {
+    width: 100%;
+  }
+
   /* Icon container styling */
   .icon {
     cursor: pointer;

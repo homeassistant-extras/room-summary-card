@@ -356,3 +356,59 @@ entities:
               }
             }
 ```
+
+## Entity Picture Attributes
+
+![Entity Styles](../../assets/entity-picture-attributes.png)
+
+```yaml
+type: grid
+cards:
+  - type: custom:room-summary-card
+    area: dining_room
+    entity: media_player.living_room_tv
+    entities:
+      - entity_id: media_player.living_room_tv
+  - type: custom:room-summary-card
+    area: shed
+    entity:
+      entity_id: media_player.living_room_tv
+      features:
+        - use_entity_icon
+    entities:
+      - entity_id: media_player.living_room_tv
+    background:
+      options:
+        - icon_background
+  - type: custom:room-summary-card
+    area: dining_room
+    entity:
+      entity_id: media_player.living_room_tv
+      features:
+        - use_entity_icon
+    entities:
+      - entity_id: media_player.living_room_tv
+  - type: custom:room-summary-card
+    area: dining_room
+    entity:
+      entity_id: media_player.living_room_tv
+      features:
+        - use_entity_icon
+    entities:
+      - entity_id: media_player.living_room_tv
+        features:
+          - use_entity_icon
+  - type: custom:room-summary-card
+    area: shed
+    entity:
+      entity_id: media_player.living_room_tv
+      features:
+        - use_entity_icon
+    entities:
+      - entity_id: media_player.living_room_tv
+    background:
+      options:
+        - icon_background
+        - hide_icon_only
+column_span: 3
+```

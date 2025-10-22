@@ -10,7 +10,6 @@ export interface HassUpdateEvent {
 }
 
 declare global {
-  // eslint-disable-next-line
   interface HASSDomEvents {
     'hass-update': HassUpdateEvent;
   }

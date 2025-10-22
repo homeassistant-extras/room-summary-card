@@ -76,6 +76,7 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': 'var(--primary-color)',
           '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
           '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': undefined,
         }),
       );
 
@@ -95,6 +96,7 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': 'var(--disabled-color)',
           '--background-opacity-icon': 'var(--opacity-icon-fill-inactive)',
           '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': undefined,
         }),
       );
     });
@@ -117,6 +119,31 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': undefined,
           '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
           '--state-color-icon-theme': undefined,
+          '--background-image': undefined,
+        }),
+      );
+    });
+
+    it('should include background image when image parameter is provided', () => {
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+      const entity = createEntityInfo('light', 'test', 'on');
+      const imageUrl = '/local/images/test-image.png';
+
+      const result = renderEntityIconStyles(mockHass, entity, true, imageUrl);
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--icon-color': 'var(--primary-color)',
+          '--icon-opacity': 'var(--opacity-icon-active)',
+          '--background-color-icon': 'var(--primary-color)',
+          '--background-opacity-icon': '1',
+          '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': `url(${imageUrl})`,
         }),
       );
     });

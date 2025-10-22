@@ -1,5 +1,5 @@
-import { RoomSummaryCardEditor } from '@/cards/editor';
 import * as editorSchemaModule from '@/editor/editor-schema';
+import { RoomSummaryCardEditor } from '@cards/editor';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Config } from '@type/config';

@@ -1,4 +1,4 @@
-import { hasFeature } from '@/config/feature';
+import { hasFeature } from '@config/feature';
 import type { Config } from '@type/config';
 
 /**

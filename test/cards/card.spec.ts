@@ -1,6 +1,6 @@
-import { RoomSummaryCard } from '@/cards/card';
-import * as actionHandlerModule from '@/delegates/action-handler-delegate';
-import * as setupCardModule from '@/delegates/utils/setup-card';
+import { RoomSummaryCard } from '@cards/card';
+import * as actionHandlerModule from '@delegates/action-handler-delegate';
+import * as setupCardModule from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { styles } from '@theme/styles';
