@@ -172,6 +172,7 @@ const entityAreaStyles = css`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    width: fit-content; /* don't cover other elements plz */
   }
 `;
 

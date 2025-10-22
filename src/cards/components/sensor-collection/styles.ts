@@ -14,6 +14,7 @@ export const styles = css`
     margin-top: 1%;
     position: relative;
     z-index: 2; /* Ensure sensor collection appears above room entity */
+    width: fit-content; /* don't cover other elements plz */
   }
 
   :host([hide-icons]) {

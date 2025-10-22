@@ -78,7 +78,7 @@ By default, entities will display their `entity_picture` attribute (if available
 
 ![Entity Styles](../../assets/entity-picture-attributes.png)
 
-📖 **See [State based CSS styling for entities](../advanced/README-EXAMPLES.md#entity-picture-attributes) for configuration details.**
+📖 **See [Entity Picture Attributes](../advanced/README-EXAMPLES.md#entity-picture-attributes) for configuration details.**
 
 ### Disabling Entity Pictures
 
