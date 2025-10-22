@@ -193,7 +193,7 @@ describe('room-state-icon.ts', () => {
       // This will throw an error because the component tries to destructure state from undefined
       expect(() => element.render()).to.throw(
         TypeError,
-        "Cannot destructure property 'state' of 'this.entity' as it is undefined.",
+        /Cannot destructure property 'state' of 'this\.entity' as it is undefined\./,
       );
     });
 
@@ -462,7 +462,7 @@ describe('room-state-icon.ts', () => {
       // This will throw an error because the component tries to access config.icon
       expect(() => element.render()).to.throw(
         TypeError,
-        "Cannot read properties of null (reading 'states')",
+        /Cannot read properties of null \(reading 'states'\)/,
       );
     });
 
