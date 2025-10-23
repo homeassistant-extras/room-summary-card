@@ -43,22 +43,24 @@ entities:
 
 ### Threshold Configuration Options
 
-| Name       | Type   | Default      | Description                                         |
-| ---------- | ------ | ------------ | --------------------------------------------------- |
-| threshold  | number | **Required** | Threshold value to compare against entity state     |
-| icon_color | string | **Required** | Color to use when this threshold condition is met   |
-| icon       | string | none         | Icon to use when this threshold condition is met    |
-| operator   | string | `gte`        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq` |
-| styles     | object | none         | Custom CSS styles to apply to entity icon           |
+| Name       | Type   | Default      | Description                                                      |
+| ---------- | ------ | ------------ | ---------------------------------------------------------------- |
+| threshold  | number | **Required** | Threshold value to compare against entity state or attribute     |
+| icon_color | string | **Required** | Color to use when this threshold condition is met                |
+| icon       | string | none         | Icon to use when this threshold condition is met                 |
+| operator   | string | `gte`        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq`              |
+| attribute  | string | none         | Optional attribute name to compare instead of entity state       |
+| styles     | object | none         | Custom CSS styles to apply to entity icon                        |
 
 ### State Configuration Options
 
-| Name       | Type   | Default      | Description                               |
-| ---------- | ------ | ------------ | ----------------------------------------- |
-| state      | string | **Required** | Entity state value to match exactly       |
-| icon_color | string | **Required** | Color to use when this state is active    |
-| icon       | string | none         | Icon to use when this state is active     |
-| styles     | object | none         | Custom CSS styles to apply to entity icon |
+| Name       | Type   | Default      | Description                                                |
+| ---------- | ------ | ------------ | ---------------------------------------------------------- |
+| state      | string | **Required** | Entity state or attribute value to match exactly           |
+| icon_color | string | **Required** | Color to use when this state is active                     |
+| icon       | string | none         | Icon to use when this state is active                      |
+| attribute  | string | none         | Optional attribute name to match instead of entity state   |
+| styles     | object | none         | Custom CSS styles to apply to entity icon                  |
 
 ### Entity Features
 
@@ -170,6 +172,112 @@ entities:
         styles:
           border: 2px solid var(--primary-color)
           border-radius: 50%
+```
+
+## Attribute-Based Matching
+
+Both `states` and `thresholds` support matching on entity attributes instead of entity state by using the `attribute` property. This is useful for entities where the important information is in attributes rather than the state itself.
+
+**Note**: Numeric attributes are compared as strings for state matching and as numbers for threshold matching. Most numeric attributes (like `current_position`, `brightness`, etc.) will need to be converted to strings when used in `states` configuration.
+
+### Attribute Matching Examples
+
+```yaml
+entities:
+  # Cover with position-based states
+  # State is "open" but we care about current_position attribute
+  - entity_id: cover.window
+    icon: mdi:window-shutter
+    states:
+      - state: "100"  # Note: numeric attributes must be quoted strings
+        attribute: current_position
+        icon_color: green
+        icon: mdi:window-shutter-open
+      - state: "50"
+        attribute: current_position
+        icon_color: orange
+        icon: mdi:window-shutter-settings
+      - state: "0"
+        attribute: current_position
+        icon_color: grey
+        icon: mdi:window-shutter
+
+  # Cover with position-based thresholds
+  - entity_id: cover.blinds
+    icon: mdi:blinds
+    thresholds:
+      - threshold: 75
+        attribute: current_position
+        icon_color: green
+        icon: mdi:blinds-open
+        operator: gte
+      - threshold: 25
+        attribute: current_position
+        icon_color: orange
+        icon: mdi:blinds-horizontal
+        operator: gte
+      # Falls through to default icon/color when < 25
+
+  # Light with brightness thresholds
+  - entity_id: light.bedroom
+    icon: mdi:lightbulb
+    thresholds:
+      - threshold: 200
+        attribute: brightness
+        icon_color: yellow
+        operator: gte
+      - threshold: 100
+        attribute: brightness
+        icon_color: amber
+        operator: gte
+      - threshold: 50
+        attribute: brightness
+        icon_color: orange
+        operator: gte
+
+  # Climate entity mixing state and attribute matching
+  - entity_id: climate.living_room
+    icon: mdi:thermostat
+    states:
+      # Match on entity state
+      - state: "off"
+        icon_color: grey
+        icon: mdi:power-off
+      - state: heating
+        icon_color: red
+        icon: mdi:fire
+      - state: cooling
+        icon_color: blue
+        icon: mdi:snowflake
+    thresholds:
+      # Match on temperature attribute when active
+      - threshold: 75
+        attribute: current_temperature
+        icon_color: red
+        operator: gte
+      - threshold: 65
+        attribute: current_temperature
+        icon_color: orange
+        operator: gte
+
+  # Media player with volume control
+  - entity_id: media_player.tv
+    icon: mdi:television
+    states:
+      # Match on entity state
+      - state: "off"
+        icon_color: grey
+      - state: playing
+        icon_color: green
+        icon: mdi:play
+    thresholds:
+      # Visual indicator when volume is high
+      - threshold: 70
+        attribute: volume_level
+        icon_color: red
+        styles:
+          animation: pulse 2s ease-in-out infinite
+        operator: gte
 ````
 
 For theme color names and advanced customization, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md).

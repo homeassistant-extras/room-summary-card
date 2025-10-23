@@ -438,6 +438,169 @@ entities:
           filter: grayscale(50%)
 ```
 
+### Attribute-Based Matching for Advanced Control
+
+Match on entity attributes instead of state for precise control over covers, lights, climate, and more:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+entities:
+  # Window cover with position-based thresholds
+  # State is "open" but we match on current_position attribute
+  - entity_id: cover.living_room_blinds
+    icon: mdi:blinds
+    thresholds:
+      - threshold: 90
+        attribute: current_position
+        icon_color: green
+        icon: mdi:blinds-open
+        operator: gte
+        styles:
+          filter: brightness(1.2)
+      - threshold: 50
+        attribute: current_position
+        icon_color: amber
+        icon: mdi:blinds-horizontal
+        operator: gte
+      - threshold: 10
+        attribute: current_position
+        icon_color: grey
+        icon: mdi:blinds
+        operator: gte
+        styles:
+          opacity: '0.7'
+
+  # Light with brightness levels
+  - entity_id: light.living_room_chandelier
+    icon: mdi:chandelier
+    thresholds:
+      - threshold: 200
+        attribute: brightness
+        icon_color: yellow
+        icon: mdi:lightbulb-on
+        operator: gte
+        styles:
+          box-shadow: 0 0 20px rgba(255, 215, 0, 0.8)
+          filter: brightness(1.3)
+      - threshold: 128
+        attribute: brightness
+        icon_color: amber
+        icon: mdi:lightbulb-on-outline
+        operator: gte
+      - threshold: 50
+        attribute: brightness
+        icon_color: orange
+        icon: mdi:lightbulb-outline
+        operator: gte
+        styles:
+          opacity: '0.8'
+
+  # Climate entity mixing state and attribute matching
+  # Shows different icons for heating/cooling states
+  # AND changes color based on current temperature
+  - entity_id: climate.living_room
+    icon: mdi:thermostat
+    states:
+      # Match on entity state for mode
+      - state: "off"
+        icon_color: grey
+        icon: mdi:power-off
+        styles:
+          opacity: '0.6'
+      - state: heating
+        icon_color: red
+        icon: mdi:fire
+        styles:
+          animation: pulse 2s ease-in-out infinite
+      - state: cooling
+        icon_color: blue
+        icon: mdi:snowflake
+        styles:
+          animation: pulse 2s ease-in-out infinite
+    thresholds:
+      # Match on current_temperature attribute for warnings
+      - threshold: 78
+        attribute: current_temperature
+        icon_color: red
+        operator: gte
+        styles:
+          border: 2px solid red
+          border-radius: 50%
+          box-shadow: 0 0 15px rgba(255, 0, 0, 0.6)
+      - threshold: 72
+        attribute: current_temperature
+        icon_color: orange
+        operator: gte
+      - threshold: 65
+        attribute: current_temperature
+        icon_color: blue
+        operator: lte
+        styles:
+          border: 2px solid blue
+          border-radius: 50%
+
+  # Media player with volume warnings
+  - entity_id: media_player.tv
+    icon: mdi:television
+    states:
+      - state: "off"
+        icon_color: grey
+        icon: mdi:television-off
+      - state: playing
+        icon_color: green
+        icon: mdi:play
+      - state: paused
+        icon_color: orange
+        icon: mdi:pause
+    thresholds:
+      # Alert when volume is too high
+      - threshold: 0.8
+        attribute: volume_level
+        icon_color: red
+        icon: mdi:volume-high
+        operator: gte
+        styles:
+          animation: shake 0.5s ease-in-out infinite
+          transform: scale(1.1)
+      - threshold: 0.5
+        attribute: volume_level
+        icon_color: amber
+        operator: gte
+
+  # Garage door with tilt sensor
+  - entity_id: cover.garage_door
+    icon: mdi:garage
+    states:
+      # Match on tilt attribute for partial open detection
+      - state: "0"
+        attribute: current_tilt_position
+        icon_color: green
+        icon: mdi:garage
+        styles: {}
+      - state: "50"
+        attribute: current_tilt_position
+        icon_color: orange
+        icon: mdi:garage-open-variant
+        styles:
+          animation: pulse 2s ease-in-out infinite
+      - state: "100"
+        attribute: current_tilt_position
+        icon_color: red
+        icon: mdi:garage-open
+        styles:
+          box-shadow: 0 0 15px rgba(255, 165, 0, 0.7)
+```
+
+**How this works:**
+- **Covers/Blinds**: Match on `current_position` attribute (0-100) instead of state ("open"/"closed")
+- **Lights**: Apply different colors based on `brightness` attribute (0-255)
+- **Climate**: Combine state-based icons (fire/snowflake) with temperature-based color warnings
+- **Media Players**: Show playback state while alerting on high `volume_level`
+- **Garage Doors**: Detect partial opening via `current_tilt_position` attribute
+
+This allows you to create sophisticated visual feedback that responds to the actual operational state of your devices, not just their on/off status.
+
 ### Environmental Monitoring with Thresholds
 
 ```yaml

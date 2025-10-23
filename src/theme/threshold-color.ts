@@ -39,19 +39,24 @@ export const getThresholdResult = (
     return undefined;
   }
 
-  const numericValue = Number.parseFloat(state.state);
-
-  // Skip if state is not a valid number
-  if (Number.isNaN(numericValue)) {
-    return undefined;
-  }
-
   // Sort thresholds by value in descending order to check highest first
   const sortedThresholds = [...config.thresholds].sort(
     (a, b) => b.threshold - a.threshold,
   );
 
   for (const threshold of sortedThresholds) {
+    // Determine what value to compare against
+    const valueToCompare = threshold.attribute
+      ? state.attributes?.[threshold.attribute]
+      : state.state;
+
+    const numericValue = Number.parseFloat(String(valueToCompare ?? ''));
+
+    // Skip if value is not a valid number
+    if (Number.isNaN(numericValue)) {
+      continue;
+    }
+
     if (meetsThreshold(numericValue, threshold)) {
       return {
         color: threshold.icon_color,
@@ -89,10 +94,13 @@ export const getStateResult = (
     return undefined;
   }
 
-  const currentState = state.state;
-
   for (const stateConfig of config.states) {
-    if (stateConfig.state === currentState) {
+    // Determine what value to compare against
+    const valueToMatch = stateConfig.attribute
+      ? String(state.attributes?.[stateConfig.attribute] ?? '')
+      : state.state;
+
+    if (stateConfig.state === valueToMatch) {
       return {
         color: stateConfig.icon_color,
         icon: stateConfig.icon,

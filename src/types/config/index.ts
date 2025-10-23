@@ -102,7 +102,7 @@ export interface Config {
     title?: Record<string, string>;
   };
 
-  /** Options to enable disable features **/
+  /** Options to enable or disable features **/
   features?: Features[];
 }
 

@@ -472,5 +472,282 @@ describe('threshold-color.ts', () => {
       const result = getStateResult(entity);
       expect(result).to.be.undefined;
     });
+
+    it('should match attribute value when attribute is specified', () => {
+      const states: StateConfig[] = [
+        {
+          state: '50',
+          attribute: 'current_position',
+          icon_color: 'orange',
+          icon: 'mdi:window-shutter-settings',
+          styles: {},
+        },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'cover.window',
+          states,
+        },
+        state: {
+          entity_id: 'cover.window',
+          state: 'open',
+          domain: 'cover',
+          attributes: { current_position: 50 },
+        },
+      };
+      const result = getStateResult(entity);
+      expect(result).to.deep.equal({
+        color: 'orange',
+        icon: 'mdi:window-shutter-settings',
+        styles: {},
+      });
+    });
+
+    it('should not match attribute value when state does not match', () => {
+      const states: StateConfig[] = [
+        {
+          state: '100',
+          attribute: 'current_position',
+          icon_color: 'green',
+          styles: {},
+        },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'cover.window',
+          states,
+        },
+        state: {
+          entity_id: 'cover.window',
+          state: 'open',
+          domain: 'cover',
+          attributes: { current_position: 50 },
+        },
+      };
+      const result = getStateResult(entity);
+      expect(result).to.be.undefined;
+    });
+
+    it('should fall back to entity state when no attribute is specified', () => {
+      const states: StateConfig[] = [
+        { state: 'open', icon_color: 'green', styles: {} },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'cover.window',
+          states,
+        },
+        state: {
+          entity_id: 'cover.window',
+          state: 'open',
+          domain: 'cover',
+          attributes: { current_position: 50 },
+        },
+      };
+      const result = getStateResult(entity);
+      expect(result).to.deep.equal({
+        color: 'green',
+        icon: undefined,
+        styles: {},
+      });
+    });
+
+    it('should handle missing attribute gracefully', () => {
+      const states: StateConfig[] = [
+        {
+          state: '50',
+          attribute: 'brightness',
+          icon_color: 'yellow',
+          styles: {},
+        },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'light.test',
+          states,
+        },
+        state: {
+          entity_id: 'light.test',
+          state: 'on',
+          domain: 'light',
+          attributes: {},
+        },
+      };
+      const result = getStateResult(entity);
+      expect(result).to.be.undefined;
+    });
+  });
+
+  describe('getThresholdResult - attribute matching', () => {
+    it('should match threshold on attribute value when attribute is specified', () => {
+      const thresholds: ThresholdConfig[] = [
+        {
+          threshold: 50,
+          attribute: 'current_position',
+          icon_color: 'orange',
+          icon: 'mdi:window-shutter-settings',
+          operator: 'gte',
+        },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'cover.window',
+          thresholds,
+        },
+        state: {
+          entity_id: 'cover.window',
+          state: 'open',
+          domain: 'cover',
+          attributes: { current_position: 75 },
+        },
+      };
+      const result = getThresholdResult(entity);
+      expect(result).to.deep.equal({
+        color: 'orange',
+        icon: 'mdi:window-shutter-settings',
+        styles: undefined,
+      });
+    });
+
+    it('should not match threshold when attribute value is below threshold', () => {
+      const thresholds: ThresholdConfig[] = [
+        {
+          threshold: 50,
+          attribute: 'current_position',
+          icon_color: 'orange',
+          operator: 'gte',
+        },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'cover.window',
+          thresholds,
+        },
+        state: {
+          entity_id: 'cover.window',
+          state: 'open',
+          domain: 'cover',
+          attributes: { current_position: 25 },
+        },
+      };
+      const result = getThresholdResult(entity);
+      expect(result).to.be.undefined;
+    });
+
+    it('should handle multiple thresholds with different attributes', () => {
+      const thresholds: ThresholdConfig[] = [
+        {
+          threshold: 200,
+          attribute: 'brightness',
+          icon_color: 'yellow',
+          operator: 'gte',
+        },
+        {
+          threshold: 50,
+          attribute: 'current_position',
+          icon_color: 'orange',
+          operator: 'gte',
+        },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'cover.window',
+          thresholds,
+        },
+        state: {
+          entity_id: 'cover.window',
+          state: 'open',
+          domain: 'cover',
+          attributes: { current_position: 75, brightness: 100 },
+        },
+      };
+      const result = getThresholdResult(entity);
+      // Should match the second threshold since brightness is 100 (< 200)
+      expect(result).to.deep.equal({
+        color: 'orange',
+        icon: undefined,
+        styles: undefined,
+      });
+    });
+
+    it('should fall back to entity state when no attribute is specified', () => {
+      const thresholds: ThresholdConfig[] = [
+        { threshold: 20, icon_color: 'blue', operator: 'gte' },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'sensor.temperature',
+          thresholds,
+        },
+        state: {
+          entity_id: 'sensor.temperature',
+          state: '25',
+          domain: 'sensor',
+          attributes: { unit_of_measurement: '°C' },
+        },
+      };
+      const result = getThresholdResult(entity);
+      expect(result).to.deep.equal({
+        color: 'blue',
+        icon: undefined,
+        styles: undefined,
+      });
+    });
+
+    it('should skip threshold when attribute value is not numeric', () => {
+      const thresholds: ThresholdConfig[] = [
+        {
+          threshold: 50,
+          attribute: 'invalid_attr',
+          icon_color: 'red',
+          operator: 'gte',
+        },
+        { threshold: 10, icon_color: 'green', operator: 'gte' },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'sensor.test',
+          thresholds,
+        },
+        state: {
+          entity_id: 'sensor.test',
+          state: '15',
+          domain: 'sensor',
+          attributes: { invalid_attr: 'not_a_number' },
+        },
+      };
+      const result = getThresholdResult(entity);
+      // Should skip first threshold and match second one
+      expect(result).to.deep.equal({
+        color: 'green',
+        icon: undefined,
+        styles: undefined,
+      });
+    });
+
+    it('should handle missing attribute gracefully', () => {
+      const thresholds: ThresholdConfig[] = [
+        {
+          threshold: 50,
+          attribute: 'missing_attr',
+          icon_color: 'red',
+          operator: 'gte',
+        },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'sensor.test',
+          thresholds,
+        },
+        state: {
+          entity_id: 'sensor.test',
+          state: '15',
+          domain: 'sensor',
+          attributes: {},
+        },
+      };
+      const result = getThresholdResult(entity);
+      expect(result).to.be.undefined;
+    });
   });
 });

@@ -2,7 +2,7 @@ import type { ActionConfig } from '@hass/data/lovelace/config/action';
 import type { ComparisonOperator } from '@type/comparison';
 
 /**
- * Configuration for an individual entity including display and interaction options.
+ * Configuration for an individual entity, including display and interaction options.
  */
 export interface EntityConfig {
   /** Unique identifier for the entity */
@@ -54,11 +54,14 @@ export interface IconProperties {
  * Configuration for threshold-based coloring
  */
 export interface ThresholdConfig extends IconProperties {
-  /** Threshold value to compare against entity state */
+  /** Threshold value to compare against entity state or attribute */
   threshold: number;
 
   /** Comparison operator (default: 'gte' for greater than or equal) */
   operator?: ComparisonOperator;
+
+  /** Optional attribute name to compare instead of entity state */
+  attribute?: string;
 
   /** CSS properties to apply to the entity */
   styles?: Record<string, string>;
@@ -68,8 +71,11 @@ export interface ThresholdConfig extends IconProperties {
  * Configuration for state-based coloring
  */
 export interface StateConfig extends IconProperties {
-  /** Entity state value to match exactly */
+  /** Entity state or attribute value to match exactly */
   state: string;
+
+  /** Optional attribute name to match instead of entity state */
+  attribute?: string;
 
   /** CSS properties to apply to the entity */
   styles: Record<string, string>;
