@@ -5,7 +5,7 @@ import { css } from 'lit';
  */
 export const styles = css`
   :host {
-    width: 100%;
+    width: var(--user-entity-icon-size, 100%);
   }
 
   /* Icon container styling */

@@ -219,20 +219,22 @@ styles:
 
 Some styles use CSS variables that can be overridden:
 
-| Variable                  | Area    | Description          |
-| ------------------------- | ------- | -------------------- |
-| `--user-room-icon-size`   | card    | Size of room icon    |
-| `--user-sensor-icon-size` | sensors | Size of sensor icons |
+| Variable                  | Area        | Description          |
+| ------------------------- | ----------- | -------------------- |
+| `--user-room-icon-size`   | card        | Size of room icon    |
+| `--user-entity-icon-size` | entity_icon | Size of entity icons |
+| `--user-sensor-icon-size` | sensors     | Size of sensor icons |
 
 Example:
 
 ```yaml
 styles:
   card:
-    '--user-card-icon-size': 50% # 1/3 size
+    '--user-room-icon-size': 50% # Room icon size
   sensors:
     '--user-sensor-icon-size': 30px # Large sensor icons
   entity_icon:
+    '--user-entity-icon-size': 28px # Entity icon size
     '--mdc-icon-size': 28px # Individual icon size
 ```
 
