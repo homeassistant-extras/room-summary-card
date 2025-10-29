@@ -33,7 +33,7 @@ import { styles } from './styles';
  * - Individual sensors display with their specific state values
  * - Averaged sensors with computed averages across device classes
  * - Icon rendering with fallback support for multi-averaged sensors
- * - Feature-based configuration for hiding climate labels and sensor icons
+ * - Feature-based configuration for hiding climate labels, sensor icons, and sensor labels
  * - Proper state display delegation to the stateDisplay utility
  *
  * @version See package.json
@@ -61,6 +61,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
   private hide!: boolean;
   @property({ type: String, reflect: true })
   private layout!: string;
+  private _hideLabels!: boolean;
 
   /**
    * Returns the component's styles
@@ -78,6 +79,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
     d(this.config, 'sensor-collection', 'set hass');
     this._hass = hass;
     this.hide = hasFeature(this.config, 'hide_sensor_icons');
+    this._hideLabels = hasFeature(this.config, 'hide_sensor_labels');
     this.layout = this.config.sensor_layout ?? 'default';
   }
 
@@ -109,7 +111,8 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
       if (isMultiple) {
         return html`
           <div class="sensor">
-            ${this.renderMultiIcon(s)} ${sensorDataToDisplaySensors(s)}
+            ${this.renderMultiIcon(s)}
+            ${this._hideLabels ? nothing : sensorDataToDisplaySensors(s)}
           </div>
         `;
       }
@@ -140,7 +143,8 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
         @action=${handleClickAction(this, info)}
         .actionHandler=${actionHandler(info)}
       >
-        ${this.renderStateIcon(state)} ${stateDisplay(this._hass, state)}
+        ${this.renderStateIcon(state)}
+        ${this._hideLabels ? nothing : stateDisplay(this._hass, state)}
       </div>
     `;
   }

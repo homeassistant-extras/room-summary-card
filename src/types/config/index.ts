@@ -113,6 +113,7 @@ export type Features =
   | 'hide_climate_label'
   | 'hide_room_icon'
   | 'hide_sensor_icons'
+  | 'hide_sensor_labels'
   | 'exclude_default_entities'
   | 'skip_climate_styles'
   | 'skip_entity_styles'

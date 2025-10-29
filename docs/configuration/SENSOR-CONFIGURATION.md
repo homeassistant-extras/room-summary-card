@@ -118,6 +118,49 @@ sensor_classes:
 
 This design choice prevents confusion since averaged sensors don't represent a single entity that can be interacted with.
 
+### Sensor Display Options
+
+You can customize how sensor information is displayed using feature flags:
+
+#### Hide Sensor Icons
+
+Hide the icons next to sensor values while keeping the text labels:
+
+```yaml
+features:
+  - hide_sensor_icons
+sensors:
+  - sensor.living_room_temperature # Shows: "72°F" (no icon)
+```
+
+#### Hide Sensor Labels
+
+Hide the text labels next to sensor icons (opposite of `hide_sensor_icons`):
+
+```yaml
+features:
+  - hide_sensor_labels
+sensors:
+  - sensor.living_room_temperature # Shows: 🌡️ (icon only, no text)
+```
+
+#### Icons Only Display
+
+For a minimal icon-only display:
+
+```yaml
+features:
+  - hide_sensor_labels
+sensor_layout: bottom
+sensors:
+  - sensor.living_room_temperature
+  - sensor.living_room_humidity
+```
+
+This is useful for compact layouts where you want visual indicators without text.
+
+![Sensor Icons](../../assets/sensor-icons.png)
+
 ### Legacy Sensor Configuration (Deprecated)
 
 For backward compatibility, you can still use:

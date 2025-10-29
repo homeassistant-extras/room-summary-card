@@ -82,6 +82,8 @@ describe('sensor-collection.ts', () => {
       expect(element['_hass']).to.equal(mockHass);
       expect(hasFeatureStub.calledWith(element.config, 'hide_sensor_icons')).to
         .be.true;
+      expect(hasFeatureStub.calledWith(element.config, 'hide_sensor_labels')).to
+        .be.true;
     });
 
     it('should set layout from config', () => {
@@ -219,6 +221,60 @@ describe('sensor-collection.ts', () => {
 
       element['renderMultiIcon'](sensor);
       expect(getIconResourcesStub.calledWith(mockHass)).to.be.true;
+    });
+  });
+
+  describe('label rendering', () => {
+    beforeEach(() => {
+      element.hass = mockHass;
+    });
+
+    it('should hide labels when hide_sensor_labels is enabled for single sensors', async () => {
+      hasFeatureStub
+        .withArgs(element.config, 'hide_sensor_labels')
+        .returns(true);
+      element.hass = mockHass;
+
+      const sensor = element.sensors.individual[0]!;
+      const result = element['renderSingleSensor'](sensor as EntityState);
+
+      // The stateDisplay function should not be called when labels are hidden
+      expect(stateDisplayStub.called).to.be.false;
+    });
+
+    it('should hide labels when hide_sensor_labels is enabled for multi sensors', async () => {
+      hasFeatureStub
+        .withArgs(element.config, 'hide_sensor_labels')
+        .returns(true);
+      element.hass = mockHass;
+
+      const sensor = {
+        domain: 'sensor',
+        device_class: 'temperature',
+        states: [
+          { entity_id: 'sensor.temp1', state: '20' },
+          { entity_id: 'sensor.temp2', state: '22' },
+        ],
+        uom: '°C',
+        average: 21,
+      } as any;
+
+      const result = element['renderSensor'](sensor, true);
+
+      // The sensorDataToDisplaySensors function should not be called when labels are hidden
+      expect(sensorDataToDisplayStub.called).to.be.false;
+    });
+
+    it('should render labels when hide_sensor_labels is disabled', async () => {
+      hasFeatureStub
+        .withArgs(element.config, 'hide_sensor_labels')
+        .returns(false);
+      element.hass = mockHass;
+
+      const sensor = element.sensors.individual[0]!;
+      await fixture(element['renderSingleSensor'](sensor as EntityState));
+
+      expect(stateDisplayStub.called).to.be.true;
     });
   });
 

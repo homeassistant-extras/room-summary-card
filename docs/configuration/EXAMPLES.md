@@ -217,6 +217,22 @@ features:
   - hide_sensor_icons
 ```
 
+### Minimal Sensor Display (Icons Only)
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - hide_sensor_labels
+sensor_layout: bottom
+sensors:
+  - sensor.living_room_temperature
+  - sensor.living_room_humidity
+  - sensor.living_room_co2
+```
+
+This configuration shows only sensor icons without text labels, creating a minimal and clean appearance.
+
 ### Entity Labels with Clean Icons
 
 ```yaml

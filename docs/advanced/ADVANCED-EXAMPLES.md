@@ -503,7 +503,7 @@ entities:
     icon: mdi:thermostat
     states:
       # Match on entity state for mode
-      - state: "off"
+      - state: 'off'
         icon_color: grey
         icon: mdi:power-off
         styles:
@@ -544,7 +544,7 @@ entities:
   - entity_id: media_player.tv
     icon: mdi:television
     states:
-      - state: "off"
+      - state: 'off'
         icon_color: grey
         icon: mdi:television-off
       - state: playing
@@ -573,18 +573,18 @@ entities:
     icon: mdi:garage
     states:
       # Match on tilt attribute for partial open detection
-      - state: "0"
+      - state: '0'
         attribute: current_tilt_position
         icon_color: green
         icon: mdi:garage
         styles: {}
-      - state: "50"
+      - state: '50'
         attribute: current_tilt_position
         icon_color: orange
         icon: mdi:garage-open-variant
         styles:
           animation: pulse 2s ease-in-out infinite
-      - state: "100"
+      - state: '100'
         attribute: current_tilt_position
         icon_color: red
         icon: mdi:garage-open
@@ -593,6 +593,7 @@ entities:
 ```
 
 **How this works:**
+
 - **Covers/Blinds**: Match on `current_position` attribute (0-100) instead of state ("open"/"closed")
 - **Lights**: Apply different colors based on `brightness` attribute (0-255)
 - **Climate**: Combine state-based icons (fire/snowflake) with temperature-based color warnings
@@ -954,6 +955,27 @@ background:
   image: /local/images/utility.jpg
   opacity: 20
 ```
+
+### Minimal Sensor Icons Display
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+features:
+  - hide_sensor_labels # Show icons only, no text
+  - hide_area_stats
+sensor_layout: bottom
+sensors:
+  - sensor.bedroom_temperature
+  - sensor.bedroom_humidity
+  - sensor.bedroom_air_quality
+styles:
+  sensors:
+    gap: 15px # Space between icons
+    font-size: 24px # Larger icons
+```
+
+![Sensor Icons](../../assets/sensor-icons.png)
 
 ### Custom Thresholds
 

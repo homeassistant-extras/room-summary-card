@@ -82,6 +82,7 @@ features:
   - hide_area_stats
   - hide_room_icon
   - hide_sensor_icons
+  - hide_sensor_labels
   - exclude_default_entities
   - skip_climate_styles
   - skip_entity_styles
@@ -94,6 +95,7 @@ features:
 | hide_area_stats          | Hide the area statistics (device/entity counts)             |
 | hide_room_icon           | Hide the room icon (for cleaner layouts)                    |
 | hide_sensor_icons        | Hide the icons next to sensor values                        |
+| hide_sensor_labels       | Hide the labels next to sensor icons (opposite of hide_sensor_icons) |
 | exclude_default_entities | Don't include default light/fan entities                    |
 | skip_climate_styles      | Disable climate-based color coding & borders                |
 | skip_entity_styles       | Disable card background styling based on main entity        |

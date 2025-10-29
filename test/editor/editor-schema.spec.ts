@@ -273,6 +273,10 @@ describe('editor-schema.ts', () => {
                       value: 'hide_sensor_icons',
                     },
                     {
+                      label: 'Hide Sensor labels',
+                      value: 'hide_sensor_labels',
+                    },
+                    {
                       label: 'Exclude Default Entities',
                       value: 'exclude_default_entities',
                     },

@@ -332,7 +332,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Custom names`**: **⭐ First contributor ⭐** added `area_name` - thanks @Aulos
 - [x] **`Disable card styling`**: bug fixes and new skip_entity_styles feature - thanks @benjycov
 - [x] **`Custom icon color integration`**: support [custom-icon-color](https://github.com/Mariusthvdb/custom-icon-color) - thanks @benjycov
-- [x] **`Sensor layout options`**: flexible sensor display layouts (default, stacked, bottom) - thanks @Ltek
+- [x] **`Sensor layout options`**: flexible sensor display layouts (default, stacked, bottom) - thanks @Ltek, @zoic21
 - [x] **`Sensor averaging by device class`**: automatic averaging like HA area card - thanks @Ltek
 - [x] **`Moving away from customize.yaml`**: allowing more configuration on the card - thanks @johntdyer
 - [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo, @X1pheR, @Ltek

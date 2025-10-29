@@ -270,7 +270,8 @@ occupancy:
   icon_color: '#FF9800'
 features:
   - hide_area_stats
-  - hide_sensor_icons
+  - hide_sensor_labels # Show sensor icons only for minimal display
+sensor_layout: bottom
 ```
 
 ## Best Practices

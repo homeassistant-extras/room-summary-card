@@ -255,6 +255,19 @@ styles:
     color: blue # Blue title
 ```
 
+### Icon-Only Sensor Display
+
+```yaml
+type: custom:room-summary-card
+area: bathroom
+features:
+  - hide_sensor_labels # Hide text labels, show icons only
+sensor_layout: bottom
+styles:
+  sensors:
+    gap: 20px # Space between icons
+```
+
 ## Tips and Best Practices
 
 ### Color Values
