@@ -11,6 +11,7 @@ import { getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
+import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { styles } from './styles';
@@ -140,6 +141,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       : this.entity?.state?.attributes?.entity_picture;
 
     if (this._image) {
+      d(this._config, 'room-state-icon - image', this._image);
       this.image = true;
       this.iconBackground = true;
       this._hideIconContent = true;
@@ -169,6 +171,8 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       this._image,
     );
 
+    d(this._config, 'room-state-icon - iconStyle', iconStyle);
+
     const iconStyles = {
       ...this._config?.styles?.entity_icon,
       ...thresholdResult?.styles,
@@ -191,7 +195,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
             ></ha-state-icon>`}
         ${this._showLabels
           ? html`<div class="entity-label">
-              ${computeEntityName(state, this._hass, this._config)}
+              ${computeEntityName(state, this._hass)}
             </div>`
           : nothing}
       </div>
