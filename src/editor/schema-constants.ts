@@ -73,6 +73,10 @@ export const FEATURES: HaFormSchema = {
               label: 'Multi-Light Background',
               value: 'multi_light_background',
             },
+            {
+              label: 'Ignore Entity',
+              value: 'ignore_entity',
+            },
           ],
         },
       },

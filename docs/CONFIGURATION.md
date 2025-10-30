@@ -87,20 +87,28 @@ features:
   - skip_climate_styles
   - skip_entity_styles
   - multi_light_background
+  - ignore_entity
 ```
 
-| Feature                  | Description                                                 |
-| ------------------------ | ----------------------------------------------------------- |
-| hide_climate_label       | Hide the climate/sensor information                         |
-| hide_area_stats          | Hide the area statistics (device/entity counts)             |
-| hide_room_icon           | Hide the room icon (for cleaner layouts)                    |
-| hide_sensor_icons        | Hide the icons next to sensor values                        |
-| hide_sensor_labels       | Hide the labels next to sensor icons (opposite of hide_sensor_icons) |
-| exclude_default_entities | Don't include default light/fan entities                    |
-| skip_climate_styles      | Disable climate-based color coding & borders                |
-| skip_entity_styles       | Disable card background styling based on main entity        |
-| show_entity_labels       | Show entity labels under each entity icon                   |
-| multi_light_background   | Enable background lighting when any light in the room is on |
+| Feature                  | Description                                                                                    |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| hide_climate_label       | Hide the climate/sensor information                                                            |
+| hide_area_stats          | Hide the area statistics (device/entity counts)                                                |
+| hide_room_icon           | Hide the room icon (for cleaner layouts)                                                       |
+| hide_sensor_icons        | Hide the icons next to sensor values                                                           |
+| hide_sensor_labels       | Hide the labels next to sensor icons (opposite of hide_sensor_icons)                           |
+| exclude_default_entities | Don't include default light/fan entities                                                       |
+| skip_climate_styles      | Disable climate-based color coding & borders                                                   |
+| skip_entity_styles       | Disable card background styling based on main entity                                           |
+| show_entity_labels       | Show entity labels under each entity icon                                                      |
+| multi_light_background   | Enable background lighting when any light in the room is on                                    |
+| ignore_entity            | Ignore the custom entity configuration and use default room entity (useful with auto-entities) |
+
+### Using `ignore_entity` with Auto-Entities
+
+The `ignore_entity` feature is particularly useful when using the `auto-entities` card to automatically generate room cards. It allows you to specify an entity in the auto-entities configuration while still using the default room entity for the card display.
+
+See [Ignore Entities](./configuration/IGNORE-ENTITY.md) documentation.
 
 ## Sensor Classes
 

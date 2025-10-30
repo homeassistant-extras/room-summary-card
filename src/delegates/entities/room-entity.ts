@@ -1,3 +1,4 @@
+import { hasFeature } from '@config/feature';
 import { getArea } from '@delegates/retrievers/area';
 import { getState } from '@delegates/retrievers/state';
 import type { ActionConfig } from '@hass/data/lovelace/config/action';
@@ -48,7 +49,7 @@ export const getRoomEntity = (
   };
 
   // Handle different entity configuration formats
-  if (config.entity) {
+  if (config.entity && !hasFeature(config, 'ignore_entity')) {
     if (typeof config.entity === 'string') {
       // String format
       return {

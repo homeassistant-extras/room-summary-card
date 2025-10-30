@@ -248,4 +248,37 @@ describe('room-entity.ts', () => {
       expectedActionConfig.double_tap_action,
     );
   });
+
+  it('should ignore custom entity when ignore_entity feature is enabled', () => {
+    const config: Config = {
+      area: 'test_room',
+      entity: 'light.custom_entity',
+      features: ['ignore_entity'],
+    };
+
+    const roomEntity = getRoomEntity(mockHass, config);
+
+    // Should return default room entity instead of custom entity
+    expect(roomEntity.config.entity_id).to.equal('light.test_room_light');
+    expect(roomEntity.config.icon).to.equal('mdi:room');
+    expect(roomEntity.state?.state).to.equal('on');
+  });
+
+  it('should ignore custom entity object when ignore_entity feature is enabled', () => {
+    const config: Config = {
+      area: 'test_room',
+      entity: {
+        entity_id: 'light.custom_entity',
+        icon: 'mdi:override',
+      },
+      features: ['ignore_entity'],
+    };
+
+    const roomEntity = getRoomEntity(mockHass, config);
+
+    // Should return default room entity instead of custom entity
+    expect(roomEntity.config.entity_id).to.equal('light.test_room_light');
+    expect(roomEntity.config.icon).to.equal('mdi:room');
+    expect(roomEntity.state?.state).to.equal('on');
+  });
 });
