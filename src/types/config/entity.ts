@@ -1,13 +1,11 @@
 import type { ActionConfig } from '@hass/data/lovelace/config/action';
 import type { ComparisonOperator } from '@type/comparison';
+import type { BaseEntityConfig } from './common';
 
 /**
  * Configuration for an individual entity, including display and interaction options.
  */
-export interface EntityConfig {
-  /** Unique identifier for the entity */
-  entity_id: string;
-
+export interface EntityConfig extends BaseEntityConfig {
   /** Custom icon to display for the entity */
   icon?: string;
 
@@ -19,9 +17,6 @@ export interface EntityConfig {
 
   /** Threshold-based color configuration */
   thresholds?: ThresholdConfig[];
-
-  /** State-based color configuration */
-  states?: StateConfig[];
 
   /** Action to perform on tap */
   tap_action?: ActionConfig;

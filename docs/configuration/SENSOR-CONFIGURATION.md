@@ -24,6 +24,43 @@ sensors:
   - entity_id: sensor.living_room_co2
 ```
 
+#### Object Format with State-Based Styling
+
+You can configure sensors with state-based styling, similar to entity configuration:
+
+```yaml
+sensors:
+  - entity_id: sensor.door_sensor
+    states:
+      - state: 'on'
+        icon_color: red
+        icon: mdi:door-open
+        styles:
+          background-color: rgba(255, 0, 0, 0.2)
+          border: 1px solid red
+      - state: 'off'
+        icon_color: green
+        icon: mdi:door-closed
+        styles:
+          background-color: rgba(0, 255, 0, 0.2)
+  - entity_id: sensor.temperature
+    states:
+      - state: '75'
+        icon_color: orange
+        icon: mdi:thermometer-alert
+        styles:
+          padding: 4px
+          border-radius: 4px
+```
+
+![Sensors Config](../../assets/sensors-config.gif)
+
+When the sensor state matches a configured state, the card will:
+
+- Display the custom icon (e.g., `mdi:door-open` when state is "on")
+- Apply the custom icon color
+- Apply any CSS styles defined in the `styles` property
+
 #### Mixed Format
 
 You can mix both formats in the same configuration:

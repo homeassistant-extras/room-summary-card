@@ -72,6 +72,27 @@ sensors:
 sensor_layout: bottom
 ```
 
+#### Sensors with State-Based Styling
+
+Sensors can be configured with state-based styling to change icons and styles based on sensor state:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+sensors:
+  - entity_id: sensor.door_sensor
+    states:
+      - state: "on"
+        icon: mdi:door-open
+        icon_color: red
+        styles:
+          background-color: rgba(255, 0, 0, 0.2)
+      - state: "off"
+        icon: mdi:door-closed
+        icon_color: green
+sensor_layout: bottom
+```
+
 ### With Custom Thresholds
 
 ```yaml

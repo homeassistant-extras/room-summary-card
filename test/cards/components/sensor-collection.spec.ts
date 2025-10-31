@@ -6,6 +6,7 @@ import * as sensorUtilsModule from '@delegates/utils/sensor-utils';
 import type { HomeAssistant } from '@hass/types';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
+import * as thresholdColorModule from '@theme/threshold-color';
 import * as styleConverterModule from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
@@ -177,6 +178,8 @@ describe('sensor-collection.ts', () => {
       // Verify stylesToHostCss is called with config.styles.sensors
       expect(stylesToHostCssStub.calledWith({ 'font-size': '14px' })).to.be
         .true;
+
+      stylesToHostCssStub.restore();
     });
   });
 
@@ -317,6 +320,210 @@ describe('sensor-collection.ts', () => {
       expect(entityInfo.config.entity_id).to.equal('sensor.humidity');
       expect(entityInfo.config.tap_action.action).to.equal('more-info');
       expect(entityInfo.state).to.equal(sensor);
+    });
+  });
+
+  describe('state-based sensor styling', () => {
+    let getStateResultStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      element.hass = mockHass;
+      getStateResultStub = stub(thresholdColorModule, 'getStateResult');
+    });
+
+    afterEach(() => {
+      getStateResultStub.restore();
+    });
+
+    it('should apply custom icon when state matches', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.humidity',
+            states: [
+              {
+                state: '45',
+                icon_color: 'blue',
+                icon: 'mdi:water',
+                styles: {},
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.humidity', state: '45' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+      };
+
+      getStateResultStub.returns({
+        icon: 'mdi:water',
+        color: 'blue',
+        styles: {},
+      });
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Should render ha-icon with custom icon instead of ha-state-icon
+      const icon = el.querySelector('ha-state-icon');
+      expect(icon).to.exist;
+      // ha-icon uses property binding, not attribute
+      expect((icon as any)?.icon).to.equal('mdi:water');
+    });
+
+    it('should apply styles when state matches', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.humidity',
+            states: [
+              {
+                state: '45',
+                icon_color: 'blue',
+                icon: 'mdi:water',
+                styles: { 'background-color': 'lightblue', padding: '4px' },
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.humidity', state: '45' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+      };
+
+      getStateResultStub.returns({
+        icon: 'mdi:water',
+        color: 'blue',
+        styles: { 'background-color': 'lightblue', padding: '4px' },
+      });
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Check that styles are applied to the sensor div
+      // The element itself is the sensor div
+      expect(el.tagName).to.equal('DIV');
+      expect(el.classList.contains('sensor')).to.be.true;
+      // Check that styleMap was called (styles may be applied via Lit's styleMap directive)
+      // In the test environment, we verify getStateResult was called with correct config
+      expect(getStateResultStub.called).to.be.true;
+    });
+
+    it('should use default icon when no state matches', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.humidity',
+            states: [
+              {
+                state: '50',
+                icon_color: 'blue',
+                icon: 'mdi:water',
+                styles: {},
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.humidity', state: '45' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+      };
+
+      getStateResultStub.returns(undefined);
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Should render ha-state-icon (default) when no state matches
+      const stateIcon = el.querySelector('ha-state-icon');
+      expect(stateIcon).to.exist;
+    });
+
+    it('should handle sensor config lookup correctly', () => {
+      element.config = {
+        sensors: [
+          'sensor.temp1', // String format
+          {
+            entity_id: 'sensor.humidity',
+            states: [
+              {
+                state: '45',
+                icon_color: 'blue',
+                icon: 'mdi:water',
+                styles: {},
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      // Should return undefined for string format sensor
+      const tempConfig = element['getSensorConfig']('sensor.temp1');
+      expect(tempConfig).to.be.undefined;
+
+      // Should return config for object format sensor
+      const humidityConfig = element['getSensorConfig']('sensor.humidity');
+      expect(humidityConfig).to.exist;
+      expect(humidityConfig?.entity_id).to.equal('sensor.humidity');
+      expect(humidityConfig?.states).to.have.lengthOf(1);
+    });
+
+    it('should handle sensors without state config', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.humidity',
+            // No states property
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.humidity', state: '45' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+      };
+
+      getStateResultStub.returns(undefined);
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Should render normally without custom styling
+      // The element itself is the sensor div
+      expect(el.tagName).to.equal('DIV');
+      expect(el.classList.contains('sensor')).to.be.true;
+      const stateIcon = el.querySelector('ha-state-icon');
+      expect(stateIcon).to.exist;
     });
   });
 });

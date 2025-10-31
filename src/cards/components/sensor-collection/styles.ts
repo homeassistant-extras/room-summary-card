@@ -73,6 +73,7 @@ export const styles = css`
 
   .sensor ha-state-icon,
   .sensor ha-icon {
+    color: var(--sensor-icon-color);
     flex-shrink: 0;
     transition:
       transform 150ms ease,

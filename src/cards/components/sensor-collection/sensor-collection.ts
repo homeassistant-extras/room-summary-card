@@ -13,13 +13,16 @@ import {
 } from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
 import { stateDisplay } from '@html/state-display';
+import { getStateResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
+import type { SensorConfig } from '@type/config/sensor';
 import type { EntityInformation, EntityState } from '@type/room';
 import type { AveragedSensor, SensorData } from '@type/sensor';
 import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { until } from 'lit/directives/until.js';
 import { styles } from './styles';
 
@@ -127,26 +130,57 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
   }
 
   private renderSingleSensor(state: EntityState): TemplateResult {
+    // Look up sensor config from config.sensors
+    const sensorConfig = this.getSensorConfig(state.entity_id);
+
+    // Create EntityInformation with sensor config for state-based styling
     const info: EntityInformation = {
       config: {
         entity_id: state.entity_id,
         tap_action: {
           action: 'more-info',
         },
+        states: sensorConfig?.states,
       },
       state: state,
     };
 
+    // Get state-based styling result
+    const stateResult = getStateResult(info);
+
     return html`
       <div
         class="sensor"
+        style=${styleMap({
+          '--sensor-icon-color': stateResult?.color,
+          ...stateResult?.styles,
+        })}
         @action=${handleClickAction(this, info)}
         .actionHandler=${actionHandler(info)}
       >
-        ${this.renderStateIcon(state)}
+        ${this.renderStateIcon(state, stateResult?.icon)}
         ${this._hideLabels ? nothing : stateDisplay(this._hass, state)}
       </div>
     `;
+  }
+
+  /**
+   * Gets the sensor configuration for a given entity ID
+   * @param entityId - The entity ID to look up
+   * @returns The SensorConfig if found, undefined otherwise
+   */
+  private getSensorConfig(entityId: string): SensorConfig | undefined {
+    if (!this.config.sensors) return undefined;
+
+    const sensor = this.config.sensors.find((s) => {
+      const sensorEntityId = typeof s === 'string' ? s : s.entity_id;
+      return sensorEntityId === entityId;
+    });
+
+    // Return undefined if not found or if it's a string (no config)
+    if (!sensor || typeof sensor === 'string') return undefined;
+
+    return sensor;
   }
 
   private renderMultiIcon(
@@ -172,11 +206,15 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
     return html`${until(iconPromise)}`;
   }
 
-  private renderStateIcon(state?: any): TemplateResult | typeof nothing {
+  private renderStateIcon(
+    state?: any,
+    icon?: string,
+  ): TemplateResult | typeof nothing {
     if (this.hide || !state) return nothing;
     return html`<ha-state-icon
       .hass=${this._hass}
       .stateObj=${state}
+      .icon=${icon}
     ></ha-state-icon>`;
   }
 }
