@@ -4,13 +4,35 @@ The card supports two types of sensor display:
 
 ### Individual Sensors (`sensors`)
 
-Display specific sensor entities in your preferred order:
+Display specific sensor entities in your preferred order. Sensors can be specified in two ways:
+
+#### Simple String Format
 
 ```yaml
 sensors:
   - sensor.living_room_temperature_main # Specific sensor
   - sensor.living_room_humidity_main # Specific sensor
   - sensor.living_room_co2 # Additional sensor
+```
+
+#### Object Format
+
+```yaml
+sensors:
+  - entity_id: sensor.living_room_temperature_main
+  - entity_id: sensor.living_room_humidity_main
+  - entity_id: sensor.living_room_co2
+```
+
+#### Mixed Format
+
+You can mix both formats in the same configuration:
+
+```yaml
+sensors:
+  - sensor.living_room_temperature_main # String format
+  - entity_id: sensor.living_room_humidity_main # Object format
+  - sensor.living_room_co2 # String format
 ```
 
 ### Averaged Sensors (`sensor_classes`)
@@ -31,6 +53,7 @@ You can use both together - individual sensors display first, then averages:
 ```yaml
 sensors:
   - sensor.living_room_co2 # Shown first
+  - entity_id: sensor.living_room_pressure # Object format also supported
 sensor_classes:
   - temperature # Averaged, shown after individual
   - humidity # Averaged, shown after individual

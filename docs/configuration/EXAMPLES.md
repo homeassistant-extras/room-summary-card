@@ -60,6 +60,18 @@ sensors:
 sensor_layout: bottom
 ```
 
+Sensors can also be specified using object format:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+sensors:
+  - entity_id: sensor.living_room_temperature
+  - entity_id: sensor.living_room_humidity
+  - entity_id: sensor.living_room_co2
+sensor_layout: bottom
+```
+
 ### With Custom Thresholds
 
 ```yaml

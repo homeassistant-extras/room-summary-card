@@ -3,6 +3,7 @@ import { getDevice } from '@delegates/retrievers/device';
 import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
 import type { Config } from '@type/config';
+import type { SensorConfig } from '@type/config/sensor';
 import type { EntityState } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { calculateAverages } from './sensor-averages';
@@ -43,10 +44,18 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     configuredLightIds = config.lights;
   }
 
+  // Helper function to extract entity_id from string or SensorConfig
+  const getSensorEntityId = (sensor: string | SensorConfig): string => {
+    return typeof sensor === 'string' ? sensor : sensor.entity_id;
+  };
+
+  // Get array of entity IDs from config.sensors for quick lookup
+  const configSensorIds = config.sensors?.map(getSensorEntityId) || [];
+
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
     // Check if this sensor is explicitly configured
-    const isConfigSensor = config.sensors?.includes(entity.entity_id);
+    const isConfigSensor = configSensorIds.includes(entity.entity_id);
     const device = getDevice(hass.devices, entity.device_id);
     const isInArea = [entity.area_id, device?.area_id].includes(config.area);
 
@@ -105,8 +114,8 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
   // Sort config sensors by their order in the config array
   configOrderedSensors.sort((a, b) => {
-    const indexA = config.sensors?.indexOf(a.entity_id) ?? -1;
-    const indexB = config.sensors?.indexOf(b.entity_id) ?? -1;
+    const indexA = configSensorIds?.indexOf(a.entity_id) ?? -1;
+    const indexB = configSensorIds?.indexOf(b.entity_id) ?? -1;
     return indexA - indexB;
   });
 

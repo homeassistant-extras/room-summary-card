@@ -5,6 +5,7 @@
 
 import type { ComparisonOperator } from '../comparison';
 import type { EntityConfig } from './entity';
+import type { SensorConfig } from './sensor';
 
 /**
  * Configuration settings for entity display and behavior within Home Assistant.
@@ -28,8 +29,8 @@ export interface Config {
   /** List of entity IDs that are experiencing issues */
   problem_entities?: string[];
 
-  /** Array of sensor entity IDs to display in the label area */
-  sensors?: string[];
+  /** Array of sensor entity IDs or sensor configurations to display in the label area */
+  sensors?: (string | SensorConfig)[];
 
   /** Array of sensor device classes to automatically find and average (default: ['temperature', 'humidity']) */
   sensor_classes?: string[];

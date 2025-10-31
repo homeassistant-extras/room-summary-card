@@ -317,7 +317,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Card Editor`**: ability to use the HA card editor. - thanks @elsilius
 - [x] **`Test on other themes`**: make sure it works elsewhere. - thanks @tardis89, @avatar25pl
 - [x] **`Flags`**: ability to disable features.
-- [x] **`Multiple sensors`**: support for displaying multiple sensors in the label area. - thanks @fctruter, @LE-tarantino
+- [x] **`Multiple sensors`**: support for displaying multiple sensors in the label area. - thanks @fctruter, @LE-tarantino, @zoic21
 - [x] **`Climate entity icon styling`**: climate entity will light up icon - thanks @murriano
 - [x] **`Climate Threshold tweaks & improvements`**: making this feature better and better - thanks @LE-tarantino, @ma-gu-16, @wmtech-1, @snotgun
 - [x] **`Area name display`**: use area name instead of area ID on card - thanks @LE-tarantino

@@ -192,6 +192,42 @@ describe('get-sensors.ts', () => {
     expect(result.individual[1]!.entity_id).to.equal('sensor.custom_sensor_1');
   });
 
+  it('should handle SensorConfig format in sensors array', () => {
+    const config: Config = {
+      area: 'living_room',
+      sensors: [
+        { entity_id: 'sensor.custom_sensor_2' },
+        { entity_id: 'sensor.custom_sensor_1' },
+      ],
+    };
+
+    const result = getSensors(mockHass, config);
+
+    expect(result.individual).to.have.lengthOf(2);
+    expect(result.individual[0]!.entity_id).to.equal('sensor.custom_sensor_2');
+    expect(result.individual[1]!.entity_id).to.equal('sensor.custom_sensor_1');
+  });
+
+  it('should handle mixed string and SensorConfig formats in sensors array', () => {
+    const config: Config = {
+      area: 'living_room',
+      sensors: [
+        'sensor.custom_sensor_2',
+        { entity_id: 'sensor.custom_sensor_1' },
+        'sensor.living_room_temperature',
+      ],
+    };
+
+    const result = getSensors(mockHass, config);
+
+    expect(result.individual).to.have.lengthOf(3);
+    expect(result.individual[0]!.entity_id).to.equal('sensor.custom_sensor_2');
+    expect(result.individual[1]!.entity_id).to.equal('sensor.custom_sensor_1');
+    expect(result.individual[2]!.entity_id).to.equal(
+      'sensor.living_room_temperature',
+    );
+  });
+
   it('should exclude sensors from other areas', () => {
     const config: Config = {
       area: 'living_room',
@@ -210,6 +246,20 @@ describe('get-sensors.ts', () => {
     const config: Config = {
       area: 'living_room',
       sensors: ['sensor.other_area_temp'], // This is in kitchen area
+    };
+
+    const result = getSensors(mockHass, config);
+
+    // Should include the kitchen sensor since it's explicitly configured
+    expect(result.individual.map((s) => s.entity_id)).to.deep.equal([
+      'sensor.other_area_temp',
+    ]);
+  });
+
+  it('should include sensors from other areas when configured with SensorConfig format', () => {
+    const config: Config = {
+      area: 'living_room',
+      sensors: [{ entity_id: 'sensor.other_area_temp' }], // This is in kitchen area
     };
 
     const result = getSensors(mockHass, config);
