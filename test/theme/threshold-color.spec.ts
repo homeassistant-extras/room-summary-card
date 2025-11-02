@@ -1,4 +1,5 @@
 import {
+  getEntityLabel,
   getStateColor,
   getStateResult,
   getThresholdColor,
@@ -343,6 +344,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'orange',
         icon: 'mdi:fire',
+        label: undefined,
         styles: undefined,
       });
     });
@@ -355,6 +357,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'orange',
         icon: undefined,
+        label: undefined,
         styles: undefined,
       });
     });
@@ -372,6 +375,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'green',
         icon: 'mdi:play',
+        label: undefined,
         styles: {},
       });
     });
@@ -389,6 +393,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'red',
         icon: 'mdi:fire',
+        label: undefined,
         styles: undefined,
       });
     });
@@ -446,6 +451,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'green',
         icon: 'mdi:play',
+        label: undefined,
         styles: {},
       });
     });
@@ -459,6 +465,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'green',
         icon: undefined,
+        label: undefined,
         styles: {},
       });
     });
@@ -499,6 +506,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'orange',
         icon: 'mdi:window-shutter-settings',
+        label: undefined,
         styles: {},
       });
     });
@@ -548,6 +556,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'green',
         icon: undefined,
+        label: undefined,
         styles: {},
       });
     });
@@ -605,6 +614,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'orange',
         icon: 'mdi:window-shutter-settings',
+        label: undefined,
         styles: undefined,
       });
     });
@@ -666,6 +676,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'orange',
         icon: undefined,
+        label: undefined,
         styles: undefined,
       });
     });
@@ -690,6 +701,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'blue',
         icon: undefined,
+        label: undefined,
         styles: undefined,
       });
     });
@@ -721,6 +733,7 @@ describe('threshold-color.ts', () => {
       expect(result).to.deep.equal({
         color: 'green',
         icon: undefined,
+        label: undefined,
         styles: undefined,
       });
     });
@@ -748,6 +761,149 @@ describe('threshold-color.ts', () => {
       };
       const result = getThresholdResult(entity);
       expect(result).to.be.undefined;
+    });
+  });
+
+  describe('getEntityLabel', () => {
+    const createEntity = (
+      state: string,
+      thresholds?: ThresholdConfig[],
+      states?: StateConfig[],
+      label?: string,
+    ): EntityInformation => ({
+      config: {
+        entity_id: 'sensor.test',
+        thresholds,
+        states,
+        label,
+      },
+      state: {
+        entity_id: 'sensor.test',
+        state,
+        domain: 'sensor',
+        attributes: {},
+      },
+    });
+
+    it('should return label from state result when state matches with label', () => {
+      const states: StateConfig[] = [
+        {
+          state: 'running',
+          icon_color: 'green',
+          icon: 'mdi:play',
+          label: 'Running Status',
+          styles: {},
+        },
+      ];
+      const entity = createEntity('running', undefined, states);
+      const result = getStateResult(entity);
+      const label = getEntityLabel(entity, result);
+      expect(label).to.equal('Running Status');
+    });
+
+    it('should return label from threshold result when threshold matches with label', () => {
+      const thresholds: ThresholdConfig[] = [
+        {
+          threshold: 50,
+          icon_color: 'orange',
+          icon: 'mdi:fire',
+          label: 'High Temperature',
+        },
+      ];
+      const entity = createEntity('75', thresholds);
+      const result = getThresholdResult(entity);
+      const label = getEntityLabel(entity, result);
+      expect(label).to.equal('High Temperature');
+    });
+
+    it('should return config label when no state/threshold label exists', () => {
+      const states: StateConfig[] = [
+        { state: 'running', icon_color: 'green', icon: 'mdi:play', styles: {} },
+      ];
+      const entity = createEntity('running', undefined, states, 'Custom Label');
+      const result = getStateResult(entity);
+      const label = getEntityLabel(entity, result);
+      expect(label).to.equal('Custom Label');
+    });
+
+    it('should prioritize state label over config label', () => {
+      const states: StateConfig[] = [
+        {
+          state: 'running',
+          icon_color: 'green',
+          icon: 'mdi:play',
+          label: 'State Label',
+          styles: {},
+        },
+      ];
+      const entity = createEntity('running', undefined, states, 'Config Label');
+      const result = getStateResult(entity);
+      const label = getEntityLabel(entity, result);
+      expect(label).to.equal('State Label');
+    });
+
+    it('should prioritize threshold label over config label', () => {
+      const thresholds: ThresholdConfig[] = [
+        {
+          threshold: 50,
+          icon_color: 'orange',
+          icon: 'mdi:fire',
+          label: 'Threshold Label',
+        },
+      ];
+      const entity = createEntity('75', thresholds, undefined, 'Config Label');
+      const result = getThresholdResult(entity);
+      const label = getEntityLabel(entity, result);
+      expect(label).to.equal('Threshold Label');
+    });
+
+    it('should return undefined when no label is configured', () => {
+      const states: StateConfig[] = [
+        { state: 'running', icon_color: 'green', icon: 'mdi:play', styles: {} },
+      ];
+      const entity = createEntity('running', undefined, states);
+      const result = getStateResult(entity);
+      const label = getEntityLabel(entity, result);
+      expect(label).to.be.undefined;
+    });
+
+    it('should include label in getStateResult when configured', () => {
+      const states: StateConfig[] = [
+        {
+          state: 'running',
+          icon_color: 'green',
+          icon: 'mdi:play',
+          label: 'Running',
+          styles: {},
+        },
+      ];
+      const entity = createEntity('running', undefined, states);
+      const result = getStateResult(entity);
+      expect(result).to.deep.equal({
+        color: 'green',
+        icon: 'mdi:play',
+        label: 'Running',
+        styles: {},
+      });
+    });
+
+    it('should include label in getThresholdResult when configured', () => {
+      const thresholds: ThresholdConfig[] = [
+        {
+          threshold: 50,
+          icon_color: 'orange',
+          icon: 'mdi:fire',
+          label: 'High Temp',
+        },
+      ];
+      const entity = createEntity('75', thresholds);
+      const result = getThresholdResult(entity);
+      expect(result).to.deep.equal({
+        color: 'orange',
+        icon: 'mdi:fire',
+        label: 'High Temp',
+        styles: undefined,
+      });
     });
   });
 });

@@ -13,7 +13,7 @@ import {
 } from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
 import { stateDisplay } from '@html/state-display';
-import { getStateResult } from '@theme/threshold-color';
+import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { SensorConfig } from '@type/config/sensor';
@@ -140,28 +140,47 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
         tap_action: {
           action: 'more-info',
         },
+        label: sensorConfig?.label,
         states: sensorConfig?.states,
       },
       state: state,
     };
 
-    // Get state-based styling result
-    const stateResult = getStateResult(info);
+    // Get state/threshold-based styling result
+    const result = getThresholdResult(info);
+
+    // Get label (priority: state/threshold label > config label)
+    const label = getEntityLabel(info, result);
 
     return html`
       <div
         class="sensor"
         style=${styleMap({
-          '--sensor-icon-color': stateResult?.color,
-          ...stateResult?.styles,
+          '--sensor-icon-color': result?.color,
+          ...result?.styles,
         })}
         @action=${handleClickAction(this, info)}
         .actionHandler=${actionHandler(info)}
       >
-        ${this.renderStateIcon(state, stateResult?.icon)}
-        ${this._hideLabels ? nothing : stateDisplay(this._hass, state)}
+        ${this.renderStateIcon(state, result?.icon)}
+        ${this.renderSensorLabel(state, label)}
       </div>
     `;
+  }
+
+  /**
+   * Renders the sensor label with proper fallback logic
+   * @param state - The entity state
+   * @param label - The configured label (if any)
+   * @returns The label content, state display, or nothing if labels are hidden
+   */
+  private renderSensorLabel(
+    state: EntityState,
+    label?: string,
+  ): TemplateResult | typeof nothing {
+    if (this._hideLabels) return nothing;
+    if (label) return html`${label}`;
+    return stateDisplay(this._hass, state);
   }
 
   /**

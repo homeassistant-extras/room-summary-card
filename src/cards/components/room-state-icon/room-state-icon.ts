@@ -7,7 +7,7 @@ import {
 import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
-import { getThresholdResult } from '@theme/threshold-color';
+import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
@@ -178,6 +178,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       ...thresholdResult?.styles,
     };
 
+    // Get label (priority: state/threshold label > config label > entity name)
+    const label = this._showLabels
+      ? getEntityLabel(this.entity, thresholdResult) ||
+        computeEntityName(state, this._hass)
+      : undefined;
+
     return html`
       ${stylesToHostCss(iconStyles)}
       <div
@@ -193,11 +199,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
               .stateObj=${state}
               .icon=${thresholdResult?.icon || this.entity.config.icon}
             ></ha-state-icon>`}
-        ${this._showLabels
-          ? html`<div class="entity-label">
-              ${computeEntityName(state, this._hass)}
-            </div>`
-          : nothing}
+        ${label ? html`<div class="entity-label">${label}</div>` : nothing}
       </div>
     `;
   }

@@ -37,41 +37,38 @@ export type EntityFeatures = 'use_entity_icon';
 /**
  * Common icon properties for state and threshold configurations
  */
-export interface IconProperties {
+export interface IconStyleProperties {
   /** Color to use when this condition is met */
   icon_color: string;
 
   /** Icon to use when this condition is met */
   icon?: string;
-}
 
-/**
- * Configuration for threshold-based coloring
- */
-export interface ThresholdConfig extends IconProperties {
-  /** Threshold value to compare against entity state or attribute */
-  threshold: number;
-
-  /** Comparison operator (default: 'gte' for greater than or equal) */
-  operator?: ComparisonOperator;
-
-  /** Optional attribute name to compare instead of entity state */
+  /** Optional attribute name to match instead of entity state */
   attribute?: string;
+
+  /** Custom label to display when this state matches */
+  label?: string;
 
   /** CSS properties to apply to the entity */
   styles?: Record<string, string>;
 }
 
 /**
+ * Configuration for threshold-based coloring
+ */
+export interface ThresholdConfig extends IconStyleProperties {
+  /** Threshold value to compare against entity state or attribute */
+  threshold: number;
+
+  /** Comparison operator (default: 'gte' for greater than or equal) */
+  operator?: ComparisonOperator;
+}
+
+/**
  * Configuration for state-based coloring
  */
-export interface StateConfig extends IconProperties {
+export interface StateConfig extends IconStyleProperties {
   /** Entity state or attribute value to match exactly */
   state: string;
-
-  /** Optional attribute name to match instead of entity state */
-  attribute?: string;
-
-  /** CSS properties to apply to the entity */
-  styles: Record<string, string>;
 }

@@ -82,12 +82,12 @@ area: living_room
 sensors:
   - entity_id: sensor.door_sensor
     states:
-      - state: "on"
+      - state: 'on'
         icon: mdi:door-open
         icon_color: red
         styles:
           background-color: rgba(255, 0, 0, 0.2)
-      - state: "off"
+      - state: 'off'
         icon: mdi:door-closed
         icon_color: green
 sensor_layout: bottom

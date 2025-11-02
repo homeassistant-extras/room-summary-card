@@ -54,24 +54,29 @@ entities:
 
 ### 3. State-Based Colors and Icons
 
-Configure colors and icons that match exact entity states (perfect for non-numeric sensors):
+Configure colors, icons, and labels that match exact entity states (perfect for non-numeric sensors):
 
 ```yaml
 entities:
   - entity_id: sensor.washing_machine_state
+    label: 'Washing Machine' # Fallback label
     states:
       - state: running
         icon_color: green
         icon: mdi:play
+        label: "It's going" # Custom label when state is "running"
       - state: rinsing
         icon_color: orange
         icon: mdi:sync
+        label: 'Splish Splash' # Custom label when state is "rinsing"
       - state: spinning
         icon_color: blue
         icon: mdi:rotate-3d-variant
+        label: 'Weee' # Custom label when state is "spinning"
       - state: finished
         icon_color: purple
         icon: mdi:check-circle
+        label: 'Empty Me!' # Custom label when state is "finished"
 ```
 
 **State matching is case-sensitive** and works with any string state value:
@@ -79,6 +84,7 @@ entities:
 ```yaml
 entities:
   - entity_id: person.john
+    label: 'John' # Fallback label
     states:
       - state: home
         icon_color: green
@@ -126,26 +132,31 @@ The `styles` property accepts any CSS property-value pairs and applies them dire
 
 ![Thresholds](../../assets/thresholds.gif)
 
-Configure dynamic colors and icons based on numeric sensor values:
+Configure dynamic colors, icons, and labels based on numeric sensor values:
 
 ```yaml
 entities:
   - entity_id: sensor.battery_level
+    label: 'Battery' # Fallback label
     thresholds:
       - threshold: 80
         icon_color: green
         icon: mdi:battery-high
+        label: 'High' # Custom label when battery >= 80%
       - threshold: 50
         icon_color: orange
         icon: mdi:battery-medium
+        label: 'Medium' # Custom label when battery >= 50%
       - threshold: 20
         icon_color: red
         icon: mdi:battery-low
+        label: 'Low' # Custom label when battery >= 20%
         styles:
           animation: pulse 2s ease-in-out infinite
       - threshold: 10
         icon_color: red
         icon: mdi:battery-alert
+        label: 'Critical' # Custom label when battery >= 10%
         styles:
           animation: shake 1s ease-in-out infinite
           transform: scale(1.1)

@@ -15,12 +15,12 @@ entities:
     type: custom:room-summary-card
     area: dining_room
     features:
-     - ignore_entity
+      - ignore_entity
   - entity: input_boolean.gina_mute
     type: custom:room-summary-card
     area: living_room
     features:
-     - ignore_entity
+      - ignore_entity
 sort:
   method: state
   reverse: true
@@ -31,7 +31,7 @@ In this example, the cards are filtered and sorted based on the specified entiti
 ## How It Works
 
 When `ignore_entity` is enabled:
+
 - The `entity` configuration is ignored
 - The card uses the default room entity based on the area (`light.{area}_light`)
 - The card displays with the default room icon and behavior
-

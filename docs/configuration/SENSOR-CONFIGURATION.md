@@ -24,30 +24,35 @@ sensors:
   - entity_id: sensor.living_room_co2
 ```
 
-#### Object Format with State-Based Styling
+#### Object Format with State-Based Styling and Labels
 
-You can configure sensors with state-based styling, similar to entity configuration:
+You can configure sensors with state-based styling and custom labels, similar to entity configuration:
 
 ```yaml
 sensors:
   - entity_id: sensor.door_sensor
+    label: 'Door' # Fallback label
     states:
       - state: 'on'
         icon_color: red
         icon: mdi:door-open
+        label: 'Open' # Displayed instead of state value when state is "on"
         styles:
           background-color: rgba(255, 0, 0, 0.2)
           border: 1px solid red
       - state: 'off'
         icon_color: green
         icon: mdi:door-closed
+        label: 'Closed' # Displayed instead of state value when state is "off"
         styles:
           background-color: rgba(0, 255, 0, 0.2)
   - entity_id: sensor.temperature
+    label: 'Temperature' # Fallback label
     states:
       - state: '75'
         icon_color: orange
         icon: mdi:thermometer-alert
+        label: 'Hot' # Displayed instead of state value when state is "75"
         styles:
           padding: 4px
           border-radius: 4px
@@ -59,7 +64,53 @@ When the sensor state matches a configured state, the card will:
 
 - Display the custom icon (e.g., `mdi:door-open` when state is "on")
 - Apply the custom icon color
+- Display the custom label (if configured) instead of the sensor's state value
 - Apply any CSS styles defined in the `styles` property
+
+#### Labels for Sensors
+
+Sensors can have custom labels configured at multiple levels:
+
+1. **State/threshold label** (highest priority) - Displayed when a matching state or threshold configuration has a `label` property
+2. **Entity-level label** - Displayed when the sensor has a `label` property configured
+3. **Sensor state value** (fallback) - Displayed when no label is configured (e.g., "75°F", "50%", "450 ppm")
+
+```yaml
+sensors:
+  # Sensor with state-based labels
+  - entity_id: sensor.door_sensor
+    label: 'Door Sensor' # Fallback label
+    states:
+      - state: 'on'
+        icon_color: red
+        icon: mdi:door-open
+        label: 'Open' # Displayed instead of "on" when state matches
+      - state: 'off'
+        icon_color: green
+        icon: mdi:door-closed
+        label: 'Closed' # Displayed instead of "off" when state matches
+
+  # Sensor with threshold-based labels
+  - entity_id: sensor.temperature
+    label: 'Temp' # Fallback label
+    thresholds:
+      - threshold: 80
+        icon_color: red
+        label: 'Hot' # Displayed instead of temperature value when >= 80°
+      - threshold: 60
+        icon_color: green
+        label: 'Warm' # Displayed instead of temperature value when >= 60°
+
+  # Sensor with only entity-level label
+  - entity_id: sensor.humidity
+    label: 'Humidity' # Always displayed instead of state value
+
+  # Sensor with no label (displays state value normally)
+  - entity_id: sensor.co2
+    # No label configured - will display sensor state value (e.g., "450 ppm")
+```
+
+**Note**: When labels are configured for sensors, they replace the sensor's state display. When labels are not configured, sensors display their normal state values.
 
 #### Mixed Format
 

@@ -28,39 +28,42 @@ entities:
 
 ## Entity Configuration Options
 
-| Name              | Type   | Default                 | Description                                 |
-| ----------------- | ------ | ----------------------- | ------------------------------------------- |
-| entity_id         | string | **Required**            | Entity ID in Home Assistant                 |
-| icon              | string | entity default          | Custom MDI icon                             |
-| on_color          | string | domain default          | Color when entity is active                 |
-| off_color         | string | theme off color         | Color when entity is inactive               |
-| thresholds        | array  | none                    | Dynamic colors/icons based on sensor values |
-| states            | array  | none                    | Colors/icons based on exact entity states   |
-| features          | array  | none                    | Feature flags for this entity               |
-| tap_action        | object | `{action: "toggle"}`    | Action on single tap                        |
-| hold_action       | object | `{action: "more-info"}` | Action on hold                              |
-| double_tap_action | object | `{action: "none"}`      | Action on double tap                        |
+| Name              | Type   | Default                 | Description                                                                                           |
+| ----------------- | ------ | ----------------------- | ----------------------------------------------------------------------------------------------------- |
+| entity_id         | string | **Required**            | Entity ID in Home Assistant                                                                           |
+| icon              | string | entity default          | Custom MDI icon                                                                                       |
+| label             | string | none                    | Custom label to display instead of entity name (when `show_entity_labels` is enabled) or sensor state |
+| on_color          | string | domain default          | Color when entity is active                                                                           |
+| off_color         | string | theme off color         | Color when entity is inactive                                                                         |
+| thresholds        | array  | none                    | Dynamic colors/icons based on sensor values                                                           |
+| states            | array  | none                    | Colors/icons based on exact entity states                                                             |
+| features          | array  | none                    | Feature flags for this entity                                                                         |
+| tap_action        | object | `{action: "toggle"}`    | Action on single tap                                                                                  |
+| hold_action       | object | `{action: "more-info"}` | Action on hold                                                                                        |
+| double_tap_action | object | `{action: "none"}`      | Action on double tap                                                                                  |
 
 ### Threshold Configuration Options
 
-| Name       | Type   | Default      | Description                                                      |
-| ---------- | ------ | ------------ | ---------------------------------------------------------------- |
-| threshold  | number | **Required** | Threshold value to compare against entity state or attribute     |
-| icon_color | string | **Required** | Color to use when this threshold condition is met                |
-| icon       | string | none         | Icon to use when this threshold condition is met                 |
-| operator   | string | `gte`        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq`              |
-| attribute  | string | none         | Optional attribute name to compare instead of entity state       |
-| styles     | object | none         | Custom CSS styles to apply to entity icon                        |
+| Name       | Type   | Default      | Description                                                                        |
+| ---------- | ------ | ------------ | ---------------------------------------------------------------------------------- |
+| threshold  | number | **Required** | Threshold value to compare against entity state or attribute                       |
+| icon_color | string | **Required** | Color to use when this threshold condition is met                                  |
+| icon       | string | none         | Icon to use when this threshold condition is met                                   |
+| label      | string | none         | Custom label to display when this threshold matches (overrides entity-level label) |
+| operator   | string | `gte`        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq`                                |
+| attribute  | string | none         | Optional attribute name to compare instead of entity state                         |
+| styles     | object | none         | Custom CSS styles to apply to entity icon                                          |
 
 ### State Configuration Options
 
-| Name       | Type   | Default      | Description                                                |
-| ---------- | ------ | ------------ | ---------------------------------------------------------- |
-| state      | string | **Required** | Entity state or attribute value to match exactly           |
-| icon_color | string | **Required** | Color to use when this state is active                     |
-| icon       | string | none         | Icon to use when this state is active                      |
-| attribute  | string | none         | Optional attribute name to match instead of entity state   |
-| styles     | object | none         | Custom CSS styles to apply to entity icon                  |
+| Name       | Type   | Default      | Description                                                                    |
+| ---------- | ------ | ------------ | ------------------------------------------------------------------------------ |
+| state      | string | **Required** | Entity state or attribute value to match exactly                               |
+| icon_color | string | **Required** | Color to use when this state is active                                         |
+| icon       | string | none         | Icon to use when this state is active                                          |
+| label      | string | none         | Custom label to display when this state matches (overrides entity-level label) |
+| attribute  | string | none         | Optional attribute name to match instead of entity state                       |
+| styles     | object | none         | Custom CSS styles to apply to entity icon                                      |
 
 ### Entity Features
 
@@ -290,18 +293,13 @@ For theme color names and advanced customization, see [Entity Color Configuratio
 
 ## Entity Labels
 
-The `show_entity_labels` feature flag displays entity names under each entity icon:
+The `show_entity_labels` feature flag displays labels under each entity icon. Labels can be configured at multiple levels with priority:
 
-```yaml
-type: custom:room-summary-card
-area: living_room
-features:
-  - show_entity_labels
-```
+1. **State/threshold label** (highest priority) - Displayed when a matching state or threshold configuration has a `label` property
+2. **Entity-level label** - Displayed when the entity has a `label` property configured
+3. **Entity name** (fallback) - Displayed when no label is configured (uses Home Assistant's entity naming logic)
 
-**Note**: Entity names are based on Home Assistant's entity naming logic and are not configurable through the card. To change the displayed name, update the entity's friendly name in Home Assistant's UI.
-
-### Example with Entity Labels
+### Label Priority Examples
 
 ```yaml
 type: custom:room-summary-card
@@ -309,10 +307,80 @@ area: living_room
 features:
   - show_entity_labels
 entities:
+  # Entity with state-based label (highest priority)
+  - entity_id: sensor.washing_machine_state
+    label: 'Washing Machine' # Fallback label
+    states:
+      - state: running
+        icon_color: green
+        icon: mdi:play
+        label: 'Running' # This will be displayed when state is "running"
+      - state: finished
+        icon_color: purple
+        icon: mdi:check-circle
+        label: 'Done' # This will be displayed when state is "finished"
+
+  # Entity with threshold-based label
+  - entity_id: sensor.temperature
+    label: 'Temperature' # Fallback label
+    thresholds:
+      - threshold: 75
+        icon_color: red
+        icon: mdi:fire
+        label: 'Hot!' # This will be displayed when temperature >= 75
+      - threshold: 60
+        icon_color: green
+        icon: mdi:thermometer
+        label: 'Normal' # This will be displayed when temperature >= 60
+
+  # Entity with only entity-level label
   - entity_id: light.living_room_lamp
     icon: mdi:lamp
+    label: 'Lamp' # Always displayed (when show_entity_labels is enabled)
+
+  # Entity with no label (uses entity name)
   - entity_id: switch.living_room_tv
     icon: mdi:television
+    # No label configured - will display "Living Room TV" (from HA entity name)
 ```
 
-This will display the friendly names of "Living Room Lamp" and "Living Room TV" under their respective icons.
+### Sensor Labels
+
+For sensors, labels work similarly but replace the sensor's state display instead of the entity name:
+
+```yaml
+sensors:
+  # Sensor with state-based label
+  - entity_id: sensor.door_sensor
+    label: 'Door' # Fallback label
+    states:
+      - state: 'on'
+        icon_color: red
+        icon: mdi:door-open
+        label: 'Open' # Displayed instead of state value when state is "on"
+      - state: 'off'
+        icon_color: green
+        icon: mdi:door-closed
+        label: 'Closed' # Displayed instead of state value when state is "off"
+
+  # Sensor with threshold-based label
+  - entity_id: sensor.temperature
+    label: 'Temp' # Fallback label
+    thresholds:
+      - threshold: 80
+        icon_color: red
+        label: 'Hot' # Displayed instead of temperature value when >= 80°
+      - threshold: 60
+        icon_color: green
+        label: 'Warm' # Displayed instead of temperature value when >= 60°
+
+  # Sensor with only entity-level label
+  - entity_id: sensor.humidity
+    label: 'Humidity' # Always displayed instead of state value
+
+  # Sensor with no label (displays state value normally)
+  - entity_id: sensor.co2
+    # No label configured - will display sensor state value (e.g., "450 ppm")
+```
+
+**Note**: When labels are configured for sensors, they replace the sensor's state display. When labels are not configured, sensors display their normal state values (e.g., "75°F", "50%", "450 ppm").

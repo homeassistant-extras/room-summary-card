@@ -9,6 +9,8 @@ export interface ThresholdResult {
   color?: string;
   /** The icon to apply */
   icon?: string;
+  /** The label to display */
+  label?: string;
   /** The CSS properties to apply to the entity */
   styles?: Record<string, string>;
 }
@@ -61,6 +63,7 @@ export const getThresholdResult = (
       return {
         color: threshold.icon_color,
         icon: threshold.icon,
+        label: threshold.label,
         styles: threshold.styles,
       };
     }
@@ -104,6 +107,7 @@ export const getStateResult = (
       return {
         color: stateConfig.icon_color,
         icon: stateConfig.icon,
+        label: stateConfig.label,
         styles: stateConfig.styles,
       };
     }
@@ -146,4 +150,26 @@ const meetsThreshold = (value: number, threshold: ThresholdConfig): boolean => {
     default:
       return value >= threshold.threshold;
   }
+};
+
+/**
+ * Gets the label for an entity with proper priority:
+ * 1. State/threshold result label (if a matching state/threshold has a label)
+ * 2. Config label (if configured at the entity level)
+ *
+ * @param entity - The entity information containing state and config
+ * @param result - The threshold/state result (optional)
+ * @returns The label to display, or undefined if none is configured
+ */
+export const getEntityLabel = (
+  entity: EntityInformation,
+  result?: ThresholdResult,
+): string | undefined => {
+  // First priority: label from state/threshold result
+  if (result?.label) {
+    return result.label;
+  }
+
+  // Second priority: label from config
+  return entity.config.label;
 };

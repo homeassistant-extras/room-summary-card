@@ -12,6 +12,9 @@ export interface BaseEntityConfig {
   /** Unique identifier for the sensor entity */
   entity_id: string;
 
+  /** Custom label to display instead of default state display */
+  label?: string;
+
   /** State-based color and icon configuration */
   states?: StateConfig[];
 }
