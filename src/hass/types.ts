@@ -16,6 +16,13 @@ export interface HomeAssistant {
   areas: Record<string, AreaRegistryEntry>;
   themes: Themes;
   localize: LocalizeFunc<string>;
+  // i18n
+  // current effective language in that order:
+  //   - backend saved user selected language
+  //   - language in local app storage
+  //   - browser language
+  //   - english (en)
+  language: string;
   callWS<T>(msg: MessageBase): Promise<T>;
   formatEntityState(stateObj: HassEntity, state?: string): string;
 }

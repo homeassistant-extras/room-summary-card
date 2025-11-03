@@ -38,6 +38,7 @@ export interface EntitySelector {
   entity: {
     multiple?: boolean;
     include_entities?: string[];
+    exclude_entities?: string[];
     filter?: EntitySelectorFilter | readonly EntitySelectorFilter[];
   } | null;
 }

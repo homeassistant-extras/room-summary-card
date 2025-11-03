@@ -1,4 +1,11 @@
-import { getSchema } from '@/editor/editor-schema';
+import {
+  areaEntities,
+  deviceClasses,
+  getEntitiesSchema,
+  getMainSchema,
+  getOccupancySchema,
+  getSensorsSchema,
+} from '@/editor/editor-schema';
 import * as sensorModule from '@hass/data/sensor';
 import type { HomeAssistant } from '@hass/types';
 import { expect } from 'chai';
@@ -101,465 +108,98 @@ describe('editor-schema.ts', () => {
     getSensorNumericDeviceClassesStub.restore();
   });
 
-  describe('getSchema', () => {
-    it('should return schema with sensor classes from area', async () => {
-      const schema = await getSchema(mockHass, 'living_room');
+  describe('areaEntities', () => {
+    it('should return entity IDs for entities in the specified area', () => {
+      const entities = areaEntities(mockHass, 'living_room');
+      expect(entities).to.deep.equal([
+        'sensor.living_room_temperature',
+        'sensor.living_room_humidity',
+        'sensor.living_room_pressure',
+        'light.living_room',
+      ]);
+    });
+
+    it('should return empty array when area has no entities', () => {
+      const entities = areaEntities(mockHass, 'non_existent_area');
+      expect(entities).to.deep.equal([]);
+    });
+  });
+
+  describe('deviceClasses', () => {
+    it('should return unique device classes for sensors in the area', async () => {
+      const classes = await deviceClasses(mockHass, 'living_room');
+      expect(classes).to.deep.equal(['temperature', 'humidity', 'pressure']);
+    });
+
+    it('should return empty array when area has no sensors', async () => {
+      const classes = await deviceClasses(mockHass, 'non_existent_area');
+      expect(classes).to.deep.equal([]);
+    });
+  });
+
+  describe('getEntitiesSchema', () => {
+    it('should return schema with entities and lights for entities tab', () => {
       const entities = Object.keys(mockHass.entities);
+      const schema = getEntitiesSchema(mockHass, entities);
 
       expect(schema).to.deep.equal([
         {
-          name: 'area',
-          label: 'Area',
-          required: true,
-          selector: { area: {} },
-        },
-        {
-          name: 'content',
-          label: 'Content',
-          type: 'expandable',
-          flatten: true,
-          icon: 'mdi:text-short',
-          schema: [
-            {
-              name: 'area_name',
-              label: 'Area name',
-              required: false,
-              selector: { text: {} },
-            },
-          ],
-        },
-        {
           name: 'entities',
-          label: 'Entities',
-          type: 'expandable' as const,
-          flatten: true,
-          icon: 'mdi:devices',
-          schema: [
-            {
-              name: 'entity',
-              label: 'Main room entity',
-              required: false,
-              selector: {
-                entity: { multiple: false, include_entities: entities },
-              },
-            },
-            {
-              name: 'entities',
-              label: 'Area side entities',
-              required: false,
-              selector: {
-                entity: { multiple: true, include_entities: entities },
-              },
-            },
-            {
-              name: 'sensors',
-              label: 'Individual sensor entities',
-              required: false,
-              selector: { entity: { multiple: true } },
-            },
-            {
-              name: 'sensor_classes',
-              label: 'Sensor classes',
-              selector: {
-                select: {
-                  reorder: true,
-                  multiple: true,
-                  custom_value: true,
-                  options: ['temperature', 'humidity', 'pressure'],
-                },
-              },
-            },
-            {
-              name: 'lights',
-              label: 'Light entities (optional for multi-light background)',
-              required: false,
-              selector: {
-                entity: {
-                  multiple: true,
-                  include_entities: entities,
-                  filter: { domain: ['light', 'switch'] },
-                },
-              },
-            },
-          ],
+          label: 'editor.area_side_entities',
+          required: false,
+          selector: {
+            entity: { multiple: true, include_entities: entities },
+          },
         },
         {
-          name: 'occupancy',
-          label: 'Occupancy & Presence Detection',
-          type: 'expandable' as const,
-          icon: 'mdi:motion-sensor',
-          schema: [
-            {
-              name: 'entities',
-              label: 'Motion/Occupancy/Presence Sensors',
-              required: true,
-              selector: {
-                entity: {
-                  multiple: true,
-                  filter: {
-                    domain: ['binary_sensor'],
-                    device_class: ['motion', 'occupancy', 'presence'],
-                  },
-                },
-              },
+          name: 'lights',
+          label: 'editor.light_entities',
+          required: false,
+          selector: {
+            entity: {
+              multiple: true,
+              include_entities: entities,
+              filter: { domain: ['light', 'switch'] },
             },
-            {
-              name: 'card_border_color',
-              label: 'Card Border Color (Occupied)',
-              required: false,
-              selector: { text: { type: 'color' as const } },
-            },
-            {
-              name: 'icon_color',
-              label: 'Icon Background Color (Occupied)',
-              required: false,
-              selector: { text: { type: 'color' as const } },
-            },
-            {
-              name: 'options',
-              label: 'Options',
-              required: false,
-              selector: {
-                select: {
-                  multiple: true,
-                  mode: 'list' as const,
-                  options: [
-                    {
-                      label: 'Disable Card Border',
-                      value: 'disabled_card_styles',
-                    },
-                    {
-                      label: 'Disable Card Border Animations',
-                      value: 'disabled_card_styles_animation',
-                    },
-                    {
-                      label: 'Disable Icon Color',
-                      value: 'disable_icon_styles',
-                    },
-                    {
-                      label: 'Disable Icon Animations',
-                      value: 'disable_icon_animation',
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-        },
-        {
-          name: 'features',
-          label: 'Features',
-          type: 'expandable' as const,
-          flatten: true,
-          icon: 'mdi:list-box',
-          schema: [
-            {
-              name: 'features',
-              label: 'Features',
-              required: false,
-              selector: {
-                select: {
-                  multiple: true,
-                  mode: 'list' as const,
-                  options: [
-                    { label: 'Hide Area Stats', value: 'hide_area_stats' },
-                    {
-                      label: 'Hide Sensors',
-                      value: 'hide_climate_label',
-                    },
-                    { label: 'Hide Room Icon', value: 'hide_room_icon' },
-                    {
-                      label: 'Hide Sensor icons',
-                      value: 'hide_sensor_icons',
-                    },
-                    {
-                      label: 'Hide Sensor labels',
-                      value: 'hide_sensor_labels',
-                    },
-                    {
-                      label: 'Exclude Default Entities',
-                      value: 'exclude_default_entities',
-                    },
-                    {
-                      label: 'Skip Climate Styles',
-                      value: 'skip_climate_styles',
-                    },
-                    {
-                      label: 'Skip Card Background Styles',
-                      value: 'skip_entity_styles',
-                    },
-                    {
-                      label: 'Show Entity Labels',
-                      value: 'show_entity_labels',
-                    },
-                    {
-                      label: 'Multi-Light Background',
-                      value: 'multi_light_background',
-                    },
-                    {
-                      label: 'Ignore Entity',
-                      value: 'ignore_entity',
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-        },
-        {
-          name: 'styles',
-          label: 'Styles',
-          type: 'expandable',
-          flatten: true,
-          icon: 'mdi:brush-variant',
-          schema: [
-            {
-              name: 'sensor_layout',
-              label: 'Sensor Layout',
-              required: false,
-              selector: {
-                select: {
-                  mode: 'dropdown' as const,
-                  options: [
-                    { label: 'Default (in label area)', value: 'default' },
-                    {
-                      label: 'Bottom',
-                      value: 'bottom',
-                    },
-                    {
-                      label: 'Vertical Stack',
-                      value: 'stacked',
-                    },
-                  ],
-                },
-              },
-            },
-            {
-              name: 'background',
-              label: 'Background',
-              type: 'expandable',
-              icon: 'mdi:format-paint',
-              schema: [
-                {
-                  name: 'image',
-                  label: 'Background Image',
-                  selector: { image: {} },
-                },
-                {
-                  name: 'image_entity',
-                  label: 'Background Image Entity',
-                  selector: {
-                    entity: { filter: { domain: ['image', 'person'] } },
-                  },
-                },
-                {
-                  name: 'opacity',
-                  label: 'Background Opacity',
-                  required: false,
-                  selector: {
-                    number: {
-                      mode: 'slider' as const,
-                      unit_of_measurement: '%',
-                      min: 0,
-                      max: 100,
-                    },
-                  },
-                },
-                {
-                  name: 'options',
-                  label: 'Options',
-                  selector: {
-                    select: {
-                      multiple: true,
-                      mode: 'list' as const,
-                      options: [
-                        {
-                          label: 'Disable Background Image',
-                          value: 'disable',
-                        },
-                        {
-                          label: 'Icon Background',
-                          value: 'icon_background',
-                        },
-                        {
-                          label: 'Hide Icon Only',
-                          value: 'hide_icon_only',
-                        },
-                      ],
-                    },
-                  },
-                },
-              ],
-            },
-            {
-              name: 'thresholds',
-              label: 'Thresholds',
-              type: 'expandable',
-              icon: 'mdi:thermometer-alert',
-              schema: [
-                {
-                  name: 'temperature',
-                  label: 'Temperature threshold',
-                  required: false,
-                  selector: {
-                    number: { mode: 'box' as const, unit_of_measurement: '°' },
-                  },
-                },
-                {
-                  name: 'humidity',
-                  label: 'Humidity threshold',
-                  required: false,
-                  selector: {
-                    number: {
-                      mode: 'slider' as const,
-                      unit_of_measurement: '%',
-                      min: 0,
-                      max: 100,
-                    },
-                  },
-                },
-
-                {
-                  name: 'mold',
-                  label: 'Mold threshold',
-                  required: false,
-                  selector: {
-                    number: {
-                      mode: 'slider' as const,
-                      unit_of_measurement: '%',
-                      min: 0,
-                      max: 100,
-                    },
-                  },
-                },
-                {
-                  name: 'temperature_entity',
-                  label: 'Temperature Entity',
-                  required: false,
-                  selector: {
-                    entity: {
-                      multiple: false,
-                      include_entities: entities,
-                      filter: {
-                        device_class: 'temperature',
-                      },
-                    },
-                  },
-                },
-
-                {
-                  name: 'temperature_operator',
-                  label: 'Temperature Operator',
-                  required: false,
-                  selector: {
-                    select: {
-                      mode: 'dropdown' as const,
-                      options: [
-                        { value: 'gt', label: 'Greater than (>)' },
-                        { value: 'gte', label: 'Greater than or equal (≥)' },
-                        { value: 'lt', label: 'Less than (<)' },
-                        { value: 'lte', label: 'Less than or equal (≤)' },
-                        { value: 'eq', label: 'Equal (=)' },
-                      ],
-                    },
-                  },
-                },
-                {
-                  name: 'humidity_entity',
-                  label: 'Humidity Entity',
-                  required: false,
-                  selector: {
-                    entity: {
-                      multiple: false,
-                      include_entities: entities,
-                      filter: {
-                        device_class: 'humidity',
-                      },
-                    },
-                  },
-                },
-                {
-                  name: 'humidity_operator',
-                  label: 'Humidity Operator',
-                  required: false,
-                  selector: {
-                    select: {
-                      mode: 'dropdown' as const,
-                      options: [
-                        { value: 'gt', label: 'Greater than (>)' },
-                        { value: 'gte', label: 'Greater than or equal (≥)' },
-                        { value: 'lt', label: 'Less than (<)' },
-                        { value: 'lte', label: 'Less than or equal (≤)' },
-                        { value: 'eq', label: 'Equal (=)' },
-                      ],
-                    },
-                  },
-                },
-              ],
-            },
-            {
-              name: 'styles',
-              label: 'Your CSS Styles',
-              type: 'expandable',
-              icon: 'mdi:spray',
-              schema: [
-                {
-                  name: 'card',
-                  label: 'Card Styles',
-                  required: false,
-                  selector: { object: {} },
-                },
-                {
-                  name: 'entities',
-                  label: 'Entities Container Styles',
-                  required: false,
-                  selector: { object: {} },
-                },
-
-                {
-                  name: 'entity_icon',
-                  label: 'Entity Icon Styles',
-                  required: false,
-                  selector: { object: {} },
-                },
-                {
-                  name: 'sensors',
-                  label: 'Sensor Styles',
-                  required: false,
-                  selector: { object: {} },
-                },
-                {
-                  name: 'stats',
-                  label: 'Stats Styles',
-                  required: false,
-                  selector: { object: {} },
-                },
-                {
-                  name: 'title',
-                  label: 'Title Styles',
-                  required: false,
-                  selector: { object: {} },
-                },
-              ],
-            },
-          ],
-        },
-        {
-          name: 'interactions',
-          label: 'Interactions',
-          type: 'expandable' as const,
-          flatten: true,
-          icon: 'mdi:gesture-tap',
-          schema: [
-            {
-              name: 'navigate',
-              label: 'Navigate path when card tapped',
-              required: false,
-              selector: { navigation: {} },
-            },
-          ],
+          },
         },
       ]);
+    });
+  });
+
+  describe('getSensorsSchema', () => {
+    it('should return schema with sensors, sensor classes, and sensor layout', () => {
+      const entities = Object.keys(mockHass.entities);
+      const sensorClasses = ['temperature', 'humidity', 'pressure'];
+      const schema = getSensorsSchema(mockHass, sensorClasses, entities);
+
+      expect(schema).to.have.length(3);
+      expect(schema[0]?.name).to.equal('sensors');
+      expect(schema[1]?.name).to.equal('sensor_classes');
+      expect(schema[2]?.name).to.equal('sensor_layout');
+    });
+  });
+
+  describe('getMainSchema', () => {
+    it('should return schema with area, entity, content, interactions, styles, and features', () => {
+      const entities = Object.keys(mockHass.entities);
+      const schema = getMainSchema(mockHass, entities);
+
+      expect(schema).to.be.an('array');
+      expect(schema.length).to.be.greaterThan(0);
+      expect(schema[0]?.name).to.equal('area');
+    });
+  });
+
+  describe('getOccupancySchema', () => {
+    it('should return schema with occupancy configuration', () => {
+      const entities = Object.keys(mockHass.entities);
+      const schema = getOccupancySchema(mockHass, entities);
+
+      expect(schema).to.be.an('array');
+      expect(schema.length).to.equal(1);
+      expect(schema[0]?.name).to.equal('occupancy');
+      expect(schema[0]?.type).to.equal('grid');
     });
   });
 });

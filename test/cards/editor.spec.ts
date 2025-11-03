@@ -46,7 +46,7 @@ describe('editor.ts', () => {
     dispatchStub = stub(card, 'dispatchEvent');
 
     // Stub the getSchema function
-    getSchemaStub = stub(editorSchemaModule, 'getSchema');
+    getSchemaStub = stub(editorSchemaModule, 'getEntitiesSchema');
     getSchemaStub.resolves(mockSchema);
 
     // Set hass and config
@@ -66,7 +66,12 @@ describe('editor.ts', () => {
 
     it('should have default properties', () => {
       expect(card.hass).to.exist;
-      expect(card['_config']).to.deep.equal({ area: 'living_room' });
+      expect(card['_config']).to.deep.equal({
+        area: 'living_room',
+        occupancy: {
+          entities: [],
+        },
+      });
     });
   });
 
@@ -78,7 +83,12 @@ describe('editor.ts', () => {
       };
 
       card.setConfig(testConfig);
-      expect(card['_config']).to.deep.equal(testConfig);
+      expect(card['_config']).to.deep.equal({
+        ...testConfig,
+        occupancy: {
+          entities: [],
+        },
+      });
     });
   });
 
