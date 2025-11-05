@@ -89,7 +89,7 @@ By default, entities will display their `entity_picture` attribute (if available
 
 To force an entity to use its icon instead of its entity picture, add the `use_entity_icon` feature:
 
-````yaml
+```yaml
 entities:
   # Display entity picture (default behavior)
   - entity_id: media_player.tv
@@ -99,6 +99,7 @@ entities:
     features:
       - use_entity_icon
 ```
+
 ## Color Priority
 
 Colors are applied in this order:
