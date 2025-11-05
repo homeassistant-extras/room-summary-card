@@ -146,13 +146,23 @@ entities:
         icon_color: red
         icon: mdi:battery-low
         styles:
+          keyframes: |-
+            pulse {
+              0%, 100% { opacity: 1; transform: scale(1); }
+              50% { opacity: 0.7; transform: scale(1.05); }
+            }
           animation: pulse 2s ease-in-out infinite
       - threshold: 10
         icon_color: red
         icon: mdi:battery-alert
         styles:
+          keyframes: |-
+            shake {
+              0%, 100% { transform: translateX(0) scale(1.1); }
+              25% { transform: translateX(-5px) scale(1.1); }
+              75% { transform: translateX(5px) scale(1.1); }
+            }
           animation: shake 1s ease-in-out infinite
-          transform: scale(1.1)
 
   # Washing machine with state-based colors and icons
   - entity_id: sensor.washing_machine_state
@@ -170,6 +180,11 @@ entities:
         icon_color: blue
         icon: mdi:rotate-3d-variant
         styles:
+          keyframes: |-
+            spin {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
           animation: spin 2s linear infinite
       - state: finished
         icon_color: purple
@@ -281,6 +296,11 @@ entities:
         attribute: volume_level
         icon_color: red
         styles:
+          keyframes: |-
+            pulse {
+              0%, 100% { opacity: 1; transform: scale(1); }
+              50% { opacity: 0.7; transform: scale(1.05); }
+            }
           animation: pulse 2s ease-in-out infinite
         operator: gte
 ```
