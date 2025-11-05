@@ -32,9 +32,10 @@ export const renderEntityIconStyles = (
     '--icon-color': styleData.cssColor,
     '--icon-opacity': `var(--opacity-icon-${styleData.activeClass})`,
     '--background-color-icon': styleData.cssColor,
-    '--background-opacity-icon': image
-      ? '1'
-      : `var(--opacity-icon-fill-${styleData.activeClass})`,
+    '--background-opacity-icon':
+      image && styleData.active
+        ? '1'
+        : `var(--opacity-icon-fill-${styleData.activeClass})`,
     '--state-color-icon-theme': styleData.themeOverride,
     '--background-image': image ? `url(${image})` : undefined,
   });
