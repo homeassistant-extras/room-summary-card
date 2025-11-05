@@ -12,6 +12,7 @@ import {
   type IconResources,
 } from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
+import { attributeDisplay } from '@html/attribute-display';
 import { stateDisplay } from '@html/state-display';
 import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
@@ -163,7 +164,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
         .actionHandler=${actionHandler(info)}
       >
         ${this.renderStateIcon(state, result?.icon)}
-        ${this.renderSensorLabel(state, label)}
+        ${this.renderSensorLabel(state, label, sensorConfig)}
       </div>
     `;
   }
@@ -172,14 +173,22 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
    * Renders the sensor label with proper fallback logic
    * @param state - The entity state
    * @param label - The configured label (if any)
-   * @returns The label content, state display, or nothing if labels are hidden
+   * @param sensorConfig - The sensor configuration (if any)
+   * @returns The label content, attribute value, state display, or nothing if labels are hidden
    */
   private renderSensorLabel(
     state: EntityState,
     label?: string,
+    sensorConfig?: SensorConfig,
   ): TemplateResult | typeof nothing {
     if (this._hideLabels) return nothing;
     if (label) return html`${label}`;
+
+    // If attribute is specified, display the attribute value instead of state
+    if (sensorConfig?.attribute) {
+      return attributeDisplay(this._hass, state, sensorConfig.attribute);
+    }
+
     return stateDisplay(this._hass, state);
   }
 

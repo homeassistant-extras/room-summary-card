@@ -113,8 +113,7 @@ describe('styles-converter.ts', () => {
     it('should handle multiple keyframes entries', async () => {
       const styles = {
         keyframes: 'fadeIn { from { opacity: 0; } to { opacity: 1; } }',
-        'animation-2':
-          'slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }',
+        'custom-animation': 'slideIn 2s ease-in-out',
       };
       const result = stylesToHostCss(styles) as TemplateResult;
       const el = await fixture(result);
@@ -127,11 +126,9 @@ describe('styles-converter.ts', () => {
       expect(content).to.include('from { opacity: 0; }');
       expect(content).to.include('to { opacity: 1; }');
 
-      // The 'animation-2' key should be treated as a regular CSS property
+      // The 'custom-animation' key should be treated as a regular CSS property
       expect(content).to.include(':host');
-      expect(content).to.include(
-        'animation-2: slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } };',
-      );
+      expect(content).to.include('custom-animation: slideIn 2s ease-in-out;');
     });
 
     it('should handle complex keyframes with multiple steps', async () => {

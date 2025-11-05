@@ -151,5 +151,3 @@ When a new language is added, the main README.md should be updated to include th
 - **Natural language** - Translation should read naturally in your language, not as a direct word-for-word translation
 
 Thank you for helping make Room Summary Card accessible to more users around the world!
-
-

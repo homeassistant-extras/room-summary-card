@@ -58,6 +58,28 @@ sensors:
           border-radius: 4px
 ```
 
+#### Displaying Entity Attributes Instead of State
+
+You can configure sensors to display a specific attribute value instead of the entity state:
+
+```yaml
+sensors:
+  # Display the 'temperature' attribute instead of the state value
+  - entity_id: sensor.weather_station
+    attribute: temperature
+
+  # Display a formatted attribute value
+  - entity_id: sensor.air_quality
+    attribute: aqi # Shows the AQI value instead of the state
+
+  # Attribute with label fallback
+  - entity_id: sensor.weather
+    label: 'Weather'
+    attribute: condition # Shows weather condition attribute instead of state
+```
+
+When an `attribute` is specified, the sensor will display the formatted attribute value using Home Assistant's attribute display formatting. This is useful when you want to show a specific attribute (like `temperature`, `humidity`, `battery_level`, etc.) instead of the entity's primary state value.
+
 ![Sensors Config](../../assets/sensors-config.gif)
 
 When the sensor state matches a configured state, the card will:
@@ -73,7 +95,8 @@ Sensors can have custom labels configured at multiple levels:
 
 1. **State/threshold label** (highest priority) - Displayed when a matching state or threshold configuration has a `label` property
 2. **Entity-level label** - Displayed when the sensor has a `label` property configured
-3. **Sensor state value** (fallback) - Displayed when no label is configured (e.g., "75°F", "50%", "450 ppm")
+3. **Attribute value** - Displayed when an `attribute` property is configured (replaces state display)
+4. **Sensor state value** (fallback) - Displayed when no label or attribute is configured (e.g., "75°F", "50%", "450 ppm")
 
 ```yaml
 sensors:
@@ -108,9 +131,18 @@ sensors:
   # Sensor with no label (displays state value normally)
   - entity_id: sensor.co2
     # No label configured - will display sensor state value (e.g., "450 ppm")
+
+  # Sensor displaying an attribute instead of state
+  - entity_id: sensor.weather_station
+    attribute: temperature # Displays temperature attribute instead of state value
+
+  # Sensor with attribute and label fallback
+  - entity_id: sensor.battery_monitor
+    label: 'Battery'
+    attribute: battery_level # Shows battery level attribute, falls back to label if attribute missing
 ```
 
-**Note**: When labels are configured for sensors, they replace the sensor's state display. When labels are not configured, sensors display their normal state values.
+**Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified, it displays the formatted attribute value instead of the state. When labels are not configured, sensors display their normal state values.
 
 #### Mixed Format
 

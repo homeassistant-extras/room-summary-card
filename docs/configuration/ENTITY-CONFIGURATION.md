@@ -33,6 +33,7 @@ entities:
 | entity_id         | string | **Required**            | Entity ID in Home Assistant                                                                           |
 | icon              | string | entity default          | Custom MDI icon                                                                                       |
 | label             | string | none                    | Custom label to display instead of entity name (when `show_entity_labels` is enabled) or sensor state |
+| attribute         | string | none                    | Attribute to display instead of entity state                                                          |
 | on_color          | string | domain default          | Color when entity is active                                                                           |
 | off_color         | string | theme off color         | Color when entity is inactive                                                                         |
 | thresholds        | array  | none                    | Dynamic colors/icons based on sensor values                                                           |
@@ -193,15 +194,15 @@ entities:
   - entity_id: cover.window
     icon: mdi:window-shutter
     states:
-      - state: "100"  # Note: numeric attributes must be quoted strings
+      - state: '100' # Note: numeric attributes must be quoted strings
         attribute: current_position
         icon_color: green
         icon: mdi:window-shutter-open
-      - state: "50"
+      - state: '50'
         attribute: current_position
         icon_color: orange
         icon: mdi:window-shutter-settings
-      - state: "0"
+      - state: '0'
         attribute: current_position
         icon_color: grey
         icon: mdi:window-shutter
@@ -244,7 +245,7 @@ entities:
     icon: mdi:thermostat
     states:
       # Match on entity state
-      - state: "off"
+      - state: 'off'
         icon_color: grey
         icon: mdi:power-off
       - state: heating
@@ -269,7 +270,7 @@ entities:
     icon: mdi:television
     states:
       # Match on entity state
-      - state: "off"
+      - state: 'off'
         icon_color: grey
       - state: playing
         icon_color: green
@@ -282,7 +283,7 @@ entities:
         styles:
           animation: pulse 2s ease-in-out infinite
         operator: gte
-````
+```
 
 For theme color names and advanced customization, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md).
 
@@ -298,7 +299,8 @@ The `show_entity_labels` feature flag displays labels under each entity icon. La
 
 1. **State/threshold label** (highest priority) - Displayed when a matching state or threshold configuration has a `label` property
 2. **Entity-level label** - Displayed when the entity has a `label` property configured
-3. **Entity name** (fallback) - Displayed when no label is configured (uses Home Assistant's entity naming logic)
+3. **Attribute value** - Displayed when an `attribute` property is configured (replaces entity name/label)
+4. **Entity name** (fallback) - Displayed when no label or attribute is configured (uses Home Assistant's entity naming logic)
 
 ### Label Priority Examples
 
@@ -343,7 +345,13 @@ entities:
   - entity_id: switch.living_room_tv
     icon: mdi:television
     # No label configured - will display "Living Room TV" (from HA entity name)
+
+  # Entity displaying an attribute instead of entity name/label
+  - entity_id: sensor.weather_station
+    attribute: condition # Displays weather condition attribute instead of entity name
 ```
+
+**Note**: When `show_entity_labels` is enabled, the `attribute` property allows you to display a formatted attribute value instead of the entity name or configured label. This is useful for entities where you want to show a specific attribute (like `battery_level`, `temperature`, `condition`, etc.) as the label.
 
 ### Sensor Labels
 
@@ -382,6 +390,10 @@ sensors:
   # Sensor with no label (displays state value normally)
   - entity_id: sensor.co2
     # No label configured - will display sensor state value (e.g., "450 ppm")
+
+  # Sensor displaying an attribute instead of state
+  - entity_id: sensor.weather_station
+    attribute: temperature # Displays temperature attribute instead of state value
 ```
 
-**Note**: When labels are configured for sensors, they replace the sensor's state display. When labels are not configured, sensors display their normal state values (e.g., "75°F", "50%", "450 ppm").
+**Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified, it displays the formatted attribute value instead of the state. When labels are not configured, sensors display their normal state values (e.g., "75°F", "50%", "450 ppm").

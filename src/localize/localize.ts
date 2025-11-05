@@ -57,5 +57,3 @@ function getNestedTranslation(obj: any, path: string): string | undefined {
 
   return typeof result === 'string' ? result : undefined;
 }
-
-
