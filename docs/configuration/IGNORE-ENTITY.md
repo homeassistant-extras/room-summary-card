@@ -26,12 +26,12 @@ sort:
   reverse: true
 ```
 
-In this example, the cards are filtered and sorted based on the specified entities (`person.gina` and `input_boolean.gina_mute`), but the card will display using the default room entity (`light.{area}_light`) instead of the specified entity.
+In this example, the cards are filtered and sorted based on the specified entities (`person.gina` and `input_boolean.gina_mute`), but the card will display using the default room entity (`light.{area}_light` or `light.{area}`) instead of the specified entity.
 
 ## How It Works
 
 When `ignore_entity` is enabled:
 
 - The `entity` configuration is ignored
-- The card uses the default room entity based on the area (`light.{area}_light`)
+- The card uses the default room entity based on the area (`light.{area}_light` or `light.{area}`)
 - The card displays with the default room icon and behavior

@@ -27,7 +27,9 @@
    ```yaml
    # Expected default entities:
    light.{area}_light       # e.g., light.living_room_light
-   switch.{area}_fan        # e.g., switch.living_room_fan
+   light.{area}            # e.g., light.living_room (alternative)
+   switch.{area}_fan       # e.g., switch.living_room_fan
+   fan.{area}              # e.g., fan.living_room (alternative)
    ```
 
 2. **Check area assignment**: Ensure entities are assigned to correct area

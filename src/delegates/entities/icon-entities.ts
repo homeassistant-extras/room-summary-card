@@ -28,9 +28,12 @@ export const getIconEntities = (
   config: Config,
 ): EntityInformation[] => {
   // Define base entities for the area
+  // Support both naming conventions: light.{area}_light / light.{area} and switch.{area}_fan / fan.{area}
   const baseEntities = [
     `light.${config.area}_light`,
+    `light.${config.area}`,
     `switch.${config.area}_fan`,
+    `fan.${config.area}`,
   ] as (EntityConfig | string)[];
 
   const configEntities = config.entities || [];

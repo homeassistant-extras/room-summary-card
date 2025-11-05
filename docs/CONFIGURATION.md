@@ -47,7 +47,7 @@ See [default entities](#default-entities)
 | -------------- | ---------------- | -------------------------- | ------------------------------------------------------------ |
 | area           | string           | **Required**               | The area identifier for the room (e.g., 'shed', 'kitchen')   |
 | area_name      | string           | area name                  | Custom area name                                             |
-| entity         | string \| object | `light.<area>_light`       | Main entity for the room                                     |
+| entity         | string \| object | `light.<area>_light` or `light.<area>` | Main entity for the room                                     |
 | entities       | array            | See below                  | Additional entities to display                               |
 | sensors        | array            | See below                  | Array of sensor entities to display in the card label area   |
 | lights         | array            | auto-discovered            | Array of light entities for multi-light background           |
@@ -64,8 +64,8 @@ See [default entities](#default-entities)
 
 By default, the card will include (if found):
 
-- Room light by naming convention (`light.living_room_light`)
-- Room fan by naming convention (`switch.living_room_fan`)
+- Room light by naming convention (`light.living_room_light` or `light.living_room`)
+- Room fan by naming convention (`switch.living_room_fan` or `fan.living_room`)
 - All temperature and humidity sensors by device class
 - Problem entities (labeled with "problem")
 - Mold sensors (with animated indicators when thresholds are exceeded)

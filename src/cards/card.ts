@@ -169,8 +169,12 @@ export class RoomSummaryCard extends LitElement {
       const areaName = area.area_id.toLowerCase().replace(/\s+/g, '_');
 
       // Check if either entity exists for this area
-      const hasLight = `light.${areaName}_light` in hass.entities;
-      const hasFan = `switch.${areaName}_fan` in hass.entities;
+      const hasLight =
+        `light.${areaName}_light` in hass.entities ||
+        `light.${areaName}` in hass.entities;
+      const hasFan =
+        `switch.${areaName}_fan` in hass.entities ||
+        `fan.${areaName}` in hass.entities;
 
       // Return true if either entity exists
       return hasLight || hasFan;
