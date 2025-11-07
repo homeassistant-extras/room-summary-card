@@ -1,18 +1,26 @@
 import * as editorSchemaModule from '@/editor/editor-schema';
+import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import { RoomSummaryCardEditor } from '@cards/editor';
+import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
-import { fixture } from '@open-wc/testing-helpers';
 import type { Config } from '@type/config';
+import type { EntityConfig } from '@type/config/entity';
 import { expect } from 'chai';
-import { nothing, type TemplateResult } from 'lit';
+import { nothing } from 'lit';
 import { stub } from 'sinon';
 
 describe('editor.ts', () => {
   let card: RoomSummaryCardEditor;
   let hass: HomeAssistant;
   let dispatchStub: sinon.SinonStub;
-  let getSchemaStub: sinon.SinonStub;
+  let fireEventStub: sinon.SinonStub;
+  let getMainSchemaStub: sinon.SinonStub;
+  let getSensorsSchemaStub: sinon.SinonStub;
+  let getOccupancySchemaStub: sinon.SinonStub;
+  let areaEntitiesStub: sinon.SinonStub;
+  let deviceClassesStub: sinon.SinonStub;
   let mockSchema: any[];
+  let mockTaskValue: { sensorClasses: string[]; entities: string[] };
 
   beforeEach(async () => {
     // Create mock schema
@@ -31,12 +39,18 @@ describe('editor.ts', () => {
       },
     ];
 
+    mockTaskValue = {
+      sensorClasses: ['temperature', 'humidity'],
+      entities: ['light.living_room', 'switch.fan'],
+    };
+
     // Create mock HomeAssistant instance
     hass = {
       states: {},
       areas: {},
       entities: {},
       devices: {},
+      localize: (key: string) => key,
     } as HomeAssistant;
 
     // Create component instance
@@ -44,10 +58,43 @@ describe('editor.ts', () => {
 
     // Stub the dispatch event method
     dispatchStub = stub(card, 'dispatchEvent');
+    // Stub fireEvent module - make it call dispatchEvent on the target
+    fireEventStub = stub(fireEventModule, 'fireEvent').callsFake(
+      (target: any, type: string, detail?: any) => {
+        if (!target) {
+          // If target is null/undefined, just return a mock event
+          // This can happen when _goBack() is called
+          return new CustomEvent(type, {
+            detail,
+            bubbles: true,
+            composed: true,
+          });
+        }
+        const event = new CustomEvent(type, {
+          detail,
+          bubbles: true,
+          composed: true,
+        });
+        return target.dispatchEvent(event);
+      },
+    );
 
-    // Stub the getSchema function
-    getSchemaStub = stub(editorSchemaModule, 'getEntitiesSchema');
-    getSchemaStub.resolves(mockSchema);
+    // Stub schema functions
+    getMainSchemaStub = stub(editorSchemaModule, 'getMainSchema');
+    getMainSchemaStub.returns(mockSchema);
+
+    getSensorsSchemaStub = stub(editorSchemaModule, 'getSensorsSchema');
+    getSensorsSchemaStub.returns(mockSchema);
+
+    getOccupancySchemaStub = stub(editorSchemaModule, 'getOccupancySchema');
+    getOccupancySchemaStub.returns(mockSchema);
+
+    // Stub task helper functions
+    areaEntitiesStub = stub(editorSchemaModule, 'areaEntities');
+    areaEntitiesStub.returns(mockTaskValue.entities);
+
+    deviceClassesStub = stub(editorSchemaModule, 'deviceClasses');
+    deviceClassesStub.resolves(mockTaskValue.sensorClasses);
 
     // Set hass and config
     card.hass = hass;
@@ -56,7 +103,12 @@ describe('editor.ts', () => {
 
   afterEach(() => {
     dispatchStub.restore();
-    getSchemaStub.restore();
+    fireEventStub.restore();
+    getMainSchemaStub.restore();
+    getSensorsSchemaStub.restore();
+    getOccupancySchemaStub.restore();
+    areaEntitiesStub.restore();
+    deviceClassesStub.restore();
   });
 
   describe('initialization', () => {
@@ -105,40 +157,28 @@ describe('editor.ts', () => {
       expect(result).to.equal(nothing);
     });
 
-    it('should render task with the correct states', async () => {
-      // Mock the task render function to test different states
-      const taskRenderStub = stub(card['_getEntitiesTask'], 'render');
+    it('should render sub-element editor when active', () => {
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'entities',
+        index: 0,
+        type: 'entity',
+        elementConfig: { entity_id: 'light.test' },
+      };
+      card['_subElementEditorConfig'] = subElementConfig;
 
-      // Test render
-      card.render();
+      const result = card.render();
+      expect(result).to.not.equal(nothing);
+      // Verify it's a TemplateResult (not nothing)
+      expect(result).to.not.equal(nothing);
+    });
 
-      // Verify task.render was called with the correct handlers
-      expect(taskRenderStub.calledOnce).to.be.true;
-      const handlers = taskRenderStub.firstCall.args[0];
-
-      // Test initial state
-      // @ts-ignore
-      expect(handlers.initial()).to.equal(nothing);
-
-      // Test pending state
-      // @ts-ignore
-      expect(handlers.pending()).to.equal(nothing);
-
-      // Test error state
-      const error = new Error('Test error');
-      // @ts-ignore
-      const errorResult = handlers.error(error) as TemplateResult;
-      expect(errorResult.values).to.deep.equal([error]);
-
-      // Test complete state with schema
-      const el = await fixture(
-        // @ts-ignore
-        handlers.complete(mockSchema) as TemplateResult,
-      );
-      expect(el.outerHTML).to.equal('<ha-form></ha-form>');
-
-      // Restore stub
-      taskRenderStub.restore();
+    it('should handle tab change', () => {
+      expect(card['_currentTab']).to.equal(0);
+      const event = new CustomEvent('MDCTabBar:activated', {
+        detail: { index: 2 },
+      });
+      card['_handleTabChange'](event);
+      expect(card['_currentTab']).to.equal(2);
     });
   });
 
@@ -225,6 +265,194 @@ describe('editor.ts', () => {
       expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
         area: 'area_1',
       });
+    });
+
+    it('should delete sensor_layout when set to default', () => {
+      const detail = {
+        value: {
+          area: 'area_1',
+          sensor_layout: 'default',
+        },
+      };
+
+      const event = new CustomEvent('value-changed', { detail });
+      card['_valueChanged'](event);
+
+      expect(dispatchStub.calledOnce).to.be.true;
+      const config = dispatchStub.firstCall.args[0].detail.config;
+      expect(config.sensor_layout).to.be.undefined;
+    });
+  });
+
+  describe('_entitiesRowChanged', () => {
+    beforeEach(() => {
+      card.setConfig({
+        area: 'living_room',
+        entities: ['light.test'],
+        lights: ['light.lamp'],
+      });
+    });
+
+    it('should update entities array when value is array', () => {
+      const mockTarget = {
+        field: 'entities' as const,
+      };
+      const event = new CustomEvent('value-changed', {
+        detail: { value: ['light.test', 'switch.fan'] },
+      });
+      Object.defineProperty(event, 'target', { value: mockTarget });
+
+      card['_entitiesRowChanged'](event);
+
+      expect(card['_config'].entities).to.deep.equal([
+        'light.test',
+        'switch.fan',
+      ]);
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should update lights array when value is array', () => {
+      const mockTarget = {
+        field: 'lights' as const,
+      };
+      const event = new CustomEvent('value-changed', {
+        detail: { value: ['light.lamp', 'light.ceiling'] },
+      });
+      Object.defineProperty(event, 'target', { value: mockTarget });
+
+      card['_entitiesRowChanged'](event);
+
+      expect(card['_config'].lights).to.deep.equal([
+        'light.lamp',
+        'light.ceiling',
+      ]);
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should ignore non-array values', () => {
+      const initialEntities = card['_config'].entities;
+      const mockTarget = {
+        field: 'entities' as const,
+      };
+      const event = new CustomEvent('value-changed', {
+        detail: { value: 'light.test' }, // string instead of array
+      });
+      Object.defineProperty(event, 'target', { value: mockTarget });
+
+      card['_entitiesRowChanged'](event);
+
+      expect(card['_config'].entities).to.deep.equal(initialEntities);
+      expect(dispatchStub.called).to.be.false;
+    });
+  });
+
+  describe('_editDetailElement', () => {
+    it('should set sub-element editor config', () => {
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'entities',
+        index: 0,
+        type: 'entity',
+        elementConfig: { entity_id: 'light.test' },
+      };
+
+      const event = new CustomEvent('edit-detail-element', {
+        detail: { subElementConfig },
+      });
+
+      card['_editDetailElement'](event as any);
+
+      expect(card['_subElementEditorConfig']).to.deep.equal(subElementConfig);
+    });
+  });
+
+  describe('_handleSubElementChanged', () => {
+    beforeEach(() => {
+      card.setConfig({
+        area: 'living_room',
+        entities: ['light.test'],
+        lights: ['light.lamp'],
+      });
+    });
+
+    it('should update entity config in entities array', () => {
+      card['_currentTab'] = 1; // Set to Entities tab (not Main tab)
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'entities',
+        index: 0,
+        type: 'entity',
+        elementConfig: { entity_id: 'light.test' },
+      };
+      card['_subElementEditorConfig'] = subElementConfig;
+
+      const newConfig: EntityConfig = {
+        entity_id: 'light.test',
+        label: 'Test Light',
+        icon: 'mdi:bulb',
+      };
+
+      const event = new CustomEvent('config-changed', {
+        detail: { config: newConfig },
+      });
+
+      card['_handleSubElementChanged'](event);
+
+      expect(card['_config'].entities?.[0]).to.deep.equal(newConfig);
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should update light entity_id in lights array', () => {
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'lights',
+        index: 0,
+        type: 'entity',
+        elementConfig: 'light.lamp',
+      };
+      card['_subElementEditorConfig'] = subElementConfig;
+
+      const event = new CustomEvent('config-changed', {
+        detail: { config: 'light.new' },
+      });
+
+      card['_handleSubElementChanged'](event);
+
+      expect(card['_config'].lights?.[0]).to.equal('light.new');
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should extract entity_id from EntityConfig for lights', () => {
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'lights',
+        index: 0,
+        type: 'entity',
+        elementConfig: 'light.lamp',
+      };
+      card['_subElementEditorConfig'] = subElementConfig;
+
+      const event = new CustomEvent('config-changed', {
+        detail: {
+          config: { entity_id: 'light.new' } as EntityConfig,
+        },
+      });
+
+      card['_handleSubElementChanged'](event);
+
+      expect(card['_config'].lights?.[0]).to.equal('light.new');
+    });
+  });
+
+  describe('_goBack', () => {
+    it('should clear sub-element editor config', () => {
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'entities',
+        index: 0,
+        type: 'entity',
+        elementConfig: { entity_id: 'light.test' },
+      };
+      card['_subElementEditorConfig'] = subElementConfig;
+
+      card['_goBack']();
+
+      expect(card['_subElementEditorConfig']).to.be.undefined;
     });
   });
 });

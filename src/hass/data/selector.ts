@@ -3,20 +3,32 @@
  */
 
 import type { CropOptions } from '@hass/dialogs/image-cropper-dialog/show-image-cropper-dialog';
+import type { UiAction } from '@hass/panels/lovelace/editor/hui-element-editor';
 
 export type Selector =
   | AreaSelector
+  | AttributeSelector
   | BooleanSelector
   | EntitySelector
   | ImageSelector
+  | IconSelector
   | NavigationSelector
   | NumberSelector
   | ObjectSelector
   | SelectSelector
-  | StringSelector;
+  | StringSelector
+  | UiActionSelector
+  | UiColorSelector;
 
 export interface AreaSelector {
   area: {};
+}
+
+export interface AttributeSelector {
+  attribute: {
+    entity_id?: string | string[];
+    hide_attributes?: readonly string[];
+  } | null;
 }
 
 export interface BooleanSelector {
@@ -40,6 +52,13 @@ export interface EntitySelector {
     include_entities?: string[];
     exclude_entities?: string[];
     filter?: EntitySelectorFilter | readonly EntitySelectorFilter[];
+  } | null;
+}
+
+export interface IconSelector {
+  icon: {
+    placeholder?: string;
+    fallbackPath?: string;
   } | null;
 }
 
@@ -96,4 +115,19 @@ export interface StringSelector {
       | 'color';
     suffix?: string;
   };
+}
+
+export interface UiActionSelector {
+  ui_action: {
+    actions?: UiAction[];
+    default_action?: UiAction;
+  } | null;
+}
+
+export interface UiColorSelector {
+  ui_color: {
+    default_color?: string;
+    include_none?: boolean;
+    include_state?: boolean;
+  } | null;
 }

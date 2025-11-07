@@ -106,4 +106,3 @@ describe('attributeDisplay.ts', () => {
     expect((el3 as any).attribute).to.equal('condition');
   });
 });
-

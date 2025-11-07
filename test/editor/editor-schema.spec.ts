@@ -87,6 +87,7 @@ describe('editor-schema.ts', () => {
           icon: 'mdi:sofa',
         },
       },
+      language: 'en',
     } as any as HomeAssistant;
 
     getSensorNumericDeviceClassesStub = stub(
@@ -145,7 +146,7 @@ describe('editor-schema.ts', () => {
       expect(schema).to.deep.equal([
         {
           name: 'entities',
-          label: 'editor.area_side_entities',
+          label: 'editor.area.area_side_entities',
           required: false,
           selector: {
             entity: { multiple: true, include_entities: entities },
@@ -153,7 +154,7 @@ describe('editor-schema.ts', () => {
         },
         {
           name: 'lights',
-          label: 'editor.light_entities',
+          label: 'editor.background.light_entities',
           required: false,
           selector: {
             entity: {
@@ -173,10 +174,50 @@ describe('editor-schema.ts', () => {
       const sensorClasses = ['temperature', 'humidity', 'pressure'];
       const schema = getSensorsSchema(mockHass, sensorClasses, entities);
 
-      expect(schema).to.have.length(3);
-      expect(schema[0]?.name).to.equal('sensors');
-      expect(schema[1]?.name).to.equal('sensor_classes');
-      expect(schema[2]?.name).to.equal('sensor_layout');
+      expect(schema).to.deep.equal([
+        {
+          name: 'sensors',
+          label: 'editor.sensor.individual_sensor_entities',
+          required: false,
+          selector: { entity: { multiple: true, include_entities: entities } },
+        },
+        {
+          name: 'sensor_classes',
+          label: 'editor.sensor.sensor_classes',
+          selector: {
+            select: {
+              reorder: true,
+              multiple: true,
+              custom_value: true,
+              options: sensorClasses,
+            },
+          },
+        },
+        {
+          name: 'sensor_layout',
+          label: 'editor.layout.sensor_layout',
+          required: false,
+          selector: {
+            select: {
+              mode: 'dropdown',
+              options: [
+                {
+                  label: 'Default (in label area)',
+                  value: 'default',
+                },
+                {
+                  label: 'Bottom',
+                  value: 'bottom',
+                },
+                {
+                  label: 'Vertical Stack',
+                  value: 'stacked',
+                },
+              ],
+            },
+          },
+        },
+      ]);
     });
   });
 
@@ -185,9 +226,346 @@ describe('editor-schema.ts', () => {
       const entities = Object.keys(mockHass.entities);
       const schema = getMainSchema(mockHass, entities);
 
-      expect(schema).to.be.an('array');
-      expect(schema.length).to.be.greaterThan(0);
-      expect(schema[0]?.name).to.equal('area');
+      expect(schema).to.deep.equal([
+        {
+          name: 'area',
+          label: 'editor.area.area',
+          required: true,
+          selector: { area: {} },
+        },
+        {
+          name: 'entity',
+          label: 'editor.area.room_entity',
+          required: false,
+          selector: {
+            entity: { multiple: false, include_entities: entities },
+          },
+        },
+        {
+          name: 'content',
+          label: 'editor.layout.content',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:text-short',
+          schema: [
+            {
+              name: 'area_name',
+              label: 'editor.area.area_name',
+              required: false,
+              selector: { text: {} },
+            },
+          ],
+        },
+        {
+          name: 'interactions',
+          label: 'editor.interactions.interactions',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:gesture-tap',
+          schema: [
+            {
+              name: 'navigate',
+              label: 'editor.interactions.navigate_path',
+              required: false,
+              selector: { navigation: {} },
+            },
+          ],
+        },
+        {
+          name: 'styles',
+          label: 'editor.styles.styles',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:brush-variant',
+          schema: [
+            {
+              name: 'background',
+              label: 'editor.background.background',
+              type: 'expandable',
+              icon: 'mdi:format-paint',
+              schema: [
+                {
+                  name: 'image',
+                  label: 'editor.background.background_image',
+                  selector: { image: {} },
+                },
+                {
+                  name: 'image_entity',
+                  label: 'editor.background.background_image_entity',
+                  selector: {
+                    entity: { filter: { domain: ['image', 'person'] } },
+                  },
+                },
+                {
+                  name: 'opacity',
+                  label: 'editor.background.background_opacity',
+                  required: false,
+                  selector: {
+                    number: {
+                      mode: 'slider',
+                      unit_of_measurement: '%',
+                      min: 0,
+                      max: 100,
+                    },
+                  },
+                },
+                {
+                  name: 'options',
+                  label: 'editor.features.options',
+                  selector: {
+                    select: {
+                      multiple: true,
+                      mode: 'list',
+                      options: [
+                        {
+                          label: 'Disable Background Image',
+                          value: 'disable',
+                        },
+                        {
+                          label: 'Icon Background',
+                          value: 'icon_background',
+                        },
+                        {
+                          label: 'Hide Icon Only',
+                          value: 'hide_icon_only',
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              name: 'thresholds',
+              label: 'editor.threshold.thresholds',
+              type: 'expandable',
+              icon: 'mdi:thermometer-alert',
+              schema: [
+                {
+                  name: 'temperature',
+                  label: 'editor.threshold.temperature_threshold',
+                  required: false,
+                  selector: {
+                    number: { mode: 'box', unit_of_measurement: '°' },
+                  },
+                },
+                {
+                  name: 'humidity',
+                  label: 'editor.threshold.humidity_threshold',
+                  required: false,
+                  selector: {
+                    number: {
+                      mode: 'slider',
+                      unit_of_measurement: '%',
+                      min: 0,
+                      max: 100,
+                    },
+                  },
+                },
+                {
+                  name: 'mold',
+                  label: 'editor.threshold.mold_threshold',
+                  required: false,
+                  selector: {
+                    number: {
+                      mode: 'slider',
+                      unit_of_measurement: '%',
+                      min: 0,
+                      max: 100,
+                    },
+                  },
+                },
+                {
+                  name: 'temperature_entity',
+                  label: 'editor.threshold.temperature_entity',
+                  required: false,
+                  selector: {
+                    entity: {
+                      multiple: false,
+                      include_entities: entities,
+                      filter: {
+                        device_class: 'temperature',
+                      },
+                    },
+                  },
+                },
+                {
+                  name: 'temperature_operator',
+                  label: 'editor.threshold.temperature_operator',
+                  required: false,
+                  selector: {
+                    select: {
+                      mode: 'dropdown',
+                      options: [
+                        {
+                          value: 'gt',
+                          label: 'Greater than (>)',
+                        },
+                        {
+                          value: 'gte',
+                          label: 'Greater than or equal (≥)',
+                        },
+                        {
+                          value: 'lt',
+                          label: 'Less than (<)',
+                        },
+                        {
+                          value: 'lte',
+                          label: 'Less than or equal (≤)',
+                        },
+                        {
+                          value: 'eq',
+                          label: 'Equal (=)',
+                        },
+                      ],
+                    },
+                  },
+                },
+                {
+                  name: 'humidity_entity',
+                  label: 'editor.threshold.humidity_entity',
+                  required: false,
+                  selector: {
+                    entity: {
+                      multiple: false,
+                      include_entities: entities,
+                      filter: {
+                        device_class: 'humidity',
+                      },
+                    },
+                  },
+                },
+                {
+                  name: 'humidity_operator',
+                  label: 'editor.threshold.humidity_operator',
+                  required: false,
+                  selector: {
+                    select: {
+                      mode: 'dropdown',
+                      options: [
+                        {
+                          value: 'gt',
+                          label: 'Greater than (>)',
+                        },
+                        {
+                          value: 'gte',
+                          label: 'Greater than or equal (≥)',
+                        },
+                        {
+                          value: 'lt',
+                          label: 'Less than (<)',
+                        },
+                        {
+                          value: 'lte',
+                          label: 'Less than or equal (≤)',
+                        },
+                        {
+                          value: 'eq',
+                          label: 'Equal (=)',
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              name: 'styles',
+              label: 'editor.styles.css_styles',
+              type: 'expandable',
+              icon: 'mdi:spray',
+              schema: [
+                {
+                  name: 'card',
+                  label: 'editor.styles.card_styles',
+                  required: false,
+                  selector: { object: {} },
+                },
+                {
+                  name: 'entities',
+                  label: 'editor.styles.entities_container_styles',
+                  required: false,
+                  selector: { object: {} },
+                },
+                {
+                  name: 'entity_icon',
+                  label: 'editor.styles.entity_icon_styles',
+                  required: false,
+                  selector: { object: {} },
+                },
+                {
+                  name: 'sensors',
+                  label: 'editor.styles.sensor_styles',
+                  required: false,
+                  selector: { object: {} },
+                },
+                {
+                  name: 'stats',
+                  label: 'editor.styles.stats_styles',
+                  required: false,
+                  selector: { object: {} },
+                },
+                {
+                  name: 'title',
+                  label: 'editor.styles.title_styles',
+                  required: false,
+                  selector: { object: {} },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'features',
+          label: 'editor.features.features',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:list-box',
+          schema: [
+            {
+              name: 'features',
+              label: 'editor.features.features',
+              required: false,
+              selector: {
+                select: {
+                  multiple: true,
+                  mode: 'list',
+                  options: [
+                    {
+                      label: 'Hide Area Stats',
+                      value: 'hide_area_stats',
+                    },
+                    {
+                      label: 'Hide Sensors',
+                      value: 'hide_climate_label',
+                    },
+                    {
+                      label: 'Hide Room Icon',
+                      value: 'hide_room_icon',
+                    },
+                    {
+                      label: 'Hide Sensor icons',
+                      value: 'hide_sensor_icons',
+                    },
+                    {
+                      label: 'Hide Sensor labels',
+                      value: 'hide_sensor_labels',
+                    },
+                    {
+                      label: 'Skip Climate Styles',
+                      value: 'skip_climate_styles',
+                    },
+                    {
+                      label: 'Skip Card Background Styles',
+                      value: 'skip_entity_styles',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ]);
     });
   });
 
@@ -196,10 +574,72 @@ describe('editor-schema.ts', () => {
       const entities = Object.keys(mockHass.entities);
       const schema = getOccupancySchema(mockHass, entities);
 
-      expect(schema).to.be.an('array');
-      expect(schema.length).to.equal(1);
-      expect(schema[0]?.name).to.equal('occupancy');
-      expect(schema[0]?.type).to.equal('grid');
+      expect(schema).to.deep.equal([
+        {
+          name: 'occupancy',
+          label: 'editor.occupancy.occupancy_presence_detection',
+          type: 'grid',
+          column_min_width: '100%',
+          schema: [
+            {
+              name: 'entities',
+              label: 'editor.occupancy.motion_occupancy_presence_sensors',
+              required: true,
+              selector: {
+                entity: {
+                  multiple: true,
+                  include_entities: entities,
+                  filter: {
+                    domain: ['binary_sensor'],
+                    device_class: ['motion', 'occupancy', 'presence'],
+                  },
+                },
+              },
+            },
+            {
+              name: 'card_border_color',
+              label: 'editor.card.card_border_color_occupied',
+              required: false,
+              selector: { ui_color: {} },
+            },
+            {
+              name: 'icon_color',
+              label: 'editor.icon.icon_background_color_occupied',
+              required: false,
+              selector: { ui_color: {} },
+            },
+            {
+              name: 'options',
+              label: 'editor.occupancy.occupancy_options',
+              required: false,
+              selector: {
+                select: {
+                  multiple: true,
+                  mode: 'list',
+                  options: [
+                    {
+                      label: 'Disable Card Border',
+                      value: 'disabled_card_styles',
+                    },
+                    {
+                      label: 'Disable Card Border Animations',
+                      value: 'disabled_card_styles_animation',
+                    },
+                    {
+                      label: 'Disable Icon Color',
+                      value: 'disable_icon_styles',
+                    },
+                    {
+                      label: 'Disable Icon Animations',
+                      value: 'disable_icon_animation',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ]);
     });
   });
 });

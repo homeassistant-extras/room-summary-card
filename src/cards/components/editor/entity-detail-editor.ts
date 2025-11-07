@@ -1,0 +1,228 @@
+import { localize } from '@/localize/localize';
+import { fireEvent } from '@hass/common/dom/fire_event';
+import type { HaFormSchema } from '@hass/components/ha-form/types';
+import type { UiAction } from '@hass/panels/lovelace/editor/hui-element-editor';
+import type { HomeAssistant } from '@hass/types';
+import type { EntityConfig } from '@type/config/entity';
+import type { TranslationKey } from '@type/locale';
+import {
+  css,
+  html,
+  LitElement,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
+import { property, state } from 'lit/decorators.js';
+import memoizeOne from 'memoize-one';
+
+export class RoomSummaryEntityDetailEditor extends LitElement {
+  @property({ attribute: false }) public hass?: HomeAssistant;
+
+  @state() private _config?: EntityConfig;
+
+  @property({ attribute: false }) public type: 'entity' | 'sensor' = 'entity';
+
+  public setConfig(config: EntityConfig | string): void {
+    if (typeof config === 'string') {
+      this._config = { entity_id: config };
+    } else {
+      this._config = { ...config };
+    }
+  }
+
+  @property({ attribute: false })
+  public set value(value: EntityConfig | string | undefined) {
+    if (!value) {
+      this._config = undefined;
+      return;
+    }
+    this.setConfig(value);
+  }
+
+  public get value(): EntityConfig | undefined {
+    return this._config;
+  }
+
+  private _entitiesSchema = memoizeOne(
+    (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
+      return [
+        {
+          name: 'entity_id',
+          required: true,
+          label: 'editor.entity.entity_id',
+          selector: { entity: {} },
+        },
+        {
+          type: 'grid',
+          name: '',
+          label: 'editor.entity.entity_label',
+          schema: [
+            {
+              name: 'label',
+              label: 'editor.entity.entity_label',
+              selector: { text: {} },
+            },
+            {
+              name: 'attribute',
+              label: 'editor.entity.entity_attribute',
+              selector: { attribute: { entity_id } },
+            },
+            {
+              name: 'icon',
+              label: 'editor.entity.entity_icon',
+              selector: {
+                icon: {},
+              },
+            },
+          ],
+        },
+        {
+          type: 'grid',
+          name: '',
+          label: 'editor.entity.entity_label',
+          schema: [
+            {
+              name: 'on_color',
+              label: 'editor.entity.entity_on_color',
+              selector: { ui_color: {} },
+            },
+            {
+              name: 'off_color',
+              label: 'editor.entity.entity_off_color',
+              selector: { ui_color: {} },
+            },
+          ],
+        },
+        {
+          name: 'features',
+          label: 'editor.features.features',
+          required: false,
+          selector: {
+            select: {
+              multiple: true,
+              mode: 'list' as const,
+              options: [
+                {
+                  label: localize(hass, 'editor.entity.use_entity_icon'),
+                  value: 'use_entity_icon',
+                },
+              ],
+            },
+          },
+        },
+        {
+          name: 'interactions',
+          label: 'editor.interactions.interactions',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:gesture-tap',
+          schema: [
+            {
+              name: 'tap_action',
+              label: 'editor.interactions.tap_action',
+              required: false,
+              selector: {
+                ui_action: {
+                  default_action: 'toggle' as UiAction,
+                },
+              },
+            },
+            {
+              name: 'double_tap_action',
+              label: 'editor.interactions.double_tap_action',
+              required: false,
+              selector: {
+                ui_action: {
+                  default_action: 'more-info' as UiAction,
+                },
+              },
+            },
+            {
+              name: 'hold_action',
+              label: 'editor.interactions.hold_action',
+              required: false,
+              selector: {
+                ui_action: {
+                  default_action: 'none' as UiAction,
+                },
+              },
+            },
+          ],
+        },
+      ];
+    },
+  );
+
+  private _sensorsSchema = memoizeOne(
+    (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
+      return [
+        {
+          name: 'entity_id',
+          required: true,
+          label: 'editor.entity.entity_id',
+          selector: { entity: {} },
+        },
+        {
+          type: 'grid',
+          name: '',
+          label: 'editor.entity.entity_label',
+          schema: [
+            {
+              name: 'label',
+              label: 'editor.entity.entity_label',
+              selector: { text: {} },
+            },
+            {
+              name: 'attribute',
+              label: 'editor.entity.entity_attribute',
+              selector: { attribute: { entity_id } },
+            },
+          ],
+        },
+      ];
+    },
+  );
+
+  override render(): TemplateResult | typeof nothing {
+    if (!this.hass || !this._config) {
+      return nothing;
+    }
+
+    const schema =
+      this.type === 'entity'
+        ? this._entitiesSchema(this._config.entity_id, this.hass)
+        : this._sensorsSchema(this._config.entity_id, this.hass);
+
+    return html`
+      <ha-form
+        .hass=${this.hass}
+        .data=${this._config}
+        .schema=${schema}
+        .computeLabel=${this._computeLabelCallback}
+        @value-changed=${this._valueChanged}
+      ></ha-form>
+    `;
+  }
+
+  private _computeLabelCallback = (schema: HaFormSchema): string => {
+    if (!schema.label) return '';
+    return `${localize(this.hass as any, schema.label as TranslationKey)} ${
+      schema.required
+        ? `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.required')})`
+        : `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.optional')})`
+    }`;
+  };
+
+  private _valueChanged(ev: CustomEvent): void {
+    console.log('ev.detail.value', ev.detail.value);
+    // @ts-ignore
+    fireEvent(this, 'config-changed', { config: ev.detail.value });
+  }
+
+  static override styles: CSSResult = css`
+    ha-form {
+      padding: 16px;
+    }
+  `;
+}

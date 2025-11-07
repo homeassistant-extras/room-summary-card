@@ -7,6 +7,9 @@
  */
 
 import { RoomSummaryCard } from '@cards/card';
+import { RoomSummaryEntitiesRowEditor } from '@cards/components/editor/entities-row-editor';
+import { RoomSummaryEntityDetailEditor } from '@cards/components/editor/entity-detail-editor';
+import { RoomSummarySubElementEditor } from '@cards/components/editor/sub-element-editor';
 import { EntityCollection } from '@cards/components/entity-collection/entity-collection';
 import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
 import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
@@ -19,6 +22,18 @@ customElements.define('room-summary-card-editor', RoomSummaryCardEditor);
 customElements.define('sensor-collection', SensorCollection);
 customElements.define('entity-collection', EntityCollection);
 customElements.define('room-state-icon', RoomStateIcon);
+customElements.define(
+  'room-summary-entity-detail-editor',
+  RoomSummaryEntityDetailEditor,
+);
+customElements.define(
+  'room-summary-entities-row-editor',
+  RoomSummaryEntitiesRowEditor,
+);
+customElements.define(
+  'room-summary-sub-element-editor',
+  RoomSummarySubElementEditor,
+);
 
 // Ensure the customCards array exists on the window object
 window.customCards = window.customCards || [];

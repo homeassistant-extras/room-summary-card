@@ -6,6 +6,7 @@ import {
 } from '@delegates/action-handler-delegate';
 import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
+import { attributeDisplay } from '@html/attribute-display';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
@@ -178,11 +179,28 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       ...thresholdResult?.styles,
     };
 
-    // Get label (priority: state/threshold label > config label > entity name)
-    const label = this._showLabels
-      ? getEntityLabel(this.entity, thresholdResult) ||
-        computeEntityName(state, this._hass)
-      : undefined;
+    // Get label (priority: state/threshold label > config label > attribute value > entity name)
+    let label: TemplateResult | string | undefined;
+    if (this._showLabels) {
+      // First priority: label from state/threshold result
+      const thresholdLabel = getEntityLabel(this.entity, thresholdResult);
+      if (thresholdLabel) {
+        label = thresholdLabel;
+      } else if (this.entity.config.label) {
+        // Second priority: configured label
+        label = this.entity.config.label;
+      } else if (this.entity.config.attribute) {
+        // Third priority: attribute value if attribute is configured
+        label = attributeDisplay(
+          this._hass,
+          state,
+          this.entity.config.attribute,
+        );
+      } else {
+        // Fallback: entity name
+        label = computeEntityName(state, this._hass);
+      }
+    }
 
     return html`
       ${stylesToHostCss(iconStyles)}
