@@ -43,7 +43,7 @@ export function stateActive(stateObj: HassEntity, state?: string): boolean {
     case 'lock':
       return compareState !== 'locked';
     case 'media_player':
-      return compareState !== 'standby';
+      return !['standby', 'paused'].includes(compareState);
     case 'vacuum':
       return !['idle', 'docked', 'paused'].includes(compareState);
     case 'valve':

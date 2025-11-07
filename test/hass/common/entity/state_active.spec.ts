@@ -122,7 +122,7 @@ describe('state_active.ts', () => {
       expect(stateActive(createStateObj(`${domain}.test`, 'playing'))).to.be
         .true;
       expect(stateActive(createStateObj(`${domain}.test`, 'paused'))).to.be
-        .true;
+        .false;
     });
 
     it('should handle vacuum domain', () => {
