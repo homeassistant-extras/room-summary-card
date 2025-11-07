@@ -3,6 +3,7 @@ import {
   deviceClasses,
   entityFeaturesSchema,
   getAreaSchema,
+  getEntitiesStylesSchema,
   getLightsSchema,
   getMainSchemaRest,
   getOccupancySchema,
@@ -127,16 +128,38 @@ export class RoomSummaryCardEditor extends LitElement {
             ${ref(this._tabContainerRef)}
             @scroll=${this._handleScroll}
           >
-            <mwc-tab-bar
-              .activeIndex=${this._currentTab}
-              @MDCTabBar:activated=${this._handleTabChange}
-            >
-              <mwc-tab label="Main"></mwc-tab>
-              <mwc-tab label="Entities"></mwc-tab>
-              <mwc-tab label="Lights"></mwc-tab>
-              <mwc-tab label="Sensors"></mwc-tab>
-              <mwc-tab label="Occupancy"></mwc-tab>
-            </mwc-tab-bar>
+            <div class="custom-tab-bar">
+              <button
+                class="custom-tab ${this._currentTab === 0 ? 'active' : ''}"
+                @click=${() => this._handleTabClick(0)}
+              >
+                Main
+              </button>
+              <button
+                class="custom-tab ${this._currentTab === 1 ? 'active' : ''}"
+                @click=${() => this._handleTabClick(1)}
+              >
+                Entities
+              </button>
+              <button
+                class="custom-tab ${this._currentTab === 2 ? 'active' : ''}"
+                @click=${() => this._handleTabClick(2)}
+              >
+                Lights
+              </button>
+              <button
+                class="custom-tab ${this._currentTab === 3 ? 'active' : ''}"
+                @click=${() => this._handleTabClick(3)}
+              >
+                Sensors
+              </button>
+              <button
+                class="custom-tab ${this._currentTab === 4 ? 'active' : ''}"
+                @click=${() => this._handleTabClick(4)}
+              >
+                Occupancy
+              </button>
+            </div>
           </div>
           <div
             class="scroll-indicator scroll-indicator-right ${this
@@ -158,6 +181,10 @@ export class RoomSummaryCardEditor extends LitElement {
 
   private _handleTabChange(ev: CustomEvent): void {
     this._currentTab = ev.detail.index;
+  }
+
+  private _handleTabClick(index: number): void {
+    this._currentTab = index;
   }
 
   private _handleScroll(): void {
@@ -278,7 +305,10 @@ export class RoomSummaryCardEditor extends LitElement {
               <ha-form
                 .hass=${this.hass}
                 .data=${this._config}
-                .schema=${[entityFeaturesSchema(this.hass)]}
+                .schema=${[
+                  getEntitiesStylesSchema(),
+                  entityFeaturesSchema(this.hass),
+                ]}
                 .computeLabel=${this._computeLabel.bind(this)}
                 @value-changed=${this._valueChanged}
               ></ha-form>

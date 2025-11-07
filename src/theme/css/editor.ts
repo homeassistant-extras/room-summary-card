@@ -85,8 +85,49 @@ export const styles = css`
     background: var(--secondary-text-color);
   }
 
-  mwc-tab-bar {
+  .custom-tab-bar {
+    display: flex;
     min-width: min-content;
+    gap: 0;
+  }
+
+  .custom-tab {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--primary-text-color);
+    cursor: pointer;
+    font-family: var(--mdc-typography-button-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.0892857143em;
+    min-width: 72px;
+    padding: 0 16px;
+    text-transform: uppercase;
+    transition: border-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .custom-tab:hover {
+    color: var(--primary-color);
+  }
+
+  .custom-tab.active {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+
+  .custom-tab:focus {
+    outline: none;
+  }
+
+  .custom-tab:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: -2px;
   }
 
   ha-form {

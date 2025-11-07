@@ -2,9 +2,11 @@ import {
   areaEntities,
   deviceClasses,
   getEntitiesSchema,
+  getEntitiesStylesSchema,
   getMainSchema,
   getOccupancySchema,
   getSensorsSchema,
+  getSensorsSchemaRest,
 } from '@/editor/editor-schema';
 import * as sensorModule from '@hass/data/sensor';
 import type { HomeAssistant } from '@hass/types';
@@ -139,7 +141,7 @@ describe('editor-schema.ts', () => {
   });
 
   describe('getEntitiesSchema', () => {
-    it('should return schema with entities and lights for entities tab', () => {
+    it('should return schema with entities, lights, and entity styles', () => {
       const entities = Object.keys(mockHass.entities);
       const schema = getEntitiesSchema(mockHass, entities);
 
@@ -164,7 +166,54 @@ describe('editor-schema.ts', () => {
             },
           },
         },
+        {
+          name: 'styles',
+          label: 'editor.styles.css_styles',
+          type: 'grid',
+          column_min_width: '100%',
+          schema: [
+            {
+              name: 'entities',
+              label: 'editor.styles.entities_container_styles',
+              required: false,
+              selector: { object: {} },
+            },
+            {
+              name: 'entity_icon',
+              label: 'editor.styles.entity_icon_styles',
+              required: false,
+              selector: { object: {} },
+            },
+          ],
+        },
       ]);
+    });
+  });
+
+  describe('getEntitiesStylesSchema', () => {
+    it('should return schema with entity styles grid', () => {
+      const schema = getEntitiesStylesSchema();
+
+      expect(schema).to.deep.equal({
+        name: 'styles',
+        label: 'editor.styles.css_styles',
+        type: 'grid',
+        column_min_width: '100%',
+        schema: [
+          {
+            name: 'entities',
+            label: 'editor.styles.entities_container_styles',
+            required: false,
+            selector: { object: {} },
+          },
+          {
+            name: 'entity_icon',
+            label: 'editor.styles.entity_icon_styles',
+            required: false,
+            selector: { object: {} },
+          },
+        ],
+      });
     });
   });
 
@@ -218,6 +267,90 @@ describe('editor-schema.ts', () => {
           },
         },
       ]);
+    });
+  });
+
+  describe('getSensorsSchemaRest', () => {
+    it('should return schema with sensor classes, sensor layout, sensor styles, and sensor features', () => {
+      const sensorClasses = ['temperature', 'humidity', 'pressure'];
+      const schema = getSensorsSchemaRest(mockHass, sensorClasses);
+
+      expect(schema).to.have.lengthOf(4);
+      expect(schema[0]).to.deep.equal({
+        name: 'sensor_classes',
+        label: 'editor.sensor.sensor_classes',
+        selector: {
+          select: {
+            reorder: true,
+            multiple: true,
+            custom_value: true,
+            options: sensorClasses,
+          },
+        },
+      });
+      expect(schema[1]).to.deep.equal({
+        name: 'sensor_layout',
+        label: 'editor.layout.sensor_layout',
+        required: false,
+        selector: {
+          select: {
+            mode: 'dropdown',
+            options: [
+              {
+                label: 'Default (in label area)',
+                value: 'default',
+              },
+              {
+                label: 'Bottom',
+                value: 'bottom',
+              },
+              {
+                label: 'Vertical Stack',
+                value: 'stacked',
+              },
+            ],
+          },
+        },
+      });
+      expect(schema[2]).to.deep.equal({
+        name: 'styles',
+        label: 'editor.styles.css_styles',
+        type: 'grid',
+        column_min_width: '100%',
+        schema: [
+          {
+            name: 'sensors',
+            label: 'editor.styles.sensor_styles',
+            required: false,
+            selector: { object: {} },
+          },
+        ],
+      });
+      expect(schema[3]).to.deep.equal({
+        name: 'features',
+        label: 'editor.features.features',
+        required: false,
+        selector: {
+          select: {
+            multiple: true,
+            mode: 'list',
+            options: [
+              {
+                label: 'Hide Sensors',
+                value: 'hide_climate_label',
+              },
+              {
+                label: 'Hide Sensor icons',
+                value: 'hide_sensor_icons',
+              },
+              {
+                label: 'Hide Sensor labels',
+                value: 'hide_sensor_labels',
+              },
+            ],
+          },
+        },
+      });
     });
   });
 
@@ -482,24 +615,6 @@ describe('editor-schema.ts', () => {
                   selector: { object: {} },
                 },
                 {
-                  name: 'entities',
-                  label: 'editor.styles.entities_container_styles',
-                  required: false,
-                  selector: { object: {} },
-                },
-                {
-                  name: 'entity_icon',
-                  label: 'editor.styles.entity_icon_styles',
-                  required: false,
-                  selector: { object: {} },
-                },
-                {
-                  name: 'sensors',
-                  label: 'editor.styles.sensor_styles',
-                  required: false,
-                  selector: { object: {} },
-                },
-                {
                   name: 'stats',
                   label: 'editor.styles.stats_styles',
                   required: false,
@@ -536,20 +651,8 @@ describe('editor-schema.ts', () => {
                       value: 'hide_area_stats',
                     },
                     {
-                      label: 'Hide Sensors',
-                      value: 'hide_climate_label',
-                    },
-                    {
                       label: 'Hide Room Icon',
                       value: 'hide_room_icon',
-                    },
-                    {
-                      label: 'Hide Sensor icons',
-                      value: 'hide_sensor_icons',
-                    },
-                    {
-                      label: 'Hide Sensor labels',
-                      value: 'hide_sensor_labels',
                     },
                     {
                       label: 'Skip Climate Styles',

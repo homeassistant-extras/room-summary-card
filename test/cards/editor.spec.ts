@@ -174,11 +174,17 @@ describe('editor.ts', () => {
 
     it('should handle tab change', () => {
       expect(card['_currentTab']).to.equal(0);
+      card['_handleTabClick'](2);
+      expect(card['_currentTab']).to.equal(2);
+    });
+
+    it('should handle legacy tab change event', () => {
+      expect(card['_currentTab']).to.equal(0);
       const event = new CustomEvent('MDCTabBar:activated', {
-        detail: { index: 2 },
+        detail: { index: 3 },
       });
       card['_handleTabChange'](event);
-      expect(card['_currentTab']).to.equal(2);
+      expect(card['_currentTab']).to.equal(3);
     });
   });
 

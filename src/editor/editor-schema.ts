@@ -282,24 +282,6 @@ const schemeStyles = (
             selector: { object: {} },
           },
           {
-            name: 'entities',
-            label: 'editor.styles.entities_container_styles',
-            required: false,
-            selector: { object: {} },
-          },
-          {
-            name: 'entity_icon',
-            label: 'editor.styles.entity_icon_styles',
-            required: false,
-            selector: { object: {} },
-          },
-          {
-            name: 'sensors',
-            label: 'editor.styles.sensor_styles',
-            required: false,
-            selector: { object: {} },
-          },
-          {
             name: 'stats',
             label: 'editor.styles.stats_styles',
             required: false,
@@ -340,7 +322,53 @@ export const getEntitiesSchema = (
         },
       },
     },
+    {
+      name: 'styles',
+      label: 'editor.styles.css_styles',
+      type: 'grid' as const,
+      column_min_width: '100%',
+      schema: [
+        {
+          name: 'entities',
+          label: 'editor.styles.entities_container_styles',
+          required: false,
+          selector: { object: {} },
+        },
+        {
+          name: 'entity_icon',
+          label: 'editor.styles.entity_icon_styles',
+          required: false,
+          selector: { object: {} },
+        },
+      ],
+    },
   ];
+};
+
+/**
+ * Returns schema for entity styles only (for entities tab)
+ */
+export const getEntitiesStylesSchema = (): HaFormSchema => {
+  return {
+    name: 'styles',
+    label: 'editor.styles.css_styles',
+    type: 'grid' as const,
+    column_min_width: '100%',
+    schema: [
+      {
+        name: 'entities',
+        label: 'editor.styles.entities_container_styles',
+        required: false,
+        selector: { object: {} },
+      },
+      {
+        name: 'entity_icon',
+        label: 'editor.styles.entity_icon_styles',
+        required: false,
+        selector: { object: {} },
+      },
+    ],
+  };
 };
 
 export const getLightsSchema = (
@@ -460,6 +488,21 @@ export const getSensorsSchemaRest = (
         },
       },
     },
+    {
+      name: 'styles',
+      label: 'editor.styles.css_styles',
+      type: 'grid' as const,
+      column_min_width: '100%',
+      schema: [
+        {
+          name: 'sensors',
+          label: 'editor.styles.sensor_styles',
+          required: false,
+          selector: { object: {} },
+        },
+      ],
+    },
+    sensorsFeaturesSchema(hass),
   ];
 };
 
@@ -626,20 +669,8 @@ const featuresSchema = (hass: HomeAssistant): HaFormSchema => {
                 value: 'hide_area_stats',
               },
               {
-                label: localize(hass, 'editor.sensor.hide_sensors'),
-                value: 'hide_climate_label',
-              },
-              {
                 label: localize(hass, 'editor.icon.hide_room_icon'),
                 value: 'hide_room_icon',
-              },
-              {
-                label: localize(hass, 'editor.sensor.hide_sensor_icons'),
-                value: 'hide_sensor_icons',
-              },
-              {
-                label: localize(hass, 'editor.sensor.hide_sensor_labels'),
-                value: 'hide_sensor_labels',
               },
               {
                 label: localize(hass, 'editor.styles.skip_climate_styles'),
@@ -708,6 +739,37 @@ export const lightsFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
           {
             label: localize(hass, 'editor.background.multi_light_background'),
             value: 'multi_light_background',
+          },
+        ],
+      },
+    },
+  };
+};
+
+/**
+ * Returns schema for sensors-specific features only
+ */
+export const sensorsFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
+  return {
+    name: 'features',
+    label: 'editor.features.features',
+    required: false,
+    selector: {
+      select: {
+        multiple: true,
+        mode: 'list' as const,
+        options: [
+          {
+            label: localize(hass, 'editor.sensor.hide_sensors'),
+            value: 'hide_climate_label',
+          },
+          {
+            label: localize(hass, 'editor.sensor.hide_sensor_icons'),
+            value: 'hide_sensor_icons',
+          },
+          {
+            label: localize(hass, 'editor.sensor.hide_sensor_labels'),
+            value: 'hide_sensor_labels',
           },
         ],
       },
