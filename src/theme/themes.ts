@@ -68,7 +68,7 @@ export const themeColors = css`
 `;
 
 export const colorsLight = css`
-  --opacity-background-active: 1;
+  --opacity-background-active: 0.1;
   --opacity-background-inactive: 1;
 
   --opacity-icon-fill-active: 0.2;

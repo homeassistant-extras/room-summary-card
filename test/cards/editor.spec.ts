@@ -369,6 +369,24 @@ describe('editor.ts', () => {
 
       expect(card['_subElementEditorConfig']).to.deep.equal(subElementConfig);
     });
+
+    it('should set type to sensor when on sensors tab', () => {
+      card['_currentTab'] = 3; // Sensors tab
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'entities',
+        index: 0,
+        type: 'entity',
+        elementConfig: 'sensor.temperature',
+      };
+
+      const event = new CustomEvent('edit-detail-element', {
+        detail: { subElementConfig },
+      });
+
+      card['_editDetailElement'](event as any);
+
+      expect(card['_subElementEditorConfig']?.type).to.equal('sensor');
+    });
   });
 
   describe('_handleSubElementChanged', () => {
@@ -443,6 +461,82 @@ describe('editor.ts', () => {
       card['_handleSubElementChanged'](event);
 
       expect(card['_config'].lights?.[0]).to.equal('light.new');
+    });
+
+    it('should remove light when value is falsy', () => {
+      card.setConfig({
+        area: 'living_room',
+        lights: ['light.lamp', 'light.ceiling'],
+      });
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'lights',
+        index: 0,
+        type: 'entity',
+        elementConfig: 'light.lamp',
+      };
+      card['_subElementEditorConfig'] = subElementConfig;
+
+      const event = new CustomEvent('config-changed', {
+        detail: { config: null },
+      });
+
+      card['_handleSubElementChanged'](event);
+
+      expect(card['_config'].lights).to.deep.equal(['light.ceiling']);
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should update sensor config in sensors array', () => {
+      card['_currentTab'] = 3; // Set to Sensors tab
+      card.setConfig({
+        area: 'living_room',
+        sensors: ['sensor.temperature'],
+      });
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'entities',
+        index: 0,
+        type: 'sensor',
+        elementConfig: 'sensor.temperature',
+      };
+      card['_subElementEditorConfig'] = subElementConfig;
+
+      const newConfig: EntityConfig = {
+        entity_id: 'sensor.temperature',
+        label: 'Temperature',
+      };
+
+      const event = new CustomEvent('config-changed', {
+        detail: { config: newConfig },
+      });
+
+      card['_handleSubElementChanged'](event);
+
+      expect(card['_config'].sensors?.[0]).to.deep.equal(newConfig);
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should remove sensor when value is falsy', () => {
+      card['_currentTab'] = 3; // Set to Sensors tab
+      card.setConfig({
+        area: 'living_room',
+        sensors: ['sensor.temperature', 'sensor.humidity'],
+      });
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'entities',
+        index: 0,
+        type: 'sensor',
+        elementConfig: 'sensor.temperature',
+      };
+      card['_subElementEditorConfig'] = subElementConfig;
+
+      const event = new CustomEvent('config-changed', {
+        detail: { config: null },
+      });
+
+      card['_handleSubElementChanged'](event);
+
+      expect(card['_config'].sensors).to.deep.equal(['sensor.humidity']);
+      expect(dispatchStub.calledOnce).to.be.true;
     });
   });
 

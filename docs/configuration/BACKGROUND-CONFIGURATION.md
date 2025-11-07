@@ -242,5 +242,5 @@ background:
 
 When no opacity is specified, the card uses theme-aware automatic opacity:
 
-- **Light mode**: Standard opacity values
+- **Light mode**: Adjusted opacity based on entity state (active/inactive)
 - **Dark mode**: Adjusted opacity based on entity state (active/inactive)

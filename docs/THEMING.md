@@ -232,20 +232,21 @@ sensor.humidity:
 
 ![Climate Borders](../assets/climate.png)
 
-## Dark Mode Adaptations
+## Theme Mode Adaptations
 
-The card automatically adapts to dark mode with:
+The card automatically adapts to both light and dark modes with:
 
 - **Background Opacity**: Different opacity levels for active/inactive states
 - **Icon Fill Opacity**: Subtle background fills behind icons
 - **Text Contrast**: Appropriate text colors for readability
-- **Border Adjustments**: Climate borders remain visible in dark themes
+- **Border Adjustments**: Climate borders remain visible in all themes
+- **State-Based Colors**: Card background colors based on entity state (works in both light and dark modes)
 
-### Dark Mode Variables
+### Theme Mode Variables
 
 ```css
 /* Light mode */
---opacity-background-active: 1;
+--opacity-background-active: 0.1;
 --opacity-background-inactive: 1;
 --opacity-icon-fill-active: 0.2;
 --opacity-icon-fill-inactive: 0.1;
@@ -256,6 +257,8 @@ The card automatically adapts to dark mode with:
 --opacity-icon-fill-active: 0.2;
 --opacity-icon-fill-inactive: 0.05;
 ```
+
+**Note**: You can disable state-based background color styling using the `skip_entity_styles` feature flag if desired.
 
 ## Troubleshooting Colors
 

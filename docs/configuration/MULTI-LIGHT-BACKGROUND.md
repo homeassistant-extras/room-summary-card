@@ -20,7 +20,7 @@ features:
 - **Automatic Discovery**: Automatically finds all light entities in the specified area
 - **Mixed Entity Support**: Can track any entity type (light, switch, binary_sensor, etc.) that reports on/off state
 - **Manual Override**: Specify exactly which entities to track with the `lights` configuration
-- **Smart Background**: Shows lit background when ANY tracked light is on (dark mode only)
+- **Smart Background**: Shows lit background when ANY tracked light is on
 
 ## Automatic Light Discovery
 
@@ -128,9 +128,9 @@ If automatic discovery isn't finding your lights:
 
 If the background isn't showing when lights are on:
 
-1. Ensure you're using dark mode (feature only works in dark mode)
-2. Verify the light entities are actually reporting "on" state
-3. Check that `multi_light_background` is in the `features` list
+1. Verify the light entities are actually reporting "on" state
+2. Check that `multi_light_background` is in the `features` list
+3. Use the `skip_entity_styles` feature flag if you want to disable background color styling
 
 ### Performance Issues
 

@@ -9,6 +9,11 @@ import {
   getOccupancySchema,
   getSensorsSchemaRest,
 } from '@/editor/editor-schema';
+import { computeLabel } from '@/editor/utils/compute-label';
+import {
+  cleanEmptyArrays,
+  cleanEmptyProps,
+} from '@/editor/utils/config-cleanup';
 import { localize } from '@/localize/localize';
 import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import type { HASSDomEvent } from '@hass/common/dom/fire_event';
@@ -218,19 +223,6 @@ export class RoomSummaryCardEditor extends LitElement {
     }
   }
 
-  /**
-   * Computes the label for a form schema field
-   * @param {HaFormSchema} schema - The form schema
-   * @returns The formatted label with required/optional indicator
-   */
-  private _computeLabel(schema: HaFormSchema): string {
-    return `${localize(this.hass, schema.label as unknown as TranslationKey)} ${
-      schema.required
-        ? `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.required')})`
-        : `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.optional')})`
-    }`;
-  }
-
   private _renderTabContent() {
     // Main tab (tab 0) uses split layout: area form, entity row editor, area_name + rest form
     if (this._currentTab === 0) {
@@ -253,7 +245,8 @@ export class RoomSummaryCardEditor extends LitElement {
                 .hass=${this.hass}
                 .data=${this._config}
                 .schema=${[areaSchema]}
-                .computeLabel=${this._computeLabel.bind(this)}
+                .computeLabel=${(schema: HaFormSchema) =>
+                  computeLabel(this.hass, schema)}
                 @value-changed=${this._valueChanged}
               ></ha-form>
               <room-summary-entities-row-editor
@@ -271,7 +264,8 @@ export class RoomSummaryCardEditor extends LitElement {
                 .hass=${this.hass}
                 .data=${this._config}
                 .schema=${restSchema}
-                .computeLabel=${this._computeLabel.bind(this)}
+                .computeLabel=${(schema: HaFormSchema) =>
+                  computeLabel(this.hass, schema)}
                 @value-changed=${this._valueChanged}
               ></ha-form>
             </div>
@@ -309,7 +303,8 @@ export class RoomSummaryCardEditor extends LitElement {
                   getEntitiesStylesSchema(),
                   entityFeaturesSchema(this.hass),
                 ]}
-                .computeLabel=${this._computeLabel.bind(this)}
+                .computeLabel=${(schema: HaFormSchema) =>
+                  computeLabel(this.hass, schema)}
                 @value-changed=${this._valueChanged}
               ></ha-form>
             </div>
@@ -350,7 +345,8 @@ export class RoomSummaryCardEditor extends LitElement {
                 .hass=${this.hass}
                 .data=${this._config}
                 .schema=${restSchema}
-                .computeLabel=${this._computeLabel.bind(this)}
+                .computeLabel=${(schema: HaFormSchema) =>
+                  computeLabel(this.hass, schema)}
                 @value-changed=${this._valueChanged}
               ></ha-form>
             </div>
@@ -385,7 +381,8 @@ export class RoomSummaryCardEditor extends LitElement {
             .hass=${this.hass}
             .data=${this._config}
             .schema=${schema}
-            .computeLabel=${this._computeLabel.bind(this)}
+            .computeLabel=${(schema: HaFormSchema) =>
+              computeLabel(this.hass, schema)}
             @value-changed=${this._valueChanged}
           ></ha-form>
         `;
@@ -420,16 +417,16 @@ export class RoomSummaryCardEditor extends LitElement {
     if (config.entity === undefined) delete config.entity;
 
     // Clean up empty arrays
-    this._cleanEmptyArrays(config, 'features');
-    this._cleanEmptyArrays(config, 'entities');
-    this._cleanEmptyArrays(config, 'lights');
-    this._cleanEmptyArrays(config, 'problem_entities');
-    this._cleanEmptyArrays(config, 'sensor_classes');
+    cleanEmptyArrays(config, 'features');
+    cleanEmptyArrays(config, 'entities');
+    cleanEmptyArrays(config, 'lights');
+    cleanEmptyArrays(config, 'problem_entities');
+    cleanEmptyArrays(config, 'sensor_classes');
 
     // Clean nested objects
-    this._cleanEmptyProps(config, 'background');
-    this._cleanEmptyProps(config, 'thresholds');
-    this._cleanEmptyProps(config, 'occupancy');
+    cleanEmptyProps(config, 'background');
+    cleanEmptyProps(config, 'thresholds');
+    cleanEmptyProps(config, 'occupancy');
 
     // @ts-ignore
     fireEvent(this, 'config-changed', { config });
@@ -584,27 +581,5 @@ export class RoomSummaryCardEditor extends LitElement {
 
   private _goBack(): void {
     this._subElementEditorConfig = undefined;
-  }
-
-  private _cleanEmptyArrays<T extends Record<string, any>>(
-    config: T,
-    key: keyof T,
-  ): void {
-    const arr = config[key];
-    if (Array.isArray(arr) && !arr.length) delete config[key];
-  }
-
-  private _cleanEmptyProps<T extends Record<string, any>>(
-    config: T,
-    key: keyof T,
-  ): void {
-    const obj = config[key];
-    if (!obj || typeof obj !== 'object') return;
-
-    for (const k of Object.keys(obj)) {
-      !obj[k] && delete obj[k];
-      this._cleanEmptyArrays(obj, k);
-    }
-    if (!Object.keys(obj).length) delete config[key];
   }
 }

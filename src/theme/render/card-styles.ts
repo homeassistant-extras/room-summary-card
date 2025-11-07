@@ -35,14 +35,12 @@ export const renderCardStyles = (
   isActive?: boolean,
 ): DirectiveResult<typeof StyleMapDirective> => {
   const { state } = entity as { state: HassEntity };
-  const active = hass.themes.darkMode && (isActive ?? false);
+  const active = isActive ?? false;
   const themeOverride = getThemeColorOverride(hass, entity, active);
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   const opacity = getBackgroundOpacity(config, active);
   const occupancy = getOccupancyCssVars(isOccupied, config.occupancy);
-  const cssColor = hass.themes.darkMode
-    ? stateColorCss(state, 'card', active)
-    : undefined;
+  const cssColor = stateColorCss(state, 'card', active);
 
   let backgroundColorCard: string | undefined;
   if (skipStyles) {

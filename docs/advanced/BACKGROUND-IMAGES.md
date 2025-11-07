@@ -66,7 +66,7 @@ background:
 
 If no opacity is specified, the card uses theme-aware automatic opacity:
 
-- Light mode: Uses standard opacity values
+- Light mode: Adjusts opacity based on entity state
 - Dark mode: Adjusts opacity based on entity state
 
 ### Disabling Background Images
