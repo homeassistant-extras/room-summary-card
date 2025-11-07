@@ -181,7 +181,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
 
     // Get label (priority: state/threshold label > config label > attribute value > entity name)
     let label: TemplateResult | string | undefined;
-    if (this._showLabels) {
+    if (this._showLabels && !this._hideIconContent) {
       // First priority: label from state/threshold result
       const thresholdLabel = getEntityLabel(this.entity, thresholdResult);
       if (thresholdLabel) {

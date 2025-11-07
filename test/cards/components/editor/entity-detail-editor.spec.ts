@@ -103,7 +103,7 @@ describe('entity-detail-editor.ts', () => {
   describe('schema', () => {
     it('should create schema with correct structure', () => {
       element.hass = mockHass;
-      const schema = element['_schema']('light.living_room', mockHass);
+      const schema = element['_entitiesSchema']('light.living_room', mockHass);
 
       const expectedSchema = [
         {
@@ -216,15 +216,15 @@ describe('entity-detail-editor.ts', () => {
 
     it('should memoize schema', () => {
       element.hass = mockHass;
-      const schema1 = element['_schema']('light.living_room', mockHass);
-      const schema2 = element['_schema']('light.living_room', mockHass);
+      const schema1 = element['_entitiesSchema']('light.living_room', mockHass);
+      const schema2 = element['_entitiesSchema']('light.living_room', mockHass);
 
       expect(schema1).to.equal(schema2); // Same reference due to memoization
     });
 
     it('should have correct selector types in schema', () => {
       element.hass = mockHass;
-      const schema = element['_schema']('light.living_room', mockHass);
+      const schema = element['_entitiesSchema']('light.living_room', mockHass);
       const firstGridSchema = (schema[1] as any).schema;
       const secondGridSchema = (schema[2] as any).schema;
 
