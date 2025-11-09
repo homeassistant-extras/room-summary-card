@@ -50,7 +50,11 @@
       "hide_sensor_labels": "Hide Sensor labels",
       "hide_sensors": "Hide Sensors",
       "individual_sensor_entities": "Individual sensor entities",
-      "sensors_info": "Sensors appear on the top row below the card title. They can be clicked for more info."
+      "sensors_info": "Sensors appear on the top row below the card title. They can be clicked for more info.",
+      "features_info": "Configure sensor display features:",
+      "hide_sensors_desc": "Hide the climate/sensor information",
+      "hide_sensor_icons_desc": "Hide the icons next to sensor values",
+      "hide_sensor_labels_desc": "Hide the labels next to sensor icons"
     },
     "threshold": {
       "thresholds": "Thresholds",
@@ -106,6 +110,13 @@
     "features": {
       "features": "Features",
       "exclude_default_entities": "Exclude Default Entities",
+      "sticky_entities": "Sticky Entities",
+      "sticky_entities_info": "Keep entity positions stable even when their state is unavailable. This prevents UI layout shifts and makes it easier to tap entities on touch dashboards.",
+      "features_info": "Configure global features that affect how entities are displayed and handled:",
+      "show_entity_labels_desc": "Show entity labels under each entity icon",
+      "exclude_default_entities_desc": "Don't include default light/fan entities",
+      "ignore_entity_desc": "Ignore the entity property in the configuration",
+      "sticky_entities_desc": "Keep entity positions even when state is unavailable",
       "options": "Options"
     }
   }

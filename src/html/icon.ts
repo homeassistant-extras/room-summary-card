@@ -66,7 +66,13 @@ export const renderRoomIcon = (
   occupied?: boolean,
 ): TemplateResult | typeof nothing => {
   const { state } = entity;
-  if (!state) return nothing;
+  const stickyEntitiesEnabled = config.features?.includes('sticky_entities');
+
+  // If state is undefined and sticky entities is not enabled, return nothing
+  if (!state && !stickyEntitiesEnabled) return nothing;
+  if (!state && stickyEntitiesEnabled) {
+    return html`<div class="sticky-entity"></div>`;
+  }
 
   /*
    * Order of properties is important for logic checks

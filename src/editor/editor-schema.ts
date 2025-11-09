@@ -502,7 +502,6 @@ export const getSensorsSchemaRest = (
         },
       ],
     },
-    sensorsFeaturesSchema(hass),
   ];
 };
 
@@ -716,6 +715,10 @@ export const entityFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
           {
             label: localize(hass, 'editor.entity.ignore_entity'),
             value: 'ignore_entity',
+          },
+          {
+            label: localize(hass, 'editor.features.sticky_entities'),
+            value: 'sticky_entities',
           },
         ],
       },

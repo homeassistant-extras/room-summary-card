@@ -275,7 +275,7 @@ describe('editor-schema.ts', () => {
       const sensorClasses = ['temperature', 'humidity', 'pressure'];
       const schema = getSensorsSchemaRest(mockHass, sensorClasses);
 
-      expect(schema).to.have.lengthOf(4);
+      expect(schema).to.have.lengthOf(3);
       expect(schema[0]).to.deep.equal({
         name: 'sensor_classes',
         label: 'editor.sensor.sensor_classes',
@@ -325,31 +325,6 @@ describe('editor-schema.ts', () => {
             selector: { object: {} },
           },
         ],
-      });
-      expect(schema[3]).to.deep.equal({
-        name: 'features',
-        label: 'editor.features.features',
-        required: false,
-        selector: {
-          select: {
-            multiple: true,
-            mode: 'list',
-            options: [
-              {
-                label: 'Hide Sensors',
-                value: 'hide_climate_label',
-              },
-              {
-                label: 'Hide Sensor icons',
-                value: 'hide_sensor_icons',
-              },
-              {
-                label: 'Hide Sensor labels',
-                value: 'hide_sensor_labels',
-              },
-            ],
-          },
-        },
       });
     });
   });

@@ -88,6 +88,7 @@ features:
   - skip_entity_styles
   - multi_light_background
   - ignore_entity
+  - sticky_entities
 ```
 
 | Feature                  | Description                                                                                    |
@@ -103,6 +104,7 @@ features:
 | show_entity_labels       | Show entity labels under each entity icon                                                      |
 | multi_light_background   | Enable background lighting when any light in the room is on                                    |
 | ignore_entity            | Ignore the custom entity configuration and use default room entity (useful with auto-entities) |
+| sticky_entities          | Keep entity positions stable even when state is unavailable (prevents UI layout shifts)        |
 
 ### Using `ignore_entity` with Auto-Entities
 

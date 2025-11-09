@@ -43,6 +43,8 @@ export const getIconEntities = (
     ? configEntities
     : baseEntities.concat(configEntities);
 
+  const stickyEntitiesEnabled = hasFeature(config, 'sticky_entities');
+
   // Process and transform entities
   const states = entities
     .map((entity) => {
@@ -52,7 +54,19 @@ export const getIconEntities = (
       }
 
       const state = getState(hass.states, entity.entity_id);
-      if (!state) return undefined;
+
+      // If state is not found and sticky entities is disabled, return undefined
+      if (!state) {
+        if (!stickyEntitiesEnabled) {
+          return undefined;
+        }
+
+        // Return entity with undefined state for sticky entities
+        return {
+          config: entity,
+          state: undefined,
+        } as EntityInformation;
+      }
 
       const useClimateIcons =
         !hasFeature(config, 'skip_climate_styles') &&

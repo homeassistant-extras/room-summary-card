@@ -1,33 +1,25 @@
-import {
-  areaEntities,
-  deviceClasses,
-  entityFeaturesSchema,
-  getAreaSchema,
-  getEntitiesStylesSchema,
-  getLightsSchema,
-  getMainSchemaRest,
-  getOccupancySchema,
-  getSensorsSchemaRest,
-} from '@/editor/editor-schema';
-import { computeLabel } from '@/editor/utils/compute-label';
+import { areaEntities, deviceClasses } from '@/editor/editor-schema';
 import {
   cleanEmptyArrays,
   cleanEmptyProps,
 } from '@/editor/utils/config-cleanup';
-import { localize } from '@/localize/localize';
+import { renderEntitiesTab } from '@/html/editor/entities-tab';
+import { renderLightsTab } from '@/html/editor/lights-tab';
+import { renderMainTab } from '@/html/editor/main-tab';
+import { renderOccupancyTab } from '@/html/editor/occupancy-tab';
+import { renderSensorsTab } from '@/html/editor/sensors-tab';
+import { renderTabBar } from '@/html/editor/tab-bar';
 import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import type { HASSDomEvent } from '@hass/common/dom/fire_event';
 import { fireEvent } from '@hass/common/dom/fire_event';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
 import { Task } from '@lit/task';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
-import type { TranslationKey } from '@type/locale';
 import { CSSResult, html, LitElement, nothing } from 'lit';
 import { state } from 'lit/decorators.js';
 import type { Ref } from 'lit/directives/ref.js';
-import { createRef, ref } from 'lit/directives/ref.js';
+import { createRef } from 'lit/directives/ref.js';
 import { styles } from '../theme/css/editor';
 
 export class RoomSummaryCardEditor extends LitElement {
@@ -114,78 +106,15 @@ export class RoomSummaryCardEditor extends LitElement {
       `;
     }
 
-    return html`
-      <div class="card-config">
-        <div class="tab-bar-wrapper">
-          <div
-            class="scroll-indicator scroll-indicator-left ${this._showLeftScroll
-              ? 'visible'
-              : ''}"
-          >
-            <svg class="scroll-arrow" viewBox="0 0 24 24">
-              <path
-                d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"
-              />
-            </svg>
-          </div>
-          <div
-            class="tab-bar-container"
-            ${ref(this._tabContainerRef)}
-            @scroll=${this._handleScroll}
-          >
-            <div class="custom-tab-bar">
-              <button
-                class="custom-tab ${this._currentTab === 0 ? 'active' : ''}"
-                @click=${() => this._handleTabClick(0)}
-              >
-                Main
-              </button>
-              <button
-                class="custom-tab ${this._currentTab === 1 ? 'active' : ''}"
-                @click=${() => this._handleTabClick(1)}
-              >
-                Entities
-              </button>
-              <button
-                class="custom-tab ${this._currentTab === 2 ? 'active' : ''}"
-                @click=${() => this._handleTabClick(2)}
-              >
-                Lights
-              </button>
-              <button
-                class="custom-tab ${this._currentTab === 3 ? 'active' : ''}"
-                @click=${() => this._handleTabClick(3)}
-              >
-                Sensors
-              </button>
-              <button
-                class="custom-tab ${this._currentTab === 4 ? 'active' : ''}"
-                @click=${() => this._handleTabClick(4)}
-              >
-                Occupancy
-              </button>
-            </div>
-          </div>
-          <div
-            class="scroll-indicator scroll-indicator-right ${this
-              ._showRightScroll
-              ? 'visible'
-              : ''}"
-          >
-            <svg class="scroll-arrow" viewBox="0 0 24 24">
-              <path
-                d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"
-              />
-            </svg>
-          </div>
-        </div>
-        ${this._renderTabContent()}
-      </div>
-    `;
-  }
-
-  private _handleTabChange(ev: CustomEvent): void {
-    this._currentTab = ev.detail.index;
+    return renderTabBar({
+      currentTab: this._currentTab,
+      showLeftScroll: this._showLeftScroll,
+      showRightScroll: this._showRightScroll,
+      tabContainerRef: this._tabContainerRef,
+      onScroll: this._handleScroll.bind(this),
+      onTabClick: this._handleTabClick.bind(this),
+      tabContent: this._renderTabContent(),
+    });
   }
 
   private _handleTabClick(index: number): void {
@@ -224,171 +153,95 @@ export class RoomSummaryCardEditor extends LitElement {
   }
 
   private _renderTabContent() {
-    // Main tab (tab 0) uses split layout: area form, entity row editor, area_name + rest form
+    // Main tab (tab 0)
     if (this._currentTab === 0) {
       return this._getEntitiesTask.render({
         initial: () => nothing,
         pending: () => nothing,
         complete: (value) => {
-          const areaSchema = getAreaSchema();
-          const restSchema = getMainSchemaRest(
-            this.hass,
-            value.entities as string[],
-          );
-
-          // Convert single entity to array for row-editor
-          const entityArray = this._config.entity ? [this._config.entity] : [];
-
-          return html`
-            <div class="entities-tab">
-              <ha-form
-                .hass=${this.hass}
-                .data=${this._config}
-                .schema=${[areaSchema]}
-                .computeLabel=${(schema: HaFormSchema) =>
-                  computeLabel(this.hass, schema)}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-              <room-summary-entities-row-editor
-                .hass=${this.hass}
-                .entities=${entityArray}
-                .availableEntities=${value.entities as string[]}
-                field="entities"
-                .single=${true}
-                label=${this.hass.localize('editor.area.room_entity') ||
-                'Room Entity'}
-                @value-changed=${this._entityRowChanged}
-                @edit-detail-element=${this._editDetailElement}
-              ></room-summary-entities-row-editor>
-              <ha-form
-                .hass=${this.hass}
-                .data=${this._config}
-                .schema=${restSchema}
-                .computeLabel=${(schema: HaFormSchema) =>
-                  computeLabel(this.hass, schema)}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-            </div>
-          `;
+          return renderMainTab({
+            hass: this.hass,
+            config: this._config,
+            entities: value.entities as string[],
+            onValueChanged: this._valueChanged.bind(this),
+            onEntityRowChanged: this._entityRowChanged.bind(this),
+            onEditDetailElement: this._editDetailElement.bind(this),
+          });
         },
         error: (error) => html`${error}`,
       });
     }
-    // Entities tab uses custom row editor
+    // Entities tab (tab 1)
     if (this._currentTab === 1) {
       return this._getEntitiesTask.render({
         initial: () => nothing,
         pending: () => nothing,
         complete: (value) => {
-          return html`
-            <div class="entities-tab">
-              <div class="info-header">
-                ${localize(this.hass, 'editor.entities.entities_info')}
-              </div>
-              <room-summary-entities-row-editor
-                .hass=${this.hass}
-                .entities=${this._config.entities}
-                .availableEntities=${value.entities as string[]}
-                field="entities"
-                label=${this.hass.localize(
-                  'ui.panel.lovelace.editor.card.generic.entities',
-                ) || 'Entities'}
-                @value-changed=${this._entitiesRowChanged}
-                @edit-detail-element=${this._editDetailElement}
-              ></room-summary-entities-row-editor>
-              <ha-form
-                .hass=${this.hass}
-                .data=${this._config}
-                .schema=${[
-                  getEntitiesStylesSchema(),
-                  entityFeaturesSchema(this.hass),
-                ]}
-                .computeLabel=${(schema: HaFormSchema) =>
-                  computeLabel(this.hass, schema)}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-            </div>
-          `;
+          return renderEntitiesTab({
+            hass: this.hass,
+            config: this._config,
+            entities: value.entities as string[],
+            onValueChanged: this._valueChanged.bind(this),
+            onEntitiesRowChanged: this._entitiesRowChanged.bind(this),
+            onEditDetailElement: this._editDetailElement.bind(this),
+          });
         },
         error: (error) => html`${error}`,
       });
     }
-
-    // Sensors tab (tab 3) uses custom row editor
+    // Lights tab (tab 2)
+    if (this._currentTab === 2) {
+      return this._getEntitiesTask.render({
+        initial: () => nothing,
+        pending: () => nothing,
+        complete: (value) => {
+          return renderLightsTab({
+            hass: this.hass,
+            config: this._config,
+            entities: value.entities as string[],
+            onValueChanged: this._valueChanged.bind(this),
+          });
+        },
+        error: (error) => html`${error}`,
+      });
+    }
+    // Sensors tab (tab 3)
     if (this._currentTab === 3) {
       return this._getEntitiesTask.render({
         initial: () => nothing,
         pending: () => nothing,
         complete: (value) => {
-          const restSchema = getSensorsSchemaRest(
-            this.hass,
-            value.sensorClasses as string[],
-          );
-
-          return html`
-            <div class="entities-tab">
-              <div class="info-header">
-                ${localize(this.hass, 'editor.sensor.sensors_info')}
-              </div>
-              <room-summary-entities-row-editor
-                .hass=${this.hass}
-                .entities=${this._config.sensors}
-                .availableEntities=${value.entities as string[]}
-                field="entities"
-                label=${this.hass.localize(
-                  'editor.sensor.individual_sensor_entities',
-                ) || 'Individual sensor entities'}
-                @value-changed=${this._sensorsRowChanged}
-                @edit-detail-element=${this._editDetailElement}
-              ></room-summary-entities-row-editor>
-              <ha-form
-                .hass=${this.hass}
-                .data=${this._config}
-                .schema=${restSchema}
-                .computeLabel=${(schema: HaFormSchema) =>
-                  computeLabel(this.hass, schema)}
-                @value-changed=${this._valueChanged}
-              ></ha-form>
-            </div>
-          `;
+          return renderSensorsTab({
+            hass: this.hass,
+            config: this._config,
+            entities: value.entities as string[],
+            sensorClasses: value.sensorClasses as string[],
+            onValueChanged: this._valueChanged.bind(this),
+            onSensorsRowChanged: this._sensorsRowChanged.bind(this),
+            onEditDetailElement: this._editDetailElement.bind(this),
+          });
+        },
+        error: (error) => html`${error}`,
+      });
+    }
+    // Occupancy tab (tab 4)
+    if (this._currentTab === 4) {
+      return this._getEntitiesTask.render({
+        initial: () => nothing,
+        pending: () => nothing,
+        complete: (value) => {
+          return renderOccupancyTab({
+            hass: this.hass,
+            config: this._config,
+            entities: value.entities as string[],
+            onValueChanged: this._valueChanged.bind(this),
+          });
         },
         error: (error) => html`${error}`,
       });
     }
 
-    // Other tabs use ha-form
-    return this._getEntitiesTask.render({
-      initial: () => nothing,
-      pending: () => nothing,
-      complete: (value) => {
-        let schema: HaFormSchema[] = [];
-        let infoText: TranslationKey | undefined;
-        if (this._currentTab === 2) {
-          schema = getLightsSchema(this.hass, value.entities as string[]);
-          infoText = 'editor.background.multi_light_background_info';
-        } else if (this._currentTab === 4) {
-          schema = getOccupancySchema(this.hass, value.entities as string[]);
-          infoText = 'editor.occupancy.occupancy_info';
-        }
-
-        return html`
-          ${infoText
-            ? html`
-                <div class="info-header">${localize(this.hass, infoText)}</div>
-              `
-            : nothing}
-          <ha-form
-            .hass=${this.hass}
-            .data=${this._config}
-            .schema=${schema}
-            .computeLabel=${(schema: HaFormSchema) =>
-              computeLabel(this.hass, schema)}
-            @value-changed=${this._valueChanged}
-          ></ha-form>
-        `;
-      },
-      error: (error) => html`${error}`,
-    });
+    return nothing;
   }
 
   /**
@@ -405,9 +258,11 @@ export class RoomSummaryCardEditor extends LitElement {
     };
   }
 
-  private _valueChanged(ev: CustomEvent) {
-    const config = ev.detail.value as Config;
-
+  /**
+   * Cleans the config and fires a config-changed event
+   * @param config - The configuration to clean and fire
+   */
+  private _cleanAndFireConfigChanged(config: Config): void {
     if (!config) return;
 
     // Clean default values
@@ -432,6 +287,11 @@ export class RoomSummaryCardEditor extends LitElement {
     fireEvent(this, 'config-changed', { config });
   }
 
+  private _valueChanged(ev: CustomEvent) {
+    const config = ev.detail.value as Config;
+    this._cleanAndFireConfigChanged(config);
+  }
+
   private _entitiesRowChanged(ev: CustomEvent) {
     const value = ev.detail.value;
     const field = (ev.target as any).field as 'entities' | 'lights';
@@ -443,12 +303,7 @@ export class RoomSummaryCardEditor extends LitElement {
     }
 
     this._config = { ...this._config!, [field]: value };
-
-    // Create a new event with the updated config for _valueChanged
-    const configEvent = new CustomEvent('value-changed', {
-      detail: { value: this._config },
-    });
-    this._valueChanged(configEvent);
+    this._cleanAndFireConfigChanged(this._config);
   }
 
   private _sensorsRowChanged(ev: CustomEvent) {
@@ -461,12 +316,7 @@ export class RoomSummaryCardEditor extends LitElement {
     }
 
     this._config = { ...this._config!, sensors: value };
-
-    // Create a new event with the updated config for _valueChanged
-    const configEvent = new CustomEvent('value-changed', {
-      detail: { value: this._config },
-    });
-    this._valueChanged(configEvent);
+    this._cleanAndFireConfigChanged(this._config);
   }
 
   private _entityRowChanged(ev: CustomEvent) {
@@ -482,12 +332,7 @@ export class RoomSummaryCardEditor extends LitElement {
     const entityValue = value.length > 0 ? value[0] : undefined;
 
     this._config = { ...this._config!, entity: entityValue };
-
-    // Create a new event with the updated config for _valueChanged
-    const configEvent = new CustomEvent('value-changed', {
-      detail: { value: this._config },
-    });
-    this._valueChanged(configEvent);
+    this._cleanAndFireConfigChanged(this._config);
   }
 
   private _editDetailElement(
@@ -576,7 +421,7 @@ export class RoomSummaryCardEditor extends LitElement {
     };
 
     ev.detail.value = this._config;
-    this._valueChanged(ev);
+    this._cleanAndFireConfigChanged(this._config);
   }
 
   private _goBack(): void {

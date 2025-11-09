@@ -177,15 +177,6 @@ describe('editor.ts', () => {
       card['_handleTabClick'](2);
       expect(card['_currentTab']).to.equal(2);
     });
-
-    it('should handle legacy tab change event', () => {
-      expect(card['_currentTab']).to.equal(0);
-      const event = new CustomEvent('MDCTabBar:activated', {
-        detail: { index: 3 },
-      });
-      card['_handleTabChange'](event);
-      expect(card['_currentTab']).to.equal(3);
-    });
   });
 
   describe('_valueChanged', () => {
@@ -350,6 +341,40 @@ describe('editor.ts', () => {
       expect(card['_config'].entities).to.deep.equal(initialEntities);
       expect(dispatchStub.called).to.be.false;
     });
+
+    it('should fire config-changed event with updated config', () => {
+      const mockTarget = {
+        field: 'entities' as const,
+      };
+      const event = new CustomEvent('value-changed', {
+        detail: { value: ['light.new', 'switch.new'] },
+      });
+      Object.defineProperty(event, 'target', { value: mockTarget });
+
+      card['_entitiesRowChanged'](event);
+
+      expect(dispatchStub.calledOnce).to.be.true;
+      expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
+      expect(
+        dispatchStub.firstCall.args[0].detail.config.entities,
+      ).to.deep.equal(['light.new', 'switch.new']);
+    });
+
+    it('should update empty arrays and remove them after cleaning', () => {
+      const mockTarget = {
+        field: 'entities' as const,
+      };
+      const event = new CustomEvent('value-changed', {
+        detail: { value: [] },
+      });
+      Object.defineProperty(event, 'target', { value: mockTarget });
+
+      card['_entitiesRowChanged'](event);
+
+      // Empty arrays are removed by cleanEmptyArrays
+      expect(card['_config'].entities).to.be.undefined;
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
   });
 
   describe('_editDetailElement', () => {
@@ -386,6 +411,204 @@ describe('editor.ts', () => {
       card['_editDetailElement'](event as any);
 
       expect(card['_subElementEditorConfig']?.type).to.equal('sensor');
+    });
+
+    it('should not change type when not on sensors tab', () => {
+      card['_currentTab'] = 0; // Main tab
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'entities',
+        index: 0,
+        type: 'entity',
+        elementConfig: { entity_id: 'light.test' },
+      };
+
+      const event = new CustomEvent('edit-detail-element', {
+        detail: { subElementConfig },
+      });
+
+      card['_editDetailElement'](event as any);
+
+      expect(card['_subElementEditorConfig']?.type).to.equal('entity');
+    });
+
+    it('should not change type when on sensors tab but field is not entities', () => {
+      card['_currentTab'] = 3; // Sensors tab
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'lights',
+        index: 0,
+        type: 'entity',
+        elementConfig: 'light.test',
+      };
+
+      const event = new CustomEvent('edit-detail-element', {
+        detail: { subElementConfig },
+      });
+
+      card['_editDetailElement'](event as any);
+
+      expect(card['_subElementEditorConfig']?.type).to.equal('entity');
+    });
+
+    it('should create a copy of the config object', () => {
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'entities',
+        index: 0,
+        type: 'entity',
+        elementConfig: { entity_id: 'light.test' },
+      };
+
+      const event = new CustomEvent('edit-detail-element', {
+        detail: { subElementConfig },
+      });
+
+      card['_editDetailElement'](event as any);
+
+      // Verify it's a different object reference
+      expect(card['_subElementEditorConfig']).to.not.equal(subElementConfig);
+      expect(card['_subElementEditorConfig']).to.deep.equal(subElementConfig);
+    });
+  });
+
+  describe('_entityRowChanged', () => {
+    beforeEach(() => {
+      card.setConfig({
+        area: 'living_room',
+        entity: 'light.test',
+      });
+    });
+
+    it('should update entity field when value is array with one element', () => {
+      const event = new CustomEvent('value-changed', {
+        detail: { value: ['light.new'] },
+      });
+
+      card['_entityRowChanged'](event);
+
+      expect(card['_config'].entity).to.equal('light.new');
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should set entity to undefined when array is empty', () => {
+      const event = new CustomEvent('value-changed', {
+        detail: { value: [] },
+      });
+
+      card['_entityRowChanged'](event);
+
+      expect(card['_config'].entity).to.be.undefined;
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should take first element when array has multiple elements', () => {
+      const event = new CustomEvent('value-changed', {
+        detail: { value: ['light.first', 'light.second'] },
+      });
+
+      card['_entityRowChanged'](event);
+
+      expect(card['_config'].entity).to.equal('light.first');
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should ignore non-array values', () => {
+      const initialEntity = card['_config'].entity;
+      const event = new CustomEvent('value-changed', {
+        detail: { value: 'light.test' }, // string instead of array
+      });
+
+      card['_entityRowChanged'](event);
+
+      expect(card['_config'].entity).to.equal(initialEntity);
+      expect(dispatchStub.called).to.be.false;
+    });
+
+    it('should fire config-changed event with updated config', () => {
+      const event = new CustomEvent('value-changed', {
+        detail: { value: ['light.new'] },
+      });
+
+      card['_entityRowChanged'](event);
+
+      expect(dispatchStub.calledOnce).to.be.true;
+      expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
+      expect(dispatchStub.firstCall.args[0].detail.config.entity).to.equal(
+        'light.new',
+      );
+    });
+  });
+
+  describe('_sensorsRowChanged', () => {
+    beforeEach(() => {
+      card.setConfig({
+        area: 'living_room',
+        sensors: ['sensor.temperature'],
+      });
+    });
+
+    it('should update sensors array when value is array', () => {
+      const event = new CustomEvent('value-changed', {
+        detail: { value: ['sensor.temperature', 'sensor.humidity'] },
+      });
+
+      card['_sensorsRowChanged'](event);
+
+      expect(card['_config'].sensors).to.deep.equal([
+        'sensor.temperature',
+        'sensor.humidity',
+      ]);
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should update sensors array to empty array', () => {
+      const event = new CustomEvent('value-changed', {
+        detail: { value: [] },
+      });
+
+      card['_sensorsRowChanged'](event);
+
+      expect(card['_config'].sensors).to.deep.equal([]);
+      expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should ignore non-array values', () => {
+      const initialSensors = card['_config'].sensors;
+      const event = new CustomEvent('value-changed', {
+        detail: { value: 'sensor.temperature' }, // string instead of array
+      });
+
+      card['_sensorsRowChanged'](event);
+
+      expect(card['_config'].sensors).to.deep.equal(initialSensors);
+      expect(dispatchStub.called).to.be.false;
+    });
+
+    it('should fire config-changed event with updated config', () => {
+      const event = new CustomEvent('value-changed', {
+        detail: { value: ['sensor.temperature', 'sensor.humidity'] },
+      });
+
+      card['_sensorsRowChanged'](event);
+
+      expect(dispatchStub.calledOnce).to.be.true;
+      expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
+      expect(
+        dispatchStub.firstCall.args[0].detail.config.sensors,
+      ).to.deep.equal(['sensor.temperature', 'sensor.humidity']);
+    });
+
+    it('should handle sensors with EntityConfig objects', () => {
+      const sensorConfig: EntityConfig = {
+        entity_id: 'sensor.temperature',
+        label: 'Temperature',
+      };
+      const event = new CustomEvent('value-changed', {
+        detail: { value: [sensorConfig] },
+      });
+
+      card['_sensorsRowChanged'](event);
+
+      expect(card['_config'].sensors).to.deep.equal([sensorConfig]);
+      expect(dispatchStub.calledOnce).to.be.true;
     });
   });
 

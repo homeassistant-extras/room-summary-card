@@ -192,4 +192,25 @@ describe('icon-entities.ts', () => {
     expect(climateEntity).to.exist;
     expect(climateEntity!.state!.attributes.icon).to.be.undefined; // No icon should be applied
   });
+
+  it('should return unavailable entity when sticky_entities is enabled and entity state is missing', () => {
+    const config = {
+      area: 'test_room',
+      features: ['sticky_entities'],
+      entities: ['light.nonexistent'],
+    } as any as Config;
+
+    const entities = getIconEntities(mockHass, config);
+    const stickyEntity = entities.find(
+      (e) => e.config.entity_id === 'light.nonexistent',
+    );
+
+    expect(stickyEntity).to.exist;
+    expect(stickyEntity!.state).to.be.undefined;
+    expect(stickyEntity!.config.entity_id).to.equal('light.nonexistent');
+    // When state is missing, default actions are not added
+    expect(stickyEntity!.config.tap_action).to.be.undefined;
+    expect(stickyEntity!.config.hold_action).to.be.undefined;
+    expect(stickyEntity!.config.double_tap_action).to.be.undefined;
+  });
 });

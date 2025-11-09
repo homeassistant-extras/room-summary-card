@@ -141,6 +141,30 @@ background:
   opacity: 35
 ```
 
+### Sticky Entities
+
+Keep entity positions stable even when their state is unavailable or if they don't exist. This prevents UI layout shifts and makes it easier to tap entities on touch dashboards:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - sticky_entities
+entities:
+  - placeholder
+  - switch.living_room_fan
+  - entity.fake
+  - switch.living_room_speakers
+```
+
+![sticky](../../assets/sticky.png)
+
+**Benefits:**
+
+- Keeps icon positions stable across states → easier and faster to tap, especially on touch dashboards
+- Reduces mistakes when entities appear/disappear or change availability
+- Entities with unavailable state will still display in their configured position
+
 ### Occupancy Detection
 
 ```yaml

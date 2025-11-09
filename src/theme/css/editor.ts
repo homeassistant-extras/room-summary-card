@@ -97,14 +97,19 @@ export const styles = css`
     border-bottom: 2px solid transparent;
     color: var(--primary-text-color);
     cursor: pointer;
-    font-family: var(--mdc-typography-button-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
+    font-family: var(
+      --mdc-typography-button-font-family,
+      var(--mdc-typography-font-family, Roboto, sans-serif)
+    );
     font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.0892857143em;
     min-width: 72px;
     padding: 0 16px;
     text-transform: uppercase;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
     white-space: nowrap;
     height: 48px;
     display: flex;
@@ -151,4 +156,3 @@ export const styles = css`
     line-height: 1.5;
   }
 `;
-

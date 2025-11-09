@@ -13,12 +13,12 @@ describe('HassUpdateMixin', () => {
     // Create a test element class using the mixin with unique name
     const elementName = `test-hass-update-${elementCounter++}`;
     TestElement = HassUpdateMixin(LitElement);
-    
+
     // Only define if not already defined
     if (!customElements.get(elementName)) {
       customElements.define(elementName, TestElement);
     }
-    
+
     element = new TestElement();
     hass = {
       language: 'en',
@@ -47,4 +47,3 @@ describe('HassUpdateMixin', () => {
     expect(element.disconnectedCallback).to.be.a('function');
   });
 });
-

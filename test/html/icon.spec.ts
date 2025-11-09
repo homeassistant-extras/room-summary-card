@@ -249,11 +249,23 @@ describe('icon.ts', () => {
       };
     });
 
-    it('should return nothing when state is not present', () => {
+    it('should return nothing when state is not present and sticky entities is not enabled', () => {
       entity.state = undefined;
+      config.features = [];
       const result = renderRoomIcon(mockHass, entity, config, true, true);
 
       expect(result).to.equal(nothing);
+    });
+
+    it('should return sticky-entity div when state is not present and sticky entities is enabled', async () => {
+      entity.state = undefined;
+      config.features = ['sticky_entities'];
+      const result = renderRoomIcon(mockHass, entity, config, true, true);
+
+      expect(result).to.not.equal(nothing);
+      const el = await fixture(result as TemplateResult);
+      expect(el.tagName.toLowerCase()).to.equal('div');
+      expect(el.className).to.equal('sticky-entity');
     });
 
     it('should return template with room-state-icon element and pass isActive parameter', async () => {
