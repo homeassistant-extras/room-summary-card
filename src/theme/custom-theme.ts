@@ -2,7 +2,7 @@ import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/room';
 import { processHomeAssistantColors, processMinimalistColors } from './colors';
 import { getRgbColor } from './get-rgb';
-import { getThresholdColor } from './threshold-color';
+import { getThresholdResult } from './threshold-color';
 
 /**
  * Determines the appropriate theme color override for a given entity based on its state,
@@ -28,10 +28,18 @@ export const getThemeColorOverride = (
   const { state } = entity;
   if (!state) return undefined;
 
+  const onColor = entity.config.on_color ?? state.attributes.on_color;
+  const offColor = entity.config.off_color ?? state?.attributes?.off_color;
+
   // threshold-based colors have the highest priority
-  const thresholdColor = getThresholdColor(entity);
+  const thresholdColor = getThresholdResult(entity)?.color;
   if (thresholdColor) {
-    return thresholdColor;
+    return processHomeAssistantColors(
+      thresholdColor,
+      onColor,
+      offColor,
+      active,
+    );
   }
 
   // icon color is the second priority - hex colors
@@ -40,8 +48,6 @@ export const getThemeColorOverride = (
     return iconColor;
   }
 
-  const onColor = entity.config.on_color ?? state.attributes.on_color;
-  const offColor = entity.config.off_color ?? state?.attributes?.off_color;
   const rgbColor = getRgbColor(state, onColor, offColor, active);
 
   // If the state has a specific RGB color, return it directly

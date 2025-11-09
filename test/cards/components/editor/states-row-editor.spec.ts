@@ -1,0 +1,812 @@
+import * as fireEventModule from '@hass/common/dom/fire_event';
+import type { HomeAssistant } from '@hass/types';
+import type { StateConfig } from '@type/config/entity';
+import { expect } from 'chai';
+import { nothing, type TemplateResult } from 'lit';
+import { stub } from 'sinon';
+import { RoomSummaryStatesRowEditor } from '../../../../src/cards/components/editor/states-row-editor';
+
+describe('states-row-editor.ts', () => {
+  let element: RoomSummaryStatesRowEditor;
+  let mockHass: HomeAssistant;
+  let fireEventStub: sinon.SinonStub;
+
+  const mockStateConfigs: StateConfig[] = [
+    {
+      state: 'on',
+      icon_color: '#ff0000',
+      label: 'On State',
+      icon: 'mdi:power',
+    },
+    {
+      state: 'off',
+      icon_color: '#000000',
+      attribute: 'battery_level',
+    },
+  ];
+
+  beforeEach(() => {
+    fireEventStub = stub(fireEventModule, 'fireEvent');
+
+    mockHass = {
+      localize: (key: string) => {
+        const translations: Record<string, string> = {
+          'editor.entity.states': 'States',
+          'editor.entity.add_state': 'Add State',
+          'editor.entity.state.state': 'State',
+          'editor.entity.state.icon_color': 'Icon Color',
+          'editor.entity.state.icon': 'Icon',
+          'editor.entity.state.label': 'Label',
+          'editor.entity.state.attribute': 'Attribute',
+          'editor.entity.state.styles': 'Styles',
+          'editor.entity.entity_label': 'Entity Label',
+          'ui.panel.lovelace.editor.card.config.optional': 'optional',
+          'ui.panel.lovelace.editor.card.config.required': 'required',
+          'ui.components.entity.entity-picker.clear': 'Clear',
+        };
+        return translations[key] || key;
+      },
+    } as any as HomeAssistant;
+
+    element = new RoomSummaryStatesRowEditor();
+    element.hass = mockHass;
+  });
+
+  afterEach(() => {
+    fireEventStub.restore();
+  });
+
+  describe('properties', () => {
+    it('should initialize with undefined states', () => {
+      expect(element.states).to.be.undefined;
+    });
+
+    it('should set states property', () => {
+      element.states = mockStateConfigs;
+      expect(element.states).to.deep.equal(mockStateConfigs);
+    });
+
+    it('should set label property', () => {
+      element.label = 'Custom States Label';
+      expect(element.label).to.equal('Custom States Label');
+    });
+
+    it('should set entityId property', () => {
+      element.entityId = 'light.living_room';
+      expect(element.entityId).to.equal('light.living_room');
+    });
+
+    it('should initialize with empty expanded states set', () => {
+      expect(element['_expandedStates'].size).to.equal(0);
+    });
+  });
+
+  describe('_getKey', () => {
+    it('should generate key using index', () => {
+      const state: StateConfig = { state: 'on', icon_color: '#ff0000' };
+      const key = element['_getKey'](state, 0);
+      expect(key).to.equal('state-0');
+    });
+
+    it('should generate different keys for different indices', () => {
+      const state: StateConfig = { state: 'on', icon_color: '#ff0000' };
+      const key1 = element['_getKey'](state, 0);
+      const key2 = element['_getKey'](state, 1);
+      expect(key1).to.not.equal(key2);
+      expect(key1).to.equal('state-0');
+      expect(key2).to.equal('state-1');
+    });
+
+    it('should generate stable keys for same index', () => {
+      const state1: StateConfig = { state: 'on', icon_color: '#ff0000' };
+      const state2: StateConfig = { state: 'off', icon_color: '#000000' };
+      const key1 = element['_getKey'](state1, 0);
+      const key2 = element['_getKey'](state2, 0);
+      expect(key1).to.equal(key2);
+    });
+  });
+
+  describe('_getStateSchema', () => {
+    it('should create schema with correct structure', () => {
+      element.entityId = 'light.living_room';
+      const schema = element['_getStateSchema']('light.living_room', mockHass);
+
+      expect(schema).to.be.an('array');
+      expect(schema.length).to.be.greaterThan(0);
+
+      // Check required fields
+      const stateField = schema.find((s) => s.name === 'state') as any;
+      expect(stateField).to.exist;
+      expect(stateField?.required).to.be.true;
+      expect(stateField?.selector).to.deep.equal({ text: {} });
+
+      const iconColorField = schema.find((s) => s.name === 'icon_color') as any;
+      expect(iconColorField).to.exist;
+      expect(iconColorField?.required).to.be.true;
+      expect(iconColorField?.selector).to.deep.equal({ ui_color: {} });
+    });
+
+    it('should include optional fields', () => {
+      element.entityId = 'sensor.temperature';
+      const schema = element['_getStateSchema']('sensor.temperature', mockHass);
+
+      const attributeField = schema.find((s) => s.name === 'attribute') as any;
+      expect(attributeField).to.exist;
+      expect(attributeField?.required).to.be.false;
+      expect(attributeField?.selector).to.deep.equal({
+        attribute: { entity_id: 'sensor.temperature' },
+      });
+
+      const stylesField = schema.find((s) => s.name === 'styles') as any;
+      expect(stylesField).to.exist;
+      expect(stylesField?.required).to.be.false;
+      expect(stylesField?.selector).to.deep.equal({ object: {} });
+    });
+
+    it('should include grid schema for icon and label', () => {
+      element.entityId = 'light.bedroom';
+      const schema = element['_getStateSchema']('light.bedroom', mockHass);
+
+      const gridSchema = schema.find((s) => s.type === 'grid') as any;
+      expect(gridSchema).to.exist;
+      expect(gridSchema?.schema).to.be.an('array');
+      expect(gridSchema?.schema?.length).to.equal(2);
+
+      const iconField = gridSchema?.schema?.find(
+        (s: any) => s.name === 'icon',
+      ) as any;
+      expect(iconField).to.exist;
+      expect(iconField?.selector).to.deep.equal({ icon: {} });
+
+      const labelField = gridSchema?.schema?.find(
+        (s: any) => s.name === 'label',
+      ) as any;
+      expect(labelField).to.exist;
+      expect(labelField?.selector).to.deep.equal({ text: {} });
+    });
+
+    it('should memoize schema for same entity_id', () => {
+      element.entityId = 'light.kitchen';
+      const schema1 = element['_getStateSchema']('light.kitchen', mockHass);
+      const schema2 = element['_getStateSchema']('light.kitchen', mockHass);
+
+      expect(schema1).to.equal(schema2); // Same reference due to memoization
+    });
+
+    it('should create different schema for different entity_id', () => {
+      const schema1 = element['_getStateSchema']('light.living_room', mockHass);
+      const schema2 = element['_getStateSchema']('sensor.temp', mockHass);
+
+      expect(schema1).to.not.equal(schema2);
+
+      const attr1 = schema1.find((s) => s.name === 'attribute') as any;
+      const attr2 = schema2.find((s) => s.name === 'attribute') as any;
+      expect(attr1?.selector).to.deep.equal({
+        attribute: { entity_id: 'light.living_room' },
+      });
+      expect(attr2?.selector).to.deep.equal({
+        attribute: { entity_id: 'sensor.temp' },
+      });
+    });
+  });
+
+  describe('_computeLabelCallback', () => {
+    beforeEach(() => {
+      element.hass = mockHass;
+    });
+
+    it('should return empty string when schema has no label', () => {
+      const schema = { name: 'test' };
+      const result = element['_computeLabelCallback'](schema as any);
+      expect(result).to.equal('');
+    });
+
+    it('should compute label for required field', () => {
+      const schema = {
+        name: 'state',
+        label: 'editor.entity.state.state',
+        required: true,
+      };
+      const result = element['_computeLabelCallback'](schema as any);
+      expect(result).to.include('State');
+      expect(result).to.include('(required)');
+    });
+
+    it('should compute label for optional field', () => {
+      const schema = {
+        name: 'label',
+        label: 'editor.entity.state.label',
+        required: false,
+      };
+      const result = element['_computeLabelCallback'](schema as any);
+      expect(result).to.include('Label');
+      expect(result).to.include('(optional)');
+    });
+
+    it('should handle undefined required field as optional', () => {
+      const schema = {
+        name: 'icon',
+        label: 'editor.entity.state.icon',
+      };
+      const result = element['_computeLabelCallback'](schema as any);
+      expect(result).to.include('Icon');
+      expect(result).to.include('(optional)');
+    });
+  });
+
+  describe('_toggleExpanded', () => {
+    it('should expand state when not expanded', () => {
+      element['_toggleExpanded'](0);
+      expect(element['_expandedStates'].has(0)).to.be.true;
+    });
+
+    it('should collapse state when expanded', () => {
+      element['_expandedStates'] = new Set([0]);
+      element['_toggleExpanded'](0);
+      expect(element['_expandedStates'].has(0)).to.be.false;
+    });
+
+    it('should handle multiple expanded states', () => {
+      element['_toggleExpanded'](0);
+      element['_toggleExpanded'](1);
+      element['_toggleExpanded'](2);
+      expect(element['_expandedStates'].has(0)).to.be.true;
+      expect(element['_expandedStates'].has(1)).to.be.true;
+      expect(element['_expandedStates'].has(2)).to.be.true;
+    });
+
+    it('should toggle individual states independently', () => {
+      element['_toggleExpanded'](0);
+      element['_toggleExpanded'](1);
+      element['_toggleExpanded'](0); // Collapse first
+      expect(element['_expandedStates'].has(0)).to.be.false;
+      expect(element['_expandedStates'].has(1)).to.be.true;
+    });
+  });
+
+  describe('_addState', () => {
+    it('should add new state to empty array', () => {
+      element.states = [];
+
+      element['_addState']();
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      expect(fireEventStub.firstCall.args[0]).to.equal(element);
+      expect(fireEventStub.firstCall.args[1]).to.equal('states-value-changed');
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.have.lengthOf(1);
+      expect(newStates[0]).to.deep.equal({
+        state: '',
+        icon_color: '',
+      });
+    });
+
+    it('should add new state to existing array', () => {
+      element.states = [...mockStateConfigs];
+
+      element['_addState']();
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.have.lengthOf(3);
+      expect(newStates[2]).to.deep.equal({
+        state: '',
+        icon_color: '',
+      });
+      // Original states should be preserved
+      expect(newStates[0]).to.deep.equal(mockStateConfigs[0]);
+      expect(newStates[1]).to.deep.equal(mockStateConfigs[1]);
+    });
+
+    it('should handle undefined states array', () => {
+      element.states = undefined;
+
+      element['_addState']();
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.have.lengthOf(1);
+      expect(newStates[0]).to.deep.equal({
+        state: '',
+        icon_color: '',
+      });
+    });
+
+    it('should expand newly added state', () => {
+      element.states = [];
+
+      element['_addState']();
+
+      const newStates = fireEventStub.firstCall.args[2].value;
+      const newIndex = newStates.length - 1;
+      expect(element['_expandedStates'].has(newIndex)).to.be.true;
+    });
+  });
+
+  describe('_removeState', () => {
+    it('should remove state at specified index', () => {
+      element.states = [...mockStateConfigs];
+
+      element['_removeState'](0);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.have.lengthOf(1);
+      expect(newStates[0]).to.deep.equal(mockStateConfigs[1]);
+    });
+
+    it('should remove last state', () => {
+      element.states = [...mockStateConfigs];
+
+      element['_removeState'](1);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.have.lengthOf(1);
+      expect(newStates[0]).to.deep.equal(mockStateConfigs[0]);
+    });
+
+    it('should adjust expanded indices after removal', () => {
+      element.states = [
+        ...mockStateConfigs,
+        { state: 'standby', icon_color: '#888888' },
+      ];
+      element['_expandedStates'] = new Set([0, 1, 2]);
+
+      element['_removeState'](1);
+
+      // Index 0 should remain, index 2 should become index 1
+      expect(element['_expandedStates'].has(0)).to.be.true;
+      expect(element['_expandedStates'].has(1)).to.be.true;
+      expect(element['_expandedStates'].has(2)).to.be.false;
+    });
+
+    it('should remove expanded state index when removing state', () => {
+      element.states = [...mockStateConfigs];
+      element['_expandedStates'] = new Set([0, 1]);
+
+      element['_removeState'](0);
+
+      // After removing index 0, the state at index 1 moves to index 0
+      // So the expanded state that was at index 1 is now at index 0
+      expect(element['_expandedStates'].has(0)).to.be.true; // Was index 1, now index 0
+      expect(element['_expandedStates'].has(1)).to.be.false; // Original index 0 was removed
+    });
+
+    it('should handle removing from empty array', () => {
+      element.states = [];
+
+      element['_removeState'](0);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.be.an('array');
+      expect(newStates.length).to.equal(0);
+    });
+
+    it('should send empty array when removing last state', () => {
+      element.states = [{ state: 'on', icon_color: '#ff0000' }];
+
+      element['_removeState'](0);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.be.an('array');
+      expect(newStates.length).to.equal(0);
+    });
+
+    it('should handle removing state with expanded indices before it', () => {
+      element.states = [
+        { state: 'a', icon_color: '#ff0000' },
+        { state: 'b', icon_color: '#00ff00' },
+        { state: 'c', icon_color: '#0000ff' },
+      ];
+      element['_expandedStates'] = new Set([0, 2]);
+
+      element['_removeState'](1);
+
+      // Index 0 should remain, index 2 should become index 1
+      expect(element['_expandedStates'].has(0)).to.be.true;
+      expect(element['_expandedStates'].has(1)).to.be.true;
+      expect(element['_expandedStates'].has(2)).to.be.false;
+    });
+  });
+
+  describe('_stateValueChanged', () => {
+    it('should update state at specified index', () => {
+      element.states = [...mockStateConfigs];
+
+      const updatedState: StateConfig = {
+        state: 'standby',
+        icon_color: '#888888',
+        label: 'Standby',
+      };
+
+      const event = new CustomEvent('value-changed', {
+        detail: { value: updatedState },
+      });
+
+      element['_stateValueChanged'](0, event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates[0]).to.deep.equal(updatedState);
+      expect(newStates[1]).to.deep.equal(mockStateConfigs[1]);
+    });
+
+    it('should update state at different index', () => {
+      element.states = [...mockStateConfigs];
+
+      const updatedState: StateConfig = {
+        state: 'error',
+        icon_color: '#ff0000',
+      };
+
+      const event = new CustomEvent('value-changed', {
+        detail: { value: updatedState },
+      });
+
+      element['_stateValueChanged'](1, event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates[0]).to.deep.equal(mockStateConfigs[0]);
+      expect(newStates[1]).to.deep.equal(updatedState);
+    });
+
+    it('should handle undefined states array', () => {
+      element.states = undefined;
+
+      const updatedState: StateConfig = {
+        state: 'on',
+        icon_color: '#ff0000',
+      };
+
+      const event = new CustomEvent('value-changed', {
+        detail: { value: updatedState },
+      });
+
+      element['_stateValueChanged'](0, event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.be.an('array');
+      expect(newStates[0]).to.deep.equal(updatedState);
+    });
+
+    it('should not update when value is invalid', () => {
+      element.states = [...mockStateConfigs];
+
+      const event = new CustomEvent('value-changed', {
+        detail: { value: null },
+      });
+
+      element['_stateValueChanged'](0, event);
+
+      // Should still fire event but with original state
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates[0]).to.deep.equal(mockStateConfigs[0]);
+    });
+
+    it('should always send an array', () => {
+      element.states = [];
+
+      const updatedState: StateConfig = {
+        state: 'on',
+        icon_color: '#ff0000',
+      };
+
+      const event = new CustomEvent('value-changed', {
+        detail: { value: updatedState },
+      });
+
+      element['_stateValueChanged'](0, event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.be.an('array');
+    });
+  });
+
+  describe('_getStateTitle', () => {
+    it('should return state with label when label exists', () => {
+      const state: StateConfig = {
+        state: 'on',
+        icon_color: '#ff0000',
+        label: 'Power On',
+      };
+      const title = element['_getStateTitle'](state);
+      expect(title).to.equal('on (Power On)');
+    });
+
+    it('should return only state when no label', () => {
+      const state: StateConfig = {
+        state: 'off',
+        icon_color: '#000000',
+      };
+      const title = element['_getStateTitle'](state);
+      expect(title).to.equal('off');
+    });
+
+    it('should return "New State" when state is empty', () => {
+      const state: StateConfig = {
+        state: '',
+        icon_color: '#ff0000',
+      };
+      const title = element['_getStateTitle'](state);
+      expect(title).to.equal('New State');
+    });
+
+    it('should handle state with only whitespace', () => {
+      const state: StateConfig = {
+        state: '  ',
+        icon_color: '#ff0000',
+      };
+      const title = element['_getStateTitle'](state);
+      expect(title).to.equal('  ');
+    });
+  });
+
+  describe('render', () => {
+    it('should render nothing when hass is not set', () => {
+      element.hass = undefined;
+      const result = element['render']();
+      expect(result).to.equal(nothing);
+    });
+
+    it('should render with default label when no custom label', () => {
+      element.states = mockStateConfigs;
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+
+    it('should render with custom label', () => {
+      element.label = 'Custom States';
+      element.states = mockStateConfigs;
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+
+    it('should render with empty states array', () => {
+      element.states = [];
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+
+    it('should render with undefined states as empty array', () => {
+      element.states = undefined;
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+
+    it('should render states with expansion panels', () => {
+      element.states = mockStateConfigs;
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+      // Verify that the template renders correctly with states
+      // The repeat directive will render expansion panels for each state
+      // We verify rendering works by checking result is not nothing
+      // and that the template structure is valid (has strings array)
+      expect(result.strings).to.be.an('array');
+      expect(result.strings.length).to.be.greaterThan(0);
+    });
+
+    it('should render add state button', () => {
+      element.states = mockStateConfigs;
+      const result = element['render']() as TemplateResult;
+      const templateString = result.strings.join('');
+      expect(templateString).to.include('mwc-button');
+      expect(templateString).to.include('add-state');
+    });
+
+    it('should use entityId in schema when provided', () => {
+      element.entityId = 'light.bedroom';
+      element.states = mockStateConfigs;
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+
+    it('should use empty string for entityId when not provided', () => {
+      element.entityId = undefined;
+      element.states = mockStateConfigs;
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+
+    it('should handle states as object and convert to array', () => {
+      // This tests the Array.isArray check
+      element.states = mockStateConfigs as any;
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+  });
+
+  describe('styles', () => {
+    it('should have static styles defined', () => {
+      expect(RoomSummaryStatesRowEditor.styles).to.exist;
+    });
+
+    it('should include states container styles', () => {
+      const styles = RoomSummaryStatesRowEditor.styles.toString();
+      expect(styles).to.include('states');
+      expect(styles).to.include('flex-direction');
+    });
+
+    it('should include state header styles', () => {
+      const styles = RoomSummaryStatesRowEditor.styles.toString();
+      expect(styles).to.include('state-header');
+      expect(styles).to.include('justify-content');
+    });
+
+    it('should include state title styles', () => {
+      const styles = RoomSummaryStatesRowEditor.styles.toString();
+      expect(styles).to.include('state-title');
+      expect(styles).to.include('font-weight');
+    });
+
+    it('should include remove icon styles', () => {
+      const styles = RoomSummaryStatesRowEditor.styles.toString();
+      expect(styles).to.include('remove-icon');
+      expect(styles).to.include('--mdc-icon-button-size');
+    });
+
+    it('should include add state button styles', () => {
+      const styles = RoomSummaryStatesRowEditor.styles.toString();
+      expect(styles).to.include('add-state');
+      expect(styles).to.include('cursor');
+    });
+
+    it('should include expansion panel styles', () => {
+      const styles = RoomSummaryStatesRowEditor.styles.toString();
+      expect(styles).to.include('ha-expansion-panel');
+      expect(styles).to.include('--expansion-panel-summary-padding');
+    });
+  });
+
+  describe('integration', () => {
+    it('should handle complete workflow: add, update, remove', () => {
+      element.states = [];
+
+      // Add state
+      element['_addState']();
+      expect(fireEventStub.calledOnce).to.be.true;
+      let newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.have.lengthOf(1);
+
+      // Update states
+      element.states = newStates;
+      fireEventStub.resetHistory();
+
+      // Update state
+      const updatedState: StateConfig = {
+        state: 'on',
+        icon_color: '#ff0000',
+        label: 'On',
+      };
+      const updateEvent = new CustomEvent('value-changed', {
+        detail: { value: updatedState },
+      });
+      element['_stateValueChanged'](0, updateEvent);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates[0]).to.deep.equal(updatedState);
+
+      // Update states again
+      element.states = newStates;
+      fireEventStub.resetHistory();
+
+      // Remove state
+      element['_removeState'](0);
+      expect(fireEventStub.calledOnce).to.be.true;
+      newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.have.lengthOf(0);
+    });
+
+    it('should handle multiple states with expansion', () => {
+      element.states = [
+        { state: 'on', icon_color: '#ff0000' },
+        { state: 'off', icon_color: '#000000' },
+        { state: 'standby', icon_color: '#888888' },
+      ];
+
+      // Expand first and third
+      element['_toggleExpanded'](0);
+      element['_toggleExpanded'](2);
+      expect(element['_expandedStates'].has(0)).to.be.true;
+      expect(element['_expandedStates'].has(1)).to.be.false;
+      expect(element['_expandedStates'].has(2)).to.be.true;
+
+      // Remove middle state
+      element['_removeState'](1);
+
+      // Indices should be adjusted
+      expect(element['_expandedStates'].has(0)).to.be.true;
+      expect(element['_expandedStates'].has(1)).to.be.true; // Was index 2
+      expect(element['_expandedStates'].has(2)).to.be.false;
+    });
+
+    it('should handle adding state after removal', () => {
+      element.states = [
+        { state: 'on', icon_color: '#ff0000' },
+        { state: 'off', icon_color: '#000000' },
+      ];
+
+      // Remove first state
+      element['_removeState'](0);
+      let newStates = fireEventStub.firstCall.args[2].value;
+      element.states = newStates;
+      fireEventStub.resetHistory();
+
+      // Add new state
+      element['_addState']();
+      newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.have.lengthOf(2);
+      expect(newStates[0]).to.deep.equal({
+        state: 'off',
+        icon_color: '#000000',
+      });
+      expect(newStates[1]).to.deep.equal({ state: '', icon_color: '' });
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle states array with duplicate states', () => {
+      element.states = [
+        { state: 'on', icon_color: '#ff0000' },
+        { state: 'on', icon_color: '#00ff00' },
+      ];
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+
+    it('should handle state with all optional fields', () => {
+      const fullState: StateConfig = {
+        state: 'custom',
+        icon_color: '#ff0000',
+        icon: 'mdi:custom',
+        label: 'Custom State',
+        attribute: 'custom_attr',
+        styles: { color: 'red' },
+      };
+      element.states = [fullState];
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+
+    it('should handle state with minimal required fields', () => {
+      const minimalState: StateConfig = {
+        state: 'on',
+        icon_color: '#ff0000',
+      };
+      element.states = [minimalState];
+      const result = element['render']() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+    });
+
+    it('should handle rapid toggle operations', () => {
+      element['_toggleExpanded'](0);
+      element['_toggleExpanded'](0);
+      element['_toggleExpanded'](0);
+      expect(element['_expandedStates'].has(0)).to.be.true;
+    });
+
+    it('should handle removing all states', () => {
+      element.states = [
+        { state: 'on', icon_color: '#ff0000' },
+        { state: 'off', icon_color: '#000000' },
+      ];
+
+      element['_removeState'](0);
+      let newStates = fireEventStub.firstCall.args[2].value;
+      element.states = newStates;
+      fireEventStub.resetHistory();
+
+      element['_removeState'](0);
+      newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.be.an('array');
+      expect(newStates.length).to.equal(0);
+    });
+  });
+});

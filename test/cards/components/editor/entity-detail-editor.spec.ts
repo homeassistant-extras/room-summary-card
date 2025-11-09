@@ -1,6 +1,7 @@
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
-import type { EntityConfig } from '@type/config/entity';
+import type { EntityConfig, StateConfig } from '@type/config/entity';
+import { fixture } from '@open-wc/testing-helpers';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -294,6 +295,103 @@ describe('entity-detail-editor.ts', () => {
       const templateString = result.strings.join('');
       expect(templateString).to.include('ha-form');
     });
+
+    it('should render states row editor when type is entity and entity_id is set', async () => {
+      element.hass = mockHass;
+      element.type = 'entity';
+      element['_config'] = mockEntityConfig;
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
+      expect(statesRowEditor).to.exist;
+      expect((statesRowEditor as any).entityId).to.equal(
+        mockEntityConfig.entity_id,
+      );
+      expect((statesRowEditor as any).hass).to.equal(mockHass);
+    });
+
+    it('should not render states row editor when type is sensor', async () => {
+      element.hass = mockHass;
+      element.type = 'sensor';
+      element['_config'] = mockEntityConfig;
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
+      expect(statesRowEditor).to.not.exist;
+    });
+
+    it('should not render states row editor when entity_id is missing', async () => {
+      element.hass = mockHass;
+      element.type = 'entity';
+      element['_config'] = { label: 'Test' } as EntityConfig;
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
+      expect(statesRowEditor).to.not.exist;
+    });
+
+    it('should not render states row editor when entity_id is empty string', async () => {
+      element.hass = mockHass;
+      element.type = 'entity';
+      element['_config'] = { entity_id: '' } as EntityConfig;
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
+      expect(statesRowEditor).to.not.exist;
+    });
+
+    it('should pass states array to states row editor when config has states', async () => {
+      const statesConfig: StateConfig[] = [
+        { state: 'on', icon_color: '#00ff00' },
+        { state: 'off', icon_color: '#ff0000' },
+      ];
+      element.hass = mockHass;
+      element.type = 'entity';
+      element['_config'] = {
+        ...mockEntityConfig,
+        states: statesConfig,
+      };
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
+      expect(statesRowEditor).to.exist;
+      expect((statesRowEditor as any).states).to.deep.equal(statesConfig);
+    });
+
+    it('should pass undefined states to states row editor when config has no states', async () => {
+      element.hass = mockHass;
+      element.type = 'entity';
+      element['_config'] = mockEntityConfig;
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
+      expect(statesRowEditor).to.exist;
+      expect((statesRowEditor as any).states).to.be.undefined;
+    });
   });
 
   describe('_computeLabelCallback', () => {
@@ -379,6 +477,144 @@ describe('entity-detail-editor.ts', () => {
       expect(fireEventStub.calledOnce).to.be.true;
       const eventArgs = fireEventStub.firstCall.args[2];
       expect(eventArgs.config).to.deep.equal(updatedConfig);
+    });
+  });
+
+  describe('_statesValueChanged', () => {
+    const mockStateConfig1: StateConfig = {
+      state: 'on',
+      icon_color: '#00ff00',
+    };
+    const mockStateConfig2: StateConfig = {
+      state: 'off',
+      icon_color: '#ff0000',
+    };
+    const mockStateConfig3: StateConfig = {
+      state: 'auto',
+      icon_color: '#0000ff',
+      icon: 'mdi:auto',
+    };
+
+    beforeEach(() => {
+      element.hass = mockHass;
+      element['_config'] = mockEntityConfig;
+    });
+
+    it('should return early when config is undefined', () => {
+      element['_config'] = undefined;
+
+      const event = new CustomEvent('states-value-changed', {
+        detail: { value: [mockStateConfig1, mockStateConfig2] },
+      });
+
+      element['_statesValueChanged'](event);
+
+      expect(fireEventStub.called).to.be.false;
+    });
+
+    it('should warn and return early when states value is not an array', () => {
+      const consoleWarnStub = stub(console, 'warn');
+
+      const event = new CustomEvent('states-value-changed', {
+        detail: { value: { on: 'on', off: 'off' } },
+      });
+
+      element['_statesValueChanged'](event);
+
+      expect(consoleWarnStub.calledOnce).to.be.true;
+      expect(consoleWarnStub.firstCall.args[0]).to.include(
+        'States value is not an array:',
+      );
+      expect(fireEventStub.called).to.be.false;
+
+      consoleWarnStub.restore();
+    });
+
+    it('should fire config-changed event with states when array has items', () => {
+      const statesArray: StateConfig[] = [
+        mockStateConfig1,
+        mockStateConfig2,
+        mockStateConfig3,
+      ];
+
+      const event = new CustomEvent('states-value-changed', {
+        detail: { value: statesArray },
+      });
+
+      element['_statesValueChanged'](event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      expect(fireEventStub.firstCall.args[0]).to.equal(element);
+      expect(fireEventStub.firstCall.args[1]).to.equal('config-changed');
+      expect(fireEventStub.firstCall.args[2]).to.deep.equal({
+        config: {
+          ...mockEntityConfig,
+          states: statesArray,
+        },
+      });
+    });
+
+    it('should remove states property when array is empty', () => {
+      const configWithStates: EntityConfig = {
+        ...mockEntityConfig,
+        states: [mockStateConfig1, mockStateConfig2],
+      };
+      element['_config'] = configWithStates;
+
+      const event = new CustomEvent('states-value-changed', {
+        detail: { value: [] },
+      });
+
+      element['_statesValueChanged'](event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newConfig = fireEventStub.firstCall.args[2].config;
+      expect(newConfig).to.not.have.property('states');
+      expect(newConfig).to.deep.equal(mockEntityConfig);
+    });
+
+    it('should preserve other config properties when updating states', () => {
+      const oldState: StateConfig = {
+        state: 'old',
+        icon_color: '#888888',
+      };
+      const configWithExtraProps: EntityConfig = {
+        ...mockEntityConfig,
+        label: 'Custom Label',
+        icon: 'mdi:custom-icon',
+        on_color: '#ff0000',
+        states: [oldState],
+      };
+      element['_config'] = configWithExtraProps;
+
+      const newStates: StateConfig[] = [mockStateConfig1, mockStateConfig2];
+
+      const event = new CustomEvent('states-value-changed', {
+        detail: { value: newStates },
+      });
+
+      element['_statesValueChanged'](event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newConfig = fireEventStub.firstCall.args[2].config;
+      expect(newConfig.states).to.deep.equal(newStates);
+      expect(newConfig.label).to.equal('Custom Label');
+      expect(newConfig.icon).to.equal('mdi:custom-icon');
+      expect(newConfig.on_color).to.equal('#ff0000');
+      expect(newConfig.entity_id).to.equal(mockEntityConfig.entity_id);
+    });
+
+    it('should handle states array with single item', () => {
+      const event = new CustomEvent('states-value-changed', {
+        detail: { value: [mockStateConfig1] },
+      });
+
+      element['_statesValueChanged'](event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      expect(fireEventStub.firstCall.args[2].config.states).to.deep.equal([
+        mockStateConfig1,
+      ]);
     });
   });
 

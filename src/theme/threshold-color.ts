@@ -73,16 +73,6 @@ export const getThresholdResult = (
 };
 
 /**
- * Evaluates threshold conditions and returns the appropriate color
- * @deprecated Use getThresholdResult() instead for both color and icon
- */
-export const getThresholdColor = (
-  entity: EntityInformation,
-): string | undefined => {
-  return getThresholdResult(entity)?.color;
-};
-
-/**
  * Evaluates state-based configuration and returns the appropriate result
  *
  * @param entity - The entity information containing state and config

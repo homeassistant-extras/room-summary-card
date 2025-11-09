@@ -15,6 +15,7 @@ import {
 } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import memoizeOne from 'memoize-one';
+import './states-row-editor';
 
 export class RoomSummaryEntityDetailEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
@@ -202,7 +203,45 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
+      ${this.type === 'entity' && this._config.entity_id
+        ? html`
+            <room-summary-states-row-editor
+              .hass=${this.hass}
+              .states=${Array.isArray(this._config.states)
+                ? this._config.states
+                : undefined}
+              .entityId=${this._config.entity_id}
+              label=${localize(this.hass, 'editor.entity.states')}
+              @states-value-changed=${this._statesValueChanged}
+            ></room-summary-states-row-editor>
+          `
+        : nothing}
     `;
+  }
+
+  private _statesValueChanged(ev: CustomEvent): void {
+    if (!this._config) return;
+    const statesValue = ev.detail.value;
+
+    // Ensure states is always an array, never an object
+    if (!Array.isArray(statesValue)) {
+      console.warn('States value is not an array:', statesValue);
+      return;
+    }
+
+    const newConfig = {
+      ...this._config,
+      // Only set states if array has items, otherwise remove the property
+      ...(statesValue.length > 0 ? { states: statesValue } : {}),
+    };
+
+    // If states array is empty, ensure we remove the property
+    if (statesValue.length === 0 && 'states' in newConfig) {
+      delete newConfig.states;
+    }
+
+    // @ts-ignore
+    fireEvent(this, 'config-changed', { config: newConfig });
   }
 
   private _computeLabelCallback = (schema: HaFormSchema): string => {
@@ -215,7 +254,6 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
   };
 
   private _valueChanged(ev: CustomEvent): void {
-    console.log('ev.detail.value', ev.detail.value);
     // @ts-ignore
     fireEvent(this, 'config-changed', { config: ev.detail.value });
   }

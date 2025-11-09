@@ -25,7 +25,17 @@
       "entity_off_color": "Off Color",
       "ignore_entity": "Ignore Entity",
       "show_entity_labels": "Show Entity Labels",
-      "use_entity_icon": "Use Entity Icon"
+      "use_entity_icon": "Use Entity Icon",
+      "states": "States",
+      "add_state": "Add State",
+      "state": {
+        "state": "State",
+        "icon_color": "Icon Color",
+        "icon": "Icon",
+        "label": "Label",
+        "attribute": "Attribute",
+        "styles": "Styles"
+      }
     },
     "entities": {
       "entities_info": "These options are for setting up the right side entities."

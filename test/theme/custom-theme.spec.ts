@@ -11,7 +11,7 @@ describe('custom-theme.ts', () => {
     let getRgbColorStub: sinon.SinonStub;
     let processMinimalistColorsStub: sinon.SinonStub;
     let processHomeAssistantColorsStub: sinon.SinonStub;
-    let getThresholdColorStub: sinon.SinonStub;
+    let getThresholdResultStub: sinon.SinonStub;
 
     const hassDefault = {
       themes: { theme: 'default' },
@@ -48,9 +48,9 @@ describe('custom-theme.ts', () => {
         colorsModule,
         'processHomeAssistantColors',
       );
-      getThresholdColorStub = stub(
+      getThresholdResultStub = stub(
         thresholdColorModule,
-        'getThresholdColor',
+        'getThresholdResult',
       ).returns(undefined);
     });
 
@@ -58,7 +58,7 @@ describe('custom-theme.ts', () => {
       getRgbColorStub.restore();
       processMinimalistColorsStub.restore();
       processHomeAssistantColorsStub.restore();
-      getThresholdColorStub.restore();
+      getThresholdResultStub.restore();
     });
 
     it('should return undefined when state is undefined', () => {
@@ -76,15 +76,51 @@ describe('custom-theme.ts', () => {
         { icon_color: '#FF5733', on_color: 'blue' },
       );
 
-      getThresholdColorStub.returns('orange');
+      getThresholdResultStub.returns({
+        color: 'orange',
+      });
+      processHomeAssistantColorsStub.returns('processed-orange');
 
       const result = getThemeColorOverride(hassDefault, entity, true);
 
-      expect(result).to.equal('orange');
-      expect(getThresholdColorStub.calledWith(entity)).to.be.true;
+      expect(result).to.equal('processed-orange');
+      expect(getThresholdResultStub.calledWith(entity)).to.be.true;
+      expect(
+        processHomeAssistantColorsStub.calledWith(
+          'orange',
+          'red',
+          undefined,
+          true,
+        ),
+      ).to.be.true;
       expect(getRgbColorStub.called).to.be.false;
       expect(processMinimalistColorsStub.called).to.be.false;
-      expect(processHomeAssistantColorsStub.called).to.be.false;
+    });
+
+    it('should call processHomeAssistantColors with threshold color, onColor, offColor, and active', () => {
+      const entity = createEntity(
+        { on_color: 'green', off_color: 'purple' },
+        { on_color: 'blue', off_color: 'yellow' },
+      );
+
+      getThresholdResultStub.returns({
+        color: 'threshold-blue',
+      });
+      processHomeAssistantColorsStub.returns('processed-threshold-blue');
+
+      const result = getThemeColorOverride(hassDefault, entity, false);
+
+      expect(result).to.equal('processed-threshold-blue');
+      expect(
+        processHomeAssistantColorsStub.calledWith(
+          'threshold-blue',
+          'green',
+          'purple',
+          false,
+        ),
+      ).to.be.true;
+      expect(getRgbColorStub.called).to.be.false;
+      expect(processMinimalistColorsStub.called).to.be.false;
     });
 
     it('should prioritize hex icon_color over everything else', () => {
@@ -93,10 +129,12 @@ describe('custom-theme.ts', () => {
         { icon_color: '#FF5733', on_color: 'blue' },
       );
 
+      getThresholdResultStub.returns(undefined);
+
       const result = getThemeColorOverride(hassDefault, entity, true);
 
       expect(result).to.equal('#FF5733');
-      expect(getThresholdColorStub.called).to.be.true;
+      expect(getThresholdResultStub.called).to.be.true;
       expect(getRgbColorStub.called).to.be.false;
       expect(processMinimalistColorsStub.called).to.be.false;
       expect(processHomeAssistantColorsStub.called).to.be.false;

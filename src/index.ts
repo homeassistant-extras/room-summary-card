@@ -9,6 +9,7 @@
 import { RoomSummaryCard } from '@cards/card';
 import { RoomSummaryEntitiesRowEditor } from '@cards/components/editor/entities-row-editor';
 import { RoomSummaryEntityDetailEditor } from '@cards/components/editor/entity-detail-editor';
+import { RoomSummaryStatesRowEditor } from '@cards/components/editor/states-row-editor';
 import { RoomSummarySubElementEditor } from '@cards/components/editor/sub-element-editor';
 import { EntityCollection } from '@cards/components/entity-collection/entity-collection';
 import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
@@ -29,6 +30,10 @@ customElements.define(
 customElements.define(
   'room-summary-entities-row-editor',
   RoomSummaryEntitiesRowEditor,
+);
+customElements.define(
+  'room-summary-states-row-editor',
+  RoomSummaryStatesRowEditor,
 );
 customElements.define(
   'room-summary-sub-element-editor',

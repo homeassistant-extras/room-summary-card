@@ -32,7 +32,7 @@ describe('index.ts', () => {
 
   it('should register all custom elements including room-state-icon', () => {
     require('@/index.ts');
-    expect(customElementsStub.callCount).to.equal(8);
+    expect(customElementsStub.callCount).to.equal(9);
     expect(customElementsStub.firstCall.args[0]).to.equal('room-summary-card');
     expect(customElementsStub.secondCall.args[0]).to.equal(
       'room-summary-card-editor',
@@ -47,6 +47,9 @@ describe('index.ts', () => {
       'room-summary-entities-row-editor',
     );
     expect(customElementsStub.getCall(7).args[0]).to.equal(
+      'room-summary-states-row-editor',
+    );
+    expect(customElementsStub.getCall(8).args[0]).to.equal(
       'room-summary-sub-element-editor',
     );
   });
@@ -96,7 +99,7 @@ describe('index.ts', () => {
     require('@/index.ts');
 
     expect(window.customCards).to.have.lengthOf(1);
-    expect(customElementsStub.callCount).to.equal(8);
+    expect(customElementsStub.callCount).to.equal(9);
   });
 
   it('should log the version with proper formatting', () => {
