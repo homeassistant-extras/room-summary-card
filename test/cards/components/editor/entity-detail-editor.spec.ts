@@ -314,8 +314,10 @@ describe('entity-detail-editor.ts', () => {
       // Wrap in a container div to ensure proper querying
       const wrappedResult = html`<div>${result}</div>`;
       const el = await fixture(wrappedResult);
-      
-      const statesRowEditor = el.querySelector('room-summary-states-row-editor');
+
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
       expect(statesRowEditor).to.exist;
       expect((statesRowEditor as any).entityId).to.equal(
         mockEntityConfig.entity_id,
@@ -382,7 +384,9 @@ describe('entity-detail-editor.ts', () => {
       const wrappedResult = html`<div>${result}</div>`;
       const el = await fixture(wrappedResult);
 
-      const statesRowEditor = el.querySelector('room-summary-states-row-editor');
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
       expect(statesRowEditor).to.exist;
       expect((statesRowEditor as any).states).to.deep.equal(statesConfig);
     });
@@ -397,7 +401,9 @@ describe('entity-detail-editor.ts', () => {
       const wrappedResult = html`<div>${result}</div>`;
       const el = await fixture(wrappedResult);
 
-      const statesRowEditor = el.querySelector('room-summary-states-row-editor');
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
       expect(statesRowEditor).to.exist;
       expect((statesRowEditor as any).states).to.be.undefined;
     });

@@ -78,6 +78,19 @@ describe('compute_entity_name.ts', () => {
       expect(computeEntityEntryName(entry, hass)).to.equal('Living Room Light');
     });
 
+    it('should return undefined when no device, no name, and no stateObj', () => {
+      const entry = {
+        entity_id: 'light.living_room',
+      } as any;
+
+      const hass = {
+        devices: {},
+        states: {},
+      } as any;
+
+      expect(computeEntityEntryName(entry, hass)).to.be.undefined;
+    });
+
     it('should return entity name when entity name equals device name', () => {
       const entry = {
         name: 'Living Room Device',

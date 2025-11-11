@@ -6,7 +6,7 @@ import type { HomeAssistant } from '@hass/types';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
 import { expect } from 'chai';
-import { nothing } from 'lit';
+import { CSSResult, nothing } from 'lit';
 import { stub } from 'sinon';
 
 describe('editor.ts', () => {
@@ -125,6 +125,12 @@ describe('editor.ts', () => {
         },
       });
     });
+
+    it('should return styles', () => {
+      const styles = RoomSummaryCardEditor.styles;
+      expect(styles).to.exist;
+      expect(styles).to.be.instanceOf(CSSResult);
+    });
   });
 
   describe('setConfig', () => {
@@ -172,11 +178,6 @@ describe('editor.ts', () => {
       expect(result).to.not.equal(nothing);
     });
 
-    it('should handle tab change', () => {
-      expect(card['_currentTab']).to.equal(0);
-      card['_handleTabClick'](2);
-      expect(card['_currentTab']).to.equal(2);
-    });
   });
 
   describe('_valueChanged', () => {

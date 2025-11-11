@@ -28,6 +28,8 @@
       "use_entity_icon": "Use Entity Icon",
       "states": "States",
       "add_state": "Add State",
+      "thresholds": "Thresholds",
+      "add_threshold": "Add Threshold",
       "state": {
         "state": "State",
         "icon_color": "Icon Color",
@@ -35,6 +37,15 @@
         "label": "Label",
         "attribute": "Attribute",
         "styles": "Styles"
+      },
+      "threshold": {
+        "threshold": "Threshold",
+        "icon_color": "Icon Color",
+        "icon": "Icon",
+        "label": "Label",
+        "attribute": "Attribute",
+        "styles": "Styles",
+        "operator": "Operator"
       }
     },
     "entities": {

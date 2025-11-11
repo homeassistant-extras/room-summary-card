@@ -211,8 +211,19 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
                 ? this._config.states
                 : undefined}
               .entityId=${this._config.entity_id}
+              .mode=${'states'}
               label=${localize(this.hass, 'editor.entity.states')}
               @states-value-changed=${this._statesValueChanged}
+            ></room-summary-states-row-editor>
+            <room-summary-states-row-editor
+              .hass=${this.hass}
+              .thresholds=${Array.isArray(this._config.thresholds)
+                ? this._config.thresholds
+                : undefined}
+              .entityId=${this._config.entity_id}
+              .mode=${'thresholds'}
+              label=${localize(this.hass, 'editor.entity.thresholds')}
+              @thresholds-value-changed=${this._thresholdsValueChanged}
             ></room-summary-states-row-editor>
           `
         : nothing}
@@ -238,6 +249,31 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     // If states array is empty, ensure we remove the property
     if (statesValue.length === 0 && 'states' in newConfig) {
       delete newConfig.states;
+    }
+
+    // @ts-ignore
+    fireEvent(this, 'config-changed', { config: newConfig });
+  }
+
+  private _thresholdsValueChanged(ev: CustomEvent): void {
+    if (!this._config) return;
+    const thresholdsValue = ev.detail.value;
+
+    // Ensure thresholds is always an array, never an object
+    if (!Array.isArray(thresholdsValue)) {
+      console.warn('Thresholds value is not an array:', thresholdsValue);
+      return;
+    }
+
+    const newConfig = {
+      ...this._config,
+      // Only set thresholds if array has items, otherwise remove the property
+      ...(thresholdsValue.length > 0 ? { thresholds: thresholdsValue } : {}),
+    };
+
+    // If thresholds array is empty, ensure we remove the property
+    if (thresholdsValue.length === 0 && 'thresholds' in newConfig) {
+      delete newConfig.thresholds;
     }
 
     // @ts-ignore

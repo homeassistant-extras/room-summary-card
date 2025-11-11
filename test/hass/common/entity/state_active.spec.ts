@@ -34,6 +34,15 @@ describe('state_active.ts', () => {
       expect(stateActive(stateObj, OFF)).to.be.false;
       expect(stateActive(stateObj, 'on')).to.be.true;
     });
+
+    it('should use stateObj.state when state parameter is undefined', () => {
+      const stateObj = createStateObj('light.test', 'on');
+      // When state is undefined, should use stateObj.state
+      expect(stateActive(stateObj, undefined)).to.be.true;
+      
+      const stateObjOff = createStateObj('light.test', OFF);
+      expect(stateActive(stateObjOff, undefined)).to.be.false;
+    });
   });
 
   describe('Button-like domains', () => {

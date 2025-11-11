@@ -167,10 +167,27 @@ describe('tab-bar.ts', () => {
     const el = await fixture(result as TemplateResult);
     const buttons = el.querySelectorAll('.custom-tab');
 
-    (buttons[2] as HTMLButtonElement).click();
+    // Test clicking tab 0 (Main)
+    (buttons[0] as HTMLButtonElement).click();
+    expect(onTabClick.calledWith(0)).to.be.true;
 
-    expect(onTabClick.calledOnce).to.be.true;
+    // Test clicking tab 1 (Entities)
+    (buttons[1] as HTMLButtonElement).click();
+    expect(onTabClick.calledWith(1)).to.be.true;
+
+    // Test clicking tab 2 (Lights)
+    (buttons[2] as HTMLButtonElement).click();
     expect(onTabClick.calledWith(2)).to.be.true;
+
+    // Test clicking tab 3 (Sensors)
+    (buttons[3] as HTMLButtonElement).click();
+    expect(onTabClick.calledWith(3)).to.be.true;
+
+    // Test clicking tab 4 (Occupancy)
+    (buttons[4] as HTMLButtonElement).click();
+    expect(onTabClick.calledWith(4)).to.be.true;
+
+    expect(onTabClick.callCount).to.equal(5);
   });
 
   it('should call onScroll when tab container is scrolled', async () => {

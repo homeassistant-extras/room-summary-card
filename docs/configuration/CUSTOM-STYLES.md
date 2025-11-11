@@ -238,6 +238,45 @@ styles:
     '--mdc-icon-size': 28px # Individual icon size
 ```
 
+## Home Assistant Variables
+
+> **Note:** The following Home Assistant CSS variables can be overridden, but these are not officially supported and may change with Home Assistant updates. Use at your own discretion.
+
+| Variable                        | Description                      |
+| ------------------------------- | -------------------------------- |
+| `--background-color-card`       | Background color of the card     |
+| `--icon-primary-color`          | Primary color for icons          |
+| `--state-color-icon-theme`      | Theme color for state icons      |
+| `--opacity-background-inactive` | Opacity for inactive backgrounds |
+| `--opacity-background-active`   | Opacity for active backgrounds   |
+| `--opacity-icon-inactive`       | Opacity for inactive icons       |
+| `--opacity-icon-fill-inactive`  | Opacity for inactive icon fills  |
+| `--opacity-icon-active`         | Opacity for active icons         |
+| `--opacity-icon-fill-active`    | Opacity for active icon fills    |
+
+Example:
+
+```yaml
+styles:
+  card:
+    '--background-color-card': orange
+    '--icon-primary-color': black
+    '--state-color-icon-theme': '#FF5349'
+    '--opacity-background-inactive': 0.2
+    '--opacity-icon-inactive': 0.2
+    '--opacity-icon-fill-inactive': 0.2
+    '--opacity-background-active': 1
+    '--opacity-icon-active': 1
+    '--opacity-icon-fill-active': 1
+  entity_icon:
+    '--icon-primary-color': black
+    '--state-color-icon-theme': '#FF5349'
+    '--opacity-icon-inactive': 0.2
+    '--opacity-icon-fill-inactive': 0.2
+    '--opacity-icon-active': 1
+    '--opacity-icon-fill-active': 1
+```
+
 ## Combining with Features
 
 Custom styles work alongside feature flags:

@@ -92,6 +92,16 @@ describe('lights-tab.ts', () => {
     expect(form).to.exist;
     expect((form as any).hass).to.equal(mockHass);
     expect((form as any).data).to.equal(mockConfig);
+    expect((form as any).computeLabel).to.be.a('function');
+
+    const computeLabelFn = (form as any).computeLabel;
+    const testSchema = {
+      name: 'lights',
+      label: 'editor.background.light_entities' as any,
+      selector: { entity: { multiple: true } } as any,
+    };
+    const label = computeLabelFn(testSchema);
+    expect(label).to.be.a('string');
   });
 
   it('should call getLightsSchema with correct parameters', () => {

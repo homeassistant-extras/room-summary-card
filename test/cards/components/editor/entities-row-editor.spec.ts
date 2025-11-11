@@ -192,6 +192,42 @@ describe('entities-row-editor.ts', () => {
       expect(fireEventStub.called).to.be.false;
     });
 
+    it('should replace entity in single mode for entities field', async () => {
+      element.field = 'entities';
+      element.single = true;
+      element.entities = [...mockEntityConfigs];
+
+      const event = new CustomEvent('value-changed', {
+        detail: { value: 'light.new' },
+      });
+      Object.defineProperty(event, 'target', { value: { value: '' } });
+
+      await element['_addEntity'](event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      expect(fireEventStub.firstCall.args[1]).to.equal('value-changed');
+      const newEntities = fireEventStub.firstCall.args[2].value;
+      expect(newEntities).to.deep.equal(['light.new']);
+    });
+
+    it('should replace light in single mode for lights field', async () => {
+      element.field = 'lights';
+      element.single = true;
+      element.lights = [...mockLights];
+
+      const event = new CustomEvent('value-changed', {
+        detail: { value: 'light.new' },
+      });
+      Object.defineProperty(event, 'target', { value: { value: '' } });
+
+      await element['_addEntity'](event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      expect(fireEventStub.firstCall.args[1]).to.equal('value-changed');
+      const newLights = fireEventStub.firstCall.args[2].value;
+      expect(newLights).to.deep.equal(['light.new']);
+    });
+
     it('should handle undefined entities array', async () => {
       element.field = 'entities';
       element.entities = undefined;
@@ -321,6 +357,40 @@ describe('entities-row-editor.ts', () => {
       expect(fireEventStub.calledOnce).to.be.true;
       const newEntities = fireEventStub.firstCall.args[2].value;
       expect(newEntities).to.have.lengthOf(1);
+    });
+
+    it('should remove light when value is empty string', () => {
+      element.field = 'lights';
+      element.lights = [...mockLights];
+
+      const event = new CustomEvent('value-changed', {
+        detail: { value: '' },
+      });
+      Object.defineProperty(event, 'target', { value: { index: 0 } });
+
+      element['_valueChanged'](event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newLights = fireEventStub.firstCall.args[2].value;
+      expect(newLights).to.have.lengthOf(1);
+      expect(newLights[0]).to.equal(mockLights[1]);
+    });
+
+    it('should remove light when value is undefined', () => {
+      element.field = 'lights';
+      element.lights = [...mockLights];
+
+      const event = new CustomEvent('value-changed', {
+        detail: { value: undefined },
+      });
+      Object.defineProperty(event, 'target', { value: { index: 1 } });
+
+      element['_valueChanged'](event);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newLights = fireEventStub.firstCall.args[2].value;
+      expect(newLights).to.have.lengthOf(1);
+      expect(newLights[0]).to.equal(mockLights[0]);
     });
 
     it('should update light at index', () => {

@@ -1,8 +1,6 @@
 import { areaEntities, deviceClasses } from '@/editor/editor-schema';
-import {
-  cleanEmptyArrays,
-  cleanEmptyProps,
-} from '@/editor/utils/config-cleanup';
+import { cleanAndFireConfigChanged } from '@/editor/utils/fire-config-changed';
+import { updateScrollIndicators } from '@/editor/utils/update-scroll-indicators';
 import { renderEntitiesTab } from '@/html/editor/entities-tab';
 import { renderLightsTab } from '@/html/editor/lights-tab';
 import { renderMainTab } from '@/html/editor/main-tab';
@@ -11,7 +9,6 @@ import { renderSensorsTab } from '@/html/editor/sensors-tab';
 import { renderTabBar } from '@/html/editor/tab-bar';
 import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import type { HASSDomEvent } from '@hass/common/dom/fire_event';
-import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { Task } from '@lit/task';
 import type { Config } from '@type/config';
@@ -111,31 +108,16 @@ export class RoomSummaryCardEditor extends LitElement {
       showLeftScroll: this._showLeftScroll,
       showRightScroll: this._showRightScroll,
       tabContainerRef: this._tabContainerRef,
-      onScroll: this._handleScroll.bind(this),
-      onTabClick: this._handleTabClick.bind(this),
+      onScroll: () => {
+        const indicators = updateScrollIndicators(this._tabContainerRef.value);
+        this._showLeftScroll = indicators.showLeftScroll;
+        this._showRightScroll = indicators.showRightScroll;
+      },
+      onTabClick: (index: number) => {
+        this._currentTab = index;
+      },
       tabContent: this._renderTabContent(),
     });
-  }
-
-  private _handleTabClick(index: number): void {
-    this._currentTab = index;
-  }
-
-  private _handleScroll(): void {
-    this._updateScrollIndicators();
-  }
-
-  private _updateScrollIndicators(): void {
-    const container = this._tabContainerRef.value;
-    if (!container) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = container;
-
-    // Show left indicator if scrolled right
-    this._showLeftScroll = scrollLeft > 5;
-
-    // Show right indicator if there's more content to the right
-    this._showRightScroll = scrollLeft < scrollWidth - clientWidth - 5;
   }
 
   override updated(
@@ -148,7 +130,11 @@ export class RoomSummaryCardEditor extends LitElement {
       changedProperties.has('_config') ||
       changedProperties.has('_currentTab')
     ) {
-      setTimeout(() => this._updateScrollIndicators(), 100);
+      setTimeout(() => {
+        const indicators = updateScrollIndicators(this._tabContainerRef.value);
+        this._showLeftScroll = indicators.showLeftScroll;
+        this._showRightScroll = indicators.showRightScroll;
+      }, 100);
     }
   }
 
@@ -258,38 +244,9 @@ export class RoomSummaryCardEditor extends LitElement {
     };
   }
 
-  /**
-   * Cleans the config and fires a config-changed event
-   * @param config - The configuration to clean and fire
-   */
-  private _cleanAndFireConfigChanged(config: Config): void {
-    if (!config) return;
-
-    // Clean default values
-    if (config.sensor_layout === 'default') delete config.sensor_layout;
-
-    // Clean up undefined entity field
-    if (config.entity === undefined) delete config.entity;
-
-    // Clean up empty arrays
-    cleanEmptyArrays(config, 'features');
-    cleanEmptyArrays(config, 'entities');
-    cleanEmptyArrays(config, 'lights');
-    cleanEmptyArrays(config, 'problem_entities');
-    cleanEmptyArrays(config, 'sensor_classes');
-
-    // Clean nested objects
-    cleanEmptyProps(config, 'background');
-    cleanEmptyProps(config, 'thresholds');
-    cleanEmptyProps(config, 'occupancy');
-
-    // @ts-ignore
-    fireEvent(this, 'config-changed', { config });
-  }
-
   private _valueChanged(ev: CustomEvent) {
     const config = ev.detail.value as Config;
-    this._cleanAndFireConfigChanged(config);
+    cleanAndFireConfigChanged(this, config);
   }
 
   private _entitiesRowChanged(ev: CustomEvent) {
@@ -303,7 +260,7 @@ export class RoomSummaryCardEditor extends LitElement {
     }
 
     this._config = { ...this._config!, [field]: value };
-    this._cleanAndFireConfigChanged(this._config);
+    cleanAndFireConfigChanged(this, this._config);
   }
 
   private _sensorsRowChanged(ev: CustomEvent) {
@@ -316,7 +273,7 @@ export class RoomSummaryCardEditor extends LitElement {
     }
 
     this._config = { ...this._config!, sensors: value };
-    this._cleanAndFireConfigChanged(this._config);
+    cleanAndFireConfigChanged(this, this._config);
   }
 
   private _entityRowChanged(ev: CustomEvent) {
@@ -332,7 +289,7 @@ export class RoomSummaryCardEditor extends LitElement {
     const entityValue = value.length > 0 ? value[0] : undefined;
 
     this._config = { ...this._config!, entity: entityValue };
-    this._cleanAndFireConfigChanged(this._config);
+    cleanAndFireConfigChanged(this, this._config);
   }
 
   private _editDetailElement(
@@ -421,7 +378,7 @@ export class RoomSummaryCardEditor extends LitElement {
     };
 
     ev.detail.value = this._config;
-    this._cleanAndFireConfigChanged(this._config);
+    cleanAndFireConfigChanged(this, this._config);
   }
 
   private _goBack(): void {

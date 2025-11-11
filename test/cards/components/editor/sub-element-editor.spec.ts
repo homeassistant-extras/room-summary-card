@@ -128,6 +128,17 @@ describe('sub-element-editor.ts', () => {
       // The _renderEditor method returns nothing for lights in GUI mode
       expect(result).to.not.equal(nothing);
     });
+
+    it('should return nothing when type is not entity or sensor', () => {
+      element.config = {
+        field: 'entities',
+        type: 'unknown' as any,
+        elementConfig: mockEntityConfig,
+      };
+
+      const result = (element as any)._renderEditor();
+      expect(result).to.equal(nothing);
+    });
   });
 
   describe('_toggleMode', () => {

@@ -73,16 +73,6 @@ describe('text-styles.ts', () => {
       getStyleDataStub.returns(null);
       result = renderTextStyles(mockHass, mockConfig, entity);
       expect(result).to.equal(nothing);
-
-      // Test inactive entity
-      getStyleDataStub.returns({
-        active: false,
-        cssColor: 'var(--disabled-color)',
-        themeOverride: 'var(--theme-override)',
-        activeClass: 'inactive',
-      });
-      result = renderTextStyles(mockHass, mockConfig, entity);
-      expect(result).to.equal(nothing);
     });
 
     it('should return style map for active entities with undefined values handled', () => {
@@ -146,6 +136,50 @@ describe('text-styles.ts', () => {
           color: 'red',
         }),
       );
+    });
+
+    it('should return styleMap with config.styles.title when inactive but styleData exists', () => {
+      const entity = createEntityInfo('light', 'test', 'off');
+      mockConfig.styles = {
+        title: { 'font-size': '16px', 'font-weight': 'bold' },
+      };
+
+      getStyleDataStub.returns({
+        active: false,
+        cssColor: 'var(--disabled-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'inactive',
+      });
+
+      const result = renderTextStyles(mockHass, mockConfig, entity);
+
+      expect(result).to.deep.equal(
+        styleMap({
+          'font-size': '16px',
+          'font-weight': 'bold',
+        }),
+      );
+    });
+
+    it('should return styleMap with empty object when inactive and no config.styles.title', () => {
+      const entity = createEntityInfo('light', 'test', 'off');
+      // No config.styles.title set
+
+      getStyleDataStub.returns({
+        active: false,
+        cssColor: 'var(--disabled-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'inactive',
+      });
+
+      const result = renderTextStyles(mockHass, mockConfig, entity);
+
+      // When active is false but styleData exists, should return styleMap with spread config.styles?.title
+      // Since config.styles?.title is undefined, spreading it gives empty object
+      expect(result).to.exist;
+      expect(result).to.not.equal(nothing);
+      // Verify it's a styleMap result by checking it can be used
+      expect(typeof result).to.equal('object');
     });
   });
 });

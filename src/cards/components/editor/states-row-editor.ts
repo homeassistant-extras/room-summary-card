@@ -2,7 +2,7 @@ import { localize } from '@/localize/localize';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
-import type { StateConfig } from '@type/config/entity';
+import type { StateConfig, ThresholdConfig } from '@type/config/entity';
 import type { TranslationKey } from '@type/locale';
 import {
   css,
@@ -21,6 +21,9 @@ declare global {
     'states-value-changed': {
       value: StateConfig[];
     };
+    'thresholds-value-changed': {
+      value: ThresholdConfig[];
+    };
   }
 }
 
@@ -29,16 +32,20 @@ export class RoomSummaryStatesRowEditor extends LitElement {
 
   @property({ attribute: false }) public states?: StateConfig[];
 
+  @property({ attribute: false }) public thresholds?: ThresholdConfig[];
+
   @property() public label?: string;
 
   @property() public entityId?: string;
 
+  @property() public mode: 'states' | 'thresholds' = 'states';
+
   @state() private _expandedStates = new Set<number>();
 
-  private _getKey(state: StateConfig, index: number): string {
+  private _getKey(item: StateConfig | ThresholdConfig, index: number): string {
     // Use index as key to maintain stable identity during editing
     // This prevents focus loss when typing in form fields
-    return `state-${index}`;
+    return `${this.mode}-${index}`;
   }
 
   private _getStateSchema = memoizeOne(
@@ -91,6 +98,97 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     },
   );
 
+  private _getThresholdSchema = memoizeOne(
+    (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
+      return [
+        {
+          name: 'threshold',
+          required: true,
+          label: 'editor.entity.threshold.threshold',
+          selector: { number: { mode: 'box' as const } },
+        },
+        {
+          name: 'icon_color',
+          required: true,
+          label: 'editor.entity.threshold.icon_color',
+          selector: { ui_color: {} },
+        },
+        {
+          name: 'operator',
+          required: false,
+          label: 'editor.entity.threshold.operator',
+          selector: {
+            select: {
+              mode: 'dropdown' as const,
+              options: [
+                {
+                  value: 'gt',
+                  label: localize(
+                    hass,
+                    'editor.threshold.operator.greater_than',
+                  ),
+                },
+                {
+                  value: 'gte',
+                  label: localize(
+                    hass,
+                    'editor.threshold.operator.greater_than_or_equal',
+                  ),
+                },
+                {
+                  value: 'lt',
+                  label: localize(hass, 'editor.threshold.operator.less_than'),
+                },
+                {
+                  value: 'lte',
+                  label: localize(
+                    hass,
+                    'editor.threshold.operator.less_than_or_equal',
+                  ),
+                },
+                {
+                  value: 'eq',
+                  label: localize(hass, 'editor.threshold.operator.equal'),
+                },
+              ],
+            },
+          },
+        },
+        {
+          type: 'grid',
+          name: '',
+          label: 'editor.entity.entity_label',
+          schema: [
+            {
+              name: 'icon',
+              label: 'editor.entity.threshold.icon',
+              required: false,
+              selector: { icon: {} },
+            },
+            {
+              name: 'label',
+              label: 'editor.entity.threshold.label',
+              required: false,
+              selector: { text: {} },
+            },
+          ],
+        },
+        {
+          name: 'attribute',
+          label: 'editor.entity.threshold.attribute',
+          required: false,
+          selector: { attribute: { entity_id } },
+        },
+        {
+          name: 'styles',
+          label: 'editor.entity.threshold.styles',
+          required: false,
+          selector: { object: {} },
+        },
+      ];
+    },
+  );
+
   private _computeLabelCallback = (schema: HaFormSchema): string => {
     if (!schema.label) return '';
     return `${localize(this.hass as any, schema.label as TranslationKey)} ${
@@ -100,64 +198,106 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     }`;
   };
 
-  private _toggleExpanded(index: number): void {
-    const newExpanded = new Set(this._expandedStates);
-    if (newExpanded.has(index)) {
-      newExpanded.delete(index);
+  private _addItem(): void {
+    if (this.mode === 'states') {
+      const newState: StateConfig = {
+        state: '',
+        icon_color: '',
+      };
+      const newStates = [...(this.states || []), newState];
+      const newIndex = newStates.length - 1;
+      this._expandedStates = new Set([...this._expandedStates, newIndex]);
+      fireEvent(this, 'states-value-changed', { value: newStates });
     } else {
-      newExpanded.add(index);
+      const newThreshold: ThresholdConfig = {
+        threshold: 0,
+        icon_color: '',
+      };
+      const newThresholds = [...(this.thresholds || []), newThreshold];
+      const newIndex = newThresholds.length - 1;
+      this._expandedStates = new Set([...this._expandedStates, newIndex]);
+      fireEvent(this, 'thresholds-value-changed', { value: newThresholds });
     }
-    this._expandedStates = newExpanded;
   }
 
-  private _addState(): void {
-    const newState: StateConfig = {
-      state: '',
-      icon_color: '',
-    };
-    const newStates = [...(this.states || []), newState];
-    const newIndex = newStates.length - 1;
-    this._expandedStates = new Set([...this._expandedStates, newIndex]);
-    fireEvent(this, 'states-value-changed', { value: newStates });
-  }
-
-  private _removeState(index: number): void {
-    const newStates = (this.states || []).concat();
-    newStates.splice(index, 1);
-    const newExpanded = new Set(this._expandedStates);
-    newExpanded.delete(index);
-    // Adjust expanded indices after removal
-    const adjustedExpanded = new Set<number>();
-    for (const idx of newExpanded) {
-      if (idx > index) {
-        adjustedExpanded.add(idx - 1);
-      } else {
-        adjustedExpanded.add(idx);
+  private _removeItem(index: number): void {
+    if (this.mode === 'states') {
+      const newStates = (this.states || []).concat();
+      newStates.splice(index, 1);
+      const newExpanded = new Set(this._expandedStates);
+      newExpanded.delete(index);
+      // Adjust expanded indices after removal
+      const adjustedExpanded = new Set<number>();
+      for (const idx of newExpanded) {
+        if (idx > index) {
+          adjustedExpanded.add(idx - 1);
+        } else {
+          adjustedExpanded.add(idx);
+        }
       }
+      this._expandedStates = adjustedExpanded;
+      // Always ensure we send an array, even if empty
+      fireEvent(this, 'states-value-changed', {
+        value: newStates.length > 0 ? newStates : [],
+      });
+    } else {
+      const newThresholds = (this.thresholds || []).concat();
+      newThresholds.splice(index, 1);
+      const newExpanded = new Set(this._expandedStates);
+      newExpanded.delete(index);
+      // Adjust expanded indices after removal
+      const adjustedExpanded = new Set<number>();
+      for (const idx of newExpanded) {
+        if (idx > index) {
+          adjustedExpanded.add(idx - 1);
+        } else {
+          adjustedExpanded.add(idx);
+        }
+      }
+      this._expandedStates = adjustedExpanded;
+      // Always ensure we send an array, even if empty
+      fireEvent(this, 'thresholds-value-changed', {
+        value: newThresholds.length > 0 ? newThresholds : [],
+      });
     }
-    this._expandedStates = adjustedExpanded;
-    // Always ensure we send an array, even if empty
-    fireEvent(this, 'states-value-changed', {
-      value: newStates.length > 0 ? newStates : [],
-    });
   }
 
-  private _stateValueChanged(index: number, ev: CustomEvent): void {
-    const newStates = (this.states || []).concat();
-    const updatedState = ev.detail.value;
-    // Ensure we have valid state and icon_color before updating
-    if (updatedState && typeof updatedState === 'object') {
-      newStates[index] = updatedState;
+  private _itemValueChanged(index: number, ev: CustomEvent): void {
+    if (this.mode === 'states') {
+      const newStates = (this.states || []).concat();
+      const updatedState = ev.detail.value;
+      // Ensure we have valid state and icon_color before updating
+      if (updatedState && typeof updatedState === 'object') {
+        newStates[index] = updatedState;
+      }
+      // Always ensure we send an array
+      fireEvent(this, 'states-value-changed', { value: newStates });
+    } else {
+      const newThresholds = (this.thresholds || []).concat();
+      const updatedThreshold = ev.detail.value;
+      // Ensure we have valid threshold and icon_color before updating
+      if (updatedThreshold && typeof updatedThreshold === 'object') {
+        newThresholds[index] = updatedThreshold;
+      }
+      // Always ensure we send an array
+      fireEvent(this, 'thresholds-value-changed', { value: newThresholds });
     }
-    // Always ensure we send an array
-    fireEvent(this, 'states-value-changed', { value: newStates });
   }
 
-  private _getStateTitle(state: StateConfig): string {
-    if (state.label) {
-      return `${state.state} (${state.label})`;
+  private _getItemTitle(item: StateConfig | ThresholdConfig): string {
+    if (this.mode === 'states') {
+      const state = item as StateConfig;
+      if (state.label) {
+        return `${state.state} (${state.label})`;
+      }
+      return state.state || 'New State';
+    } else {
+      const threshold = item as ThresholdConfig;
+      if (threshold.label) {
+        return `${threshold.threshold} (${threshold.label})`;
+      }
+      return threshold.threshold?.toString() || 'New Threshold';
     }
-    return state.state || 'New State';
   }
 
   protected override render(): TemplateResult | typeof nothing {
@@ -165,22 +305,24 @@ export class RoomSummaryStatesRowEditor extends LitElement {
       return nothing;
     }
 
-    // Ensure states is always an array, never an object
-    const states = Array.isArray(this.states) ? this.states : [];
     const entityId = this.entityId || '';
 
-    return html`
-      <label>
-        ${this.label ||
-        `${localize(this.hass, 'editor.entity.states')} (${this.hass.localize(
-          'ui.panel.lovelace.editor.card.config.optional',
-        )})`}
-      </label>
-      <div class="states">
-        ${repeat(
+    const defaultLabel =
+      this.mode === 'states'
+        ? localize(this.hass, 'editor.entity.states')
+        : localize(this.hass, 'editor.entity.thresholds');
+    const addButtonLabel =
+      this.mode === 'states'
+        ? localize(this.hass, 'editor.entity.add_state')
+        : localize(this.hass, 'editor.entity.add_threshold');
+
+    const renderItems = () => {
+      if (this.mode === 'states') {
+        const states = Array.isArray(this.states) ? this.states : [];
+        return repeat(
           states,
-          (state, index) => this._getKey(state, index),
-          (state, index) => {
+          (item, index) => this._getKey(item, index),
+          (item, index) => {
             const isExpanded = this._expandedStates.has(index);
             return html`
               <ha-expansion-panel
@@ -199,7 +341,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
                 }}
               >
                 <div slot="header" class="state-header">
-                  <div class="state-title">${this._getStateTitle(state)}</div>
+                  <div class="state-title">${this._getItemTitle(item)}</div>
                   <ha-icon-button
                     .label=${this.hass!.localize(
                       'ui.components.entity.entity-picker.clear',
@@ -208,7 +350,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
                     .index=${index}
                     @click=${(e: Event) => {
                       e.stopPropagation();
-                      this._removeState(index);
+                      this._removeItem(index);
                     }}
                   >
                     <ha-icon icon="mdi:close"></ha-icon>
@@ -217,33 +359,96 @@ export class RoomSummaryStatesRowEditor extends LitElement {
                 <div class="state-content">
                   <ha-form
                     .hass=${this.hass}
-                    .data=${state}
+                    .data=${item}
                     .schema=${this._getStateSchema(entityId, this.hass!)}
                     .computeLabel=${this._computeLabelCallback}
                     @value-changed=${(ev: CustomEvent) =>
-                      this._stateValueChanged(index, ev)}
+                      this._itemValueChanged(index, ev)}
                   ></ha-form>
                 </div>
               </ha-expansion-panel>
             `;
           },
-        )}
-      </div>
-      <mwc-button class="add-state" outlined @click=${this._addState}>
+        );
+      } else {
+        const thresholds = Array.isArray(this.thresholds)
+          ? this.thresholds
+          : [];
+        return repeat(
+          thresholds,
+          (item, index) => this._getKey(item, index),
+          (item, index) => {
+            const isExpanded = this._expandedStates.has(index);
+            return html`
+              <ha-expansion-panel
+                .expanded=${isExpanded}
+                @expanded-changed=${(ev: CustomEvent) => {
+                  if (ev.detail.value) {
+                    this._expandedStates = new Set([
+                      ...this._expandedStates,
+                      index,
+                    ]);
+                  } else {
+                    const newExpanded = new Set(this._expandedStates);
+                    newExpanded.delete(index);
+                    this._expandedStates = newExpanded;
+                  }
+                }}
+              >
+                <div slot="header" class="state-header">
+                  <div class="state-title">${this._getItemTitle(item)}</div>
+                  <ha-icon-button
+                    .label=${this.hass!.localize(
+                      'ui.components.entity.entity-picker.clear',
+                    )}
+                    class="remove-icon"
+                    .index=${index}
+                    @click=${(e: Event) => {
+                      e.stopPropagation();
+                      this._removeItem(index);
+                    }}
+                  >
+                    <ha-icon icon="mdi:close"></ha-icon>
+                  </ha-icon-button>
+                </div>
+                <div class="state-content">
+                  <ha-form
+                    .hass=${this.hass}
+                    .data=${item}
+                    .schema=${this._getThresholdSchema(entityId, this.hass!)}
+                    .computeLabel=${this._computeLabelCallback}
+                    @value-changed=${(ev: CustomEvent) =>
+                      this._itemValueChanged(index, ev)}
+                  ></ha-form>
+                </div>
+              </ha-expansion-panel>
+            `;
+          },
+        );
+      }
+    };
+
+    return html`
+      <label>
+        ${this.label || defaultLabel}
+        (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})
+      </label>
+      <div class="states">${renderItems()}</div>
+      <mwc-button class="add-state" outlined @click=${this._addItem}>
         <ha-icon icon="mdi:plus" slot="icon"></ha-icon>
-        ${this.hass
-          ? localize(this.hass, 'editor.entity.add_state')
-          : 'Add State'}
+        ${addButtonLabel}
       </mwc-button>
     `;
   }
 
   static override styles: CSSResult = css`
+    :host {
+      margin-bottom: 20px;
+      display: block;
+    }
+
     label {
       display: block;
-      margin-bottom: 8px;
-      color: var(--primary-text-color);
-      font-weight: 500;
     }
 
     .states {
@@ -281,7 +486,6 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     }
 
     .add-state {
-      padding: 16px 0;
       cursor: pointer;
     }
   `;

@@ -45,6 +45,10 @@ describe('strip_prefix_from_entity_name.ts', () => {
     expect(
       stripPrefixFromEntityName('kitchen temperature sensor', 'kitchen'),
     ).to.equal('Temperature sensor');
+    // Test case where result is a single word (no space in result)
+    expect(
+      stripPrefixFromEntityName('living room lamp', 'living room'),
+    ).to.equal('Lamp');
   });
 
   it('should preserve existing capitalization in first word', () => {

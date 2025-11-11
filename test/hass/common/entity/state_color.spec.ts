@@ -74,6 +74,20 @@ describe('state_color.ts', () => {
       );
     });
 
+    it('should use stateObj.state when state parameter is undefined', () => {
+      const stateObj = createStateObj('light.test', 'on');
+      stateColorPropertiesStub = stub(
+        stateColorModule,
+        'stateColorProperties',
+      ).returns(['--some-color-property']);
+      computeCssVariableStub.returns('var(--some-color-property)');
+
+      // When state is undefined, should use stateObj.state
+      expect(stateColorCss(stateObj, 'test', true, undefined)).to.equal(
+        'var(--some-color-property)',
+      );
+    });
+
     it('should return css variable for valid color properties', () => {
       const stateObj = createStateObj('light.test', 'on');
       // Use stub on the exported module
@@ -183,6 +197,21 @@ describe('state_color.ts', () => {
       );
       expect(result).to.include('--state-light-off-color');
     });
+
+    it('should use stateActive when active parameter is undefined', () => {
+      const stateObj = createStateObj('light.test', 'on');
+      stateActiveStub.returns(true);
+
+      // When active is undefined, should call stateActive
+      const result = domainStateColorProperties(
+        'light',
+        stateObj,
+        'test',
+        undefined,
+      );
+      expect(stateActiveStub.calledWith(stateObj, undefined)).to.be.true;
+      expect(result).to.include('--state-light-active-color');
+    });
   });
 
   describe('stateColorProperties', () => {
@@ -272,6 +301,29 @@ describe('state_color.ts', () => {
           'test',
           true,
           'off',
+        ),
+      ).to.be.true;
+    });
+
+    it('should use stateObj.state when state parameter is undefined', () => {
+      const stateObj = createStateObj('light.test', 'on');
+
+      // Create a stub for domainStateColorProperties
+      domainStateColorPropertiesStub = stub(
+        stateColorModule,
+        'domainStateColorProperties',
+      );
+      domainStateColorPropertiesStub.returns(['--test-property']);
+
+      // When state is undefined, should use stateObj.state
+      stateColorProperties(stateObj, 'test', true, undefined);
+      expect(
+        domainStateColorPropertiesStub.calledWith(
+          'light',
+          stateObj,
+          'test',
+          true,
+          undefined,
         ),
       ).to.be.true;
     });

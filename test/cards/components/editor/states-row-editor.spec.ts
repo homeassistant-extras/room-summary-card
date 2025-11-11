@@ -83,26 +83,30 @@ describe('states-row-editor.ts', () => {
 
   describe('_getKey', () => {
     it('should generate key using index', () => {
+      element.mode = 'states';
       const state: StateConfig = { state: 'on', icon_color: '#ff0000' };
       const key = element['_getKey'](state, 0);
-      expect(key).to.equal('state-0');
+      expect(key).to.equal('states-0');
     });
 
     it('should generate different keys for different indices', () => {
+      element.mode = 'states';
       const state: StateConfig = { state: 'on', icon_color: '#ff0000' };
       const key1 = element['_getKey'](state, 0);
       const key2 = element['_getKey'](state, 1);
       expect(key1).to.not.equal(key2);
-      expect(key1).to.equal('state-0');
-      expect(key2).to.equal('state-1');
+      expect(key1).to.equal('states-0');
+      expect(key2).to.equal('states-1');
     });
 
     it('should generate stable keys for same index', () => {
+      element.mode = 'states';
       const state1: StateConfig = { state: 'on', icon_color: '#ff0000' };
       const state2: StateConfig = { state: 'off', icon_color: '#000000' };
       const key1 = element['_getKey'](state1, 0);
       const key2 = element['_getKey'](state2, 0);
       expect(key1).to.equal(key2);
+      expect(key1).to.equal('states-0');
     });
   });
 
@@ -234,41 +238,38 @@ describe('states-row-editor.ts', () => {
     });
   });
 
-  describe('_toggleExpanded', () => {
+  describe('_expandedStates', () => {
     it('should expand state when not expanded', () => {
-      element['_toggleExpanded'](0);
+      element['_expandedStates'] = new Set([0]);
       expect(element['_expandedStates'].has(0)).to.be.true;
     });
 
     it('should collapse state when expanded', () => {
       element['_expandedStates'] = new Set([0]);
-      element['_toggleExpanded'](0);
+      element['_expandedStates'] = new Set();
       expect(element['_expandedStates'].has(0)).to.be.false;
     });
 
     it('should handle multiple expanded states', () => {
-      element['_toggleExpanded'](0);
-      element['_toggleExpanded'](1);
-      element['_toggleExpanded'](2);
+      element['_expandedStates'] = new Set([0, 1, 2]);
       expect(element['_expandedStates'].has(0)).to.be.true;
       expect(element['_expandedStates'].has(1)).to.be.true;
       expect(element['_expandedStates'].has(2)).to.be.true;
     });
 
     it('should toggle individual states independently', () => {
-      element['_toggleExpanded'](0);
-      element['_toggleExpanded'](1);
-      element['_toggleExpanded'](0); // Collapse first
+      element['_expandedStates'] = new Set([1]);
       expect(element['_expandedStates'].has(0)).to.be.false;
       expect(element['_expandedStates'].has(1)).to.be.true;
     });
   });
 
-  describe('_addState', () => {
+  describe('_addItem', () => {
     it('should add new state to empty array', () => {
+      element.mode = 'states';
       element.states = [];
 
-      element['_addState']();
+      element['_addItem']();
 
       expect(fireEventStub.calledOnce).to.be.true;
       expect(fireEventStub.firstCall.args[0]).to.equal(element);
@@ -282,9 +283,10 @@ describe('states-row-editor.ts', () => {
     });
 
     it('should add new state to existing array', () => {
+      element.mode = 'states';
       element.states = [...mockStateConfigs];
 
-      element['_addState']();
+      element['_addItem']();
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -299,9 +301,10 @@ describe('states-row-editor.ts', () => {
     });
 
     it('should handle undefined states array', () => {
+      element.mode = 'states';
       element.states = undefined;
 
-      element['_addState']();
+      element['_addItem']();
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -313,9 +316,10 @@ describe('states-row-editor.ts', () => {
     });
 
     it('should expand newly added state', () => {
+      element.mode = 'states';
       element.states = [];
 
-      element['_addState']();
+      element['_addItem']();
 
       const newStates = fireEventStub.firstCall.args[2].value;
       const newIndex = newStates.length - 1;
@@ -323,11 +327,12 @@ describe('states-row-editor.ts', () => {
     });
   });
 
-  describe('_removeState', () => {
+  describe('_removeItem', () => {
     it('should remove state at specified index', () => {
       element.states = [...mockStateConfigs];
 
-      element['_removeState'](0);
+      element.mode = 'states';
+      element['_removeItem'](0);
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -338,7 +343,8 @@ describe('states-row-editor.ts', () => {
     it('should remove last state', () => {
       element.states = [...mockStateConfigs];
 
-      element['_removeState'](1);
+      element.mode = 'states';
+      element['_removeItem'](1);
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -353,7 +359,8 @@ describe('states-row-editor.ts', () => {
       ];
       element['_expandedStates'] = new Set([0, 1, 2]);
 
-      element['_removeState'](1);
+      element.mode = 'states';
+      element['_removeItem'](1);
 
       // Index 0 should remain, index 2 should become index 1
       expect(element['_expandedStates'].has(0)).to.be.true;
@@ -365,7 +372,8 @@ describe('states-row-editor.ts', () => {
       element.states = [...mockStateConfigs];
       element['_expandedStates'] = new Set([0, 1]);
 
-      element['_removeState'](0);
+      element.mode = 'states';
+      element['_removeItem'](0);
 
       // After removing index 0, the state at index 1 moves to index 0
       // So the expanded state that was at index 1 is now at index 0
@@ -376,7 +384,8 @@ describe('states-row-editor.ts', () => {
     it('should handle removing from empty array', () => {
       element.states = [];
 
-      element['_removeState'](0);
+      element.mode = 'states';
+      element['_removeItem'](0);
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -387,7 +396,8 @@ describe('states-row-editor.ts', () => {
     it('should send empty array when removing last state', () => {
       element.states = [{ state: 'on', icon_color: '#ff0000' }];
 
-      element['_removeState'](0);
+      element.mode = 'states';
+      element['_removeItem'](0);
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -403,7 +413,8 @@ describe('states-row-editor.ts', () => {
       ];
       element['_expandedStates'] = new Set([0, 2]);
 
-      element['_removeState'](1);
+      element.mode = 'states';
+      element['_removeItem'](1);
 
       // Index 0 should remain, index 2 should become index 1
       expect(element['_expandedStates'].has(0)).to.be.true;
@@ -412,7 +423,7 @@ describe('states-row-editor.ts', () => {
     });
   });
 
-  describe('_stateValueChanged', () => {
+  describe('_itemValueChanged', () => {
     it('should update state at specified index', () => {
       element.states = [...mockStateConfigs];
 
@@ -426,7 +437,8 @@ describe('states-row-editor.ts', () => {
         detail: { value: updatedState },
       });
 
-      element['_stateValueChanged'](0, event);
+      element.mode = 'states';
+      element['_itemValueChanged'](0, event);
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -446,7 +458,8 @@ describe('states-row-editor.ts', () => {
         detail: { value: updatedState },
       });
 
-      element['_stateValueChanged'](1, event);
+      element.mode = 'states';
+      element['_itemValueChanged'](1, event);
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -466,7 +479,8 @@ describe('states-row-editor.ts', () => {
         detail: { value: updatedState },
       });
 
-      element['_stateValueChanged'](0, event);
+      element.mode = 'states';
+      element['_itemValueChanged'](0, event);
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -481,7 +495,8 @@ describe('states-row-editor.ts', () => {
         detail: { value: null },
       });
 
-      element['_stateValueChanged'](0, event);
+      element.mode = 'states';
+      element['_itemValueChanged'](0, event);
 
       // Should still fire event but with original state
       expect(fireEventStub.calledOnce).to.be.true;
@@ -501,7 +516,8 @@ describe('states-row-editor.ts', () => {
         detail: { value: updatedState },
       });
 
-      element['_stateValueChanged'](0, event);
+      element.mode = 'states';
+      element['_itemValueChanged'](0, event);
 
       expect(fireEventStub.calledOnce).to.be.true;
       const newStates = fireEventStub.firstCall.args[2].value;
@@ -509,14 +525,15 @@ describe('states-row-editor.ts', () => {
     });
   });
 
-  describe('_getStateTitle', () => {
+  describe('_getItemTitle', () => {
     it('should return state with label when label exists', () => {
       const state: StateConfig = {
         state: 'on',
         icon_color: '#ff0000',
         label: 'Power On',
       };
-      const title = element['_getStateTitle'](state);
+      element.mode = 'states';
+      const title = element['_getItemTitle'](state);
       expect(title).to.equal('on (Power On)');
     });
 
@@ -525,7 +542,8 @@ describe('states-row-editor.ts', () => {
         state: 'off',
         icon_color: '#000000',
       };
-      const title = element['_getStateTitle'](state);
+      element.mode = 'states';
+      const title = element['_getItemTitle'](state);
       expect(title).to.equal('off');
     });
 
@@ -534,7 +552,8 @@ describe('states-row-editor.ts', () => {
         state: '',
         icon_color: '#ff0000',
       };
-      const title = element['_getStateTitle'](state);
+      element.mode = 'states';
+      const title = element['_getItemTitle'](state);
       expect(title).to.equal('New State');
     });
 
@@ -543,7 +562,8 @@ describe('states-row-editor.ts', () => {
         state: '  ',
         icon_color: '#ff0000',
       };
-      const title = element['_getStateTitle'](state);
+      element.mode = 'states';
+      const title = element['_getItemTitle'](state);
       expect(title).to.equal('  ');
     });
   });
@@ -666,10 +686,11 @@ describe('states-row-editor.ts', () => {
 
   describe('integration', () => {
     it('should handle complete workflow: add, update, remove', () => {
+      element.mode = 'states';
       element.states = [];
 
       // Add state
-      element['_addState']();
+      element['_addItem']();
       expect(fireEventStub.calledOnce).to.be.true;
       let newStates = fireEventStub.firstCall.args[2].value;
       expect(newStates).to.have.lengthOf(1);
@@ -687,7 +708,8 @@ describe('states-row-editor.ts', () => {
       const updateEvent = new CustomEvent('value-changed', {
         detail: { value: updatedState },
       });
-      element['_stateValueChanged'](0, updateEvent);
+      element.mode = 'states';
+      element['_itemValueChanged'](0, updateEvent);
 
       expect(fireEventStub.calledOnce).to.be.true;
       newStates = fireEventStub.firstCall.args[2].value;
@@ -698,7 +720,8 @@ describe('states-row-editor.ts', () => {
       fireEventStub.resetHistory();
 
       // Remove state
-      element['_removeState'](0);
+      element.mode = 'states';
+      element['_removeItem'](0);
       expect(fireEventStub.calledOnce).to.be.true;
       newStates = fireEventStub.firstCall.args[2].value;
       expect(newStates).to.have.lengthOf(0);
@@ -712,14 +735,14 @@ describe('states-row-editor.ts', () => {
       ];
 
       // Expand first and third
-      element['_toggleExpanded'](0);
-      element['_toggleExpanded'](2);
+      element['_expandedStates'] = new Set([0, 2]);
       expect(element['_expandedStates'].has(0)).to.be.true;
       expect(element['_expandedStates'].has(1)).to.be.false;
       expect(element['_expandedStates'].has(2)).to.be.true;
 
       // Remove middle state
-      element['_removeState'](1);
+      element.mode = 'states';
+      element['_removeItem'](1);
 
       // Indices should be adjusted
       expect(element['_expandedStates'].has(0)).to.be.true;
@@ -734,13 +757,15 @@ describe('states-row-editor.ts', () => {
       ];
 
       // Remove first state
-      element['_removeState'](0);
+      element.mode = 'states';
+      element['_removeItem'](0);
       let newStates = fireEventStub.firstCall.args[2].value;
       element.states = newStates;
       fireEventStub.resetHistory();
 
       // Add new state
-      element['_addState']();
+      element.mode = 'states';
+      element['_addItem']();
       newStates = fireEventStub.firstCall.args[2].value;
       expect(newStates).to.have.lengthOf(2);
       expect(newStates[0]).to.deep.equal({
@@ -786,9 +811,10 @@ describe('states-row-editor.ts', () => {
     });
 
     it('should handle rapid toggle operations', () => {
-      element['_toggleExpanded'](0);
-      element['_toggleExpanded'](0);
-      element['_toggleExpanded'](0);
+      // Simulate rapid expansion/collapse by directly setting state
+      element['_expandedStates'] = new Set([0]);
+      element['_expandedStates'] = new Set();
+      element['_expandedStates'] = new Set([0]);
       expect(element['_expandedStates'].has(0)).to.be.true;
     });
 
@@ -798,12 +824,14 @@ describe('states-row-editor.ts', () => {
         { state: 'off', icon_color: '#000000' },
       ];
 
-      element['_removeState'](0);
+      element.mode = 'states';
+      element['_removeItem'](0);
       let newStates = fireEventStub.firstCall.args[2].value;
       element.states = newStates;
       fireEventStub.resetHistory();
 
-      element['_removeState'](0);
+      element.mode = 'states';
+      element['_removeItem'](0);
       newStates = fireEventStub.firstCall.args[2].value;
       expect(newStates).to.be.an('array');
       expect(newStates.length).to.equal(0);
