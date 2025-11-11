@@ -66,9 +66,9 @@ describe('colors.ts', () => {
       expect(result).to.equal('var(--primary-color)');
     });
 
-    it('should return undefined when iconColor is not in homeAssistantColors', () => {
+    it('should return iconColor when iconColor is not in homeAssistantColors', () => {
       const result = processHomeAssistantColors('invalid-color', '', '', true);
-      expect(result).to.be.undefined;
+      expect(result).to.equal('invalid-color');
     });
 
     it('should return onColor CSS variable when active and onColor is valid', () => {
@@ -81,14 +81,14 @@ describe('colors.ts', () => {
       expect(result).to.equal('var(--grey-color)');
     });
 
-    it('should return undefined when active but onColor is invalid', () => {
+    it('should return iconColor when active but onColor is invalid', () => {
       const result = processHomeAssistantColors('', 'invalid-color', '', true);
-      expect(result).to.be.undefined;
+      expect(result).to.equal('');
     });
 
-    it('should return undefined when inactive but offColor is invalid', () => {
+    it('should return iconColor when inactive but offColor is invalid', () => {
       const result = processHomeAssistantColors('', '', 'invalid-color', false);
-      expect(result).to.be.undefined;
+      expect(result).to.equal('');
     });
 
     it('should prioritize iconColor over onColor/offColor', () => {

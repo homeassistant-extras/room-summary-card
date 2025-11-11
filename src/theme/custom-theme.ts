@@ -2,7 +2,7 @@ import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/room';
 import { processHomeAssistantColors, processMinimalistColors } from './colors';
 import { getRgbColor } from './get-rgb';
-import { getThresholdResult } from './threshold-color';
+import { type ThresholdResult } from './threshold-color';
 
 /**
  * Determines the appropriate theme color override for a given entity based on its state,
@@ -17,29 +17,22 @@ import { getThresholdResult } from './threshold-color';
  *
  * @param hass - The Home Assistant instance containing theme information.
  * @param entity - The entity information, including state and configuration.
+ * @param thresholdResult - Optional threshold result from the entity configuration.
  * @param active - Optional flag indicating if the entity is in an active state.
  * @returns The resolved color as a string (e.g., hex or rgb), or `undefined` if no color override is determined.
  */
 export const getThemeColorOverride = (
   hass: HomeAssistant,
   entity: EntityInformation,
+  thresholdResult: ThresholdResult | undefined,
   active?: boolean,
 ): string | undefined => {
   const { state } = entity;
   if (!state) return undefined;
 
-  const onColor = entity.config.on_color ?? state.attributes.on_color;
-  const offColor = entity.config.off_color ?? state?.attributes?.off_color;
-
   // threshold-based colors have the highest priority
-  const thresholdColor = getThresholdResult(entity)?.color;
-  if (thresholdColor) {
-    return processHomeAssistantColors(
-      thresholdColor,
-      onColor,
-      offColor,
-      active,
-    );
+  if (thresholdResult?.color) {
+    return processHomeAssistantColors(thresholdResult.color);
   }
 
   // icon color is the second priority - hex colors
@@ -48,6 +41,8 @@ export const getThemeColorOverride = (
     return iconColor;
   }
 
+  const onColor = entity.config.on_color ?? state.attributes.on_color;
+  const offColor = entity.config.off_color ?? state?.attributes?.off_color;
   const rgbColor = getRgbColor(state, onColor, offColor, active);
 
   // If the state has a specific RGB color, return it directly

@@ -1,11 +1,12 @@
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
-import type { EntityConfig, StateConfig } from '@type/config/entity';
 import { fixture } from '@open-wc/testing-helpers';
+import type { EntityConfig, StateConfig } from '@type/config/entity';
 import { expect } from 'chai';
-import { nothing, type TemplateResult } from 'lit';
+import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
 import { RoomSummaryEntityDetailEditor } from '../../../../src/cards/components/editor/entity-detail-editor';
+import { RoomSummaryStatesRowEditor } from '../../../../src/cards/components/editor/states-row-editor';
 
 describe('entity-detail-editor.ts', () => {
   let element: RoomSummaryEntityDetailEditor;
@@ -22,6 +23,14 @@ describe('entity-detail-editor.ts', () => {
 
   beforeEach(() => {
     fireEventStub = stub(fireEventModule, 'fireEvent');
+
+    // Register custom elements needed for tests
+    if (!customElements.get('room-summary-states-row-editor')) {
+      customElements.define(
+        'room-summary-states-row-editor',
+        RoomSummaryStatesRowEditor,
+      );
+    }
 
     mockHass = {
       language: 'en',
@@ -302,11 +311,11 @@ describe('entity-detail-editor.ts', () => {
       element['_config'] = mockEntityConfig;
 
       const result = element.render() as TemplateResult;
-      const el = await fixture(result);
-
-      const statesRowEditor = el.querySelector(
-        'room-summary-states-row-editor',
-      );
+      // Wrap in a container div to ensure proper querying
+      const wrappedResult = html`<div>${result}</div>`;
+      const el = await fixture(wrappedResult);
+      
+      const statesRowEditor = el.querySelector('room-summary-states-row-editor');
       expect(statesRowEditor).to.exist;
       expect((statesRowEditor as any).entityId).to.equal(
         mockEntityConfig.entity_id,
@@ -369,11 +378,11 @@ describe('entity-detail-editor.ts', () => {
       };
 
       const result = element.render() as TemplateResult;
-      const el = await fixture(result);
+      // Wrap in a container div to ensure proper querying
+      const wrappedResult = html`<div>${result}</div>`;
+      const el = await fixture(wrappedResult);
 
-      const statesRowEditor = el.querySelector(
-        'room-summary-states-row-editor',
-      );
+      const statesRowEditor = el.querySelector('room-summary-states-row-editor');
       expect(statesRowEditor).to.exist;
       expect((statesRowEditor as any).states).to.deep.equal(statesConfig);
     });
@@ -384,11 +393,11 @@ describe('entity-detail-editor.ts', () => {
       element['_config'] = mockEntityConfig;
 
       const result = element.render() as TemplateResult;
-      const el = await fixture(result);
+      // Wrap in a container div to ensure proper querying
+      const wrappedResult = html`<div>${result}</div>`;
+      const el = await fixture(wrappedResult);
 
-      const statesRowEditor = el.querySelector(
-        'room-summary-states-row-editor',
-      );
+      const statesRowEditor = el.querySelector('room-summary-states-row-editor');
       expect(statesRowEditor).to.exist;
       expect((statesRowEditor as any).states).to.be.undefined;
     });

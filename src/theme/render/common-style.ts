@@ -3,6 +3,10 @@ import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
 import { getThemeColorOverride } from '@theme/custom-theme';
+import {
+  getThresholdResult,
+  type ThresholdResult,
+} from '@theme/threshold-color';
 import type { EntityInformation } from '@type/room';
 
 /**
@@ -13,6 +17,7 @@ interface StyleData {
   cssColor: string | undefined;
   themeOverride: string | undefined;
   activeClass: 'active' | 'inactive';
+  thresholdResult: ThresholdResult | undefined;
 }
 
 /**
@@ -41,7 +46,13 @@ export const getStyleData = (
   // we don't care about the theme in this context
   const isActive = active ?? stateActive(state);
   const activeClass = isActive ? 'active' : 'inactive';
-  const themeOverride = getThemeColorOverride(hass, entity, isActive);
+  const thresholdResult = getThresholdResult(entity);
+  const themeOverride = getThemeColorOverride(
+    hass,
+    entity,
+    thresholdResult,
+    isActive,
+  );
   const cssColor =
     stateColorCss(state, scope, isActive) ??
     (themeOverride ? `var(--state-color-${scope}-theme)` : undefined);
@@ -51,5 +62,6 @@ export const getStyleData = (
     cssColor,
     themeOverride,
     activeClass,
+    thresholdResult,
   };
 };

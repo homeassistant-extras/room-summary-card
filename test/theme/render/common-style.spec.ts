@@ -2,6 +2,7 @@ import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
 import * as customThemeModule from '@theme/custom-theme';
 import { getStyleData } from '@theme/render/common-style';
+import * as thresholdColorModule from '@theme/threshold-color';
 import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
@@ -31,6 +32,7 @@ describe('common-style.ts', () => {
   let stateActiveStub: sinon.SinonStub;
   let stateColorCssStub: sinon.SinonStub;
   let getThemeColorOverrideStub: sinon.SinonStub;
+  let getThresholdResultStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -41,11 +43,16 @@ describe('common-style.ts', () => {
       customThemeModule,
       'getThemeColorOverride',
     );
+    getThresholdResultStub = sandbox.stub(
+      thresholdColorModule,
+      'getThresholdResult',
+    );
 
     // Default stub behaviors
     stateActiveStub.returns(true);
     stateColorCssStub.returns('var(--primary-color)');
     getThemeColorOverrideStub.returns('var(--theme-override)');
+    getThresholdResultStub.returns(undefined);
 
     mockHass = {
       themes: {
@@ -80,6 +87,7 @@ describe('common-style.ts', () => {
         cssColor: 'var(--primary-color)',
         themeOverride: 'var(--theme-override)',
         activeClass: 'active',
+        thresholdResult: undefined,
       });
 
       // Test inactive state
@@ -93,6 +101,7 @@ describe('common-style.ts', () => {
         cssColor: 'var(--disabled-color)',
         themeOverride: 'var(--theme-override)',
         activeClass: 'inactive',
+        thresholdResult: undefined,
       });
     });
 
@@ -115,8 +124,32 @@ describe('common-style.ts', () => {
       expect(stateActiveStub.calledOnce).to.be.true;
       expect(stateColorCssStub.calledOnce).to.be.true;
       expect(getThemeColorOverrideStub.calledOnce).to.be.true;
-      expect(getThemeColorOverrideStub.calledWith(mockHass, entity, true)).to.be
-        .true;
+      // getThemeColorOverride is called with (hass, entity, thresholdResult, isActive)
+      // thresholdResult is undefined (from stub), isActive is true (from stateActiveStub)
+      expect(
+        getThemeColorOverrideStub.calledWith(
+          mockHass,
+          entity,
+          undefined,
+          true,
+        ),
+      ).to.be.true;
+    });
+
+    it('should return thresholdResult in style data', () => {
+      const entity = createEntityInfo('sensor', 'temperature', '25');
+      const mockThresholdResult = {
+        color: 'orange',
+        icon: 'mdi:thermometer',
+      };
+      getThresholdResultStub.returns(mockThresholdResult);
+
+      const result = getStyleData(mockHass, 'primary', entity);
+
+      expect(result).to.not.be.null;
+      expect(result?.thresholdResult).to.deep.equal(mockThresholdResult);
+      expect(getThresholdResultStub.calledOnce).to.be.true;
+      expect(getThresholdResultStub.calledWith(entity)).to.be.true;
     });
   });
 });

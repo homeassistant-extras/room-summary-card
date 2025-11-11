@@ -27,10 +27,10 @@ export const processMinimalistColors = (
  * Processes Home Assistant fallback colors
  */
 export const processHomeAssistantColors = (
-  iconColor: string,
-  onColor: string,
-  offColor: string,
-  active: boolean | undefined,
+  iconColor: string | undefined,
+  onColor: string = '',
+  offColor: string = '',
+  active: boolean = false,
 ): string | undefined => {
   if (iconColor && homeAssistantColors.includes(iconColor)) {
     return `var(--${iconColor}-color)`;
@@ -42,5 +42,5 @@ export const processHomeAssistantColors = (
     return `var(--${offColor}-color)`;
   }
 
-  return undefined;
+  return iconColor;
 };

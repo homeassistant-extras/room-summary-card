@@ -10,6 +10,7 @@ import * as stateColorModule from '@hass/common/entity/state_color';
 import * as backgroundBitsModule from '@theme/background/background-bits';
 import * as customThemeModule from '@theme/custom-theme';
 import { renderCardStyles } from '@theme/render/card-styles';
+import * as thresholdColorModule from '@theme/threshold-color';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 
@@ -35,6 +36,7 @@ describe('card-styles.ts', () => {
   let stateActiveStub: sinon.SinonStub;
   let stateColorCssStub: sinon.SinonStub;
   let getThemeColorOverrideStub: sinon.SinonStub;
+  let getThresholdResultStub: sinon.SinonStub;
   let hasFeatureStub: sinon.SinonStub;
   let getBackgroundOpacityStub: sinon.SinonStub;
   let getOccupancyCssVarsStub: sinon.SinonStub;
@@ -47,6 +49,10 @@ describe('card-styles.ts', () => {
     getThemeColorOverrideStub = sandbox.stub(
       customThemeModule,
       'getThemeColorOverride',
+    );
+    getThresholdResultStub = sandbox.stub(
+      thresholdColorModule,
+      'getThresholdResult',
     );
     hasFeatureStub = sandbox.stub(featureModule, 'hasFeature');
     getBackgroundOpacityStub = sandbox.stub(
@@ -61,6 +67,7 @@ describe('card-styles.ts', () => {
     // Default stub behaviors
     stateActiveStub.returns(false);
     stateColorCssStub.returns('var(--primary-color)');
+    getThresholdResultStub.returns(undefined);
     getThemeColorOverrideStub.returns('var(--theme-override)');
     hasFeatureStub.returns(false);
     getBackgroundOpacityStub.returns({
@@ -88,6 +95,15 @@ describe('card-styles.ts', () => {
         false,
       );
 
+      expect(getThresholdResultStub.calledWith(entity)).to.be.true;
+      expect(
+        getThemeColorOverrideStub.calledWith(
+          mockHass,
+          entity,
+          undefined,
+          false,
+        ),
+      ).to.be.true;
       expect(getBackgroundOpacityStub.calledWith(mockConfig, false)).to.be.true;
       expect(getOccupancyCssVarsStub.calledWith(false, mockConfig.occupancy)).to
         .be.true;
@@ -125,6 +141,10 @@ describe('card-styles.ts', () => {
         true,
       );
 
+      expect(getThresholdResultStub.calledWith(entity)).to.be.true;
+      expect(
+        getThemeColorOverrideStub.calledWith(mockHass, entity, undefined, true),
+      ).to.be.true;
       expect(styles).to.deep.equal(
         styleMap({
           '--background-color-card': 'var(--active-color)',
@@ -156,6 +176,10 @@ describe('card-styles.ts', () => {
         true,
       );
 
+      expect(getThresholdResultStub.calledWith(entity)).to.be.true;
+      expect(
+        getThemeColorOverrideStub.calledWith(mockHass, entity, undefined, true),
+      ).to.be.true;
       expect(styles).to.deep.equal(
         styleMap({
           '--background-color-card': undefined, // Should be undefined due to active being false
@@ -185,6 +209,15 @@ describe('card-styles.ts', () => {
         false,
       );
 
+      expect(getThresholdResultStub.calledWith(entity)).to.be.true;
+      expect(
+        getThemeColorOverrideStub.calledWith(
+          mockHass,
+          entity,
+          undefined,
+          false,
+        ),
+      ).to.be.true;
       expect(getOccupancyCssVarsStub.calledWith(true, mockConfig.occupancy)).to
         .be.true;
       expect(styles).to.deep.equal(
@@ -194,6 +227,43 @@ describe('card-styles.ts', () => {
           '--background-image': undefined,
           '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...occupancyStyles,
+        }),
+      );
+    });
+
+    it('should pass threshold result to getThemeColorOverride', () => {
+      const thresholdResult = {
+        color: 'rgb(255, 0, 0)',
+        icon: 'mdi:alert',
+      };
+      getThresholdResultStub.returns(thresholdResult);
+      getThemeColorOverrideStub.returns('rgb(255, 0, 0)');
+
+      const entity = createEntityInfo('sensor.temperature', '25');
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        undefined,
+        false,
+      );
+
+      expect(getThresholdResultStub.calledWith(entity)).to.be.true;
+      expect(
+        getThemeColorOverrideStub.calledWith(
+          mockHass,
+          entity,
+          thresholdResult,
+          false,
+        ),
+      ).to.be.true;
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'rgb(255, 0, 0)',
+          '--background-image': undefined,
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
     });

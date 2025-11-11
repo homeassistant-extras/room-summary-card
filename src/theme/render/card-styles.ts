@@ -9,6 +9,7 @@ import { getOccupancyCssVars } from '@delegates/checks/occupancy';
 import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
+import { getThresholdResult } from '@theme/threshold-color';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { getBackgroundOpacity } from '../background/background-bits';
@@ -36,7 +37,13 @@ export const renderCardStyles = (
 ): DirectiveResult<typeof StyleMapDirective> => {
   const { state } = entity as { state: HassEntity };
   const active = isActive ?? false;
-  const themeOverride = getThemeColorOverride(hass, entity, active);
+  const thresholdResult = getThresholdResult(entity);
+  const themeOverride = getThemeColorOverride(
+    hass,
+    entity,
+    thresholdResult,
+    active,
+  );
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   const opacity = getBackgroundOpacity(config, active);
   const occupancy = getOccupancyCssVars(isOccupied, config.occupancy);
