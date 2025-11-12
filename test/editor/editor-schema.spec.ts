@@ -657,10 +657,6 @@ describe('editor-schema.ts', () => {
                       label: 'editor.card.skip_card_background_styles',
                       value: 'skip_entity_styles',
                     },
-                    {
-                      label: 'editor.features.slider',
-                      value: 'slider',
-                    },
                   ],
                 },
               },
@@ -668,6 +664,46 @@ describe('editor-schema.ts', () => {
           ],
         },
       ]);
+    });
+  });
+
+  describe('entityFeaturesSchema', () => {
+    it('should return schema with entity-specific features including slider', () => {
+      const schema = entityFeaturesSchema(mockHass);
+
+      expect(schema).to.deep.equal({
+        name: 'features',
+        label: 'editor.features.features',
+        required: false,
+        selector: {
+          select: {
+            multiple: true,
+            mode: 'list',
+            options: [
+              {
+                label: 'editor.entity.show_entity_labels',
+                value: 'show_entity_labels',
+              },
+              {
+                label: 'editor.features.exclude_default_entities',
+                value: 'exclude_default_entities',
+              },
+              {
+                label: 'editor.entity.ignore_entity',
+                value: 'ignore_entity',
+              },
+              {
+                label: 'editor.features.sticky_entities',
+                value: 'sticky_entities',
+              },
+              {
+                label: 'editor.features.slider',
+                value: 'slider',
+              },
+            ],
+          },
+        },
+      });
     });
   });
 

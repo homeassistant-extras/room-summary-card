@@ -171,6 +171,26 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'orange',
+        titleColor: undefined,
+        icon: 'mdi:fire',
+        label: undefined,
+        styles: undefined,
+      });
+    });
+
+    it('should return titleColor when threshold matches with title_color configured', () => {
+      const entity = createEntity('75', [
+        {
+          threshold: 50,
+          icon_color: 'orange',
+          title_color: 'pink',
+          icon: 'mdi:fire',
+        },
+      ]);
+      const result = getThresholdResult(entity);
+      expect(result).to.deep.equal({
+        color: 'orange',
+        titleColor: 'pink',
         icon: 'mdi:fire',
         label: undefined,
         styles: undefined,
@@ -184,6 +204,7 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'orange',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: undefined,
@@ -202,6 +223,7 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'green',
+        titleColor: undefined,
         icon: 'mdi:play',
         label: undefined,
         styles: {},
@@ -220,6 +242,7 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'red',
+        titleColor: undefined,
         icon: 'mdi:fire',
         label: undefined,
         styles: undefined,
@@ -278,7 +301,24 @@ describe('threshold-color.ts', () => {
       const result = getStateResult(entity);
       expect(result).to.deep.equal({
         color: 'green',
+        titleColor: undefined,
         icon: 'mdi:play',
+        label: undefined,
+        styles: {},
+      });
+    });
+
+    it('should return titleColor when state matches with title_color configured', () => {
+      const states: StateConfig[] = [
+        { state: 'on', icon_color: 'blue', title_color: 'pink', styles: {} },
+        { state: 'off', icon_color: 'red', title_color: 'green', styles: {} },
+      ];
+      const entity = createEntity('on', states);
+      const result = getStateResult(entity);
+      expect(result).to.deep.equal({
+        color: 'blue',
+        titleColor: 'pink',
+        icon: undefined,
         label: undefined,
         styles: {},
       });
@@ -292,6 +332,7 @@ describe('threshold-color.ts', () => {
       const result = getStateResult(entity);
       expect(result).to.deep.equal({
         color: 'green',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: {},
@@ -333,6 +374,7 @@ describe('threshold-color.ts', () => {
       const result = getStateResult(entity);
       expect(result).to.deep.equal({
         color: 'orange',
+        titleColor: undefined,
         icon: 'mdi:window-shutter-settings',
         label: undefined,
         styles: {},
@@ -383,6 +425,7 @@ describe('threshold-color.ts', () => {
       const result = getStateResult(entity);
       expect(result).to.deep.equal({
         color: 'green',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: {},
@@ -409,6 +452,7 @@ describe('threshold-color.ts', () => {
       const result = getStateResult(entity);
       expect(result).to.deep.equal({
         color: 'yellow',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: {},
@@ -465,6 +509,7 @@ describe('threshold-color.ts', () => {
       // Should convert undefined to empty string and match
       expect(result).to.deep.equal({
         color: 'yellow',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: {},
@@ -498,6 +543,7 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'orange',
+        titleColor: undefined,
         icon: 'mdi:window-shutter-settings',
         label: undefined,
         styles: undefined,
@@ -560,6 +606,7 @@ describe('threshold-color.ts', () => {
       // Should match the second threshold since brightness is 100 (< 200)
       expect(result).to.deep.equal({
         color: 'orange',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: undefined,
@@ -585,6 +632,7 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'blue',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: undefined,
@@ -614,6 +662,7 @@ describe('threshold-color.ts', () => {
         icon: undefined,
         label: undefined,
         styles: undefined,
+        titleColor: undefined,
       });
     });
 
@@ -646,6 +695,7 @@ describe('threshold-color.ts', () => {
         icon: undefined,
         label: undefined,
         styles: undefined,
+        titleColor: undefined,
       });
     });
 
@@ -721,6 +771,7 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'red',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: undefined,
@@ -761,6 +812,7 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'blue',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: undefined,
@@ -801,6 +853,7 @@ describe('threshold-color.ts', () => {
       };
       expect(getThresholdResult(entityLess)).to.deep.equal({
         color: 'green',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: undefined,
@@ -821,6 +874,7 @@ describe('threshold-color.ts', () => {
       };
       expect(getThresholdResult(entityEqual)).to.deep.equal({
         color: 'green',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: undefined,
@@ -846,6 +900,7 @@ describe('threshold-color.ts', () => {
       };
       expect(getThresholdResult(entityEqual)).to.deep.equal({
         color: 'purple',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: undefined,
@@ -887,6 +942,7 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'yellow',
+        titleColor: undefined,
         icon: undefined,
         label: undefined,
         styles: undefined,
@@ -1011,6 +1067,7 @@ describe('threshold-color.ts', () => {
       const result = getStateResult(entity);
       expect(result).to.deep.equal({
         color: 'green',
+        titleColor: undefined,
         icon: 'mdi:play',
         label: 'Running',
         styles: {},
@@ -1030,6 +1087,7 @@ describe('threshold-color.ts', () => {
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
         color: 'orange',
+        titleColor: undefined,
         icon: 'mdi:fire',
         label: 'High Temp',
         styles: undefined,

@@ -156,13 +156,14 @@ describe('text-styles.ts', () => {
 
       expect(result).to.deep.equal(
         styleMap({
+          '--text-color': 'var(--disabled-color)',
           'font-size': '16px',
           'font-weight': 'bold',
         }),
       );
     });
 
-    it('should return styleMap with empty object when inactive and no config.styles.title', () => {
+    it('should return styleMap with text-color when inactive and no config.styles.title', () => {
       const entity = createEntityInfo('light', 'test', 'off');
       // No config.styles.title set
 
@@ -175,12 +176,113 @@ describe('text-styles.ts', () => {
 
       const result = renderTextStyles(mockHass, mockConfig, entity);
 
-      // When active is false but styleData exists, should return styleMap with spread config.styles?.title
-      // Since config.styles?.title is undefined, spreading it gives empty object
-      expect(result).to.exist;
-      expect(result).to.not.equal(nothing);
-      // Verify it's a styleMap result by checking it can be used
-      expect(typeof result).to.equal('object');
+      expect(result).to.deep.equal(
+        styleMap({
+          '--text-color': 'var(--disabled-color)',
+        }),
+      );
+    });
+
+    it('should use titleColor from thresholdResult when available', () => {
+      const entity = createEntityInfo('light', 'test', 'on');
+      mockConfig.styles = {
+        title: { 'font-size': '18px' },
+      };
+
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+        thresholdResult: {
+          color: 'blue',
+          titleColor: 'pink',
+        },
+      });
+
+      const result = renderTextStyles(mockHass, mockConfig, entity);
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--text-color': 'var(--pink-color)',
+          '--state-color-text-theme': 'var(--theme-override)',
+          'font-size': '18px',
+        }),
+      );
+    });
+
+    it('should fall back to cssColor when titleColor is not specified', () => {
+      const entity = createEntityInfo('light', 'test', 'on');
+
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+        thresholdResult: {
+          color: 'blue',
+          // titleColor not specified
+        },
+      });
+
+      const result = renderTextStyles(mockHass, mockConfig, entity);
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--text-color': 'var(--primary-color)',
+          '--state-color-text-theme': 'var(--theme-override)',
+        }),
+      );
+    });
+
+    it('should use titleColor from thresholdResult when inactive', () => {
+      const entity = createEntityInfo('light', 'test', 'off');
+      mockConfig.styles = {
+        title: { 'font-size': '16px' },
+      };
+
+      getStyleDataStub.returns({
+        active: false,
+        cssColor: 'var(--disabled-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'inactive',
+        thresholdResult: {
+          color: 'red',
+          titleColor: 'green',
+        },
+      });
+
+      const result = renderTextStyles(mockHass, mockConfig, entity);
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--text-color': 'var(--green-color)',
+          'font-size': '16px',
+        }),
+      );
+    });
+
+    it('should fall back to cssColor when inactive and titleColor is not specified', () => {
+      const entity = createEntityInfo('light', 'test', 'off');
+
+      getStyleDataStub.returns({
+        active: false,
+        cssColor: 'var(--disabled-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'inactive',
+        thresholdResult: {
+          color: 'red',
+          // titleColor not specified
+        },
+      });
+
+      const result = renderTextStyles(mockHass, mockConfig, entity);
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--text-color': 'var(--disabled-color)',
+        }),
+      );
     });
   });
 });

@@ -85,11 +85,13 @@ sensors:
       - state: 'on'
         icon: mdi:door-open
         icon_color: red
+        title_color: red
         styles:
           background-color: rgba(255, 0, 0, 0.2)
       - state: 'off'
         icon: mdi:door-closed
         icon_color: green
+        title_color: green
 sensor_layout: bottom
 ```
 

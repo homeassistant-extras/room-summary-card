@@ -24,7 +24,13 @@ describe('sensors-tab.ts', () => {
       devices: {},
       areas: {},
       states: {},
-      localize: (key: string) => key,
+      localize: (key: string) => {
+        // Return null for specific key to test fallback
+        if (key === 'editor.sensor.individual_sensor_entities') {
+          return null as any;
+        }
+        return key;
+      },
     } as any as HomeAssistant;
 
     mockConfig = {

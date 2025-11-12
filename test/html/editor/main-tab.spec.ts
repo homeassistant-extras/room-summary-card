@@ -22,7 +22,13 @@ describe('main-tab.ts', () => {
       devices: {},
       areas: {},
       states: {},
-      localize: (key: string) => key,
+      localize: (key: string) => {
+        // Return null for specific key to test fallback
+        if (key === 'editor.area.room_entity') {
+          return null as any;
+        }
+        return key;
+      },
     } as any as HomeAssistant;
 
     mockConfig = {

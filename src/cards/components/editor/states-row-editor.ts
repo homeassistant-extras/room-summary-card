@@ -64,6 +64,12 @@ export class RoomSummaryStatesRowEditor extends LitElement {
           selector: { ui_color: {} },
         },
         {
+          name: 'title_color',
+          required: false,
+          label: 'editor.entity.state.title_color',
+          selector: { ui_color: {} },
+        },
+        {
           type: 'grid',
           name: '',
           label: 'editor.entity.entity_label',
@@ -111,6 +117,12 @@ export class RoomSummaryStatesRowEditor extends LitElement {
           name: 'icon_color',
           required: true,
           label: 'editor.entity.threshold.icon_color',
+          selector: { ui_color: {} },
+        },
+        {
+          name: 'title_color',
+          required: false,
+          label: 'editor.entity.threshold.title_color',
           selector: { ui_color: {} },
         },
         {

@@ -33,6 +33,7 @@
       "state": {
         "state": "State",
         "icon_color": "Icon Color",
+        "title_color": "Title Color",
         "icon": "Icon",
         "label": "Label",
         "attribute": "Attribute",
@@ -41,6 +42,7 @@
       "threshold": {
         "threshold": "Threshold",
         "icon_color": "Icon Color",
+        "title_color": "Title Color",
         "icon": "Icon",
         "label": "Label",
         "attribute": "Attribute",

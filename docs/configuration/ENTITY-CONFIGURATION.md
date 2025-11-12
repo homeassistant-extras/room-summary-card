@@ -45,26 +45,28 @@ entities:
 
 ### Threshold Configuration Options
 
-| Name       | Type   | Default      | Description                                                                        |
-| ---------- | ------ | ------------ | ---------------------------------------------------------------------------------- |
-| threshold  | number | **Required** | Threshold value to compare against entity state or attribute                       |
-| icon_color | string | **Required** | Color to use when this threshold condition is met                                  |
-| icon       | string | none         | Icon to use when this threshold condition is met                                   |
-| label      | string | none         | Custom label to display when this threshold matches (overrides entity-level label) |
-| operator   | string | `gte`        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq`                                |
-| attribute  | string | none         | Optional attribute name to compare instead of entity state                         |
-| styles     | object | none         | Custom CSS styles to apply to entity icon                                          |
+| Name        | Type   | Default      | Description                                                                        |
+| ----------- | ------ | ------------ | ---------------------------------------------------------------------------------- |
+| threshold   | number | **Required** | Threshold value to compare against entity state or attribute                       |
+| icon_color  | string | **Required** | Color to use when this threshold condition is met                                  |
+| title_color | string | none         | Color to use for the card title when this threshold condition is met               |
+| icon        | string | none         | Icon to use when this threshold condition is met                                   |
+| label       | string | none         | Custom label to display when this threshold matches (overrides entity-level label) |
+| operator    | string | `gte`        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq`                                |
+| attribute   | string | none         | Optional attribute name to compare instead of entity state                         |
+| styles      | object | none         | Custom CSS styles to apply to entity icon                                          |
 
 ### State Configuration Options
 
-| Name       | Type   | Default      | Description                                                                    |
-| ---------- | ------ | ------------ | ------------------------------------------------------------------------------ |
-| state      | string | **Required** | Entity state or attribute value to match exactly                               |
-| icon_color | string | **Required** | Color to use when this state is active                                         |
-| icon       | string | none         | Icon to use when this state is active                                          |
-| label      | string | none         | Custom label to display when this state matches (overrides entity-level label) |
-| attribute  | string | none         | Optional attribute name to match instead of entity state                       |
-| styles     | object | none         | Custom CSS styles to apply to entity icon                                      |
+| Name        | Type   | Default      | Description                                                                    |
+| ----------- | ------ | ------------ | ------------------------------------------------------------------------------ |
+| state       | string | **Required** | Entity state or attribute value to match exactly                               |
+| icon_color  | string | **Required** | Color to use when this state is active                                         |
+| title_color | string | none         | Color to use for the card title when this state is active                      |
+| icon        | string | none         | Icon to use when this state is active                                          |
+| label       | string | none         | Custom label to display when this state matches (overrides entity-level label) |
+| attribute   | string | none         | Optional attribute name to match instead of entity state                       |
+| styles      | object | none         | Custom CSS styles to apply to entity icon                                      |
 
 ### Entity Features
 
@@ -192,6 +194,16 @@ entities:
         styles:
           border: 2px solid var(--primary-color)
           border-radius: 50%
+
+  # Light with title color control based on state
+  - entity_id: light.living_room
+    states:
+      - state: 'on'
+        icon_color: blue
+        title_color: pink
+      - state: 'off'
+        icon_color: red
+        title_color: green
 ```
 
 ## Attribute-Based Matching

@@ -5,7 +5,9 @@
       "Bash(yarn build)",
       "Bash(npm run typecheck:*)",
       "Bash(yarn format)",
-      "Bash(yarn test:*)"
+      "Bash(yarn test:*)",
+      "Bash(find:*)",
+      "Bash(yarn test:coverage:*)"
     ],
     "deny": [],
     "ask": []

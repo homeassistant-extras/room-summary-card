@@ -1,5 +1,6 @@
 import { hasFeature } from '@config/feature';
 import type { HomeAssistant } from '@hass/types';
+import { processHomeAssistantColors } from '@theme/colors';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { nothing } from 'lit';
@@ -34,11 +35,19 @@ export const renderTextStyles = (
 
   if (!styleData) return nothing;
 
+  // Check if titleColor is specified in threshold/state result
+  const titleColor = styleData.thresholdResult?.titleColor
+    ? processHomeAssistantColors(styleData.thresholdResult.titleColor)
+    : styleData.cssColor;
+
   return styleData.active
     ? styleMap({
-        '--text-color': styleData.cssColor,
+        '--text-color': titleColor,
         '--state-color-text-theme': styleData.themeOverride,
         ...config.styles?.title,
       })
-    : styleMap({ ...config.styles?.title });
+    : styleMap({
+        '--text-color': titleColor,
+        ...config.styles?.title,
+      });
 };

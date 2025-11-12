@@ -55,11 +55,23 @@ describe('get-background-image-url.ts', () => {
         image_entity: 'person.john',
         image: '/local/fallback.jpg',
       };
-      getStateStub.returns({ attributes: {} });
+      getStateStub.returns({ attributes: undefined });
 
       const result = getBackgroundImageUrl(mockHass, mockConfig);
 
       expect(result).to.equal('/local/fallback.jpg');
+    });
+
+    it('should return config image when entity state is null', () => {
+      mockConfig.background = {
+        image_entity: 'person.jane',
+        image: '/local/default.jpg',
+      };
+      getStateStub.returns(null);
+
+      const result = getBackgroundImageUrl(mockHass, mockConfig);
+
+      expect(result).to.equal('/local/default.jpg');
     });
 
     it('should return config image when no entity specified', () => {

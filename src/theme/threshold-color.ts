@@ -7,6 +7,8 @@ import type { EntityInformation } from '@type/room';
 export interface ThresholdResult {
   /** The color to apply */
   color?: string;
+  /** The title color to apply */
+  titleColor?: string;
   /** The icon to apply */
   icon?: string;
   /** The label to display */
@@ -62,6 +64,7 @@ export const getThresholdResult = (
     if (meetsThreshold(numericValue, threshold)) {
       return {
         color: threshold.icon_color,
+        titleColor: threshold.title_color,
         icon: threshold.icon,
         label: threshold.label,
         styles: threshold.styles,
@@ -96,6 +99,7 @@ export const getStateResult = (
     if (stateConfig.state === valueToMatch) {
       return {
         color: stateConfig.icon_color,
+        titleColor: stateConfig.title_color,
         icon: stateConfig.icon,
         label: stateConfig.label,
         styles: stateConfig.styles,

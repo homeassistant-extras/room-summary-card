@@ -24,7 +24,13 @@ describe('entities-tab.ts', () => {
       devices: {},
       areas: {},
       states: {},
-      localize: (key: string) => key,
+      localize: (key: string) => {
+        // Return null for specific key to test fallback
+        if (key === 'ui.panel.lovelace.editor.card.generic.entities') {
+          return null as any;
+        }
+        return key;
+      },
     } as any as HomeAssistant;
 
     mockConfig = {
