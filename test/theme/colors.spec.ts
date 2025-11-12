@@ -95,5 +95,11 @@ describe('colors.ts', () => {
       const result = processHomeAssistantColors('blue', 'red', 'grey', true);
       expect(result).to.equal('var(--blue-color)');
     });
+
+    it('should use default active parameter when not provided', () => {
+      // Test default active = false by not passing it
+      const result = processHomeAssistantColors('', '', 'grey');
+      expect(result).to.equal('var(--grey-color)');
+    });
   });
 });

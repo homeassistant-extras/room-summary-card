@@ -81,6 +81,60 @@ describe('tab-bar.ts', () => {
     expect(buttons[4].classList.contains('active')).to.be.false;
   });
 
+  it('should set active class on tab 1 (Entities)', async () => {
+    const result = renderTabBar({
+      currentTab: 1,
+      showLeftScroll: false,
+      showRightScroll: false,
+      tabContainerRef,
+      onScroll,
+      onTabClick,
+      tabContent: mockTabContent,
+    });
+
+    const el = await fixture(result as TemplateResult);
+    const buttons = el.querySelectorAll('.custom-tab');
+
+    expect(buttons[1].classList.contains('active')).to.be.true;
+    expect(buttons[0].classList.contains('active')).to.be.false;
+  });
+
+  it('should set active class on tab 3 (Sensors)', async () => {
+    const result = renderTabBar({
+      currentTab: 3,
+      showLeftScroll: false,
+      showRightScroll: false,
+      tabContainerRef,
+      onScroll,
+      onTabClick,
+      tabContent: mockTabContent,
+    });
+
+    const el = await fixture(result as TemplateResult);
+    const buttons = el.querySelectorAll('.custom-tab');
+
+    expect(buttons[3].classList.contains('active')).to.be.true;
+    expect(buttons[0].classList.contains('active')).to.be.false;
+  });
+
+  it('should set active class on tab 4 (Occupancy)', async () => {
+    const result = renderTabBar({
+      currentTab: 4,
+      showLeftScroll: false,
+      showRightScroll: false,
+      tabContainerRef,
+      onScroll,
+      onTabClick,
+      tabContent: mockTabContent,
+    });
+
+    const el = await fixture(result as TemplateResult);
+    const buttons = el.querySelectorAll('.custom-tab');
+
+    expect(buttons[4].classList.contains('active')).to.be.true;
+    expect(buttons[0].classList.contains('active')).to.be.false;
+  });
+
   it('should show left scroll indicator when showLeftScroll is true', async () => {
     const result = renderTabBar({
       currentTab: 0,

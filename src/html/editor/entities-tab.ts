@@ -52,7 +52,7 @@ export function renderEntitiesTab(params: EntitiesTabParams): TemplateResult {
       <ha-form
         .hass=${hass}
         .data=${config}
-        .schema=${[getEntitiesStylesSchema()]}
+        .schema=${getEntitiesStylesSchema(hass)}
         .computeLabel=${(schema: HaFormSchema) => computeLabel(hass, schema)}
         @value-changed=${onValueChanged}
       ></ha-form>

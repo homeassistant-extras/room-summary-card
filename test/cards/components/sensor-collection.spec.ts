@@ -4,6 +4,7 @@ import * as actionHandlerModule from '@delegates/action-handler-delegate';
 import * as iconModule from '@delegates/retrievers/icons';
 import * as sensorUtilsModule from '@delegates/utils/sensor-utils';
 import type { HomeAssistant } from '@hass/types';
+import * as attributeDisplayModule from '@html/attribute-display';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
 import * as thresholdColorModule from '@theme/threshold-color';
@@ -22,6 +23,7 @@ describe('sensor-collection.ts', () => {
   let getIconResourcesStub: sinon.SinonStub;
   let sensorDataToDisplayStub: sinon.SinonStub;
   let stateDisplayStub: sinon.SinonStub;
+  let attributeDisplayStub: sinon.SinonStub;
   let actionHandlerStub: sinon.SinonStub;
   let handleClickActionStub: sinon.SinonStub;
 
@@ -37,6 +39,10 @@ describe('sensor-collection.ts', () => {
     stateDisplayStub = stub(stateDisplayModule, 'stateDisplay').returns(
       html`<span>formatted state</span>`,
     );
+    attributeDisplayStub = stub(
+      attributeDisplayModule,
+      'attributeDisplay',
+    ).returns(html`<span>attribute value</span>`);
     actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
       bind: () => {},
       handleAction: () => {},
@@ -72,6 +78,7 @@ describe('sensor-collection.ts', () => {
     getIconResourcesStub.restore();
     sensorDataToDisplayStub.restore();
     stateDisplayStub.restore();
+    attributeDisplayStub.restore();
     actionHandlerStub.restore();
     handleClickActionStub.restore();
   });
@@ -278,6 +285,46 @@ describe('sensor-collection.ts', () => {
       await fixture(element['renderSingleSensor'](sensor as EntityState));
 
       expect(stateDisplayStub.called).to.be.true;
+    });
+
+    it('should use attribute display when sensor config has attribute and no label', async () => {
+      hasFeatureStub
+        .withArgs(element.config, 'hide_sensor_labels')
+        .returns(false);
+      element.hass = mockHass;
+
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.humidity',
+            attribute: 'humidity',
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          {
+            entity_id: 'sensor.humidity',
+            state: '45',
+            domain: 'sensor',
+            attributes: {
+              humidity: 50,
+            },
+          } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+      };
+
+      const sensor = element.sensors.individual[0]!;
+      await fixture(element['renderSingleSensor'](sensor as EntityState));
+
+      expect(attributeDisplayStub.called).to.be.true;
+      expect(attributeDisplayStub.calledWith(mockHass, sensor, 'humidity')).to
+        .be.true;
+      expect(stateDisplayStub.called).to.be.false;
     });
   });
 

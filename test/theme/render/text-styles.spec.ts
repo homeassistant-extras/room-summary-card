@@ -60,19 +60,20 @@ describe('text-styles.ts', () => {
   });
 
   describe('renderTextStyles', () => {
-    it('should return nothing when skip_entity_styles is enabled or no style data', () => {
+    it('should return nothing when skip_entity_styles is enabled', () => {
       const entity = createEntityInfo('light', 'test', 'on');
-
-      // Test skip_entity_styles feature
       hasFeatureStub.withArgs(mockConfig, 'skip_entity_styles').returns(true);
-      let result = renderTextStyles(mockHass, mockConfig, entity);
+      const result = renderTextStyles(mockHass, mockConfig, entity);
       expect(result).to.equal(nothing);
+    });
 
-      // Test null style data
+    it('should return nothing when styleData is null', () => {
+      const entity = createEntityInfo('light', 'test', 'on');
       hasFeatureStub.returns(false);
       getStyleDataStub.returns(null);
-      result = renderTextStyles(mockHass, mockConfig, entity);
+      const result = renderTextStyles(mockHass, mockConfig, entity);
       expect(result).to.equal(nothing);
+      expect(getStyleDataStub.calledWith(mockHass, 'text', entity)).to.be.true;
     });
 
     it('should return style map for active entities with undefined values handled', () => {

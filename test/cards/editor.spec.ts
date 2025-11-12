@@ -177,7 +177,6 @@ describe('editor.ts', () => {
       // Verify it's a TemplateResult (not nothing)
       expect(result).to.not.equal(nothing);
     });
-
   });
 
   describe('_valueChanged', () => {

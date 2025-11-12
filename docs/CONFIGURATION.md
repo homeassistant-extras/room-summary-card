@@ -16,6 +16,7 @@ Some of these go to their own documents - so use this ToC as a guide.
 - [Threshold Configuration](configuration/THRESHOLD-CONFIGURATION.md)
 - [Occupancy Configuration](configuration/OCCUPANCY-CONFIGURATION.md)
 - [Multi-Light Background Configuration](configuration/MULTI-LIGHT-BACKGROUND.md)
+- [Slider Configuration](configuration/SLIDER-CONFIGURATION.md)
 - [Action Configuration](configuration/ACTION-CONFIGURATION.md)
 - [Entity Attributes](configuration/ENTITY-ATTRIBUTES.md)
 - [Setting Up Area Pictures](configuration/AREA-PICTURES.md)
@@ -43,22 +44,23 @@ See [default entities](#default-entities)
 
 ## Configuration Options
 
-| Name           | Type             | Default                                | Description                                                  |
-| -------------- | ---------------- | -------------------------------------- | ------------------------------------------------------------ |
-| area           | string           | **Required**                           | The area identifier for the room (e.g., 'shed', 'kitchen')   |
-| area_name      | string           | area name                              | Custom area name                                             |
-| entity         | string \| object | `light.<area>_light` or `light.<area>` | Main entity for the room                                     |
-| entities       | array            | See below                              | Additional entities to display                               |
-| sensors        | array            | See below                              | Array of sensor entities to display in the card label area   |
-| lights         | array            | auto-discovered                        | Array of light entities for multi-light background           |
-| navigate       | string           | area name (dash-separated)             | Custom navigation path when clicking the room name / icon    |
-| background     | object           | See below                              | Background image configuration                               |
-| occupancy      | object           | See below                              | Occupancy detection configuration                            |
-| features       | list             | See below                              | Optional flags to toggle different features                  |
-| sensor_layout  | string           | `default`                              | Layout for sensor display: `default`, `stacked`, or `bottom` |
-| sensor_classes | array            | See below                              | Device classes to average and display sensor readings for    |
-| thresholds     | object           | `80° / 60%`                            | Climate thresholds for temperature, humidity, and mold       |
-| styles         | object           | `{}`                                   | Custom CSS styles for card areas                             |
+| Name           | Type             | Default                                | Description                                                     |
+| -------------- | ---------------- | -------------------------------------- | --------------------------------------------------------------- |
+| area           | string           | **Required**                           | The area identifier for the room (e.g., 'shed', 'kitchen')      |
+| area_name      | string           | area name                              | Custom area name                                                |
+| entity         | string \| object | `light.<area>_light` or `light.<area>` | Main entity for the room                                        |
+| entities       | array            | See below                              | Additional entities to display                                  |
+| sensors        | array            | See below                              | Array of sensor entities to display in the card label area      |
+| lights         | array            | auto-discovered                        | Array of light entities for multi-light background              |
+| navigate       | string           | area name (dash-separated)             | Custom navigation path when clicking the room name / icon       |
+| background     | object           | See below                              | Background image configuration                                  |
+| occupancy      | object           | See below                              | Occupancy detection configuration                               |
+| features       | list             | See below                              | Optional flags to toggle different features                     |
+| sensor_layout  | string           | `default`                              | Layout for sensor display: `default`, `stacked`, or `bottom`    |
+| sensor_classes | array            | See below                              | Device classes to average and display sensor readings for       |
+| thresholds     | object           | `80° / 60%`                            | Climate thresholds for temperature, humidity, and mold          |
+| slider_style   | string           | `minimalist`                           | Visual style of the slider track when slider feature is enabled |
+| styles         | object           | `{}`                                   | Custom CSS styles for card areas                                |
 
 ### Default Entities
 
@@ -89,6 +91,7 @@ features:
   - multi_light_background
   - ignore_entity
   - sticky_entities
+  - slider
 ```
 
 | Feature                  | Description                                                                                    |
@@ -105,6 +108,7 @@ features:
 | multi_light_background   | Enable background lighting when any light in the room is on                                    |
 | ignore_entity            | Ignore the custom entity configuration and use default room entity (useful with auto-entities) |
 | sticky_entities          | Keep entity positions stable even when state is unavailable (prevents UI layout shifts)        |
+| slider                   | Display the first entity as a draggable slider for brightness control                          |
 
 ### Using `ignore_entity` with Auto-Entities
 
@@ -223,6 +227,46 @@ lights:
 - Smart background lighting when ANY tracked light is on
 
 See [Multi-Light Background Configuration](configuration/MULTI-LIGHT-BACKGROUND.md) for complete documentation and examples.
+
+## Slider Control
+
+The slider feature displays the first entity as a draggable vertical slider, allowing you to control brightness by dragging the entity icon up and down. This is particularly useful for light entities where you want quick brightness adjustment.
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - slider
+slider_style: filled
+entity: light.living_room_main
+```
+
+**Features:**
+
+- Drag the entity icon vertically to adjust brightness (0-255)
+- Icon position reflects current brightness level
+- Works with mouse and touch interactions
+- Multiple visual track styles available
+- Automatically uses the first entity from your entity list
+
+**Slider Styles:**
+
+The `slider_style` option controls the visual appearance of the track:
+
+- `minimalist` (default) - Clean, minimal track
+- `track` - Sunken track with depth
+- `line` - Thin vertical line
+- `filled` - Progress bar showing brightness level
+- `gradient` - Gradient line effect
+- `dual-rail` - Two parallel lines
+- `dots` - Dotted track with ticks
+- `notched` - Track with notches/indents
+- `grid` - Grid pattern with horizontal lines
+- `glow` - Glowing line effect
+- `shadow-trail` - Shadow that follows the icon
+- `outlined` - Outlined track border
+
+See [Slider Configuration](configuration/SLIDER-CONFIGURATION.md) for complete documentation and examples.
 
 ## Next Steps
 

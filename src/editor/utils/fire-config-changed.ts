@@ -37,4 +37,3 @@ export function cleanAndFireConfigChanged(
   // @ts-ignore
   fireEvent(element, 'config-changed', { config });
 }
-

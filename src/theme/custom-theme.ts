@@ -36,12 +36,12 @@ export const getThemeColorOverride = (
   }
 
   // icon color is the second priority - hex colors
-  const iconColor = state.attributes.icon_color;
+  const iconColor = state.attributes?.icon_color;
   if (iconColor?.startsWith('#')) {
     return iconColor;
   }
 
-  const onColor = entity.config.on_color ?? state.attributes.on_color;
+  const onColor = entity.config.on_color ?? state.attributes?.on_color;
   const offColor = entity.config.off_color ?? state?.attributes?.off_color;
   const rgbColor = getRgbColor(state, onColor, offColor, active);
 

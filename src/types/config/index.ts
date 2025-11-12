@@ -38,6 +38,21 @@ export interface Config {
   /** Layout of the sensors */
   sensor_layout?: 'default' | 'bottom' | 'stacked';
 
+  /** Visual style of the slider control */
+  slider_style?:
+    | 'track'
+    | 'minimalist'
+    | 'line'
+    | 'filled'
+    | 'gradient'
+    | 'dual-rail'
+    | 'dots'
+    | 'notched'
+    | 'grid'
+    | 'glow'
+    | 'shadow-trail'
+    | 'outlined';
+
   /** Occupancy detection configuration */
   occupancy?: OccupancyConfig;
 
@@ -121,7 +136,8 @@ export type Features =
   | 'skip_entity_styles'
   | 'show_entity_labels'
   | 'multi_light_background'
-  | 'sticky_entities';
+  | 'sticky_entities'
+  | 'slider';
 
 /**
  * @file Occupancy Configuration Types

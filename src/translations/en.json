@@ -128,16 +128,33 @@
     "stats": {
       "hide_area_stats": "Hide Area Stats"
     },
+    "slider": {
+      "slider_style": "Slider Style",
+      "minimalist": "Minimalist",
+      "track": "Track",
+      "line": "Line",
+      "filled": "Filled/Progress",
+      "gradient": "Gradient",
+      "dual_rail": "Dual Rail",
+      "dots": "Dots/Ticks",
+      "notched": "Notched",
+      "grid": "Grid",
+      "glow": "Glow",
+      "shadow_trail": "Shadow Trail",
+      "outlined": "Outlined Track"
+    },
     "features": {
       "features": "Features",
       "exclude_default_entities": "Exclude Default Entities",
       "sticky_entities": "Sticky Entities",
+      "slider": "Slider",
       "sticky_entities_info": "Keep entity positions stable even when their state is unavailable. This prevents UI layout shifts and makes it easier to tap entities on touch dashboards.",
       "features_info": "Configure global features that affect how entities are displayed and handled:",
       "show_entity_labels_desc": "Show entity labels under each entity icon",
       "exclude_default_entities_desc": "Don't include default light/fan entities",
       "ignore_entity_desc": "Ignore the entity property in the configuration",
       "sticky_entities_desc": "Keep entity positions even when state is unavailable",
+      "slider_desc": "Display a single entity in a slider layout instead of the entity collection",
       "options": "Options"
     }
   }

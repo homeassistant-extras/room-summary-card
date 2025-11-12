@@ -8,9 +8,11 @@ import type {
   ToggleActionConfig,
 } from '@hass/data/lovelace/config/action';
 import type { HomeAssistant } from '@hass/types';
+import * as attributeDisplayModule from '@html/attribute-display';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
 import * as iconStylesModule from '@theme/render/icon-styles';
+import * as thresholdColorModule from '@theme/threshold-color';
 import * as styleConverterModule from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
@@ -29,6 +31,9 @@ describe('room-state-icon.ts', () => {
   let handleClickActionStub: sinon.SinonStub;
   let hasFeatureStub: sinon.SinonStub;
   let computeEntityNameStub: sinon.SinonStub;
+  let getEntityLabelStub: sinon.SinonStub;
+  let getThresholdResultStub: sinon.SinonStub;
+  let attributeDisplayStub: sinon.SinonStub;
 
   const mockEntityState: EntityState = createStateEntity(
     'light',
@@ -86,6 +91,17 @@ describe('room-state-icon.ts', () => {
       computeEntityNameModule,
       'computeEntityName',
     ).returns('Living Room Light');
+    getEntityLabelStub = stub(thresholdColorModule, 'getEntityLabel').returns(
+      undefined,
+    );
+    getThresholdResultStub = stub(
+      thresholdColorModule,
+      'getThresholdResult',
+    ).returns(undefined);
+    attributeDisplayStub = stub(
+      attributeDisplayModule,
+      'attributeDisplay',
+    ).returns(html`<span>attribute value</span>`);
 
     mockHass = {
       states: {
@@ -107,6 +123,9 @@ describe('room-state-icon.ts', () => {
     handleClickActionStub.restore();
     hasFeatureStub.restore();
     computeEntityNameStub.restore();
+    getEntityLabelStub.restore();
+    getThresholdResultStub.restore();
+    attributeDisplayStub.restore();
   });
 
   describe('properties', () => {
@@ -313,6 +332,145 @@ describe('room-state-icon.ts', () => {
       const templateString = result.strings.join('');
       expect(templateString).to.not.include('class="entity-label"');
     });
+
+    it('should prioritize threshold label over config label', async () => {
+      const configWithLabels = {
+        ...mockConfig,
+        features: ['show_entity_labels'],
+      } as Config;
+      element.config = configWithLabels;
+
+      const entityWithConfigLabel = {
+        ...mockEntity,
+        config: {
+          ...mockEntityConfig,
+          label: 'Config Label',
+        },
+      };
+      element.entity = entityWithConfigLabel;
+
+      // Mock threshold result with label
+      getThresholdResultStub.returns({
+        label: 'Threshold Label',
+        icon: 'mdi:icon',
+        color: 'red',
+        styles: {},
+      });
+      getEntityLabelStub.returns('Threshold Label');
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const entityLabel = el.querySelector('.entity-label');
+      expect(entityLabel).to.exist;
+      expect(entityLabel?.textContent?.trim()).to.equal('Threshold Label');
+      expect(getEntityLabelStub.called).to.be.true;
+    });
+
+    it('should use config label when threshold label is not available', async () => {
+      const configWithLabels = {
+        ...mockConfig,
+        features: ['show_entity_labels'],
+      } as Config;
+      element.config = configWithLabels;
+
+      const entityWithConfigLabel = {
+        ...mockEntity,
+        config: {
+          ...mockEntityConfig,
+          label: 'Config Label',
+        },
+      };
+      element.entity = entityWithConfigLabel;
+
+      // Mock threshold result without label
+      getThresholdResultStub.returns({
+        icon: 'mdi:icon',
+        color: 'red',
+        styles: {},
+      });
+      getEntityLabelStub.returns(undefined);
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const entityLabel = el.querySelector('.entity-label');
+      expect(entityLabel).to.exist;
+      expect(entityLabel?.textContent?.trim()).to.equal('Config Label');
+    });
+
+    it('should use attribute display when attribute is configured and no label', async () => {
+      const configWithLabels = {
+        ...mockConfig,
+        features: ['show_entity_labels'],
+      } as Config;
+      element.config = configWithLabels;
+
+      const entityWithAttribute = {
+        ...mockEntity,
+        config: {
+          ...mockEntityConfig,
+          attribute: 'brightness',
+        },
+      };
+      element.entity = entityWithAttribute;
+
+      // Mock threshold result without label
+      getThresholdResultStub.returns({
+        icon: 'mdi:icon',
+        color: 'red',
+        styles: {},
+      });
+      getEntityLabelStub.returns(undefined);
+      attributeDisplayStub.returns(html`<span>50%</span>`);
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const entityLabel = el.querySelector('.entity-label');
+      expect(entityLabel).to.exist;
+      expect(
+        attributeDisplayStub.calledWith(
+          mockHass,
+          mockEntityState,
+          'brightness',
+        ),
+      ).to.be.true;
+    });
+
+    it('should use entity name as fallback when no label or attribute', async () => {
+      const configWithLabels = {
+        ...mockConfig,
+        features: ['show_entity_labels'],
+      } as Config;
+      element.config = configWithLabels;
+
+      const entityWithoutLabel = {
+        ...mockEntity,
+        config: {
+          entity_id: 'light.living_room',
+        },
+      };
+      element.entity = entityWithoutLabel;
+
+      // Mock threshold result without label
+      getThresholdResultStub.returns({
+        icon: 'mdi:icon',
+        color: 'red',
+        styles: {},
+      });
+      getEntityLabelStub.returns(undefined);
+      computeEntityNameStub.returns('Living Room Light');
+
+      const result = element.render() as TemplateResult;
+      const el = await fixture(result);
+
+      const entityLabel = el.querySelector('.entity-label');
+      expect(entityLabel).to.exist;
+      expect(entityLabel?.textContent?.trim()).to.equal('Living Room Light');
+      expect(computeEntityNameStub.calledWith(mockEntityState, mockHass)).to.be
+        .true;
+    });
   });
 
   describe('action handling', () => {
@@ -456,11 +614,8 @@ describe('room-state-icon.ts', () => {
       };
       element.entity = entityWithNullConfig;
 
-      // This will throw an error because the component tries to access config.icon
-      expect(() => element.render()).to.throw(
-        TypeError,
-        /Cannot read properties of null \(reading ['"]states['"]\)/,
-      );
+      // This will throw an error because the component tries to access config properties
+      expect(() => element.render()).to.throw(TypeError);
     });
 
     it('should handle undefined hass', () => {
@@ -481,6 +636,25 @@ describe('room-state-icon.ts', () => {
         },
       } as Config;
 
+      expect(element['iconBackground']).to.be.true;
+    });
+
+    it('should set hideIconContent when entity has entity_picture attribute', () => {
+      const entityWithPicture = {
+        ...mockEntity,
+        state: {
+          ...mockEntityState,
+          attributes: {
+            ...mockEntityState.attributes,
+            entity_picture: '/local/picture.jpg',
+          },
+        },
+      };
+      element.entity = entityWithPicture;
+      element.hass = mockHass;
+
+      expect(element['_hideIconContent']).to.be.true;
+      expect(element['image']).to.be.true;
       expect(element['iconBackground']).to.be.true;
     });
 

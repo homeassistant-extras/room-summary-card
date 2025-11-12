@@ -172,6 +172,60 @@ describe('custom-theme.ts', () => {
         .be.true;
     });
 
+    it('should handle state.attributes being undefined when accessing off_color', () => {
+      const entity = {
+        config: { entity_id: 'light.test' },
+        state: {
+          entity_id: 'light.test',
+          state: 'off',
+          domain: 'light',
+          attributes: undefined as any,
+        },
+      };
+      getRgbColorStub.returns(undefined);
+      processHomeAssistantColorsStub.returns('var(--red-color)');
+
+      getThemeColorOverride(hassDefault, entity, undefined, false);
+
+      // Should use config.off_color (undefined) since state.attributes is undefined
+      expect(
+        getRgbColorStub.calledWith(entity.state, undefined, undefined, false),
+      ).to.be.true;
+    });
+
+    it('should use state.attributes.off_color when config.off_color is not set', () => {
+      const entity = createEntity({}, { off_color: 'purple' });
+      getRgbColorStub.returns(undefined);
+      processHomeAssistantColorsStub.returns('var(--purple-color)');
+
+      getThemeColorOverride(hassDefault, entity, undefined, false);
+
+      // Should use state.attributes.off_color since config.off_color is undefined
+      expect(
+        getRgbColorStub.calledWith(entity.state, undefined, 'purple', false),
+      ).to.be.true;
+    });
+
+    it('should handle undefined theme when checking minimalist theme', () => {
+      const hassUndefinedTheme = {
+        themes: { theme: undefined },
+      } as any as HomeAssistant;
+      const entity = createEntity({ on_color: 'red' });
+      getRgbColorStub.returns(undefined);
+      processHomeAssistantColorsStub.returns('var(--red-color)');
+
+      const result = getThemeColorOverride(
+        hassUndefinedTheme,
+        entity,
+        undefined,
+        true,
+      );
+
+      expect(result).to.equal('var(--red-color)');
+      expect(processMinimalistColorsStub.called).to.be.false;
+      expect(processHomeAssistantColorsStub.called).to.be.true;
+    });
+
     it('should return RGB color when available', () => {
       const entity = createEntity({ on_color: 'red' });
       getRgbColorStub.returns('rgb(123, 45, 67)');

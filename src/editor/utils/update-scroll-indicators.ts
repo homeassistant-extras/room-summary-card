@@ -20,4 +20,3 @@ export function updateScrollIndicators(
 
   return { showLeftScroll, showRightScroll };
 }
-

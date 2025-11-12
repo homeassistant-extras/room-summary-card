@@ -267,5 +267,34 @@ describe('card-styles.ts', () => {
         }),
       );
     });
+
+    it('should use default active when isActive is undefined', () => {
+      const entity = createEntityInfo('light.test');
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        undefined,
+        undefined as any,
+      );
+
+      expect(
+        getThemeColorOverrideStub.calledWith(
+          mockHass,
+          entity,
+          undefined,
+          false,
+        ),
+      ).to.be.true;
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+        }),
+      );
+    });
   });
 });

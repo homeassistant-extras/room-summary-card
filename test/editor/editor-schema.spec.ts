@@ -1,13 +1,13 @@
 import {
   areaEntities,
   deviceClasses,
-  getEntitiesSchema,
   getEntitiesStylesSchema,
   getMainSchema,
   getOccupancySchema,
   getSensorsSchema,
   getSensorsSchemaRest,
 } from '@/editor/editor-schema';
+import * as localizeModule from '@/localize/localize';
 import * as sensorModule from '@hass/data/sensor';
 import type { HomeAssistant } from '@hass/types';
 import { expect } from 'chai';
@@ -16,6 +16,7 @@ import { stub, type SinonStub } from 'sinon';
 describe('editor-schema.ts', () => {
   let mockHass: HomeAssistant;
   let getSensorNumericDeviceClassesStub: SinonStub;
+  let localizeStub: SinonStub;
 
   beforeEach(() => {
     mockHass = {
@@ -105,10 +106,15 @@ describe('editor-schema.ts', () => {
         'illuminance',
       ],
     });
+
+    localizeStub = stub(localizeModule, 'localize').callsFake(
+      (hass: HomeAssistant, key: string) => key,
+    );
   });
 
   afterEach(() => {
     getSensorNumericDeviceClassesStub.restore();
+    localizeStub.restore();
   });
 
   describe('areaEntities', () => {
@@ -140,61 +146,13 @@ describe('editor-schema.ts', () => {
     });
   });
 
-  describe('getEntitiesSchema', () => {
-    it('should return schema with entities, lights, and entity styles', () => {
-      const entities = Object.keys(mockHass.entities);
-      const schema = getEntitiesSchema(mockHass, entities);
-
-      expect(schema).to.deep.equal([
-        {
-          name: 'entities',
-          label: 'editor.area.area_side_entities',
-          required: false,
-          selector: {
-            entity: { multiple: true, include_entities: entities },
-          },
-        },
-        {
-          name: 'lights',
-          label: 'editor.background.light_entities',
-          required: false,
-          selector: {
-            entity: {
-              multiple: true,
-              include_entities: entities,
-              filter: { domain: ['light', 'switch'] },
-            },
-          },
-        },
-        {
-          name: 'styles',
-          label: 'editor.styles.css_styles',
-          type: 'grid',
-          column_min_width: '100%',
-          schema: [
-            {
-              name: 'entities',
-              label: 'editor.styles.entities_container_styles',
-              required: false,
-              selector: { object: {} },
-            },
-            {
-              name: 'entity_icon',
-              label: 'editor.styles.entity_icon_styles',
-              required: false,
-              selector: { object: {} },
-            },
-          ],
-        },
-      ]);
-    });
-  });
-
   describe('getEntitiesStylesSchema', () => {
-    it('should return schema with entity styles grid', () => {
-      const schema = getEntitiesStylesSchema();
+    it('should return schema array with entity styles grid and slider style', () => {
+      const schema = getEntitiesStylesSchema(mockHass);
 
-      expect(schema).to.deep.equal({
+      expect(schema).to.be.an('array');
+      expect(schema).to.have.lengthOf(2);
+      expect(schema[0]).to.deep.equal({
         name: 'styles',
         label: 'editor.styles.css_styles',
         type: 'grid',
@@ -213,6 +171,66 @@ describe('editor-schema.ts', () => {
             selector: { object: {} },
           },
         ],
+      });
+      expect(schema[1]).to.deep.equal({
+        name: 'slider_style',
+        label: 'editor.slider.slider_style',
+        required: false,
+        selector: {
+          select: {
+            mode: 'dropdown',
+            options: [
+              {
+                label: 'editor.slider.minimalist',
+                value: 'minimalist',
+              },
+              {
+                label: 'editor.slider.track',
+                value: 'track',
+              },
+              {
+                label: 'editor.slider.line',
+                value: 'line',
+              },
+              {
+                label: 'editor.slider.filled',
+                value: 'filled',
+              },
+              {
+                label: 'editor.slider.gradient',
+                value: 'gradient',
+              },
+              {
+                label: 'editor.slider.dual_rail',
+                value: 'dual-rail',
+              },
+              {
+                label: 'editor.slider.dots',
+                value: 'dots',
+              },
+              {
+                label: 'editor.slider.notched',
+                value: 'notched',
+              },
+              {
+                label: 'editor.slider.grid',
+                value: 'grid',
+              },
+              {
+                label: 'editor.slider.glow',
+                value: 'glow',
+              },
+              {
+                label: 'editor.slider.shadow_trail',
+                value: 'shadow-trail',
+              },
+              {
+                label: 'editor.slider.outlined',
+                value: 'outlined',
+              },
+            ],
+          },
+        },
       });
     });
   });
@@ -251,15 +269,15 @@ describe('editor-schema.ts', () => {
               mode: 'dropdown',
               options: [
                 {
-                  label: 'Default (in label area)',
+                  label: 'editor.layout.default_in_label_area',
                   value: 'default',
                 },
                 {
-                  label: 'Bottom',
+                  label: 'editor.layout.bottom',
                   value: 'bottom',
                 },
                 {
-                  label: 'Vertical Stack',
+                  label: 'editor.layout.vertical_stack',
                   value: 'stacked',
                 },
               ],
@@ -297,15 +315,15 @@ describe('editor-schema.ts', () => {
             mode: 'dropdown',
             options: [
               {
-                label: 'Default (in label area)',
+                label: 'editor.layout.default_in_label_area',
                 value: 'default',
               },
               {
-                label: 'Bottom',
+                label: 'editor.layout.bottom',
                 value: 'bottom',
               },
               {
-                label: 'Vertical Stack',
+                label: 'editor.layout.vertical_stack',
                 value: 'stacked',
               },
             ],
@@ -426,15 +444,15 @@ describe('editor-schema.ts', () => {
                       mode: 'list',
                       options: [
                         {
-                          label: 'Disable Background Image',
+                          label: 'editor.background.disable_background_image',
                           value: 'disable',
                         },
                         {
-                          label: 'Icon Background',
+                          label: 'editor.icon.icon_background',
                           value: 'icon_background',
                         },
                         {
-                          label: 'Hide Icon Only',
+                          label: 'editor.icon.hide_icon_only',
                           value: 'hide_icon_only',
                         },
                       ],
@@ -507,23 +525,24 @@ describe('editor-schema.ts', () => {
                       options: [
                         {
                           value: 'gt',
-                          label: 'Greater than (>)',
+                          label: 'editor.threshold.operator.greater_than',
                         },
                         {
                           value: 'gte',
-                          label: 'Greater than or equal (≥)',
+                          label:
+                            'editor.threshold.operator.greater_than_or_equal',
                         },
                         {
                           value: 'lt',
-                          label: 'Less than (<)',
+                          label: 'editor.threshold.operator.less_than',
                         },
                         {
                           value: 'lte',
-                          label: 'Less than or equal (≤)',
+                          label: 'editor.threshold.operator.less_than_or_equal',
                         },
                         {
                           value: 'eq',
-                          label: 'Equal (=)',
+                          label: 'editor.threshold.operator.equal',
                         },
                       ],
                     },
@@ -553,23 +572,24 @@ describe('editor-schema.ts', () => {
                       options: [
                         {
                           value: 'gt',
-                          label: 'Greater than (>)',
+                          label: 'editor.threshold.operator.greater_than',
                         },
                         {
                           value: 'gte',
-                          label: 'Greater than or equal (≥)',
+                          label:
+                            'editor.threshold.operator.greater_than_or_equal',
                         },
                         {
                           value: 'lt',
-                          label: 'Less than (<)',
+                          label: 'editor.threshold.operator.less_than',
                         },
                         {
                           value: 'lte',
-                          label: 'Less than or equal (≤)',
+                          label: 'editor.threshold.operator.less_than_or_equal',
                         },
                         {
                           value: 'eq',
-                          label: 'Equal (=)',
+                          label: 'editor.threshold.operator.equal',
                         },
                       ],
                     },
@@ -622,20 +642,24 @@ describe('editor-schema.ts', () => {
                   mode: 'list',
                   options: [
                     {
-                      label: 'Hide Area Stats',
+                      label: 'editor.stats.hide_area_stats',
                       value: 'hide_area_stats',
                     },
                     {
-                      label: 'Hide Room Icon',
+                      label: 'editor.icon.hide_room_icon',
                       value: 'hide_room_icon',
                     },
                     {
-                      label: 'Skip Climate Styles',
+                      label: 'editor.styles.skip_climate_styles',
                       value: 'skip_climate_styles',
                     },
                     {
-                      label: 'Skip Card Background Styles',
+                      label: 'editor.card.skip_card_background_styles',
                       value: 'skip_entity_styles',
+                    },
+                    {
+                      label: 'editor.features.slider',
+                      value: 'slider',
                     },
                   ],
                 },
@@ -696,19 +720,19 @@ describe('editor-schema.ts', () => {
                   mode: 'list',
                   options: [
                     {
-                      label: 'Disable Card Border',
+                      label: 'editor.card.disable_card_border',
                       value: 'disabled_card_styles',
                     },
                     {
-                      label: 'Disable Card Border Animations',
+                      label: 'editor.card.disable_card_border_animations',
                       value: 'disabled_card_styles_animation',
                     },
                     {
-                      label: 'Disable Icon Color',
+                      label: 'editor.icon.disable_icon_color',
                       value: 'disable_icon_styles',
                     },
                     {
-                      label: 'Disable Icon Animations',
+                      label: 'editor.icon.disable_icon_animations',
                       value: 'disable_icon_animation',
                     },
                   ],

@@ -12,6 +12,7 @@ import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderRoomIcon } from '@/html/icon';
+import { hasFeature } from '@config/feature';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
@@ -238,10 +239,19 @@ export class RoomSummaryCard extends LitElement {
           ${roomEntity}
 
           <!-- Entities Container -->
-          <entity-collection
-            .config=${this._config}
-            .hass=${this._hass}
-          ></entity-collection>
+          ${hasFeature(this._config, 'slider')
+            ? html`
+                <entity-slider
+                  .config=${this._config}
+                  .hass=${this._hass}
+                ></entity-slider>
+              `
+            : html`
+                <entity-collection
+                  .config=${this._config}
+                  .hass=${this._hass}
+                ></entity-collection>
+              `}
 
           <!-- Problem Indicator -->
           ${problems}

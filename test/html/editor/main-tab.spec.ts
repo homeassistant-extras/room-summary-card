@@ -143,4 +143,38 @@ describe('main-tab.ts', () => {
       'light.living_room',
     ]);
   });
+
+  it('should call computeLabel function on both ha-form elements', async () => {
+    const result = renderMainTab({
+      hass: mockHass,
+      config: mockConfig,
+      entities: ['light.living_room'],
+      onValueChanged,
+      onEntityRowChanged,
+      onEditDetailElement,
+    });
+
+    const el = await fixture(result as TemplateResult);
+    const forms = el.querySelectorAll('ha-form');
+
+    expect(forms.length).to.equal(2);
+
+    // Test computeLabel on first form (line 44)
+    const computeLabelFn1 = (forms[0] as any).computeLabel;
+    expect(computeLabelFn1).to.be.a('function');
+    const label1 = computeLabelFn1({
+      name: 'area',
+      label: 'editor.area.area' as any,
+    });
+    expect(label1).to.be.a('string');
+
+    // Test computeLabel on second form (line 61)
+    const computeLabelFn2 = (forms[1] as any).computeLabel;
+    expect(computeLabelFn2).to.be.a('function');
+    const label2 = computeLabelFn2({
+      name: 'area_name',
+      label: 'editor.area.area_name' as any,
+    });
+    expect(label2).to.be.a('string');
+  });
 });

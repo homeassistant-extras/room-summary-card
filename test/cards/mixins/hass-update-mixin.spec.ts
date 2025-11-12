@@ -2,6 +2,7 @@ import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import type { HomeAssistant } from '@hass/types';
 import { expect } from 'chai';
 import { LitElement } from 'lit';
+import { match, stub } from 'sinon';
 
 describe('HassUpdateMixin', () => {
   let TestElement: ReturnType<typeof HassUpdateMixin>;
@@ -45,5 +46,45 @@ describe('HassUpdateMixin', () => {
   it('should have connectedCallback and disconnectedCallback methods', () => {
     expect(element.connectedCallback).to.be.a('function');
     expect(element.disconnectedCallback).to.be.a('function');
+  });
+
+  it('should add event listener when connected to DOM', () => {
+    const addEventListenerSpy = stub(window, 'addEventListener');
+
+    // Call connectedCallback directly (it will be called automatically when appended)
+    element.connectedCallback();
+
+    expect(addEventListenerSpy.calledWith('hass-update', match.any)).to.be.true;
+
+    addEventListenerSpy.restore();
+  });
+
+  it('should remove event listener when disconnected from DOM', () => {
+    const removeEventListenerSpy = stub(window, 'removeEventListener');
+
+    // Set up: connect first
+    element.connectedCallback();
+    // Then disconnect
+    element.disconnectedCallback();
+
+    expect(removeEventListenerSpy.calledWith('hass-update', match.any)).to.be
+      .true;
+
+    removeEventListenerSpy.restore();
+  });
+
+  it('should update hass property when hass-update event is fired', () => {
+    // Connect the element to set up the event listener
+    element.connectedCallback();
+
+    // Create a custom event that works in jsdom
+    const updateEvent = document.createEvent('Event') as CustomEvent<{
+      hass: HomeAssistant;
+    }>;
+    updateEvent.initEvent('hass-update', false, false);
+    (updateEvent as any).detail = { hass };
+    window.dispatchEvent(updateEvent);
+
+    expect(element.hass).to.deep.equal(hass);
   });
 });

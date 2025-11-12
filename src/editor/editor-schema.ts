@@ -299,29 +299,13 @@ const schemeStyles = (
   };
 };
 
-export const getEntitiesSchema = (
+/**
+ * Returns schema for entity styles only (for entities tab)
+ */
+export const getEntitiesStylesSchema = (
   hass: HomeAssistant,
-  entities: string[],
 ): HaFormSchema[] => {
   return [
-    {
-      name: 'entities',
-      label: 'editor.area.area_side_entities',
-      required: false,
-      selector: { entity: { multiple: true, include_entities: entities } },
-    },
-    {
-      name: 'lights',
-      label: 'editor.background.light_entities',
-      required: false,
-      selector: {
-        entity: {
-          multiple: true,
-          include_entities: entities,
-          filter: { domain: ['light', 'switch'] },
-        },
-      },
-    },
     {
       name: 'styles',
       label: 'editor.styles.css_styles',
@@ -342,33 +326,67 @@ export const getEntitiesSchema = (
         },
       ],
     },
+    {
+      name: 'slider_style',
+      label: 'editor.slider.slider_style',
+      required: false,
+      selector: {
+        select: {
+          mode: 'dropdown' as const,
+          options: [
+            {
+              label: localize(hass, 'editor.slider.minimalist'),
+              value: 'minimalist',
+            },
+            {
+              label: localize(hass, 'editor.slider.track'),
+              value: 'track',
+            },
+            {
+              label: localize(hass, 'editor.slider.line'),
+              value: 'line',
+            },
+            {
+              label: localize(hass, 'editor.slider.filled'),
+              value: 'filled',
+            },
+            {
+              label: localize(hass, 'editor.slider.gradient'),
+              value: 'gradient',
+            },
+            {
+              label: localize(hass, 'editor.slider.dual_rail'),
+              value: 'dual-rail',
+            },
+            {
+              label: localize(hass, 'editor.slider.dots'),
+              value: 'dots',
+            },
+            {
+              label: localize(hass, 'editor.slider.notched'),
+              value: 'notched',
+            },
+            {
+              label: localize(hass, 'editor.slider.grid'),
+              value: 'grid',
+            },
+            {
+              label: localize(hass, 'editor.slider.glow'),
+              value: 'glow',
+            },
+            {
+              label: localize(hass, 'editor.slider.shadow_trail'),
+              value: 'shadow-trail',
+            },
+            {
+              label: localize(hass, 'editor.slider.outlined'),
+              value: 'outlined',
+            },
+          ],
+        },
+      },
+    },
   ];
-};
-
-/**
- * Returns schema for entity styles only (for entities tab)
- */
-export const getEntitiesStylesSchema = (): HaFormSchema => {
-  return {
-    name: 'styles',
-    label: 'editor.styles.css_styles',
-    type: 'grid' as const,
-    column_min_width: '100%',
-    schema: [
-      {
-        name: 'entities',
-        label: 'editor.styles.entities_container_styles',
-        required: false,
-        selector: { object: {} },
-      },
-      {
-        name: 'entity_icon',
-        label: 'editor.styles.entity_icon_styles',
-        required: false,
-        selector: { object: {} },
-      },
-    ],
-  };
 };
 
 export const getLightsSchema = (
@@ -681,6 +699,10 @@ const featuresSchema = (hass: HomeAssistant): HaFormSchema => {
                   'editor.card.skip_card_background_styles',
                 ),
                 value: 'skip_entity_styles',
+              },
+              {
+                label: localize(hass, 'editor.features.slider'),
+                value: 'slider',
               },
             ],
           },

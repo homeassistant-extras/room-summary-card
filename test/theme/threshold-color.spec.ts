@@ -439,6 +439,37 @@ describe('threshold-color.ts', () => {
       const result = getStateResult(entity);
       expect(result).to.be.undefined;
     });
+
+    it('should handle undefined attributes when accessing stateConfig attribute', () => {
+      const states: StateConfig[] = [
+        {
+          state: '',
+          attribute: 'some_attr',
+          icon_color: 'yellow',
+          styles: {},
+        },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'light.test',
+          states,
+        },
+        state: {
+          entity_id: 'light.test',
+          state: 'on',
+          domain: 'light',
+          attributes: undefined as any,
+        },
+      };
+      const result = getStateResult(entity);
+      // Should convert undefined to empty string and match
+      expect(result).to.deep.equal({
+        color: 'yellow',
+        icon: undefined,
+        label: undefined,
+        styles: {},
+      });
+    });
   });
 
   describe('getThresholdResult - attribute matching', () => {
@@ -641,6 +672,32 @@ describe('threshold-color.ts', () => {
       };
       const result = getThresholdResult(entity);
       expect(result).to.be.undefined;
+    });
+
+    it('should handle undefined attributes when accessing threshold attribute', () => {
+      const thresholds: ThresholdConfig[] = [
+        {
+          threshold: 50,
+          attribute: 'some_attr',
+          icon_color: 'red',
+          operator: 'gte',
+        },
+      ];
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'sensor.test',
+          thresholds,
+        },
+        state: {
+          entity_id: 'sensor.test',
+          state: '15',
+          domain: 'sensor',
+          attributes: undefined as any,
+        },
+      };
+      const result = getThresholdResult(entity);
+      // Should fall back to state.state since attributes is undefined
+      expect(result).to.be.undefined; // 15 < 50, so no match
     });
   });
 

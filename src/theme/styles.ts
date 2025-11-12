@@ -140,7 +140,8 @@ const gridLayoutStyles = css`
     container-type: inline-size;
   }
 
-  entity-collection {
+  entity-collection,
+  entity-slider {
     grid-area: e;
   }
 

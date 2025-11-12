@@ -35,12 +35,14 @@ describe('entities-tab.ts', () => {
     getEntitiesStylesSchemaStub = stub(
       editorSchemaModule,
       'getEntitiesStylesSchema',
-    ).returns({
-      name: 'styles',
-      label: 'editor.styles.styles' as any,
-      type: 'expandable',
-      schema: [],
-    });
+    ).returns([
+      {
+        name: 'styles',
+        label: 'editor.styles.styles' as any,
+        type: 'expandable',
+        schema: [],
+      },
+    ]);
 
     entityFeaturesSchemaStub = stub(
       editorSchemaModule,
@@ -162,7 +164,42 @@ describe('entities-tab.ts', () => {
     });
 
     expect(getEntitiesStylesSchemaStub.calledOnce).to.be.true;
+    expect(getEntitiesStylesSchemaStub.firstCall.args[0]).to.equal(mockHass);
     expect(entityFeaturesSchemaStub.calledOnce).to.be.true;
     expect(entityFeaturesSchemaStub.firstCall.args[0]).to.equal(mockHass);
+  });
+
+  it('should call computeLabel function on ha-form elements', async () => {
+    const result = renderEntitiesTab({
+      hass: mockHass,
+      config: mockConfig,
+      entities: ['light.living_room'],
+      onValueChanged,
+      onEntitiesRowChanged,
+      onEditDetailElement,
+    });
+
+    const el = await fixture(result as TemplateResult);
+    const forms = el.querySelectorAll('ha-form');
+
+    expect(forms.length).to.equal(2);
+
+    // Test computeLabel on first form
+    const computeLabelFn1 = (forms[0] as any).computeLabel;
+    expect(computeLabelFn1).to.be.a('function');
+    const label1 = computeLabelFn1({
+      name: 'styles',
+      label: 'editor.styles.styles' as any,
+    });
+    expect(label1).to.be.a('string');
+
+    // Test computeLabel on second form (lines 56, 74)
+    const computeLabelFn2 = (forms[1] as any).computeLabel;
+    expect(computeLabelFn2).to.be.a('function');
+    const label2 = computeLabelFn2({
+      name: 'features',
+      label: 'editor.features.features' as any,
+    });
+    expect(label2).to.be.a('string');
   });
 });

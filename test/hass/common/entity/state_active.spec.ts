@@ -39,7 +39,7 @@ describe('state_active.ts', () => {
       const stateObj = createStateObj('light.test', 'on');
       // When state is undefined, should use stateObj.state
       expect(stateActive(stateObj, undefined)).to.be.true;
-      
+
       const stateObjOff = createStateObj('light.test', OFF);
       expect(stateActive(stateObjOff, undefined)).to.be.false;
     });

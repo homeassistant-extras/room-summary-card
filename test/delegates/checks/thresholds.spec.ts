@@ -518,6 +518,34 @@ describe('climate-thresholds.ts', () => {
         const result = climateThresholds(config, sensorData);
         expect(result).to.deep.equal({ hot: true, humid: false });
       });
+
+      it('should use default gt operator for unknown operator', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: 75,
+            temperature_operator: 'unknown' as any, // Invalid operator
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 76, // Above threshold
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        // Should default to 'gt' behavior (value > threshold)
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
     });
   });
 });

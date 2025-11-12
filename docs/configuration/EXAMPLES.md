@@ -476,3 +476,132 @@ entities:
 ```
 
 This example uses automatic light discovery while still displaying specific entities in the card.
+
+## Slider Control Examples
+
+![slider](../../assets/slider.gif)
+
+### Basic Slider
+
+Display the first entity as a draggable slider for brightness control:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - slider
+entity: light.living_room_main
+```
+
+### Slider with Filled Track Style
+
+Use a progress bar style that shows the current brightness level:
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+features:
+  - slider
+slider_style: filled
+entity: light.bedroom_ceiling
+```
+
+### Slider with Track Style
+
+Use a sunken track style for a more tactile appearance:
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+features:
+  - slider
+slider_style: track
+entity: light.kitchen_main
+```
+
+### Slider with Glow Effect
+
+Use a glowing track style for a modern look:
+
+```yaml
+type: custom:room-summary-card
+area: office
+features:
+  - slider
+slider_style: glow
+entity: light.office_desk
+```
+
+### Slider with Shadow Trail
+
+Use a shadow trail that follows the icon position:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - slider
+slider_style: shadow-trail
+entity: light.living_room_lamp
+```
+
+### Slider with Grid Pattern
+
+Use a grid pattern track for precise visual feedback:
+
+```yaml
+type: custom:room-summary-card
+area: bathroom
+features:
+  - slider
+slider_style: grid
+entity: light.bathroom_vanity
+```
+
+### Slider with Multiple Entities
+
+When using slider, only the first entity is displayed as the slider. Other entities are ignored:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - slider
+slider_style: minimalist
+entity: light.living_room_main
+# Only light.living_room_main will be displayed as a slider
+# Other entities in the area are not shown when slider is enabled
+```
+
+### Slider with Background Image
+
+Combine slider with background images for a rich visual experience:
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+features:
+  - slider
+slider_style: filled
+entity: light.bedroom_ceiling
+background:
+  image: /local/images/bedroom.jpg
+  opacity: 30
+```
+
+### Slider with Custom Entity Configuration
+
+Configure the slider entity with custom icon and colors:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - slider
+slider_style: gradient
+entity:
+  entity_id: light.living_room_main
+  icon: mdi:ceiling-light
+  on_color: warm_white
+  off_color: grey
+```

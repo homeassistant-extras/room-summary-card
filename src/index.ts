@@ -12,6 +12,7 @@ import { RoomSummaryEntityDetailEditor } from '@cards/components/editor/entity-d
 import { RoomSummaryStatesRowEditor } from '@cards/components/editor/states-row-editor';
 import { RoomSummarySubElementEditor } from '@cards/components/editor/sub-element-editor';
 import { EntityCollection } from '@cards/components/entity-collection/entity-collection';
+import { EntitySlider } from '@cards/components/entity-slider/entity-slider';
 import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
 import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
 import { RoomSummaryCardEditor } from '@cards/editor';
@@ -22,6 +23,7 @@ customElements.define('room-summary-card', RoomSummaryCard);
 customElements.define('room-summary-card-editor', RoomSummaryCardEditor);
 customElements.define('sensor-collection', SensorCollection);
 customElements.define('entity-collection', EntityCollection);
+customElements.define('entity-slider', EntitySlider);
 customElements.define('room-state-icon', RoomStateIcon);
 customElements.define(
   'room-summary-entity-detail-editor',

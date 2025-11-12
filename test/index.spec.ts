@@ -32,24 +32,25 @@ describe('index.ts', () => {
 
   it('should register all custom elements including room-state-icon', () => {
     require('@/index.ts');
-    expect(customElementsStub.callCount).to.equal(9);
+    expect(customElementsStub.callCount).to.equal(10);
     expect(customElementsStub.firstCall.args[0]).to.equal('room-summary-card');
     expect(customElementsStub.secondCall.args[0]).to.equal(
       'room-summary-card-editor',
     );
     expect(customElementsStub.thirdCall.args[0]).to.equal('sensor-collection');
     expect(customElementsStub.getCall(3).args[0]).to.equal('entity-collection');
-    expect(customElementsStub.getCall(4).args[0]).to.equal('room-state-icon');
-    expect(customElementsStub.getCall(5).args[0]).to.equal(
+    expect(customElementsStub.getCall(4).args[0]).to.equal('entity-slider');
+    expect(customElementsStub.getCall(5).args[0]).to.equal('room-state-icon');
+    expect(customElementsStub.getCall(6).args[0]).to.equal(
       'room-summary-entity-detail-editor',
     );
-    expect(customElementsStub.getCall(6).args[0]).to.equal(
+    expect(customElementsStub.getCall(7).args[0]).to.equal(
       'room-summary-entities-row-editor',
     );
-    expect(customElementsStub.getCall(7).args[0]).to.equal(
+    expect(customElementsStub.getCall(8).args[0]).to.equal(
       'room-summary-states-row-editor',
     );
-    expect(customElementsStub.getCall(8).args[0]).to.equal(
+    expect(customElementsStub.getCall(9).args[0]).to.equal(
       'room-summary-sub-element-editor',
     );
   });
@@ -99,7 +100,7 @@ describe('index.ts', () => {
     require('@/index.ts');
 
     expect(window.customCards).to.have.lengthOf(1);
-    expect(customElementsStub.callCount).to.equal(9);
+    expect(customElementsStub.callCount).to.equal(10);
   });
 
   it('should log the version with proper formatting', () => {

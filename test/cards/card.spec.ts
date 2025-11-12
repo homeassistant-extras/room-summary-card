@@ -194,6 +194,28 @@ describe('card.ts', () => {
       expect(roomStateIcon).to.exist;
       expect((roomStateIcon as any).isMainRoomEntity).to.be.true;
     });
+
+    it('should render entity-slider when slider feature is enabled', async () => {
+      card.setConfig({ area: 'living_room', features: ['slider'] });
+      card.hass = mockHass;
+      const el = await fixture(card.render() as TemplateResult);
+      const entitySlider = el.querySelector('entity-slider');
+      const entityCollection = el.querySelector('entity-collection');
+
+      expect(entitySlider).to.exist;
+      expect(entityCollection).to.not.exist;
+    });
+
+    it('should render entity-collection when slider feature is not enabled', async () => {
+      card.setConfig({ area: 'living_room' });
+      card.hass = mockHass;
+      const el = await fixture(card.render() as TemplateResult);
+      const entitySlider = el.querySelector('entity-slider');
+      const entityCollection = el.querySelector('entity-collection');
+
+      expect(entityCollection).to.exist;
+      expect(entitySlider).to.not.exist;
+    });
   });
 
   describe('getStubConfig()', () => {

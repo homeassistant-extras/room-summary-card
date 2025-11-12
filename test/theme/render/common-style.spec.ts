@@ -116,6 +116,18 @@ describe('common-style.ts', () => {
       expect(result?.activeClass).to.equal('active');
     });
 
+    it('should return undefined cssColor when both stateColorCss and themeOverride are falsy', () => {
+      const entity = createEntityInfo('light', 'test', 'on');
+      stateColorCssStub.returns(undefined);
+      getThemeColorOverrideStub.returns(undefined);
+
+      const result = getStyleData(mockHass, 'test', entity);
+
+      expect(result?.cssColor).to.be.undefined;
+      expect(result?.active).to.be.true;
+      expect(result?.activeClass).to.equal('active');
+    });
+
     it('should call underlying functions with correct parameters', () => {
       const entity = createEntityInfo('switch', 'test', 'on');
 
@@ -127,12 +139,7 @@ describe('common-style.ts', () => {
       // getThemeColorOverride is called with (hass, entity, thresholdResult, isActive)
       // thresholdResult is undefined (from stub), isActive is true (from stateActiveStub)
       expect(
-        getThemeColorOverrideStub.calledWith(
-          mockHass,
-          entity,
-          undefined,
-          true,
-        ),
+        getThemeColorOverrideStub.calledWith(mockHass, entity, undefined, true),
       ).to.be.true;
     });
 
