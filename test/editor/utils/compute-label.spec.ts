@@ -1,4 +1,4 @@
-import { computeLabel } from '@/editor/utils/compute-label';
+import { computeLabel } from '@editor/utils/compute-label';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
 import { expect } from 'chai';

@@ -1,4 +1,4 @@
-import { updateScrollIndicators } from '@/editor/utils/update-scroll-indicators';
+import { updateScrollIndicators } from '@editor/utils/update-scroll-indicators';
 import { expect } from 'chai';
 
 describe('update-scroll-indicators.ts', () => {

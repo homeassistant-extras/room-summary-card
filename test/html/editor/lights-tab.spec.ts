@@ -1,7 +1,7 @@
-import * as editorSchemaModule from '@/editor/editor-schema';
-import * as localizeModule from '@/localize/localize';
+import * as editorSchemaModule from '@editor/editor-schema';
 import type { HomeAssistant } from '@hass/types';
 import { renderLightsTab } from '@html/editor/lights-tab';
+import * as localizeModule from '@localize/localize';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Config } from '@type/config';
 import { expect } from 'chai';

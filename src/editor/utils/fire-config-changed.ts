@@ -1,7 +1,7 @@
 import {
   cleanEmptyArrays,
   cleanEmptyProps,
-} from '@/editor/utils/config-cleanup';
+} from '@editor/utils/config-cleanup';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { Config } from '@type/config';
 

@@ -1,4 +1,4 @@
-import { cleanAndFireConfigChanged } from '@/editor/utils/fire-config-changed';
+import { cleanAndFireConfigChanged } from '@editor/utils/fire-config-changed';
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { Config } from '@type/config';
 import { expect } from 'chai';

@@ -1,5 +1,5 @@
-import { localize } from '@/localize/localize';
 import type { HomeAssistant } from '@hass/types';
+import { localize } from '@localize/localize';
 import { expect } from 'chai';
 
 describe('localize.ts', () => {

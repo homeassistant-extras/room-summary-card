@@ -1,5 +1,5 @@
-import { getAreaSchema, getMainSchemaRest } from '@/editor/editor-schema';
-import { computeLabel } from '@/editor/utils/compute-label';
+import { getAreaSchema, getMainSchemaRest } from '@editor/editor-schema';
+import { computeLabel } from '@editor/utils/compute-label';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
 import type { Config } from '@type/config';

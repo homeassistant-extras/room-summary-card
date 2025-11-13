@@ -1,8 +1,8 @@
-import { localize } from '@/localize/localize';
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import { getSensorNumericDeviceClasses } from '@hass/data/sensor';
 import type { HomeAssistant } from '@hass/types';
+import { localize } from '@localize/localize';
 import { INTERACTIONS } from './schema-constants';
 
 export const areaEntities = (hass: HomeAssistant, area: string) => {
@@ -700,10 +700,6 @@ const featuresSchema = (hass: HomeAssistant): HaFormSchema => {
                 ),
                 value: 'skip_entity_styles',
               },
-              {
-                label: localize(hass, 'editor.features.slider'),
-                value: 'slider',
-              },
             ],
           },
         },
@@ -741,6 +737,10 @@ export const entityFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
           {
             label: localize(hass, 'editor.features.sticky_entities'),
             value: 'sticky_entities',
+          },
+          {
+            label: localize(hass, 'editor.features.slider'),
+            value: 'slider',
           },
         ],
       },

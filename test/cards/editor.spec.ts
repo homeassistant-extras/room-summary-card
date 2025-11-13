@@ -1,4 +1,4 @@
-import * as editorSchemaModule from '@/editor/editor-schema';
+import * as editorSchemaModule from '@editor/editor-schema';
 import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import { RoomSummaryCardEditor } from '@cards/editor';
 import * as fireEventModule from '@hass/common/dom/fire_event';

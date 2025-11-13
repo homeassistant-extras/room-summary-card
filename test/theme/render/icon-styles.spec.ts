@@ -147,5 +147,113 @@ describe('icon-styles.ts', () => {
         }),
       );
     });
+
+    it('should apply opacity from config when image, opacity, and isMainRoomEntity are provided', () => {
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+      const entity = createEntityInfo('light', 'test', 'on');
+      const imageUrl = '/local/images/test-image.png';
+      const config = {
+        area: 'test',
+        background: {
+          opacity: 50,
+        },
+      } as any;
+
+      const result = renderEntityIconStyles(
+        mockHass,
+        entity,
+        true,
+        imageUrl,
+        true,
+        config,
+      );
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--icon-color': 'var(--primary-color)',
+          '--icon-opacity': 'var(--opacity-icon-active)',
+          '--background-color-icon': 'var(--primary-color)',
+          '--background-opacity-icon': 0.5,
+          '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': `url(${imageUrl})`,
+        }),
+      );
+    });
+
+    it('should not apply opacity from config when isMainRoomEntity is false', () => {
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+      const entity = createEntityInfo('light', 'test', 'on');
+      const imageUrl = '/local/images/test-image.png';
+      const config = {
+        area: 'test',
+        background: {
+          opacity: 50,
+        },
+      } as any;
+
+      const result = renderEntityIconStyles(
+        mockHass,
+        entity,
+        true,
+        imageUrl,
+        false,
+        config,
+      );
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--icon-color': 'var(--primary-color)',
+          '--icon-opacity': 'var(--opacity-icon-active)',
+          '--background-color-icon': 'var(--primary-color)',
+          '--background-opacity-icon': '1',
+          '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': `url(${imageUrl})`,
+        }),
+      );
+    });
+
+    it('should use default opacity when image is present but opacity is not configured', () => {
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+      const entity = createEntityInfo('light', 'test', 'on');
+      const imageUrl = '/local/images/test-image.png';
+      const config = {
+        area: 'test',
+      } as any;
+
+      const result = renderEntityIconStyles(
+        mockHass,
+        entity,
+        true,
+        imageUrl,
+        true,
+        config,
+      );
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--icon-color': 'var(--primary-color)',
+          '--icon-opacity': 'var(--opacity-icon-active)',
+          '--background-color-icon': 'var(--primary-color)',
+          '--background-opacity-icon': '1',
+          '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': `url(${imageUrl})`,
+        }),
+      );
+    });
   });
 });

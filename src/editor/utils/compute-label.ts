@@ -1,6 +1,6 @@
-import { localize } from '@/localize/localize';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
+import { localize } from '@localize/localize';
 import type { TranslationKey } from '@type/locale';
 
 /**

@@ -1,15 +1,16 @@
 import {
   areaEntities,
   deviceClasses,
+  entityFeaturesSchema,
   getEntitiesStylesSchema,
   getMainSchema,
   getOccupancySchema,
   getSensorsSchema,
   getSensorsSchemaRest,
-} from '@/editor/editor-schema';
-import * as localizeModule from '@/localize/localize';
+} from '@editor/editor-schema';
 import * as sensorModule from '@hass/data/sensor';
 import type { HomeAssistant } from '@hass/types';
+import * as localizeModule from '@localize/localize';
 import { expect } from 'chai';
 import { stub, type SinonStub } from 'sinon';
 

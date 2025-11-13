@@ -1,7 +1,7 @@
 import {
   cleanEmptyArrays,
   cleanEmptyProps,
-} from '@/editor/utils/config-cleanup';
+} from '@editor/utils/config-cleanup';
 import { expect } from 'chai';
 
 describe('config-cleanup', () => {

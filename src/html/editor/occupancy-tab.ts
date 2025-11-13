@@ -1,8 +1,8 @@
-import { getOccupancySchema } from '@/editor/editor-schema';
-import { computeLabel } from '@/editor/utils/compute-label';
-import { localize } from '@/localize/localize';
+import { getOccupancySchema } from '@editor/editor-schema';
+import { computeLabel } from '@editor/utils/compute-label';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
+import { localize } from '@localize/localize';
 import type { Config } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
 

@@ -1,4 +1,4 @@
-import * as editorSchemaModule from '@/editor/editor-schema';
+import * as editorSchemaModule from '@editor/editor-schema';
 import type { HomeAssistant } from '@hass/types';
 import { renderMainTab } from '@html/editor/main-tab';
 import { fixture } from '@open-wc/testing-helpers';

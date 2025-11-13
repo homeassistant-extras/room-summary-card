@@ -170,6 +170,8 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       this.entity,
       this.isActive,
       this._image,
+      this.isMainRoomEntity,
+      this._config,
     );
 
     d(this._config, 'room-state-icon - iconStyle', iconStyle);

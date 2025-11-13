@@ -1,6 +1,3 @@
-import { areaEntities, deviceClasses } from '@/editor/editor-schema';
-import { cleanAndFireConfigChanged } from '@/editor/utils/fire-config-changed';
-import { updateScrollIndicators } from '@/editor/utils/update-scroll-indicators';
 import { renderEntitiesTab } from '@/html/editor/entities-tab';
 import { renderLightsTab } from '@/html/editor/lights-tab';
 import { renderMainTab } from '@/html/editor/main-tab';
@@ -8,6 +5,9 @@ import { renderOccupancyTab } from '@/html/editor/occupancy-tab';
 import { renderSensorsTab } from '@/html/editor/sensors-tab';
 import { renderTabBar } from '@/html/editor/tab-bar';
 import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
+import { areaEntities, deviceClasses } from '@editor/editor-schema';
+import { cleanAndFireConfigChanged } from '@editor/utils/fire-config-changed';
+import { updateScrollIndicators } from '@editor/utils/update-scroll-indicators';
 import type { HASSDomEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { Task } from '@lit/task';
