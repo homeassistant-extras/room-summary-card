@@ -2,7 +2,6 @@
  * https://github.com/home-assistant/frontend/blob/dev/src/data/selector.ts
  */
 
-import type { CropOptions } from '@hass/dialogs/image-cropper-dialog/show-image-cropper-dialog';
 import type { UiAction } from '@hass/panels/lovelace/editor/hui-element-editor';
 
 export type Selector =
@@ -10,8 +9,8 @@ export type Selector =
   | AttributeSelector
   | BooleanSelector
   | EntitySelector
-  | ImageSelector
   | IconSelector
+  | MediaSelector
   | NavigationSelector
   | NumberSelector
   | ObjectSelector
@@ -35,10 +34,6 @@ export interface BooleanSelector {
   boolean: {} | null;
 }
 
-export interface ImageSelector {
-  image: { original?: boolean; crop?: CropOptions } | null;
-}
-
 interface EntitySelectorFilter {
   integration?: string;
   domain?: string | readonly string[];
@@ -59,6 +54,16 @@ export interface IconSelector {
   icon: {
     placeholder?: string;
     fallbackPath?: string;
+  } | null;
+}
+
+export interface MediaSelector {
+  media: {
+    accept?: string[];
+    image_upload?: boolean;
+    clearable?: boolean;
+    hide_content_type?: boolean;
+    content_id_helper?: string;
   } | null;
 }
 

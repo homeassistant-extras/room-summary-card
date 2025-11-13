@@ -414,7 +414,7 @@ describe('editor-schema.ts', () => {
                 {
                   name: 'image',
                   label: 'editor.background.background_image',
-                  selector: { image: {} },
+                  selector: { media: { image_upload: true } },
                 },
                 {
                   name: 'image_entity',

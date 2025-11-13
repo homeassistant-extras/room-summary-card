@@ -53,11 +53,11 @@ describe('tab-bar.ts', () => {
     const buttons = el.querySelectorAll('.custom-tab');
 
     expect(buttons.length).to.equal(5);
-    expect(buttons[0].textContent?.trim()).to.equal('Main');
-    expect(buttons[1].textContent?.trim()).to.equal('Entities');
-    expect(buttons[2].textContent?.trim()).to.equal('Lights');
-    expect(buttons[3].textContent?.trim()).to.equal('Sensors');
-    expect(buttons[4].textContent?.trim()).to.equal('Occupancy');
+    expect(buttons[0]!.textContent?.trim()).to.equal('Main');
+    expect(buttons[1]!.textContent?.trim()).to.equal('Entities');
+    expect(buttons[2]!.textContent?.trim()).to.equal('Lights');
+    expect(buttons[3]!.textContent?.trim()).to.equal('Sensors');
+    expect(buttons[4]!.textContent?.trim()).to.equal('Occupancy');
   });
 
   it('should set active class on current tab', async () => {
@@ -74,11 +74,11 @@ describe('tab-bar.ts', () => {
     const el = await fixture(result as TemplateResult);
     const buttons = el.querySelectorAll('.custom-tab');
 
-    expect(buttons[0].classList.contains('active')).to.be.false;
-    expect(buttons[1].classList.contains('active')).to.be.false;
-    expect(buttons[2].classList.contains('active')).to.be.true;
-    expect(buttons[3].classList.contains('active')).to.be.false;
-    expect(buttons[4].classList.contains('active')).to.be.false;
+    expect(buttons[0]!.classList.contains('active')).to.be.false;
+    expect(buttons[1]!.classList.contains('active')).to.be.false;
+    expect(buttons[2]!.classList.contains('active')).to.be.true;
+    expect(buttons[3]!.classList.contains('active')).to.be.false;
+    expect(buttons[4]!.classList.contains('active')).to.be.false;
   });
 
   it('should set active class on tab 1 (Entities)', async () => {
@@ -95,8 +95,8 @@ describe('tab-bar.ts', () => {
     const el = await fixture(result as TemplateResult);
     const buttons = el.querySelectorAll('.custom-tab');
 
-    expect(buttons[1].classList.contains('active')).to.be.true;
-    expect(buttons[0].classList.contains('active')).to.be.false;
+    expect(buttons[1]!.classList.contains('active')).to.be.true;
+    expect(buttons[0]!.classList.contains('active')).to.be.false;
   });
 
   it('should set active class on tab 3 (Sensors)', async () => {
@@ -113,8 +113,8 @@ describe('tab-bar.ts', () => {
     const el = await fixture(result as TemplateResult);
     const buttons = el.querySelectorAll('.custom-tab');
 
-    expect(buttons[3].classList.contains('active')).to.be.true;
-    expect(buttons[0].classList.contains('active')).to.be.false;
+    expect(buttons[3]!.classList.contains('active')).to.be.true;
+    expect(buttons[0]!.classList.contains('active')).to.be.false;
   });
 
   it('should set active class on tab 4 (Occupancy)', async () => {
@@ -131,8 +131,8 @@ describe('tab-bar.ts', () => {
     const el = await fixture(result as TemplateResult);
     const buttons = el.querySelectorAll('.custom-tab');
 
-    expect(buttons[4].classList.contains('active')).to.be.true;
-    expect(buttons[0].classList.contains('active')).to.be.false;
+    expect(buttons[4]!.classList.contains('active')).to.be.true;
+    expect(buttons[0]!.classList.contains('active')).to.be.false;
   });
 
   it('should show left scroll indicator when showLeftScroll is true', async () => {

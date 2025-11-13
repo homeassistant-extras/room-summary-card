@@ -120,9 +120,14 @@ export class RoomSummaryCard extends LitElement {
     this.dark = dark;
     this.hot = hot;
     this.humid = humid;
-    this.image = !!image;
-    this._image = image;
     this._isActive = isActive;
+
+    // Handle async image resolution
+    image.then((resolvedImage) => {
+      this.image = !!resolvedImage;
+      this._image = resolvedImage;
+    });
+
     // Update states only if they've changed
     let shouldRender = false;
     if (!equal(roomInfo, this._roomInformation)) {

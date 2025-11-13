@@ -81,8 +81,12 @@ export interface Config {
   };
 
   background?: {
-    /** URL of the background image */
-    image?: string;
+    /** URL of the background image or media source object */
+    image?: string | {
+      media_content_id: string;
+      media_content_type?: string;
+      metadata?: Record<string, any>;
+    };
 
     /** Entity ID for dynamic background images */
     image_entity?: string;

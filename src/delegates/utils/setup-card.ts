@@ -14,7 +14,7 @@ export interface RoomProperties {
   roomInfo: RoomInformation;
   roomEntity: EntityInformation;
   sensors: SensorData;
-  image?: string | null;
+  image: Promise<string | undefined | null>;
   isActive: boolean;
   flags: {
     occupied: boolean;

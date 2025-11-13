@@ -43,13 +43,14 @@ describe('setup-card.ts', () => {
       individual: [],
       averaged: [],
       problemSensors: [],
+      lightEntities: [],
     });
     getRoomEntityStub.returns({
       config: { entity_id: 'light.test' },
       state: s('light', 'test', 'on'),
     });
     climateThresholdsStub.returns({ hot: false, humid: false });
-    getBackgroundImageUrlStub.returns('/local/bg.jpg');
+    getBackgroundImageUrlStub.resolves('/local/bg.jpg');
     getOccupancyStateStub.returns(true);
   });
 
@@ -80,6 +81,7 @@ describe('setup-card.ts', () => {
           individual: [],
           averaged: [],
           problemSensors: [],
+          lightEntities: [],
         }),
       ).to.be.true;
 
@@ -92,9 +94,17 @@ describe('setup-card.ts', () => {
         'isActive',
         'flags',
       ]);
-      expect(result.image).to.equal('/local/bg.jpg');
+      expect(result.image).to.be.a('promise');
       expect(result.flags.dark).to.be.true;
       expect(result.flags.occupied).to.be.true;
+    });
+
+    it('should return image as a promise that resolves to the image URL', async () => {
+      const config: Config = { area: 'living_room' };
+      const result = getRoomProperties(mockHass, config);
+
+      const imageUrl = await result.image;
+      expect(imageUrl).to.equal('/local/bg.jpg');
     });
 
     it('should use config area_name when provided instead of calling getArea', () => {

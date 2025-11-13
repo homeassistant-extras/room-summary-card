@@ -37,7 +37,7 @@ describe('card.ts', () => {
         problemSensors: [],
         lightEntities: [],
       },
-      image: null,
+      image: Promise.resolve(null),
       isActive: true,
       flags: {
         occupied: true,
@@ -133,7 +133,7 @@ describe('card.ts', () => {
           problemSensors: [],
           lightEntities: [],
         },
-        image: null,
+        image: Promise.resolve(null),
         isActive: false,
         flags: {
           occupied: false,
@@ -145,6 +145,41 @@ describe('card.ts', () => {
 
       card.hass = mockHass;
       expect(card['_isActive']).to.be.false;
+    });
+
+    it('should handle image promise and update _image when resolved', async () => {
+      getRoomPropertiesStub.returns({
+        roomInfo: { area_name: 'Living Room' },
+        roomEntity: {
+          config: { entity_id: 'light.test' },
+          state: {
+            entity_id: 'light.test',
+            state: 'on',
+            attributes: {},
+            domain: 'light',
+          },
+        },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+        },
+        image: Promise.resolve('/local/test.jpg'),
+        isActive: true,
+        flags: {
+          occupied: true,
+          dark: true,
+          hot: false,
+          humid: false,
+        },
+      });
+
+      card.hass = mockHass;
+      // Wait for image promise to resolve
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(card['_image']).to.equal('/local/test.jpg');
+      expect(card['image']).to.be.true;
     });
   });
 
