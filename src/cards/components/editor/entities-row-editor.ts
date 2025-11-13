@@ -75,52 +75,97 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
           'ui.panel.lovelace.editor.card.config.optional',
         )})`}
       </label>
-      <div class="entities">
-        ${repeat(
-          items,
-          (item, index) => this._getKey(item, index),
-          (item, index) => html`
-            <div class="entity">
-              ${!this.single
-                ? html`
-                    <div class="handle">
-                      <ha-icon icon="mdi:drag"></ha-icon>
+      ${!this.single
+        ? html`
+            <ha-sortable
+              handle-selector=".handle"
+              @item-moved=${this._rowMoved}
+            >
+              <div class="entities">
+                ${repeat(
+                  items,
+                  (item, index) => this._getKey(item, index),
+                  (item, index) => html`
+                    <div class="entity">
+                      <div class="handle">
+                        <ha-icon icon="mdi:drag"></ha-icon>
+                      </div>
+                      <ha-entity-picker
+                        allow-custom-entity
+                        hide-clear-icon
+                        .hass=${this.hass}
+                        .value=${this._getEntityId(item)}
+                        .index=${index}
+                        .includeEntities=${this.availableEntities}
+                        @value-changed=${this._valueChanged}
+                      ></ha-entity-picker>
+                      <ha-icon-button
+                        .label=${this.hass!.localize(
+                          'ui.components.entity.entity-picker.clear',
+                        )}
+                        class="remove-icon"
+                        .index=${index}
+                        @click=${this._removeRow}
+                      >
+                        <ha-icon icon="mdi:close"></ha-icon>
+                      </ha-icon-button>
+                      <ha-icon-button
+                        .label=${this.hass!.localize(
+                          'ui.components.entity.entity-picker.edit',
+                        )}
+                        class="edit-icon"
+                        .index=${index}
+                        @click=${this._editRow}
+                      >
+                        <ha-icon icon="mdi:pencil"></ha-icon>
+                      </ha-icon-button>
                     </div>
-                  `
-                : nothing}
-              <ha-entity-picker
-                allow-custom-entity
-                hide-clear-icon
-                .hass=${this.hass}
-                .value=${this._getEntityId(item)}
-                .index=${index}
-                .includeEntities=${this.availableEntities}
-                @value-changed=${this._valueChanged}
-              ></ha-entity-picker>
-              <ha-icon-button
-                .label=${this.hass!.localize(
-                  'ui.components.entity.entity-picker.clear',
+                  `,
                 )}
-                class="remove-icon"
-                .index=${index}
-                @click=${this._removeRow}
-              >
-                <ha-icon icon="mdi:close"></ha-icon>
-              </ha-icon-button>
-              <ha-icon-button
-                .label=${this.hass!.localize(
-                  'ui.components.entity.entity-picker.edit',
-                )}
-                class="edit-icon"
-                .index=${index}
-                @click=${this._editRow}
-              >
-                <ha-icon icon="mdi:pencil"></ha-icon>
-              </ha-icon-button>
+              </div>
+            </ha-sortable>
+          `
+        : html`
+            <div class="entities">
+              ${repeat(
+                items,
+                (item, index) => this._getKey(item, index),
+                (item, index) => html`
+                  <div class="entity">
+                    <ha-entity-picker
+                      allow-custom-entity
+                      hide-clear-icon
+                      .hass=${this.hass}
+                      .value=${this._getEntityId(item)}
+                      .index=${index}
+                      .includeEntities=${this.availableEntities}
+                      @value-changed=${this._valueChanged}
+                    ></ha-entity-picker>
+                    <ha-icon-button
+                      .label=${this.hass!.localize(
+                        'ui.components.entity.entity-picker.clear',
+                      )}
+                      class="remove-icon"
+                      .index=${index}
+                      @click=${this._removeRow}
+                    >
+                      <ha-icon icon="mdi:close"></ha-icon>
+                    </ha-icon-button>
+                    <ha-icon-button
+                      .label=${this.hass!.localize(
+                        'ui.components.entity.entity-picker.edit',
+                      )}
+                      class="edit-icon"
+                      .index=${index}
+                      @click=${this._editRow}
+                    >
+                      <ha-icon icon="mdi:pencil"></ha-icon>
+                    </ha-icon-button>
+                  </div>
+                `,
+              )}
             </div>
-          `,
-        )}
-      </div>
+          `}
       ${!this.single || items.length === 0
         ? html`
             <ha-entity-picker
@@ -225,6 +270,21 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
     });
   }
 
+  private _rowMoved(ev: CustomEvent): void {
+    ev.stopPropagation();
+    const { oldIndex, newIndex } = ev.detail;
+
+    const items =
+      this.field === 'entities' ? this.entities || [] : this.lights || [];
+    const newItems = items.concat();
+
+    const [movedItem] = newItems.splice(oldIndex, 1);
+    if (movedItem !== undefined) {
+      newItems.splice(newIndex, 0, movedItem);
+      fireEvent(this, 'value-changed', { value: newItems });
+    }
+  }
+
   static override styles: CSSResult = css`
     ha-entity-picker {
       margin-top: 8px;
@@ -253,7 +313,7 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
 
     .entity .handle {
       padding-right: 8px;
-      cursor: move;
+      cursor: move; /* fallback if grab cursor is unsupported */
       cursor: grab;
       padding-inline-end: 8px;
       padding-inline-start: initial;
