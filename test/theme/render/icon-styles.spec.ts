@@ -148,7 +148,7 @@ describe('icon-styles.ts', () => {
       );
     });
 
-    it('should apply opacity from config when image, opacity, and isMainRoomEntity are provided', () => {
+    it('should apply opacity from config when icon_background option is set and isMainRoomEntity is true', () => {
       getStyleDataStub.returns({
         active: true,
         cssColor: 'var(--primary-color)',
@@ -161,6 +161,83 @@ describe('icon-styles.ts', () => {
         area: 'test',
         background: {
           opacity: 50,
+          options: ['icon_background'],
+        },
+      } as any;
+
+      const result = renderEntityIconStyles(
+        mockHass,
+        entity,
+        true,
+        imageUrl,
+        true, // isMainRoomEntity must be true
+        config,
+      );
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--icon-color': 'var(--primary-color)',
+          '--icon-opacity': 'var(--opacity-icon-active)',
+          '--background-color-icon': 'var(--primary-color)',
+          '--background-opacity-icon': 0.5,
+          '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': `url(${imageUrl})`,
+        }),
+      );
+    });
+
+    it('should not apply opacity from config when icon_background is set but isMainRoomEntity is false', () => {
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+      const entity = createEntityInfo('light', 'test', 'on');
+      const imageUrl = '/local/images/test-image.png';
+      const config = {
+        area: 'test',
+        background: {
+          opacity: 50,
+          options: ['icon_background'],
+        },
+      } as any;
+
+      const result = renderEntityIconStyles(
+        mockHass,
+        entity,
+        true,
+        imageUrl,
+        false, // isMainRoomEntity is false
+        config,
+      );
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--icon-color': 'var(--primary-color)',
+          '--icon-opacity': 'var(--opacity-icon-active)',
+          '--background-color-icon': 'var(--primary-color)',
+          '--background-opacity-icon': '1',
+          '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': `url(${imageUrl})`,
+        }),
+      );
+    });
+
+    it('should apply opacity from config when isMainRoomEntity is true (legacy behavior)', () => {
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+      const entity = createEntityInfo('light', 'test', 'on');
+      const imageUrl = '/local/images/test-image.png';
+      const config = {
+        area: 'test',
+        background: {
+          opacity: 50,
+          options: ['icon_background'],
         },
       } as any;
 
@@ -185,7 +262,7 @@ describe('icon-styles.ts', () => {
       );
     });
 
-    it('should not apply opacity from config when isMainRoomEntity is false', () => {
+    it('should not apply opacity from config when icon_background is not set and isMainRoomEntity is false', () => {
       getStyleDataStub.returns({
         active: true,
         cssColor: 'var(--primary-color)',

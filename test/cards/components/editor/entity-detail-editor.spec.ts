@@ -219,6 +219,21 @@ describe('entity-detail-editor.ts', () => {
             },
           ],
         },
+        {
+          name: 'styles',
+          label: 'editor.styles.css_styles',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:brush-variant',
+          schema: [
+            {
+              name: 'styles',
+              label: 'editor.entity.styles',
+              required: false,
+              selector: { object: {} },
+            },
+          ],
+        },
       ];
 
       expect(schema).to.deep.equal(expectedSchema);

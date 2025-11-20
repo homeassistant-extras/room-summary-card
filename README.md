@@ -336,7 +336,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Sensor layout options`**: flexible sensor display layouts (default, stacked, bottom) - thanks @Ltek, @zoic21
 - [x] **`Sensor averaging by device class`**: automatic averaging like HA area card - thanks @Ltek
 - [x] **`Moving away from customize.yaml`**: allowing more configuration on the card - thanks @johntdyer
-- [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo, @X1pheR, @Ltek, @felippepuhle
+- [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo, @X1pheR, @Ltek, @felippepuhle, @devkaiwang
 - [x] **`Custom Styles`**: apply custom CSS styles - thanks @marceloroloff, @ma-gu-16, @Ltek, @johannwilken, @Sturby, @viprapp, @CaptainSteubing
 - [x] **`Random bugs`**: pointing out issues to improve card - thanks @rickd1994, @avijavez10, @awfulwoman, @anandv85
 - [x] **`Occupancy Detection`**: visual indicators for room occupancy with motion/occupancy sensors - thanks @X1pheR

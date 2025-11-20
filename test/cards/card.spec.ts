@@ -182,6 +182,93 @@ describe('card.ts', () => {
       expect(card['_image']).to.equal('/local/test.jpg');
       expect(card['image']).to.be.true;
     });
+
+    it('should not set image property when iconBackground is set', async () => {
+      card.setConfig({
+        area: 'living_room',
+        background: {
+          options: ['icon_background'],
+          image: '/local/test.jpg',
+        },
+      });
+
+      getRoomPropertiesStub.returns({
+        roomInfo: { area_name: 'Living Room' },
+        roomEntity: {
+          config: { entity_id: 'light.test' },
+          state: {
+            entity_id: 'light.test',
+            state: 'on',
+            attributes: {},
+            domain: 'light',
+          },
+        },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+        },
+        image: Promise.resolve('/local/test.jpg'),
+        isActive: true,
+        flags: {
+          occupied: true,
+          dark: true,
+          hot: false,
+          humid: false,
+        },
+      });
+
+      card.hass = mockHass;
+      // Wait for image promise to resolve
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(card['_image']).to.equal('/local/test.jpg');
+      expect(card['image']).to.be.false; // Should be false when iconBackground is set
+      expect(card['iconBackground']).to.be.true;
+    });
+
+    it('should set image property when iconBackground is not set', async () => {
+      card.setConfig({
+        area: 'living_room',
+        background: {
+          image: '/local/test.jpg',
+        },
+      });
+
+      getRoomPropertiesStub.returns({
+        roomInfo: { area_name: 'Living Room' },
+        roomEntity: {
+          config: { entity_id: 'light.test' },
+          state: {
+            entity_id: 'light.test',
+            state: 'on',
+            attributes: {},
+            domain: 'light',
+          },
+        },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+        },
+        image: Promise.resolve('/local/test.jpg'),
+        isActive: true,
+        flags: {
+          occupied: true,
+          dark: true,
+          hot: false,
+          humid: false,
+        },
+      });
+
+      card.hass = mockHass;
+      // Wait for image promise to resolve
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(card['_image']).to.equal('/local/test.jpg');
+      expect(card['image']).to.be.true; // Should be true when iconBackground is not set
+      expect(card['iconBackground']).to.be.false;
+    });
   });
 
   describe('styles', () => {

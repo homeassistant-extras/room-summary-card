@@ -127,7 +127,9 @@ export class RoomSummaryCard extends LitElement {
 
     // Handle async image resolution
     image.then((resolvedImage) => {
-      this.image = !!resolvedImage;
+      // Don't set image attribute on card if icon_background is set
+      // (background should only apply to icon, not card)
+      this.image = !this.iconBackground && !!resolvedImage;
       this._image = resolvedImage;
     });
 
@@ -211,7 +213,7 @@ export class RoomSummaryCard extends LitElement {
       this._config,
       true,
       this._isActive,
-      this.image,
+      !!this._image,
       this.occupied,
       this.smoke,
     );

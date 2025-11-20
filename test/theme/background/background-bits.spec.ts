@@ -62,5 +62,36 @@ describe('background-bits.ts', () => {
         '--background-opacity-card': 'var(--opacity-background-inactive)',
       });
     });
+
+    it('should not set opacity-theme when icon_background option is set', () => {
+      const config: Config = {
+        area: 'test',
+        background: {
+          opacity: 50,
+          options: ['icon_background'],
+        },
+      };
+      const result = getBackgroundOpacity(config, false);
+
+      expect(result).to.deep.equal({
+        '--opacity-theme': undefined,
+        '--background-opacity-card': `var(--opacity-background-inactive)`,
+      });
+    });
+
+    it('should set opacity-theme when icon_background option is not set', () => {
+      const config: Config = {
+        area: 'test',
+        background: {
+          opacity: 50,
+        },
+      };
+      const result = getBackgroundOpacity(config, false);
+
+      expect(result).to.deep.equal({
+        '--opacity-theme': 0.5,
+        '--background-opacity-card': `var(--opacity-background-inactive)`,
+      });
+    });
   });
 });
