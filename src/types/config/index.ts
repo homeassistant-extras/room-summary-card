@@ -54,7 +54,10 @@ export interface Config {
     | 'outlined';
 
   /** Occupancy detection configuration */
-  occupancy?: OccupancyConfig;
+  occupancy?: AlarmConfig;
+
+  /** Smoke detection configuration */
+  smoke?: AlarmConfig;
 
   /** Custom thresholds for temperature and humidity */
   thresholds?: {
@@ -82,11 +85,13 @@ export interface Config {
 
   background?: {
     /** URL of the background image or media source object */
-    image?: string | {
-      media_content_id: string;
-      media_content_type?: string;
-      metadata?: Record<string, any>;
-    };
+    image?:
+      | string
+      | {
+          media_content_id: string;
+          media_content_type?: string;
+          metadata?: Record<string, any>;
+        };
 
     /** Entity ID for dynamic background images */
     image_entity?: string;
@@ -151,7 +156,7 @@ export type Features =
 /**
  * Configuration for occupancy-based visual indicators
  */
-export interface OccupancyConfig {
+export interface AlarmConfig {
   /** Entity IDs for motion/occupancy sensors (required) */
   entities: string[];
 

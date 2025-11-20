@@ -19,6 +19,7 @@ describe('setup-card.ts', () => {
   let climateThresholdsStub: SinonStub;
   let getBackgroundImageUrlStub: SinonStub;
   let getOccupancyStateStub: SinonStub;
+  let getSmokeStateStub: SinonStub;
 
   beforeEach(() => {
     // Create stubs for all the delegate functions
@@ -31,6 +32,7 @@ describe('setup-card.ts', () => {
       'getBackgroundImageUrl',
     );
     getOccupancyStateStub = stub(occupancyModule, 'getOccupancyState');
+    getSmokeStateStub = stub(occupancyModule, 'getSmokeState');
 
     mockHass = {
       areas: { living_room: { area_id: 'living_room', name: 'Living Room' } },
@@ -51,7 +53,8 @@ describe('setup-card.ts', () => {
     });
     climateThresholdsStub.returns({ hot: false, humid: false });
     getBackgroundImageUrlStub.resolves('/local/bg.jpg');
-    getOccupancyStateStub.returns(true);
+    getOccupancyStateStub.returns(false);
+    getSmokeStateStub.returns(false);
   });
 
   afterEach(() => {
@@ -61,6 +64,7 @@ describe('setup-card.ts', () => {
     climateThresholdsStub.restore();
     getBackgroundImageUrlStub.restore();
     getOccupancyStateStub.restore();
+    getSmokeStateStub.restore();
   });
 
   describe('getRoomProperties', () => {
@@ -74,6 +78,7 @@ describe('setup-card.ts', () => {
       expect(getBackgroundImageUrlStub.calledWith(mockHass, config)).to.be.true;
       expect(getOccupancyStateStub.calledWith(mockHass, config.occupancy)).to.be
         .true;
+      expect(getSmokeStateStub.calledWith(mockHass, config.smoke)).to.be.true;
 
       // Verify climateThresholds is called with full sensor data
       expect(
@@ -96,7 +101,8 @@ describe('setup-card.ts', () => {
       ]);
       expect(result.image).to.be.a('promise');
       expect(result.flags.dark).to.be.true;
-      expect(result.flags.occupied).to.be.true;
+      expect(result.flags.occupied).to.be.false;
+      expect(result.flags.smoke).to.be.false;
     });
 
     it('should return image as a promise that resolves to the image URL', async () => {
@@ -228,6 +234,72 @@ describe('setup-card.ts', () => {
 
         const result = getRoomProperties(mockHass, config);
         expect(result.isActive).to.be.false;
+      });
+    });
+
+    describe('smoke and occupancy priority', () => {
+      it('should call getSmokeState with smoke config', () => {
+        const config: Config = {
+          area: 'living_room',
+          smoke: { entities: ['binary_sensor.smoke_1'] },
+        };
+        getRoomProperties(mockHass, config);
+
+        expect(getSmokeStateStub.calledWith(mockHass, config.smoke)).to.be.true;
+      });
+
+      it('should set smoke flag when smoke is detected', () => {
+        const config: Config = {
+          area: 'living_room',
+          smoke: { entities: ['binary_sensor.smoke_1'] },
+        };
+        getSmokeStateStub.returns(true);
+        getOccupancyStateStub.returns(true);
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.smoke).to.be.true;
+        expect(result.flags.occupied).to.be.false; // Occupancy suppressed when smoke detected
+      });
+
+      it('should set occupied flag when only occupancy is detected', () => {
+        const config: Config = {
+          area: 'living_room',
+          occupancy: { entities: ['binary_sensor.motion_1'] },
+        };
+        getSmokeStateStub.returns(false);
+        getOccupancyStateStub.returns(true);
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.smoke).to.be.false;
+        expect(result.flags.occupied).to.be.true;
+      });
+
+      it('should suppress occupancy when smoke is detected even if occupancy is also detected', () => {
+        const config: Config = {
+          area: 'living_room',
+          occupancy: { entities: ['binary_sensor.motion_1'] },
+          smoke: { entities: ['binary_sensor.smoke_1'] },
+        };
+        getSmokeStateStub.returns(true);
+        getOccupancyStateStub.returns(true);
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.smoke).to.be.true;
+        expect(result.flags.occupied).to.be.false; // Smoke takes priority
+      });
+
+      it('should set both flags to false when neither is detected', () => {
+        const config: Config = {
+          area: 'living_room',
+          occupancy: { entities: ['binary_sensor.motion_1'] },
+          smoke: { entities: ['binary_sensor.smoke_1'] },
+        };
+        getSmokeStateStub.returns(false);
+        getOccupancyStateStub.returns(false);
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.smoke).to.be.false;
+        expect(result.flags.occupied).to.be.false;
       });
     });
   });

@@ -589,78 +589,104 @@ export const getMainSchemaRest = (
   featuresSchema(hass),
 ];
 
+/**
+ * Returns schema for a single alarm configuration (occupancy or smoke)
+ */
+const getAlarmConfigSchema = (
+  hass: HomeAssistant,
+  entities: string[],
+  alarmType: 'occupancy' | 'smoke',
+): HaFormSchema => {
+  const isSmoke = alarmType === 'smoke';
+  return {
+    name: alarmType,
+    label: isSmoke
+      ? 'editor.alarm.smoke_detection'
+      : 'editor.alarm.occupancy_detection',
+    type: 'expandable' as const,
+    icon: isSmoke ? 'mdi:smoke-detector' : 'mdi:motion-sensor',
+    schema: [
+      {
+        name: 'entities',
+        label: isSmoke
+          ? 'editor.alarm.smoke_detectors'
+          : 'editor.alarm.motion_occupancy_presence_sensors',
+        required: true,
+        selector: {
+          entity: {
+            multiple: true,
+            include_entities: entities,
+            filter: isSmoke
+              ? {
+                  domain: ['binary_sensor'],
+                  device_class: ['smoke'],
+                }
+              : {
+                  domain: ['binary_sensor'],
+                  device_class: ['motion', 'occupancy', 'presence'],
+                },
+          },
+        },
+      },
+      {
+        name: 'card_border_color',
+        label: isSmoke
+          ? 'editor.card.card_border_color_smoke'
+          : 'editor.card.card_border_color_occupied',
+        required: false,
+        selector: { ui_color: {} },
+      },
+      {
+        name: 'icon_color',
+        label: isSmoke
+          ? 'editor.icon.icon_background_color_smoke'
+          : 'editor.icon.icon_background_color_occupied',
+        required: false,
+        selector: { ui_color: {} },
+      },
+      {
+        name: 'options',
+        label: 'editor.alarm.alarm_options',
+        required: false,
+        selector: {
+          select: {
+            multiple: true,
+            mode: 'list' as const,
+            options: [
+              {
+                label: localize(hass, 'editor.card.disable_card_border'),
+                value: 'disabled_card_styles',
+              },
+              {
+                label: localize(
+                  hass,
+                  'editor.card.disable_card_border_animations',
+                ),
+                value: 'disabled_card_styles_animation',
+              },
+              {
+                label: localize(hass, 'editor.icon.disable_icon_color'),
+                value: 'disable_icon_styles',
+              },
+              {
+                label: localize(hass, 'editor.icon.disable_icon_animations'),
+                value: 'disable_icon_animation',
+              },
+            ],
+          },
+        },
+      },
+    ],
+  };
+};
+
 export const getOccupancySchema = (
   hass: HomeAssistant,
   entities: string[],
 ): HaFormSchema[] => {
   return [
-    {
-      name: 'occupancy',
-      label: 'editor.occupancy.occupancy_presence_detection',
-      type: 'grid' as const,
-      column_min_width: '100%',
-      schema: [
-        {
-          name: 'entities',
-          label: 'editor.occupancy.motion_occupancy_presence_sensors',
-          required: true,
-          selector: {
-            entity: {
-              multiple: true,
-              include_entities: entities,
-              filter: {
-                domain: ['binary_sensor'],
-                device_class: ['motion', 'occupancy', 'presence'],
-              },
-            },
-          },
-        },
-        {
-          name: 'card_border_color',
-          label: 'editor.card.card_border_color_occupied',
-          required: false,
-          selector: { ui_color: {} },
-        },
-        {
-          name: 'icon_color',
-          label: 'editor.icon.icon_background_color_occupied',
-          required: false,
-          selector: { ui_color: {} },
-        },
-        {
-          name: 'options',
-          label: 'editor.occupancy.occupancy_options',
-          required: false,
-          selector: {
-            select: {
-              multiple: true,
-              mode: 'list' as const,
-              options: [
-                {
-                  label: localize(hass, 'editor.card.disable_card_border'),
-                  value: 'disabled_card_styles',
-                },
-                {
-                  label: localize(
-                    hass,
-                    'editor.card.disable_card_border_animations',
-                  ),
-                  value: 'disabled_card_styles_animation',
-                },
-                {
-                  label: localize(hass, 'editor.icon.disable_icon_color'),
-                  value: 'disable_icon_styles',
-                },
-                {
-                  label: localize(hass, 'editor.icon.disable_icon_animations'),
-                  value: 'disable_icon_animation',
-                },
-              ],
-            },
-          },
-        },
-      ],
-    },
+    getAlarmConfigSchema(hass, entities, 'occupancy'),
+    getAlarmConfigSchema(hass, entities, 'smoke'),
   ];
 };
 

@@ -72,8 +72,15 @@ export const styles = css`
     height: 100%;
   }
 
-  /* Occupancy styling - applies when the room is occupied */
-  :host([room][occupied]) .icon::before {
+  /* Smoke styling - applies when smoke is detected (takes priority over occupancy) */
+  :host([room][smoke]) .icon::before {
+    animation: var(--smoke-icon-animation);
+    background-color: var(--smoke-icon-color, var(--background-color-icon));
+    transition: all 0.3s ease;
+  }
+
+  /* Occupancy styling - applies when the room is occupied (only if smoke is not detected) */
+  :host([room][occupied]:not([smoke])) .icon::before {
     animation: var(--occupancy-icon-animation);
     background-color: var(--occupancy-icon-color, var(--background-color-icon));
     transition: all 0.3s ease;

@@ -348,6 +348,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Multi-Light Background`**: card background lights up when any light entity in the room is on - thanks @joshkay
 - [x] **`Entity Picture Display`**: automatic display of entity pictures with optional override - thanks @Zipp0KMS, @pheitman
 - [x] **`Custom Labels`**: entity and sensor labels with state/threshold-based overrides - thanks @ojm88
+- [x] **`Smoke Detection`**: visual indicators for smoke detectors - thanks @Arjan-21
 
 ## Contributing
 

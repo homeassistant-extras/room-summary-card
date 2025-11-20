@@ -76,7 +76,7 @@ export function renderTabBar(params: TabBarParams): TemplateResult {
               class="custom-tab ${currentTab === 4 ? 'active' : ''}"
               @click=${() => onTabClick(4)}
             >
-              Occupancy
+              Alarm
             </button>
           </div>
         </div>

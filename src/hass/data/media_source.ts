@@ -28,5 +28,3 @@ export const resolveMediaSource = async (
   });
   return result.url;
 };
-
-

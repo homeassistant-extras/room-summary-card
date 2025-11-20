@@ -716,13 +716,13 @@ describe('editor-schema.ts', () => {
       expect(schema).to.deep.equal([
         {
           name: 'occupancy',
-          label: 'editor.occupancy.occupancy_presence_detection',
-          type: 'grid',
-          column_min_width: '100%',
+          label: 'editor.alarm.occupancy_detection',
+          type: 'expandable',
+          icon: 'mdi:motion-sensor',
           schema: [
             {
               name: 'entities',
-              label: 'editor.occupancy.motion_occupancy_presence_sensors',
+              label: 'editor.alarm.motion_occupancy_presence_sensors',
               required: true,
               selector: {
                 entity: {
@@ -749,7 +749,71 @@ describe('editor-schema.ts', () => {
             },
             {
               name: 'options',
-              label: 'editor.occupancy.occupancy_options',
+              label: 'editor.alarm.alarm_options',
+              required: false,
+              selector: {
+                select: {
+                  multiple: true,
+                  mode: 'list',
+                  options: [
+                    {
+                      label: 'editor.card.disable_card_border',
+                      value: 'disabled_card_styles',
+                    },
+                    {
+                      label: 'editor.card.disable_card_border_animations',
+                      value: 'disabled_card_styles_animation',
+                    },
+                    {
+                      label: 'editor.icon.disable_icon_color',
+                      value: 'disable_icon_styles',
+                    },
+                    {
+                      label: 'editor.icon.disable_icon_animations',
+                      value: 'disable_icon_animation',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        {
+          name: 'smoke',
+          label: 'editor.alarm.smoke_detection',
+          type: 'expandable',
+          icon: 'mdi:smoke-detector',
+          schema: [
+            {
+              name: 'entities',
+              label: 'editor.alarm.smoke_detectors',
+              required: true,
+              selector: {
+                entity: {
+                  multiple: true,
+                  include_entities: entities,
+                  filter: {
+                    domain: ['binary_sensor'],
+                    device_class: ['smoke'],
+                  },
+                },
+              },
+            },
+            {
+              name: 'card_border_color',
+              label: 'editor.card.card_border_color_smoke',
+              required: false,
+              selector: { ui_color: {} },
+            },
+            {
+              name: 'icon_color',
+              label: 'editor.icon.icon_background_color_smoke',
+              required: false,
+              selector: { ui_color: {} },
+            },
+            {
+              name: 'options',
+              label: 'editor.alarm.alarm_options',
               required: false,
               selector: {
                 select: {

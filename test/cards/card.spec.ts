@@ -41,6 +41,7 @@ describe('card.ts', () => {
       isActive: true,
       flags: {
         occupied: true,
+        smoke: false,
         dark: true,
         hot: false,
         humid: false,
@@ -250,6 +251,15 @@ describe('card.ts', () => {
 
       expect(entityCollection).to.exist;
       expect(entitySlider).to.not.exist;
+    });
+  });
+
+  describe('getConfigElement()', () => {
+    it('should return a room-summary-card-editor element', () => {
+      const element = RoomSummaryCard.getConfigElement();
+      expect(element.tagName.toLowerCase()).to.equal(
+        'room-summary-card-editor',
+      );
     });
   });
 

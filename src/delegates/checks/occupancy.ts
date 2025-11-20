@@ -1,17 +1,14 @@
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
-import type { OccupancyConfig } from '@type/config';
+import type { AlarmConfig } from '@type/config';
 
 /**
- * Checks if an occupancy sensor entity is currently detecting motion/presence
+ * Checks if an entity is currently detecting an alarm condition
  * @param hass Home Assistant instance
- * @param entityId Entity ID of the occupancy sensor
- * @returns True if occupancy is detected, false otherwise
+ * @param entityId Entity ID of the sensor
+ * @returns True if condition is detected, false otherwise
  */
-const isOccupancyDetected = (
-  hass: HomeAssistant,
-  entityId: string,
-): boolean => {
+const isEntityDetected = (hass: HomeAssistant, entityId: string): boolean => {
   const entity = hass.states[entityId];
   if (!entity) return false;
 
@@ -19,71 +16,135 @@ const isOccupancyDetected = (
 };
 
 /**
- * Gets the current occupancy state for a configured occupancy sensor
+ * Gets the current alarm state for a configured alarm sensor
  * @param hass Home Assistant instance
- * @param config Occupancy configuration
- * @returns OccupancyState object with current state and config
+ * @param config Alarm configuration
+ * @returns True if condition is detected, false otherwise
  */
-export const getOccupancyState = (
-  hass: HomeAssistant,
-  config?: OccupancyConfig,
-): boolean => {
+const getAlarmState = (hass: HomeAssistant, config?: AlarmConfig): boolean => {
   if (!config) return false;
-  // Check if any of the entities detect occupancy
-  const isOccupied = config.entities.some((entityId) =>
-    isOccupancyDetected(hass, entityId),
-  );
-
-  return isOccupied;
+  // Check if any of the entities detect the condition
+  return config.entities.some((entityId) => isEntityDetected(hass, entityId));
 };
 
 /**
- * Gets CSS variables for occupancy styling based on current state
- * @param occupancyState Current occupancy state
+ * Gets CSS variables for alarm styling based on current state
+ * @param isDetected Current detection state
+ * @param config Alarm configuration
+ * @param prefix CSS variable prefix (e.g., 'occupancy' or 'smoke')
+ * @param defaultColor Default color to use (e.g., 'var(--success-color)' or 'var(--error-color)')
+ * @param animationName Animation name (e.g., 'occupancy-pulse' or 'smoke-pulse')
  * @returns Object with CSS variable names and values
  */
-export const getOccupancyCssVars = (
-  isOccupied: boolean,
-  config?: OccupancyConfig,
+const getAlarmCssVars = (
+  isDetected: boolean,
+  config?: AlarmConfig,
+  prefix: string = 'alarm',
+  defaultColor: string = 'var(--primary-color)',
+  animationName: string = 'alarm-pulse',
 ): Record<string, string> => {
   if (!config) return {};
 
   const vars: Record<string, string> = {};
 
-  if (!isOccupied) return vars;
+  if (!isDetected) return vars;
 
   // Set card border variable (3px solid) unless disabled
   const isCardBorderDisabled = config.options?.includes('disabled_card_styles');
   if (!isCardBorderDisabled) {
-    const borderColor = config.card_border_color ?? 'var(--success-color)';
-    vars['--occupancy-card-border'] = `3px solid ${borderColor}`;
-    vars['--occupancy-card-border-color'] = borderColor;
+    const borderColor = config.card_border_color ?? defaultColor;
+    vars[`--${prefix}-card-border`] = `3px solid ${borderColor}`;
+    vars[`--${prefix}-card-border-color`] = borderColor;
 
     // Set animation unless disabled
     const isAnimationDisabled = config.options?.includes(
       'disabled_card_styles_animation',
     );
     if (!isAnimationDisabled) {
-      vars['--occupancy-card-animation'] =
-        'occupancy-pulse 2s ease-in-out infinite alternate';
+      vars[`--${prefix}-card-animation`] =
+        `${animationName} 2s ease-in-out infinite alternate`;
     }
   }
 
   // Icon color styling
   const isIconColorDisabled = config.options?.includes('disable_icon_styles');
   if (!isIconColorDisabled) {
-    const iconColor = config.icon_color ?? 'var(--success-color)';
-    vars['--occupancy-icon-color'] = iconColor;
+    const iconColor = config.icon_color ?? defaultColor;
+    vars[`--${prefix}-icon-color`] = iconColor;
 
     // Set animation unless disabled
     const isIconAnimationDisabled = config.options?.includes(
       'disable_icon_animation',
     );
     if (!isIconAnimationDisabled) {
-      vars['--occupancy-icon-animation'] =
+      vars[`--${prefix}-icon-animation`] =
         'icon-breathe 3s ease-in-out infinite alternate';
     }
   }
 
   return vars;
+};
+
+/**
+ * Gets the current occupancy state for a configured occupancy sensor
+ * @param hass Home Assistant instance
+ * @param config Occupancy configuration
+ * @returns True if occupancy is detected, false otherwise
+ */
+export const getOccupancyState = (
+  hass: HomeAssistant,
+  config?: AlarmConfig,
+): boolean => {
+  return getAlarmState(hass, config);
+};
+
+/**
+ * Gets CSS variables for occupancy styling based on current state
+ * @param isOccupied Current occupancy state
+ * @param config Occupancy configuration
+ * @returns Object with CSS variable names and values
+ */
+export const getOccupancyCssVars = (
+  isOccupied: boolean,
+  config?: AlarmConfig,
+): Record<string, string> => {
+  return getAlarmCssVars(
+    isOccupied,
+    config,
+    'occupancy',
+    'var(--success-color)',
+    'occupancy-pulse',
+  );
+};
+
+/**
+ * Gets the current smoke state for a configured smoke detector
+ * @param hass Home Assistant instance
+ * @param config Smoke configuration
+ * @returns True if smoke is detected, false otherwise
+ */
+export const getSmokeState = (
+  hass: HomeAssistant,
+  config?: AlarmConfig,
+): boolean => {
+  return getAlarmState(hass, config);
+};
+
+/**
+ * Gets CSS variables for smoke styling based on current state
+ * @param isSmokeDetected Current smoke detection state
+ * @param config Smoke configuration
+ * @returns Object with CSS variable names and values
+ */
+export const getSmokeCssVars = (
+  isSmokeDetected: boolean,
+  config?: AlarmConfig,
+): Record<string, string> => {
+  return getAlarmCssVars(
+    isSmokeDetected,
+    config,
+    'smoke',
+    'var(--error-color)',
+    'smoke-pulse',
+  );
 };

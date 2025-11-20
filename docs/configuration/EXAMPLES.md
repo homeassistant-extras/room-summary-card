@@ -180,6 +180,38 @@ occupancy:
   icon_color: '#FF9800' # Orange icon background when occupied
 ```
 
+### Smoke Detection
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+smoke:
+  entities:
+    - binary_sensor.kitchen_smoke_detector
+    - binary_sensor.kitchen_smoke_alarm
+  card_border_color: '#F44336' # Red border when smoke detected
+  icon_color: '#FF1744' # Red icon background when smoke detected
+```
+
+### Combined Occupancy and Smoke Detection
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+occupancy:
+  entities:
+    - binary_sensor.bedroom_motion
+  card_border_color: '#4CAF50' # Green when occupied
+  icon_color: '#8BC34A'
+smoke:
+  entities:
+    - binary_sensor.bedroom_smoke_detector
+  card_border_color: '#F44336' # Red when smoke detected (takes priority)
+  icon_color: '#FF1744'
+```
+
+**Note**: When smoke is detected, it takes priority over occupancy detection. The smoke colors and styles will be used, and occupancy indicators will be suppressed.
+
 ### Advanced Occupancy with Multiple Sensors
 
 ```yaml

@@ -181,9 +181,9 @@ styles:
 - See [Custom Styles Configuration](configuration/CUSTOM-STYLES.md) for style information.
 - See [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md) for complete color options.
 
-## Occupancy Detection
+## Alarm Detection (Occupancy & Smoke)
 
-The card supports occupancy detection using motion, occupancy, or presence sensors to provide visual feedback when rooms are occupied:
+The card supports alarm detection using motion, occupancy, presence, or smoke sensors to provide visual feedback when rooms are occupied or when smoke is detected:
 
 ```yaml
 type: custom:room-summary-card
@@ -194,15 +194,21 @@ occupancy:
     - binary_sensor.living_room_occupancy
   card_border_color: '#4CAF50' # Green border when occupied
   icon_color: '#FF9800' # Orange icon background when occupied
+smoke:
+  entities:
+    - binary_sensor.living_room_smoke_detector
+  card_border_color: '#F44336' # Red border when smoke detected
+  icon_color: '#FF1744' # Red icon background when smoke detected
 ```
 
 **Features:**
 
-- Visual indicators (card borders, icon colors) when occupied
-- Support for multiple sensor types (motion, occupancy, presence)
+- Visual indicators (card borders, icon colors) when occupied or smoke is detected
+- Support for multiple sensor types (motion, occupancy, presence for occupancy; smoke for smoke detection)
 - Customizable styling options
+- **Priority system**: Smoke detection takes priority over occupancy detection and uses different colors (default: red for smoke, green for occupancy)
 
-See [Occupancy Configuration](configuration/OCCUPANCY-CONFIGURATION.md) for complete documentation and examples.
+See [Alarm Configuration](configuration/OCCUPANCY-CONFIGURATION.md) for complete documentation and examples.
 
 ## Multi-Light Background
 

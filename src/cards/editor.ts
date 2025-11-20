@@ -241,6 +241,10 @@ export class RoomSummaryCardEditor extends LitElement {
         ...config.occupancy,
         entities: config.occupancy?.entities ?? [],
       },
+      smoke: {
+        ...config.smoke,
+        entities: config.smoke?.entities ?? [],
+      },
     };
   }
 

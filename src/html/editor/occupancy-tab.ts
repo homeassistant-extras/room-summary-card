@@ -14,15 +14,15 @@ export interface OccupancyTabParams {
 }
 
 /**
- * Renders the Occupancy tab content for the editor
- * @param params - Parameters for rendering the occupancy tab
- * @returns TemplateResult with the occupancy tab HTML
+ * Renders the Alarm tab content for the editor (includes occupancy and smoke)
+ * @param params - Parameters for rendering the alarm tab
+ * @returns TemplateResult with the alarm tab HTML
  */
 export function renderOccupancyTab(params: OccupancyTabParams): TemplateResult {
   const { hass, config, entities, onValueChanged } = params;
 
   const schema = getOccupancySchema(hass, entities);
-  const infoText = 'editor.occupancy.occupancy_info';
+  const infoText = 'editor.alarm.alarm_info';
 
   return html`
     ${infoText

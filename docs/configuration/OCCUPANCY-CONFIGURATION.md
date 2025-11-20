@@ -1,16 +1,17 @@
-# Occupancy Configuration
+# Alarm Configuration (Occupancy & Smoke Detection)
 
-The Room Summary Card supports occupancy detection to provide visual feedback when rooms are occupied. This feature uses motion, occupancy, or presence sensors to dynamically change the card's appearance based on room occupancy status.
+The Room Summary Card supports alarm detection to provide visual feedback when rooms are occupied or when smoke is detected. This feature uses motion, occupancy, presence, or smoke sensors to dynamically change the card's appearance based on room status.
 
 ![Occupancy](../../assets/occupancy.png)
 
 ## Overview
 
-Occupancy detection allows you to:
+Alarm detection allows you to:
 
-- **Visual Indicators**: Change card borders and room icon colors when occupied
-- **Multiple Sensors**: Combine multiple motion/occupancy sensors for reliable detection
+- **Visual Indicators**: Change card borders and room icon colors when occupied or smoke is detected
+- **Multiple Sensors**: Combine multiple motion/occupancy/smoke sensors for reliable detection
 - **Customizable Styling**: Control which visual effects are applied
+- **Priority System**: Smoke detection takes priority over occupancy detection and uses a different color (default: red)
 
 ## Basic Configuration
 
@@ -29,7 +30,45 @@ This configuration will:
 
 - Monitor the specified sensors for occupancy
 - Apply default visual indicators when any sensor detects occupancy
-- Use theme-appropriate colors for the indicators
+- Use theme-appropriate colors for the indicators (default: green/success color)
+
+### Simple Smoke Detection
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+smoke:
+  entities:
+    - binary_sensor.kitchen_smoke_detector
+    - binary_sensor.kitchen_smoke_alarm
+```
+
+This configuration will:
+
+- Monitor the specified smoke detectors
+- Apply visual indicators when smoke is detected
+- Use error color by default (typically red)
+- **Take priority over occupancy detection** - if smoke is detected, occupancy indicators are suppressed
+
+### Combined Occupancy and Smoke Detection
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+occupancy:
+  entities:
+    - binary_sensor.bedroom_motion
+    - binary_sensor.bedroom_presence
+  card_border_color: '#4CAF50' # Green border when occupied
+  icon_color: '#FF9800' # Orange icon background when occupied
+smoke:
+  entities:
+    - binary_sensor.bedroom_smoke_detector
+  card_border_color: '#F44336' # Red border when smoke detected
+  icon_color: '#FF1744' # Red icon background when smoke detected
+```
+
+**Important**: When both occupancy and smoke are configured, smoke detection takes priority. If smoke is detected, the smoke colors and styles are used, and occupancy indicators are suppressed.
 
 ### With Custom Colors
 
@@ -46,12 +85,16 @@ occupancy:
 
 ## Configuration Options
 
-| Option              | Type   | Default             | Description                                          |
-| ------------------- | ------ | ------------------- | ---------------------------------------------------- |
-| `entities`          | array  | **Required**        | Array of motion/occupancy/presence sensor entity IDs |
-| `card_border_color` | string | Theme success color | Color for card border when occupied                  |
-| `icon_color`        | string | Theme success color | Color for room icon background when occupied         |
-| `options`           | array  | `[]`                | Array of features to disable (see below)             |
+Both `occupancy` and `smoke` configurations use the same options:
+
+| Option              | Type   | Default (Occupancy) | Default (Smoke)   | Description                                                                           |
+| ------------------- | ------ | ------------------- | ----------------- | ------------------------------------------------------------------------------------- |
+| `entities`          | array  | **Required**        | **Required**      | Array of sensor entity IDs (motion/occupancy/presence for occupancy, smoke for smoke) |
+| `card_border_color` | string | Theme success color | Theme error color | Color for card border when alarm is triggered                                         |
+| `icon_color`        | string | Theme success color | Theme error color | Color for room icon background when alarm is triggered                                |
+| `options`           | array  | `[]`                | `[]`              | Array of features to disable (see below)                                              |
+
+**Note**: Smoke detection uses error color (typically red) by default, while occupancy uses success color (typically green) by default.
 
 ## Visual Effects
 
@@ -128,6 +171,42 @@ occupancy:
   icon_color: '#8BC34A'
 ```
 
+### Smoke Detection with Custom Colors
+
+Configure smoke detection with custom colors:
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+smoke:
+  entities:
+    - binary_sensor.kitchen_smoke_detector
+    - binary_sensor.kitchen_smoke_alarm
+  card_border_color: '#FF5722' # Deep orange border
+  icon_color: '#F44336' # Red icon background
+```
+
+### Combined Occupancy and Smoke
+
+Use both occupancy and smoke detection together:
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+occupancy:
+  entities:
+    - binary_sensor.bedroom_motion
+  card_border_color: '#4CAF50' # Green when occupied
+  icon_color: '#8BC34A'
+smoke:
+  entities:
+    - binary_sensor.bedroom_smoke_detector
+  card_border_color: '#F44336' # Red when smoke detected (takes priority)
+  icon_color: '#FF1744'
+```
+
+**Priority**: When smoke is detected, it takes priority over occupancy. The smoke colors and styles will be used, and occupancy indicators will be suppressed.
+
 ### Minimal Visual Feedback
 
 Only change the icon color without border effects:
@@ -184,11 +263,19 @@ styles:
 
 ## Supported Sensor Types
 
+### Occupancy Detection
+
 The occupancy detection works with any binary sensor that has one of these device classes:
 
 - **`motion`**: Motion sensors (e.g., `binary_sensor.living_room_motion`)
 - **`occupancy`**: Occupancy sensors (e.g., `binary_sensor.bedroom_occupancy`)
 - **`presence`**: Presence sensors (e.g., `binary_sensor.office_presence`)
+
+### Smoke Detection
+
+The smoke detection works with binary sensors that have the `smoke` device class:
+
+- **`smoke`**: Smoke detectors (e.g., `binary_sensor.kitchen_smoke_detector`)
 
 ### Device Tracker Integration
 

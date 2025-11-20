@@ -1,6 +1,6 @@
-import * as editorSchemaModule from '@editor/editor-schema';
 import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import { RoomSummaryCardEditor } from '@cards/editor';
+import * as editorSchemaModule from '@editor/editor-schema';
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import type { Config } from '@type/config';
@@ -123,6 +123,9 @@ describe('editor.ts', () => {
         occupancy: {
           entities: [],
         },
+        smoke: {
+          entities: [],
+        },
       });
     });
 
@@ -144,6 +147,9 @@ describe('editor.ts', () => {
       expect(card['_config']).to.deep.equal({
         ...testConfig,
         occupancy: {
+          entities: [],
+        },
+        smoke: {
           entities: [],
         },
       });
@@ -760,6 +766,54 @@ describe('editor.ts', () => {
 
       expect(card['_config'].sensors).to.deep.equal(['sensor.humidity']);
       expect(dispatchStub.calledOnce).to.be.true;
+    });
+
+    it('should return early when config is missing', () => {
+      card['_config'] = undefined as any;
+      card['_subElementEditorConfig'] = {
+        field: 'entities',
+        index: 0,
+        type: 'entity',
+        elementConfig: { entity_id: 'light.test' },
+      };
+
+      const event = new CustomEvent('config-changed', {
+        detail: { config: { entity_id: 'light.new' } },
+      });
+
+      card['_handleSubElementChanged'](event);
+
+      expect(dispatchStub.called).to.be.false;
+    });
+
+    it('should return early when hass is missing', () => {
+      card.hass = undefined as any;
+      card['_subElementEditorConfig'] = {
+        field: 'entities',
+        index: 0,
+        type: 'entity',
+        elementConfig: { entity_id: 'light.test' },
+      };
+
+      const event = new CustomEvent('config-changed', {
+        detail: { config: { entity_id: 'light.new' } },
+      });
+
+      card['_handleSubElementChanged'](event);
+
+      expect(dispatchStub.called).to.be.false;
+    });
+
+    it('should return early when subElementEditorConfig is missing', () => {
+      card['_subElementEditorConfig'] = undefined;
+
+      const event = new CustomEvent('config-changed', {
+        detail: { config: { entity_id: 'light.new' } },
+      });
+
+      card['_handleSubElementChanged'](event);
+
+      expect(dispatchStub.called).to.be.false;
     });
   });
 

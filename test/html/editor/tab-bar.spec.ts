@@ -57,7 +57,7 @@ describe('tab-bar.ts', () => {
     expect(buttons[1]!.textContent?.trim()).to.equal('Entities');
     expect(buttons[2]!.textContent?.trim()).to.equal('Lights');
     expect(buttons[3]!.textContent?.trim()).to.equal('Sensors');
-    expect(buttons[4]!.textContent?.trim()).to.equal('Occupancy');
+    expect(buttons[4]!.textContent?.trim()).to.equal('Alarm');
   });
 
   it('should set active class on current tab', async () => {

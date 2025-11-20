@@ -5,7 +5,10 @@ import {
 } from 'lit-html/directives/style-map.js';
 
 import { hasFeature } from '@config/feature';
-import { getOccupancyCssVars } from '@delegates/checks/occupancy';
+import {
+  getOccupancyCssVars,
+  getSmokeCssVars,
+} from '@delegates/checks/occupancy';
 import { stateColorCss } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
@@ -17,12 +20,13 @@ import { getThemeColorOverride } from '../custom-theme';
 
 /**
  * Generates a style map for a card component based on the current Home Assistant theme,
- * entity state, configuration, optional background image, and occupancy state.
+ * entity state, configuration, optional background image, occupancy state, and smoke detection.
  *
  * @param hass - The Home Assistant instance containing theme and state information.
  * @param config - The configuration object for the card.
  * @param entity - The entity information, including its current state.
  * @param isOccupied - Whether the room is occupied.
+ * @param isSmokeDetected - Whether smoke is detected (takes priority over occupancy).
  * @param image - (Optional) A URL or path to a background image for the card.
  * @param isActive - Whether the room is considered active (for styling).
  * @returns A DirectiveResult containing the computed style map for the card.
@@ -32,6 +36,7 @@ export const renderCardStyles = (
   config: Config,
   entity: EntityInformation,
   isOccupied: boolean,
+  isSmokeDetected: boolean,
   image?: string | null,
   isActive?: boolean,
 ): DirectiveResult<typeof StyleMapDirective> => {
@@ -46,7 +51,10 @@ export const renderCardStyles = (
   );
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   const opacity = getBackgroundOpacity(config, active);
-  const occupancy = getOccupancyCssVars(isOccupied, config.occupancy);
+  // Smoke takes priority over occupancy - if smoke is detected, use smoke CSS vars
+  const alarmVars = isSmokeDetected
+    ? getSmokeCssVars(isSmokeDetected, config.smoke)
+    : getOccupancyCssVars(isOccupied, config.occupancy);
   const cssColor = stateColorCss(state, 'card', active);
 
   let backgroundColorCard: string | undefined;
@@ -62,7 +70,7 @@ export const renderCardStyles = (
     '--state-color-card-theme': themeOverride,
     '--background-image': image ? `url(${image})` : undefined,
     ...opacity,
-    ...occupancy,
+    ...alarmVars,
     ...config.styles?.card,
   });
 };

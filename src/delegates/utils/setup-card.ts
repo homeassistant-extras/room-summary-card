@@ -1,4 +1,4 @@
-import { getOccupancyState } from '@delegates/checks/occupancy';
+import { getOccupancyState, getSmokeState } from '@delegates/checks/occupancy';
 import { climateThresholds } from '@delegates/checks/thresholds';
 import { getArea } from '@delegates/retrievers/area';
 import { stateActive } from '@hass/common/entity/state_active';
@@ -18,6 +18,7 @@ export interface RoomProperties {
   isActive: boolean;
   flags: {
     occupied: boolean;
+    smoke: boolean;
     dark: boolean;
     hot: boolean;
     humid: boolean;
@@ -47,6 +48,7 @@ export const getRoomProperties = (
   const sensors = getSensors(hass, config);
   const thresholds = climateThresholds(config, sensors);
   const image = getBackgroundImageUrl(hass, config);
+  const smokeDetected = getSmokeState(hass, config.smoke);
   const occupied = getOccupancyState(hass, config.occupancy);
 
   // Calculate if room is active - either room entity is active or any light is active
@@ -61,7 +63,9 @@ export const getRoomProperties = (
     image,
     isActive,
     flags: {
-      occupied,
+      // Smoke takes priority over occupancy - if smoke is detected, don't show occupancy
+      occupied: smokeDetected ? false : occupied,
+      smoke: smokeDetected,
       dark: hass.themes.darkMode,
       ...thresholds,
     },

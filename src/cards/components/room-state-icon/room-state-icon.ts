@@ -102,6 +102,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   occupied?: boolean;
 
   /**
+   * Whether smoke is detected (for smoke styling, takes priority over occupancy)
+   */
+  @property({ type: Boolean, reflect: true })
+  smoke?: boolean;
+
+  /**
    * Returns the component's styles
    */
   static override get styles(): CSSResult {

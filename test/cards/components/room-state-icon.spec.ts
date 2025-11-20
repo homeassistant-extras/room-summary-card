@@ -699,5 +699,104 @@ describe('room-state-icon.ts', () => {
       expect(actionHandlerStub.calledWith(mockEntity)).to.be.true;
       expect(handleClickActionStub.calledWith(element, mockEntity)).to.be.true;
     });
+
+    it('should render without icon content when hideIconContent is true', async () => {
+      // Set up entity with entity_picture to trigger hideIconContent
+      const entityWithPicture = {
+        ...mockEntity,
+        state: {
+          ...mockEntityState,
+          attributes: {
+            ...mockEntityState.attributes,
+            entity_picture: '/local/picture.jpg',
+          },
+        },
+        // Ensure use_entity_icon feature is NOT enabled to trigger line 148
+        config: {
+          ...mockEntityConfig,
+          features: [], // Empty features array ensures hasEntityFeature returns false
+        },
+      };
+      element.entity = entityWithPicture;
+      element.config = mockConfig;
+      element.hass = mockHass; // This triggers the hass setter which sets _hideIconContent
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      // Use fixture to actually render and test the DOM
+      const el = await fixture(result);
+
+      // Should render the icon div but without ha-state-icon content
+      expect(el.classList.contains('icon') || el.querySelector('.icon')).to
+        .exist;
+      expect(el.querySelector('ha-state-icon')).to.not.exist;
+    });
+  });
+
+  describe('entity_picture handling', () => {
+    it('should set _image from entity_picture when use_entity_icon feature is not enabled', () => {
+      // Create entity without use_entity_icon feature (hasEntityFeature will return false)
+      const entityWithoutFeature = {
+        ...mockEntity,
+        state: {
+          ...mockEntityState,
+          attributes: {
+            ...mockEntityState.attributes,
+            entity_picture: '/local/test-picture.jpg',
+          },
+        },
+        config: {
+          ...mockEntityConfig,
+          features: [], // No use_entity_icon feature
+        },
+      };
+      element.entity = entityWithoutFeature;
+      element.config = mockConfig;
+
+      // Setting hass should trigger the setter and execute line 148
+      element.hass = mockHass;
+
+      // Verify that _image was set from entity_picture (line 148)
+      expect(element['_image']).to.equal('/local/test-picture.jpg');
+      expect(element['image']).to.be.true;
+      expect(element['iconBackground']).to.be.true;
+      expect(element['_hideIconContent']).to.be.true;
+    });
+  });
+
+  describe('config styles spreading', () => {
+    it('should spread entity_icon styles from config when rendering', () => {
+      const configWithEntityIconStyles = {
+        ...mockConfig,
+        styles: {
+          entity_icon: {
+            '--icon-size': '32px',
+            '--icon-color': 'blue',
+          },
+        },
+      } as Config;
+      element.config = configWithEntityIconStyles;
+
+      // Mock threshold result with styles
+      getThresholdResultStub.returns({
+        icon: 'mdi:icon',
+        color: 'red',
+        styles: {
+          '--threshold-color': 'red',
+        },
+      });
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      // Verify that stylesToHostCss was called with merged styles
+      // This ensures line 186 (spreading entity_icon styles) was executed
+      expect(stylesToHostCssStub.called).to.be.true;
+      const callArgs = stylesToHostCssStub.getCall(0).args[0];
+      expect(callArgs).to.have.property('--icon-size', '32px');
+      expect(callArgs).to.have.property('--icon-color', 'blue');
+      expect(callArgs).to.have.property('--threshold-color', 'red');
+    });
   });
 });

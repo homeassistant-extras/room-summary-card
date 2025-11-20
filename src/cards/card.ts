@@ -69,6 +69,8 @@ export class RoomSummaryCard extends LitElement {
   private image!: boolean;
   @property({ type: Boolean, reflect: true })
   private occupied!: boolean;
+  @property({ type: Boolean, reflect: true })
+  private smoke!: boolean;
   @property({ type: Boolean, reflect: true, attribute: 'icon-bg' })
   private iconBackground!: boolean;
   private _image?: string | null;
@@ -113,10 +115,11 @@ export class RoomSummaryCard extends LitElement {
       sensors,
       image,
       isActive,
-      flags: { occupied, dark, hot, humid },
+      flags: { occupied, smoke, dark, hot, humid },
     } = getRoomProperties(hass, this._config);
 
     this.occupied = occupied;
+    this.smoke = smoke;
     this.dark = dark;
     this.hot = hot;
     this.humid = humid;
@@ -210,6 +213,7 @@ export class RoomSummaryCard extends LitElement {
       this._isActive,
       this.image,
       this.occupied,
+      this.smoke,
     );
 
     const cardStyle = renderCardStyles(
@@ -217,6 +221,7 @@ export class RoomSummaryCard extends LitElement {
       this._config,
       this._roomEntity,
       this.occupied,
+      this.smoke,
       this._image,
       this._isActive,
     );

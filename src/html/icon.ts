@@ -54,6 +54,7 @@ export const renderProblemIndicator = (
  * @param {boolean} isActive - Whether the room is considered active (for styling)
  * @param {boolean} hasImage - Whether the room has a background image
  * @param {boolean} occupied - Whether the room is occupied (for occupancy styling)
+ * @param {boolean} smoke - Whether smoke is detected (takes priority over occupancy)
  * @returns {TemplateResult | typeof nothing} A Lit template containing the room icon element or nothing if state doesn't exist
  */
 export const renderRoomIcon = (
@@ -64,6 +65,7 @@ export const renderRoomIcon = (
   isActive?: boolean,
   hasImage?: boolean,
   occupied?: boolean,
+  smoke?: boolean,
 ): TemplateResult | typeof nothing => {
   const { state } = entity;
   const stickyEntitiesEnabled = config.features?.includes('sticky_entities');
@@ -83,6 +85,7 @@ export const renderRoomIcon = (
     .isActive=${isActive}
     .image=${hasImage}
     .occupied=${occupied}
+    .smoke=${smoke}
     .entity=${entity}
     .config=${config}
     .hass=${hass}

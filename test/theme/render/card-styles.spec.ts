@@ -40,6 +40,7 @@ describe('card-styles.ts', () => {
   let hasFeatureStub: sinon.SinonStub;
   let getBackgroundOpacityStub: sinon.SinonStub;
   let getOccupancyCssVarsStub: sinon.SinonStub;
+  let getSmokeCssVarsStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -63,6 +64,7 @@ describe('card-styles.ts', () => {
       occupancyModule,
       'getOccupancyCssVars',
     );
+    getSmokeCssVarsStub = sandbox.stub(occupancyModule, 'getSmokeCssVars');
 
     // Default stub behaviors
     stateActiveStub.returns(false);
@@ -74,6 +76,7 @@ describe('card-styles.ts', () => {
       '--background-opacity-card': 'var(--opacity-background-inactive)',
     });
     getOccupancyCssVarsStub.returns({});
+    getSmokeCssVarsStub.returns({});
 
     mockHass = { themes: { darkMode: false } };
     mockConfig = { area: 'test_area' };
@@ -90,6 +93,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
+        false,
         false,
         undefined,
         false,
@@ -137,6 +141,7 @@ describe('card-styles.ts', () => {
         configWithStyles,
         entity,
         false,
+        false,
         image,
         true,
       );
@@ -172,6 +177,7 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         false,
+        false,
         undefined,
         true,
       );
@@ -205,6 +211,7 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         true,
+        false,
         undefined,
         false,
       );
@@ -245,6 +252,7 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         false,
+        false,
         undefined,
         false,
       );
@@ -274,6 +282,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
+        false,
         false,
         undefined,
         undefined as any,

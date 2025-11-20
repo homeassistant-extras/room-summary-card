@@ -37,12 +37,26 @@ describe('occupancy-tab.ts', () => {
     ).returns([
       {
         name: 'occupancy',
-        label: 'editor.occupancy.occupancy_presence_detection' as any,
+        label: 'editor.alarm.occupancy_detection' as any,
         type: 'expandable',
+        icon: 'mdi:motion-sensor',
         schema: [
           {
             name: 'entities',
-            label: 'editor.occupancy.motion_occupancy_presence_sensors' as any,
+            label: 'editor.alarm.motion_occupancy_presence_sensors' as any,
+            selector: { entity: { multiple: true } },
+          },
+        ],
+      },
+      {
+        name: 'smoke',
+        label: 'editor.alarm.smoke_detection' as any,
+        type: 'expandable',
+        icon: 'mdi:smoke-detector',
+        schema: [
+          {
+            name: 'entities',
+            label: 'editor.alarm.smoke_detectors' as any,
             selector: { entity: { multiple: true } },
           },
         ],
@@ -109,7 +123,7 @@ describe('occupancy-tab.ts', () => {
     const computeLabelFn = (form as any).computeLabel;
     const testSchema = {
       name: 'occupancy',
-      label: 'editor.occupancy.occupancy_presence_detection' as any,
+      label: 'editor.alarm.occupancy_detection' as any,
       type: 'expandable',
       schema: [] as any,
     };
@@ -142,8 +156,6 @@ describe('occupancy-tab.ts', () => {
     });
 
     expect(localizeStub.called).to.be.true;
-    expect(localizeStub.firstCall.args[1]).to.equal(
-      'editor.occupancy.occupancy_info',
-    );
+    expect(localizeStub.firstCall.args[1]).to.equal('editor.alarm.alarm_info');
   });
 });
