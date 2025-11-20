@@ -29,6 +29,9 @@ export interface EntityConfig extends BaseEntityConfig {
 
   /** Features to enable or disable for the entity */
   features?: EntityFeatures[];
+
+  /** CSS properties to apply to the entity */
+  styles?: Record<string, string>;
 }
 
 /** Features to enable or disable for the entity */

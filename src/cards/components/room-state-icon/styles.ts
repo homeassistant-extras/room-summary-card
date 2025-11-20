@@ -62,6 +62,7 @@ export const styles = css`
     text-align: center;
     overflow: hidden;
     margin-top: 75%;
+    display: var(--user-entity-label-display, block);
   }
 
   .box {

@@ -10,10 +10,12 @@ Custom styles can be applied to the main areas of the card:
 
 - **`card`** - The entire card container and background
 - **`entities`** - The entity container
-- **`entity_icon`** - Individual entity icons
+- **`entity_icon`** - Individual entity icons (global styles for all entities)
 - **`title`** - The room name/title text
 - **`stats`** - The area statistics (device/entity counts)
 - **`sensors`** - The sensor display area and sensor styling
+
+**Note**: In addition to global `entity_icon` styles, you can also apply styles directly to individual entities using the `styles` property in entity configuration. Entity-level styles override global `entity_icon` styles, and threshold/state styles override entity-level styles.
 
 ## Basic Usage
 
@@ -63,7 +65,7 @@ styles:
 
 ### Entity Icon Styles
 
-Control individual entity icons:
+Control individual entity icons globally:
 
 ```yaml
 styles:
@@ -73,6 +75,29 @@ styles:
     filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))' # Add shadow
     transform: 'scale(1.2)' # Make icons larger
 ```
+
+### Per-Entity Styles
+
+Apply styles directly to individual entities for per-entity customization:
+
+```yaml
+entities:
+  - entity_id: light.living_room
+    styles:
+      '--user-entity-label-display': none # Hide label for this entity
+      opacity: 0.9
+      transform: scale(1.1)
+  - entity_id: switch.kitchen
+    styles:
+      border: '2px solid red'
+      border-radius: '50%'
+```
+
+**Style Priority:**
+
+1. Threshold/state styles (highest priority)
+2. Entity-level styles (middle priority)
+3. Global `entity_icon` styles (lowest priority)
 
 #### Hide Icon Backgrounds
 
@@ -219,11 +244,12 @@ styles:
 
 Some styles use CSS variables that can be overridden:
 
-| Variable                  | Area        | Description          |
-| ------------------------- | ----------- | -------------------- |
-| `--user-room-icon-size`   | card        | Size of room icon    |
-| `--user-entity-icon-size` | entity_icon | Size of entity icons |
-| `--user-sensor-icon-size` | sensors     | Size of sensor icons |
+| Variable                      | Area        | Description                                          |
+| ----------------------------- | ----------- | ---------------------------------------------------- |
+| `--user-room-icon-size`       | card        | Size of room icon                                    |
+| `--user-entity-icon-size`     | entity_icon | Size of entity icons                                 |
+| `--user-sensor-icon-size`     | sensors     | Size of sensor icons                                 |
+| `--user-entity-label-display` | entity_icon | Control entity label display (set to `none` to hide) |
 
 Example:
 
@@ -236,6 +262,31 @@ styles:
   entity_icon:
     '--user-entity-icon-size': 28px # Entity icon size
     '--mdc-icon-size': 28px # Individual icon size
+    '--user-entity-label-display': none # Hide all entity labels
+```
+
+### Hiding Individual Entity Labels
+
+You can hide labels for specific entities by setting the `--user-entity-label-display` CSS variable in the entity's styles:
+
+```yaml
+entities:
+  - entity_id: light.living_room
+    styles:
+      '--user-entity-label-display': none # Hide label for this specific entity
+  - entity_id: switch.kitchen
+    # This entity will still show its label
+```
+
+You can also hide labels conditionally based on state or threshold:
+
+```yaml
+entities:
+  - entity_id: sensor.temperature
+    thresholds:
+      - threshold: 75
+        styles:
+          '--user-entity-label-display': none # Hide label when temperature >= 75
 ```
 
 ## Home Assistant Variables

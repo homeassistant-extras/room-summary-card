@@ -184,6 +184,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
 
     const iconStyles = {
       ...this._config?.styles?.entity_icon,
+      ...this.entity.config.styles,
       ...thresholdResult?.styles,
     };
 

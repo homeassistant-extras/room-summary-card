@@ -18,6 +18,8 @@ entities:
     icon: mdi:lamp
     on_color: yellow
     off_color: grey
+    styles:
+      '--user-entity-label-display': none # Hide label for this entity
     tap_action:
       action: toggle
   - entity_id: switch.living_room_tv
@@ -38,6 +40,7 @@ entities:
 | off_color         | string | theme off color         | Color when entity is inactive                                                                         |
 | thresholds        | array  | none                    | Dynamic colors/icons based on sensor values                                                           |
 | states            | array  | none                    | Colors/icons based on exact entity states                                                             |
+| styles            | object | none                    | Custom CSS styles to apply to the entity                                                              |
 | features          | array  | none                    | Feature flags for this entity                                                                         |
 | tap_action        | object | `{action: "toggle"}`    | Action on single tap                                                                                  |
 | hold_action       | object | `{action: "more-info"}` | Action on hold                                                                                        |

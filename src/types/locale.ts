@@ -35,6 +35,7 @@ export type TranslationKey =
   | 'editor.entity.entity_on_color'
   | 'editor.entity.entity_off_color'
   | 'editor.entity.use_entity_icon'
+  | 'editor.entity.styles'
   | 'editor.entity.states'
   | 'editor.entity.add_state'
   | 'editor.entity.thresholds'

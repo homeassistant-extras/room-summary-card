@@ -151,6 +151,21 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
             },
           ],
         },
+        {
+          name: 'styles',
+          label: 'editor.styles.css_styles',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:brush-variant',
+          schema: [
+            {
+              name: 'styles',
+              label: 'editor.entity.styles',
+              required: false,
+              selector: { object: {} },
+            },
+          ],
+        },
       ];
     },
   );
