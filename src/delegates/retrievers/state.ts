@@ -21,7 +21,12 @@ export const getState = memoizeOne(
     const state =
       states[entityId] ??
       (fakeState
-        ? { entity_id: entityId, state: 'off', attributes: {} }
+        ? {
+            entity_id: entityId,
+            state: 'off',
+            // Set friendly_name to an empty string so the label is blank
+            attributes: { friendly_name: '' },
+          }
         : undefined);
 
     if (!state) return undefined;

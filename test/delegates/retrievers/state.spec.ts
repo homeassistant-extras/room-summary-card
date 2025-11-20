@@ -69,6 +69,7 @@ describe('state.ts', () => {
       const state = getState(mockHass.states, 'light.fake', true);
       expect(state).to.exist;
       expect(state?.entity_id).to.equal('light.fake');
+      expect(state?.attributes.friendly_name).to.equal('');
     });
 
     it('should return state with domain functions', () => {

@@ -154,7 +154,9 @@ describe('room-entity.ts', () => {
       'light.non_existent_room_light',
     );
     // Verify it's a fake state by checking if attributes is undefined
-    expect(roomEntity.state?.attributes).to.deep.equal({});
+    expect(roomEntity.state?.attributes).to.deep.equal({
+      friendly_name: '',
+    });
   });
 
   it('should preserve custom entity config with defaults', () => {

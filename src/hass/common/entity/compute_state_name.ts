@@ -5,6 +5,10 @@
 import type { HassEntity } from '@hass/ws/types';
 import { computeObjectId } from './compute_object_id';
 
+/**
+ * The attributes.friendly_name === undefined check is integral since we set
+ * the friendly_name to an empty string for fake states so the label is blank.
+ */
 export const computeStateNameFromEntityAttributes = (
   entityId: string,
   attributes: Record<string, any>,
