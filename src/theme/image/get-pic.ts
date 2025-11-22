@@ -8,6 +8,32 @@ import type { HomeAssistant } from '@hass/types';
 import type { Config } from '@type/config';
 
 /**
+ * Resolves a media source content ID or returns it as-is
+ */
+const resolveMediaContentId = async (
+  hass: HomeAssistant,
+  mediaContentId: string,
+): Promise<string> => {
+  if (isMediaSourceContentId(mediaContentId)) {
+    return await resolveMediaSource(hass, mediaContentId);
+  }
+  return mediaContentId;
+};
+
+/**
+ * Handles image configuration that can be a string or object
+ */
+const handleImageConfig = async (
+  hass: HomeAssistant,
+  image: string | { media_content_id: string },
+): Promise<string> => {
+  if (typeof image === 'string') {
+    return await resolveMediaContentId(hass, image);
+  }
+  return await resolveMediaContentId(hass, image.media_content_id);
+};
+
+/**
  * Determines the background image URL from various sources
  * Supports both string URLs and media source objects
  */
@@ -28,28 +54,7 @@ export const getBackgroundImageUrl = async (
 
   // Check config image
   if (config.background?.image) {
-    const image = config.background.image;
-
-    // Handle object format (media source)
-    if (typeof image === 'object' && image.media_content_id) {
-      const mediaContentId = image.media_content_id;
-      // If it's a media source, resolve it via WebSocket
-      if (isMediaSourceContentId(mediaContentId)) {
-        return await resolveMediaSource(hass, mediaContentId);
-      }
-      // Otherwise, return the media_content_id as-is (backwards compatibility)
-      return mediaContentId;
-    }
-
-    // Handle string format
-    if (typeof image === 'string') {
-      // If it's a media source string, resolve it via WebSocket
-      if (isMediaSourceContentId(image)) {
-        return await resolveMediaSource(hass, image);
-      }
-      // Otherwise, return the string as-is (backwards compatibility)
-      return image;
-    }
+    return await handleImageConfig(hass, config.background.image);
   }
 
   // Fallback to area picture

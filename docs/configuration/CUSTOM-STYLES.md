@@ -49,6 +49,34 @@ styles:
     box-shadow: '0 4px 8px rgba(0,0,0,0.2)'
 ```
 
+#### Customizing Card Background Image Overlay
+
+When using card background images, you can customize or remove the default gradient overlay using the same `--user-background-image-overlay` variable:
+
+**Remove the gradient overlay:**
+
+```yaml
+styles:
+  card:
+    '--user-background-image-overlay': none
+```
+
+**Use a custom gradient:**
+
+```yaml
+styles:
+  card:
+    '--user-background-image-overlay': 'linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.2), transparent)'
+```
+
+**Use a solid color overlay:**
+
+```yaml
+styles:
+  card:
+    '--user-background-image-overlay': 'rgba(0, 0, 0, 0.3)'
+```
+
 ### Entity Styles
 
 Control the entity container:
@@ -74,6 +102,34 @@ styles:
     opacity: 0.8 # Icon opacity
     filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))' # Add shadow
     transform: 'scale(1.2)' # Make icons larger
+```
+
+#### Customizing Icon Background Image Overlay
+
+When using icon backgrounds with images, you can customize or remove the default gradient overlay:
+
+**Remove the gradient overlay:**
+
+```yaml
+styles:
+  card:
+    '--user-background-image-overlay': none
+```
+
+**Use a custom gradient:**
+
+```yaml
+styles:
+  card:
+    '--user-background-image-overlay': 'linear-gradient(to bottom, rgba(255,0,0,0.3), rgba(0,0,255,0.1), transparent)'
+```
+
+**Use a solid color overlay:**
+
+```yaml
+styles:
+  card:
+    '--user-background-image-overlay': 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))'
 ```
 
 ### Per-Entity Styles
@@ -244,12 +300,13 @@ styles:
 
 Some styles use CSS variables that can be overridden:
 
-| Variable                      | Area        | Description                                          |
-| ----------------------------- | ----------- | ---------------------------------------------------- |
-| `--user-room-icon-size`       | card        | Size of room icon                                    |
-| `--user-entity-icon-size`     | entity_icon | Size of entity icons                                 |
-| `--user-sensor-icon-size`     | sensors     | Size of sensor icons                                 |
-| `--user-entity-label-display` | entity_icon | Control entity label display (set to `none` to hide) |
+| Variable                          | Area              | Description                                                                    |
+| --------------------------------- | ----------------- | ------------------------------------------------------------------------------ |
+| `--user-room-icon-size`           | card              | Size of room icon                                                              |
+| `--user-entity-icon-size`         | entity_icon       | Size of entity icons                                                           |
+| `--user-sensor-icon-size`         | sensors           | Size of sensor icons                                                           |
+| `--user-entity-label-display`     | entity_icon       | Control entity label display (set to `none` to hide)                           |
+| `--user-background-image-overlay` | card, entity_icon | Overlay gradient for card and icon background images (set to `none` to remove) |
 
 Example:
 

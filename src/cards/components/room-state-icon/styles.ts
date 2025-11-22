@@ -8,6 +8,17 @@ export const styles = css`
     width: var(--user-entity-icon-size, 100%);
   }
 
+  :host([image][icon-bg]) {
+    --user-background-image-overlay: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.4),
+      rgba(0, 0, 0, 0.3),
+      rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0)
+    );
+  }
+
   /* Icon container styling */
   .icon {
     cursor: pointer;
@@ -33,15 +44,7 @@ export const styles = css`
   /* Icon background image styling */
   :host([image][icon-bg]) .icon::before {
     background-image:
-      linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.4),
-        rgba(0, 0, 0, 0.3),
-        rgba(0, 0, 0, 0.1),
-        rgba(0, 0, 0, 0),
-        rgba(0, 0, 0, 0)
-      ),
-      var(--background-image);
+      var(--user-background-image-overlay), var(--background-image);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;

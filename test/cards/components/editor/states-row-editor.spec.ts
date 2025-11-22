@@ -1,6 +1,6 @@
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
-import type { StateConfig } from '@type/config/entity';
+import type { StateConfig, ThresholdConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -420,6 +420,220 @@ describe('states-row-editor.ts', () => {
       expect(element['_expandedStates'].has(0)).to.be.true;
       expect(element['_expandedStates'].has(1)).to.be.true;
       expect(element['_expandedStates'].has(2)).to.be.false;
+    });
+  });
+
+  describe('_adjustExpandedIndicesAfterRemoval', () => {
+    it('should remove the deleted index from expanded states', () => {
+      element['_expandedStates'] = new Set([0, 1, 2]);
+      const result = element['_adjustExpandedIndicesAfterRemoval'](1);
+      // Removing index 1:
+      // Index 0 stays 0
+      // Index 1 is removed
+      // Index 2 becomes 1
+      expect(result.has(0)).to.be.true; // Unchanged
+      expect(result.has(1)).to.be.true; // Was index 2, adjusted to 1
+      expect(result.has(2)).to.be.false; // Was removed/adjusted
+      expect(result.size).to.equal(2);
+    });
+
+    it('should decrement indices greater than removed index', () => {
+      element['_expandedStates'] = new Set([0, 2, 3]);
+      const result = element['_adjustExpandedIndicesAfterRemoval'](1);
+      // Removing index 1:
+      // Index 0 stays 0
+      // Index 2 becomes 1
+      // Index 3 becomes 2
+      expect(result.has(0)).to.be.true; // Before removed index, unchanged
+      expect(result.has(1)).to.be.true; // Was index 2
+      expect(result.has(2)).to.be.true; // Was index 3
+      expect(result.size).to.equal(3);
+    });
+
+    it('should keep indices less than removed index unchanged', () => {
+      element['_expandedStates'] = new Set([0, 1]);
+      const result = element['_adjustExpandedIndicesAfterRemoval'](2);
+      expect(result.has(0)).to.be.true;
+      expect(result.has(1)).to.be.true;
+    });
+
+    it('should handle empty expanded states', () => {
+      element['_expandedStates'] = new Set();
+      const result = element['_adjustExpandedIndicesAfterRemoval'](0);
+      expect(result.size).to.equal(0);
+    });
+
+    it('should handle removing first index', () => {
+      element['_expandedStates'] = new Set([0, 1, 2]);
+      const result = element['_adjustExpandedIndicesAfterRemoval'](0);
+      // Removing index 0:
+      // Index 1 becomes 0
+      // Index 2 becomes 1
+      expect(result.has(0)).to.be.true; // Was index 1
+      expect(result.has(1)).to.be.true; // Was index 2
+      expect(result.size).to.equal(2);
+    });
+
+    it('should handle removing last index', () => {
+      element['_expandedStates'] = new Set([0, 1, 2]);
+      const result = element['_adjustExpandedIndicesAfterRemoval'](2);
+      expect(result.has(0)).to.be.true;
+      expect(result.has(1)).to.be.true;
+      expect(result.has(2)).to.be.false; // Removed
+    });
+  });
+
+  describe('_removeStateItem', () => {
+    beforeEach(() => {
+      element.mode = 'states';
+    });
+
+    it('should remove state at specified index', () => {
+      element.states = [...mockStateConfigs];
+      element['_removeStateItem'](0);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      expect(fireEventStub.firstCall.args[1]).to.equal('states-value-changed');
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.have.lengthOf(1);
+      expect(newStates[0]).to.deep.equal(mockStateConfigs[1]);
+    });
+
+    it('should adjust expanded states after removal', () => {
+      element.states = [
+        ...mockStateConfigs,
+        { state: 'standby', icon_color: '#888888' },
+      ];
+      element['_expandedStates'] = new Set([0, 2]);
+      element['_removeStateItem'](1);
+
+      // Index 0 should remain, index 2 should become index 1
+      expect(element['_expandedStates'].has(0)).to.be.true;
+      expect(element['_expandedStates'].has(1)).to.be.true;
+      expect(element['_expandedStates'].has(2)).to.be.false;
+    });
+
+    it('should send empty array when removing last state', () => {
+      element.states = [{ state: 'on', icon_color: '#ff0000' }];
+      element['_removeStateItem'](0);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.be.an('array');
+      expect(newStates.length).to.equal(0);
+    });
+
+    it('should handle undefined states array', () => {
+      element.states = undefined;
+      element['_removeStateItem'](0);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newStates = fireEventStub.firstCall.args[2].value;
+      expect(newStates).to.be.an('array');
+      expect(newStates.length).to.equal(0);
+    });
+
+    it('should remove expanded state index when removing state', () => {
+      element.states = [...mockStateConfigs];
+      element['_expandedStates'] = new Set([0, 1]);
+      element['_removeStateItem'](0);
+
+      // After removing index 0, the state at index 1 moves to index 0
+      expect(element['_expandedStates'].has(0)).to.be.true; // Was index 1
+      expect(element['_expandedStates'].has(1)).to.be.false;
+    });
+  });
+
+  describe('_removeThresholdItem', () => {
+    beforeEach(() => {
+      element.mode = 'thresholds';
+      mockHass.localize = (key: string) => {
+        const translations: Record<string, string> = {
+          'editor.entity.thresholds': 'Thresholds',
+          'editor.entity.add_threshold': 'Add Threshold',
+          'editor.entity.threshold.threshold': 'Threshold',
+          'editor.entity.threshold.icon_color': 'Icon Color',
+          'editor.entity.threshold.icon': 'Icon',
+          'editor.entity.threshold.label': 'Label',
+          'editor.entity.threshold.attribute': 'Attribute',
+          'editor.entity.threshold.styles': 'Styles',
+          'editor.entity.entity_label': 'Entity Label',
+          'ui.panel.lovelace.editor.card.config.optional': 'optional',
+          'ui.panel.lovelace.editor.card.config.required': 'required',
+          'ui.components.entity.entity-picker.clear': 'Clear',
+        };
+        return translations[key] || key;
+      };
+    });
+
+    const mockThresholdConfigs = [
+      {
+        threshold: 20,
+        icon_color: '#ff0000',
+        label: 'Low Threshold',
+      },
+      {
+        threshold: 80,
+        icon_color: '#0000ff',
+        operator: 'gte' as const,
+      },
+    ];
+
+    it('should remove threshold at specified index', () => {
+      element.thresholds = [...mockThresholdConfigs];
+      element['_removeThresholdItem'](0);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      expect(fireEventStub.firstCall.args[1]).to.equal(
+        'thresholds-value-changed',
+      );
+      const newThresholds = fireEventStub.firstCall.args[2].value;
+      expect(newThresholds).to.have.lengthOf(1);
+      expect(newThresholds[0]).to.deep.equal(mockThresholdConfigs[1]);
+    });
+
+    it('should adjust expanded states after removal', () => {
+      element.thresholds = [
+        ...mockThresholdConfigs,
+        { threshold: 50, icon_color: '#888888' },
+      ];
+      element['_expandedStates'] = new Set([0, 2]);
+      element['_removeThresholdItem'](1);
+
+      // Index 0 should remain, index 2 should become index 1
+      expect(element['_expandedStates'].has(0)).to.be.true;
+      expect(element['_expandedStates'].has(1)).to.be.true;
+      expect(element['_expandedStates'].has(2)).to.be.false;
+    });
+
+    it('should send empty array when removing last threshold', () => {
+      element.thresholds = [{ threshold: 20, icon_color: '#ff0000' }];
+      element['_removeThresholdItem'](0);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newThresholds = fireEventStub.firstCall.args[2].value;
+      expect(newThresholds).to.be.an('array');
+      expect(newThresholds.length).to.equal(0);
+    });
+
+    it('should handle undefined thresholds array', () => {
+      element.thresholds = undefined;
+      element['_removeThresholdItem'](0);
+
+      expect(fireEventStub.calledOnce).to.be.true;
+      const newThresholds = fireEventStub.firstCall.args[2].value;
+      expect(newThresholds).to.be.an('array');
+      expect(newThresholds.length).to.equal(0);
+    });
+
+    it('should remove expanded state index when removing threshold', () => {
+      element.thresholds = [...mockThresholdConfigs];
+      element['_expandedStates'] = new Set([0, 1]);
+      element['_removeThresholdItem'](0);
+
+      // After removing index 0, the threshold at index 1 moves to index 0
+      expect(element['_expandedStates'].has(0)).to.be.true; // Was index 1
+      expect(element['_expandedStates'].has(1)).to.be.false;
     });
   });
 

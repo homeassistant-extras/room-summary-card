@@ -232,45 +232,58 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     }
   }
 
+  /**
+   * Adjusts expanded state indices after removing an item at the specified index.
+   * Indices greater than the removed index are decremented by 1.
+   */
+  private _adjustExpandedIndicesAfterRemoval(
+    removedIndex: number,
+  ): Set<number> {
+    const newExpanded = new Set(this._expandedStates);
+    newExpanded.delete(removedIndex);
+
+    const adjustedExpanded = new Set<number>();
+    for (const idx of newExpanded) {
+      if (idx > removedIndex) {
+        adjustedExpanded.add(idx - 1);
+      } else {
+        adjustedExpanded.add(idx);
+      }
+    }
+    return adjustedExpanded;
+  }
+
+  /**
+   * Removes a state item at the specified index and fires the appropriate event.
+   */
+  private _removeStateItem(index: number): void {
+    const newStates = (this.states || []).concat();
+    newStates.splice(index, 1);
+    this._expandedStates = this._adjustExpandedIndicesAfterRemoval(index);
+    // Always ensure we send an array, even if empty
+    fireEvent(this, 'states-value-changed', {
+      value: newStates.length > 0 ? newStates : [],
+    });
+  }
+
+  /**
+   * Removes a threshold item at the specified index and fires the appropriate event.
+   */
+  private _removeThresholdItem(index: number): void {
+    const newThresholds = (this.thresholds || []).concat();
+    newThresholds.splice(index, 1);
+    this._expandedStates = this._adjustExpandedIndicesAfterRemoval(index);
+    // Always ensure we send an array, even if empty
+    fireEvent(this, 'thresholds-value-changed', {
+      value: newThresholds.length > 0 ? newThresholds : [],
+    });
+  }
+
   private _removeItem(index: number): void {
     if (this.mode === 'states') {
-      const newStates = (this.states || []).concat();
-      newStates.splice(index, 1);
-      const newExpanded = new Set(this._expandedStates);
-      newExpanded.delete(index);
-      // Adjust expanded indices after removal
-      const adjustedExpanded = new Set<number>();
-      for (const idx of newExpanded) {
-        if (idx > index) {
-          adjustedExpanded.add(idx - 1);
-        } else {
-          adjustedExpanded.add(idx);
-        }
-      }
-      this._expandedStates = adjustedExpanded;
-      // Always ensure we send an array, even if empty
-      fireEvent(this, 'states-value-changed', {
-        value: newStates.length > 0 ? newStates : [],
-      });
+      this._removeStateItem(index);
     } else {
-      const newThresholds = (this.thresholds || []).concat();
-      newThresholds.splice(index, 1);
-      const newExpanded = new Set(this._expandedStates);
-      newExpanded.delete(index);
-      // Adjust expanded indices after removal
-      const adjustedExpanded = new Set<number>();
-      for (const idx of newExpanded) {
-        if (idx > index) {
-          adjustedExpanded.add(idx - 1);
-        } else {
-          adjustedExpanded.add(idx);
-        }
-      }
-      this._expandedStates = adjustedExpanded;
-      // Always ensure we send an array, even if empty
-      fireEvent(this, 'thresholds-value-changed', {
-        value: newThresholds.length > 0 ? newThresholds : [],
-      });
+      this._removeThresholdItem(index);
     }
   }
 

@@ -65,6 +65,17 @@ const haCardThemeStyles = css`
     --text-opacity-theme: 0.8;
     --opacity-icon-fill-inactive: 0.2;
   }
+
+  :host([image]) {
+    --user-background-image-overlay: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.8),
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0.3),
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0)
+    );
+  }
 `;
 
 /**
@@ -80,15 +91,7 @@ const cardContainerStyles = css`
 
   :host([image]) ha-card::before {
     background-image:
-      linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.8),
-        rgba(0, 0, 0, 0.7),
-        rgba(0, 0, 0, 0.3),
-        rgba(0, 0, 0, 0),
-        rgba(0, 0, 0, 0)
-      ),
-      var(--background-image);
+      var(--user-background-image-overlay), var(--background-image);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;

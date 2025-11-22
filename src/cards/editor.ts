@@ -7,12 +7,12 @@ import { renderTabBar } from '@/html/editor/tab-bar';
 import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import { areaEntities, deviceClasses } from '@editor/editor-schema';
 import { cleanAndFireConfigChanged } from '@editor/utils/fire-config-changed';
+import { handleSubElementChanged } from '@editor/utils/handle-sub-element-changed';
 import { updateScrollIndicators } from '@editor/utils/update-scroll-indicators';
 import type { HASSDomEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { Task } from '@lit/task';
 import type { Config } from '@type/config';
-import type { EntityConfig } from '@type/config/entity';
 import { CSSResult, html, LitElement, nothing } from 'lit';
 import { state } from 'lit/decorators.js';
 import type { Ref } from 'lit/directives/ref.js';
@@ -318,68 +318,24 @@ export class RoomSummaryCardEditor extends LitElement {
     }
 
     const value = ev.detail.config;
-    const { field, index, type } = this._subElementEditorConfig;
+    const result = handleSubElementChanged(
+      this._config,
+      value,
+      this._subElementEditorConfig,
+      this._currentTab,
+    );
 
-    // Handle single entity field (from tab 0)
-    if (field === 'entities' && this._currentTab === 0) {
-      if (!value) {
-        this._config = { ...this._config, entity: undefined };
-        this._goBack();
-      } else {
-        // If value is a string, keep as string, otherwise use EntityConfig
-        this._config = {
-          ...this._config,
-          entity: typeof value === 'string' ? value : (value as EntityConfig),
-        };
-      }
-    } else if (field === 'entities' && this._currentTab === 1) {
-      // Handle entities array (from tab 1)
-      const newConfigEntities = (this._config.entities || []).concat();
-      if (!value) {
-        newConfigEntities.splice(index!, 1);
-        this._goBack();
-      } else {
-        // If value is a string, convert to EntityConfig
-        if (typeof value === 'string') {
-          newConfigEntities[index!] = value;
-        } else {
-          newConfigEntities[index!] = value as EntityConfig;
-        }
-      }
-      this._config = { ...this._config, entities: newConfigEntities };
-    } else if (field === 'entities' && this._currentTab === 3) {
-      // Handle sensors array (from tab 3)
-      const newConfigSensors = (this._config.sensors || []).concat();
-      if (!value) {
-        newConfigSensors.splice(index!, 1);
-        this._goBack();
-      } else {
-        // If value is a string, keep as string, otherwise use SensorConfig
-        if (typeof value === 'string') {
-          newConfigSensors[index!] = value;
-        } else {
-          newConfigSensors[index!] = value as EntityConfig;
-        }
-      }
-      this._config = { ...this._config, sensors: newConfigSensors };
-    } else if (field === 'lights') {
-      const newConfigLights = (this._config.lights || []).concat();
-      if (!value) {
-        newConfigLights.splice(index!, 1);
-        this._goBack();
-      } else {
-        // Lights are always strings
-        const entityId =
-          typeof value === 'string' ? value : (value as EntityConfig).entity_id;
-        newConfigLights[index!] = entityId;
-      }
-      this._config = { ...this._config, lights: newConfigLights };
-    }
+    this._config = result.config;
 
+    // Update sub-element editor config with the new value
     this._subElementEditorConfig = {
       ...this._subElementEditorConfig,
       elementConfig: value,
     };
+
+    if (result.shouldGoBack) {
+      this._goBack();
+    }
 
     ev.detail.value = this._config;
     cleanAndFireConfigChanged(this, this._config);

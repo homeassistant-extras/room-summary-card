@@ -15,7 +15,6 @@ export type TranslationKey =
   | 'editor.background.multi_light_background'
   | 'editor.background.multi_light_background_info'
   | 'editor.background.light_entities'
-  | 'editor.layout.bottom'
   | 'editor.card.card_border_color_occupied'
   | 'editor.card.card_border_color_smoke'
   | 'editor.card.disable_card_border'
