@@ -134,6 +134,7 @@ describe('get-sensors.ts', () => {
       'problemSensors',
       'mold',
       'lightEntities',
+      'thresholdSensors'
     ]);
     expect(result.individual).to.be.an('array');
     expect(result.averaged).to.equal(mockAveraged);

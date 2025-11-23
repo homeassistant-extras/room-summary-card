@@ -88,6 +88,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        thresholdSensors: [],
       };
 
       const result = info(
@@ -117,6 +118,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        thresholdSensors: [],
       };
 
       const result = info(
@@ -143,6 +145,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        thresholdSensors: [],
       };
 
       info(
@@ -165,6 +168,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        thresholdSensors: [],
       };
 
       const result = info(
@@ -193,6 +197,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        thresholdSensors: [],
       };
 
       const result = info(
@@ -217,6 +222,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        thresholdSensors: [],
       };
 
       const result = info(
@@ -241,6 +247,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        thresholdSensors: [],
       };
 
       const result = info(

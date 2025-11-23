@@ -40,18 +40,18 @@ export interface Config {
 
   /** Visual style of the slider control */
   slider_style?:
-    | 'track'
-    | 'minimalist'
-    | 'line'
-    | 'filled'
-    | 'gradient'
-    | 'dual-rail'
-    | 'dots'
-    | 'notched'
-    | 'grid'
-    | 'glow'
-    | 'shadow-trail'
-    | 'outlined';
+  | 'track'
+  | 'minimalist'
+  | 'line'
+  | 'filled'
+  | 'gradient'
+  | 'dual-rail'
+  | 'dots'
+  | 'notched'
+  | 'grid'
+  | 'glow'
+  | 'shadow-trail'
+  | 'outlined';
 
   /** Occupancy detection configuration */
   occupancy?: AlarmConfig;
@@ -61,11 +61,11 @@ export interface Config {
 
   /** Custom thresholds for temperature and humidity */
   thresholds?: {
-    /** Temperature threshold value */
-    temperature?: number;
+    /** Temperature threshold value or entity ID */
+    temperature?: number | string;
 
-    /** Humidity threshold value */
-    humidity?: number;
+    /** Humidity threshold value or entity ID */
+    humidity?: number | string;
 
     /** Mold threshold value (percentage) */
     mold?: number;
@@ -86,12 +86,12 @@ export interface Config {
   background?: {
     /** URL of the background image or media source object */
     image?:
-      | string
-      | {
-          media_content_id: string;
-          media_content_type?: string;
-          metadata?: Record<string, any>;
-        };
+    | string
+    | {
+      media_content_id: string;
+      media_content_type?: string;
+      metadata?: Record<string, any>;
+    };
 
     /** Entity ID for dynamic background images */
     image_entity?: string;
