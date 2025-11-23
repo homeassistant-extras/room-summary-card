@@ -253,6 +253,30 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     `;
   }
 
+  /**
+   * Removes empty string properties from a config object
+   */
+  private _cleanEmptyStrings(obj: any): any {
+    if (!obj || typeof obj !== 'object') return obj;
+    const cleaned: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      // Skip empty strings
+      if (value === '') continue;
+      // Recursively clean nested objects
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const cleanedValue = this._cleanEmptyStrings(value);
+        if (Object.keys(cleanedValue).length > 0) {
+          cleaned[key] = cleanedValue;
+        }
+      } else if (Array.isArray(value)) {
+        cleaned[key] = value.map((item) => this._cleanEmptyStrings(item));
+      } else {
+        cleaned[key] = value;
+      }
+    }
+    return cleaned;
+  }
+
   private _statesValueChanged(ev: CustomEvent): void {
     if (!this._config) return;
     const statesValue = ev.detail.value;
@@ -263,14 +287,19 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       return;
     }
 
+    // Clean empty strings from each state config
+    const cleanedStates = statesValue.map((state) =>
+      this._cleanEmptyStrings(state),
+    );
+
     const newConfig = {
       ...this._config,
       // Only set states if array has items, otherwise remove the property
-      ...(statesValue.length > 0 ? { states: statesValue } : {}),
+      ...(cleanedStates.length > 0 ? { states: cleanedStates } : {}),
     };
 
     // If states array is empty, ensure we remove the property
-    if (statesValue.length === 0 && 'states' in newConfig) {
+    if (cleanedStates.length === 0 && 'states' in newConfig) {
       delete newConfig.states;
     }
 
@@ -288,14 +317,21 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       return;
     }
 
+    // Clean empty strings from each threshold config
+    const cleanedThresholds = thresholdsValue.map((threshold) =>
+      this._cleanEmptyStrings(threshold),
+    );
+
     const newConfig = {
       ...this._config,
       // Only set thresholds if array has items, otherwise remove the property
-      ...(thresholdsValue.length > 0 ? { thresholds: thresholdsValue } : {}),
+      ...(cleanedThresholds.length > 0
+        ? { thresholds: cleanedThresholds }
+        : {}),
     };
 
     // If thresholds array is empty, ensure we remove the property
-    if (thresholdsValue.length === 0 && 'thresholds' in newConfig) {
+    if (cleanedThresholds.length === 0 && 'thresholds' in newConfig) {
       delete newConfig.thresholds;
     }
 

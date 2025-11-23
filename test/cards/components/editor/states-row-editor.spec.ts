@@ -363,7 +363,6 @@ describe('states-row-editor.ts', () => {
       expect(newStates).to.have.lengthOf(1);
       expect(newStates[0]).to.deep.equal({
         state: '',
-        icon_color: '',
       });
     });
 
@@ -378,7 +377,6 @@ describe('states-row-editor.ts', () => {
       expect(newStates).to.have.lengthOf(3);
       expect(newStates[2]).to.deep.equal({
         state: '',
-        icon_color: '',
       });
       // Original states should be preserved
       expect(newStates[0]).to.deep.equal(mockStateConfigs[0]);
@@ -396,7 +394,6 @@ describe('states-row-editor.ts', () => {
       expect(newStates).to.have.lengthOf(1);
       expect(newStates[0]).to.deep.equal({
         state: '',
-        icon_color: '',
       });
     });
 
@@ -1071,7 +1068,7 @@ describe('states-row-editor.ts', () => {
         state: 'off',
         icon_color: '#000000',
       });
-      expect(newStates[1]).to.deep.equal({ state: '', icon_color: '' });
+      expect(newStates[1]).to.deep.equal({ state: '' });
     });
   });
 

@@ -235,17 +235,7 @@ export class RoomSummaryCardEditor extends LitElement {
    * @param {Config} config - The card configuration
    */
   setConfig(config: Config) {
-    this._config = {
-      ...config,
-      occupancy: {
-        ...config.occupancy,
-        entities: config.occupancy?.entities ?? [],
-      },
-      smoke: {
-        ...config.smoke,
-        entities: config.smoke?.entities ?? [],
-      },
-    };
+    this._config = { ...config };
   }
 
   private _valueChanged(ev: CustomEvent) {

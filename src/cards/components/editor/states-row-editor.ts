@@ -230,19 +230,17 @@ export class RoomSummaryStatesRowEditor extends LitElement {
 
   private _addItem(): void {
     if (this.mode === 'states') {
-      const newState: StateConfig = {
+      const newState = {
         state: '',
-        icon_color: '',
-      };
+      } as any as StateConfig;
       const newStates = [...(this.states || []), newState];
       const newIndex = newStates.length - 1;
       this._expandedStates = new Set([...this._expandedStates, newIndex]);
       fireEvent(this, 'states-value-changed', { value: newStates });
     } else {
-      const newThreshold: ThresholdConfig = {
+      const newThreshold = {
         threshold: 0,
-        icon_color: '',
-      };
+      } as any as ThresholdConfig;
       const newThresholds = [...(this.thresholds || []), newThreshold];
       const newIndex = newThresholds.length - 1;
       this._expandedStates = new Set([...this._expandedStates, newIndex]);
@@ -305,22 +303,50 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     }
   }
 
+  /**
+   * Removes empty string properties from a config object
+   */
+  private _cleanEmptyStrings(obj: any): any {
+    if (!obj || typeof obj !== 'object') return obj;
+    const cleaned: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      // Skip empty strings
+      if (value === '') continue;
+      // Recursively clean nested objects
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const cleanedValue = this._cleanEmptyStrings(value);
+        if (Object.keys(cleanedValue).length > 0) {
+          cleaned[key] = cleanedValue;
+        }
+      } else if (Array.isArray(value)) {
+        cleaned[key] = value.map((item) => this._cleanEmptyStrings(item));
+      } else {
+        cleaned[key] = value;
+      }
+    }
+    return cleaned;
+  }
+
   private _itemValueChanged(index: number, ev: CustomEvent): void {
     if (this.mode === 'states') {
       const newStates = (this.states || []).concat();
       const updatedState = ev.detail.value;
-      // Ensure we have valid state and icon_color before updating
+      // Ensure we have valid state before updating
       if (updatedState && typeof updatedState === 'object') {
-        newStates[index] = updatedState;
+        // Clean empty strings from the state config
+        const cleanedState = this._cleanEmptyStrings(updatedState);
+        newStates[index] = cleanedState;
       }
       // Always ensure we send an array
       fireEvent(this, 'states-value-changed', { value: newStates });
     } else {
       const newThresholds = (this.thresholds || []).concat();
       const updatedThreshold = ev.detail.value;
-      // Ensure we have valid threshold and icon_color before updating
+      // Ensure we have valid threshold before updating
       if (updatedThreshold && typeof updatedThreshold === 'object') {
-        newThresholds[index] = updatedThreshold;
+        // Clean empty strings from the threshold config
+        const cleanedThreshold = this._cleanEmptyStrings(updatedThreshold);
+        newThresholds[index] = cleanedThreshold;
       }
       // Always ensure we send an array
       fireEvent(this, 'thresholds-value-changed', { value: newThresholds });

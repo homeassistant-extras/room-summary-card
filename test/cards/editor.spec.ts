@@ -120,12 +120,6 @@ describe('editor.ts', () => {
       expect(card.hass).to.exist;
       expect(card['_config']).to.deep.equal({
         area: 'living_room',
-        occupancy: {
-          entities: [],
-        },
-        smoke: {
-          entities: [],
-        },
       });
     });
 
@@ -144,15 +138,22 @@ describe('editor.ts', () => {
       };
 
       card.setConfig(testConfig);
-      expect(card['_config']).to.deep.equal({
-        ...testConfig,
+      expect(card['_config']).to.deep.equal(testConfig);
+    });
+
+    it('should preserve existing occupancy and smoke configs', () => {
+      const testConfig: Config = {
+        area: 'area_1',
         occupancy: {
-          entities: [],
+          entities: ['binary_sensor.motion'],
         },
         smoke: {
-          entities: [],
+          entities: ['binary_sensor.smoke'],
         },
-      });
+      };
+
+      card.setConfig(testConfig);
+      expect(card['_config']).to.deep.equal(testConfig);
     });
   });
 
@@ -574,7 +575,7 @@ describe('editor.ts', () => {
 
       card['_sensorsRowChanged'](event);
 
-      expect(card['_config'].sensors).to.deep.equal([]);
+      expect(card['_config'].sensors).to.be.undefined;
       expect(dispatchStub.calledOnce).to.be.true;
     });
 

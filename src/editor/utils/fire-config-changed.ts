@@ -29,10 +29,17 @@ export function cleanAndFireConfigChanged(
   cleanEmptyArrays(config, 'problem_entities');
   cleanEmptyArrays(config, 'sensor_classes');
 
+  // Clean empty strings from entity configs
+  cleanEmptyProps(config, 'entity');
+  cleanEmptyProps(config, 'entities');
+  cleanEmptyProps(config, 'lights');
+  cleanEmptyProps(config, 'sensors');
+
   // Clean nested objects
   cleanEmptyProps(config, 'background');
   cleanEmptyProps(config, 'thresholds');
   cleanEmptyProps(config, 'occupancy');
+  cleanEmptyProps(config, 'smoke');
 
   // @ts-ignore
   fireEvent(element, 'config-changed', { config });
