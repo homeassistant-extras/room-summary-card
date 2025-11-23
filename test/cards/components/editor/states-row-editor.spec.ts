@@ -1,6 +1,6 @@
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
-import type { StateConfig, ThresholdConfig } from '@type/config/entity';
+import type { StateConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -113,7 +113,12 @@ describe('states-row-editor.ts', () => {
   describe('_getStateSchema', () => {
     it('should create schema with correct structure', () => {
       element.entityId = 'light.living_room';
-      const schema = element['_getStateSchema']('light.living_room', mockHass);
+      const schema = element['_getStateSchema'](
+        'light.living_room',
+        mockHass,
+        false,
+        false,
+      );
 
       expect(schema).to.be.an('array');
       expect(schema.length).to.be.greaterThan(0);
@@ -132,7 +137,12 @@ describe('states-row-editor.ts', () => {
 
     it('should include optional fields', () => {
       element.entityId = 'sensor.temperature';
-      const schema = element['_getStateSchema']('sensor.temperature', mockHass);
+      const schema = element['_getStateSchema'](
+        'sensor.temperature',
+        mockHass,
+        false,
+        false,
+      );
 
       const attributeField = schema.find((s) => s.name === 'attribute') as any;
       expect(attributeField).to.exist;
@@ -149,7 +159,12 @@ describe('states-row-editor.ts', () => {
 
     it('should include grid schema for icon and label', () => {
       element.entityId = 'light.bedroom';
-      const schema = element['_getStateSchema']('light.bedroom', mockHass);
+      const schema = element['_getStateSchema'](
+        'light.bedroom',
+        mockHass,
+        false,
+        false,
+      );
 
       const gridSchema = schema.find((s) => s.type === 'grid') as any;
       expect(gridSchema).to.exist;
@@ -171,15 +186,35 @@ describe('states-row-editor.ts', () => {
 
     it('should memoize schema for same entity_id', () => {
       element.entityId = 'light.kitchen';
-      const schema1 = element['_getStateSchema']('light.kitchen', mockHass);
-      const schema2 = element['_getStateSchema']('light.kitchen', mockHass);
+      const schema1 = element['_getStateSchema'](
+        'light.kitchen',
+        mockHass,
+        false,
+        false,
+      );
+      const schema2 = element['_getStateSchema'](
+        'light.kitchen',
+        mockHass,
+        false,
+        false,
+      );
 
       expect(schema1).to.equal(schema2); // Same reference due to memoization
     });
 
     it('should create different schema for different entity_id', () => {
-      const schema1 = element['_getStateSchema']('light.living_room', mockHass);
-      const schema2 = element['_getStateSchema']('sensor.temp', mockHass);
+      const schema1 = element['_getStateSchema'](
+        'light.living_room',
+        mockHass,
+        false,
+        false,
+      );
+      const schema2 = element['_getStateSchema'](
+        'sensor.temp',
+        mockHass,
+        false,
+        false,
+      );
 
       expect(schema1).to.not.equal(schema2);
 
@@ -191,6 +226,56 @@ describe('states-row-editor.ts', () => {
       expect(attr2?.selector).to.deep.equal({
         attribute: { entity_id: 'sensor.temp' },
       });
+    });
+
+    it('should exclude title_color when isSensor is true', () => {
+      const entitySchema = element['_getStateSchema'](
+        'light.living_room',
+        mockHass,
+        false,
+        false,
+      );
+      const sensorSchema = element['_getStateSchema'](
+        'sensor.temperature',
+        mockHass,
+        true,
+        false,
+      );
+
+      const entityTitleColor = entitySchema.find(
+        (s) => s.name === 'title_color',
+      );
+      const sensorTitleColor = sensorSchema.find(
+        (s) => s.name === 'title_color',
+      );
+
+      expect(entityTitleColor).to.not.exist;
+      expect(sensorTitleColor).to.not.exist;
+    });
+
+    it('should only include title_color for main entity', () => {
+      const mainEntitySchema = element['_getStateSchema'](
+        'light.living_room',
+        mockHass,
+        false,
+        true,
+      );
+      const entitiesListSchema = element['_getStateSchema'](
+        'light.living_room',
+        mockHass,
+        false,
+        false,
+      );
+
+      const mainEntityTitleColor = mainEntitySchema.find(
+        (s) => s.name === 'title_color',
+      );
+      const entitiesListTitleColor = entitiesListSchema.find(
+        (s) => s.name === 'title_color',
+      );
+
+      expect(mainEntityTitleColor).to.exist;
+      expect(entitiesListTitleColor).to.not.exist;
     });
   });
 

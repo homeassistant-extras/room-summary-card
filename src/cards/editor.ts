@@ -308,6 +308,10 @@ export class RoomSummaryCardEditor extends LitElement {
       config.type = 'sensor';
     }
 
+    // Set isMainEntity to true if we're on the main tab (tab 0) and field is 'entities'
+    // Main entity is edited on tab 0, entities list is edited on tab 1
+    config.isMainEntity = this._currentTab === 0 && config.field === 'entities';
+
     this._subElementEditorConfig = config;
   }
 

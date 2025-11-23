@@ -24,6 +24,8 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
 
   @property({ attribute: false }) public type: 'entity' | 'sensor' = 'entity';
 
+  @property({ type: Boolean }) public isMainEntity = false;
+
   public setConfig(config: EntityConfig | string): void {
     if (typeof config === 'string') {
       this._config = { entity_id: config };
@@ -218,7 +220,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
-      ${this.type === 'entity' && this._config.entity_id
+      ${this._config.entity_id
         ? html`
             <room-summary-states-row-editor
               .hass=${this.hass}
@@ -227,19 +229,25 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
                 : undefined}
               .entityId=${this._config.entity_id}
               .mode=${'states'}
+              .isSensor=${this.type === 'sensor'}
+              .isMainEntity=${this.isMainEntity}
               label=${localize(this.hass, 'editor.entity.states')}
               @states-value-changed=${this._statesValueChanged}
             ></room-summary-states-row-editor>
-            <room-summary-states-row-editor
-              .hass=${this.hass}
-              .thresholds=${Array.isArray(this._config.thresholds)
-                ? this._config.thresholds
-                : undefined}
-              .entityId=${this._config.entity_id}
-              .mode=${'thresholds'}
-              label=${localize(this.hass, 'editor.entity.thresholds')}
-              @thresholds-value-changed=${this._thresholdsValueChanged}
-            ></room-summary-states-row-editor>
+            ${this.type === 'entity'
+              ? html`
+                  <room-summary-states-row-editor
+                    .hass=${this.hass}
+                    .thresholds=${Array.isArray(this._config.thresholds)
+                      ? this._config.thresholds
+                      : undefined}
+                    .entityId=${this._config.entity_id}
+                    .mode=${'thresholds'}
+                    label=${localize(this.hass, 'editor.entity.thresholds')}
+                    @thresholds-value-changed=${this._thresholdsValueChanged}
+                  ></room-summary-states-row-editor>
+                `
+              : nothing}
           `
         : nothing}
     `;

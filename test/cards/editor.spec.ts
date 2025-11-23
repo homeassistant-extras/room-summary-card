@@ -388,6 +388,7 @@ describe('editor.ts', () => {
       const subElementConfig: SubElementEditorConfig = {
         field: 'entities',
         index: 0,
+        isMainEntity: true,
         type: 'entity',
         elementConfig: { entity_id: 'light.test' },
       };
@@ -460,6 +461,7 @@ describe('editor.ts', () => {
         field: 'entities',
         index: 0,
         type: 'entity',
+        isMainEntity: true,
         elementConfig: { entity_id: 'light.test' },
       };
 

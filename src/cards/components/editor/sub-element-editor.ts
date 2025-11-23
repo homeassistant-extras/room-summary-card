@@ -10,6 +10,7 @@ export interface SubElementEditorConfig {
   elementConfig?: EntityConfig | string;
   field: 'entities' | 'lights';
   type: 'entity' | 'sensor';
+  isMainEntity?: boolean;
 }
 
 declare global {
@@ -71,6 +72,7 @@ export class RoomSummarySubElementEditor extends LitElement {
             .hass=${this.hass}
             .value=${this.config.elementConfig}
             .type=${type}
+            .isMainEntity=${this.config.isMainEntity ?? false}
             @config-changed=${this._handleConfigChanged}
           ></room-summary-entity-detail-editor>
         `;

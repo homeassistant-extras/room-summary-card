@@ -40,6 +40,10 @@ export class RoomSummaryStatesRowEditor extends LitElement {
 
   @property() public mode: 'states' | 'thresholds' = 'states';
 
+  @property({ type: Boolean }) public isSensor = false;
+
+  @property({ type: Boolean }) public isMainEntity = false;
+
   @state() private _expandedStates = new Set<number>();
 
   private _getKey(item: StateConfig | ThresholdConfig, index: number): string {
@@ -49,8 +53,13 @@ export class RoomSummaryStatesRowEditor extends LitElement {
   }
 
   private _getStateSchema = memoizeOne(
-    (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
-      return [
+    (
+      entity_id: string,
+      hass: HomeAssistant,
+      isSensor: boolean,
+      isMainEntity: boolean,
+    ): HaFormSchema[] => {
+      const schema: HaFormSchema[] = [
         {
           name: 'state',
           required: true,
@@ -63,12 +72,19 @@ export class RoomSummaryStatesRowEditor extends LitElement {
           label: 'editor.entity.state.icon_color',
           selector: { ui_color: {} },
         },
-        {
+      ];
+
+      // Only include title_color for main entity (not sensors, not entities list)
+      if (!isSensor && isMainEntity) {
+        schema.push({
           name: 'title_color',
           required: false,
           label: 'editor.entity.state.title_color',
           selector: { ui_color: {} },
-        },
+        });
+      }
+
+      schema.push(
         {
           type: 'grid',
           name: '',
@@ -100,7 +116,9 @@ export class RoomSummaryStatesRowEditor extends LitElement {
           required: false,
           selector: { object: {} },
         },
-      ];
+      );
+
+      return schema;
     },
   );
 
@@ -385,7 +403,12 @@ export class RoomSummaryStatesRowEditor extends LitElement {
                   <ha-form
                     .hass=${this.hass}
                     .data=${item}
-                    .schema=${this._getStateSchema(entityId, this.hass!)}
+                    .schema=${this._getStateSchema(
+                      entityId,
+                      this.hass!,
+                      this.isSensor,
+                      this.isMainEntity,
+                    )}
                     .computeLabel=${this._computeLabelCallback}
                     @value-changed=${(ev: CustomEvent) =>
                       this._itemValueChanged(index, ev)}

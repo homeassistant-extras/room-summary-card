@@ -108,6 +108,8 @@ styles:
 
 When using icon backgrounds with images, you can customize or remove the default gradient overlay:
 
+![Gradient](../../assets/gradient.png)
+
 **Remove the gradient overlay:**
 
 ```yaml
