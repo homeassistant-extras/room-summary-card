@@ -2,6 +2,8 @@
 
 Configure climate-based border styling thresholds and mold detection:
 
+![Climate Borders](../../assets/climate.png)
+
 > **Note:** This covers **climate thresholds** for card styling. For **entity threshold colors** based on individual sensor values, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md#3-threshold-based-colors).
 
 ```yaml
@@ -49,6 +51,8 @@ The mold indicator provides a prominent visual warning when mold levels exceed y
 - **Animations**: Includes pulsing, bouncing, and glowing effects to draw attention
 - **Warning Symbol**: Displays a flashing warning triangle (⚠) for additional emphasis
 - **Hover Effects**: Scales up and intensifies animations on hover
+
+![Moldy](../../assets/moldy.png)
 
 **Mold Sensor Requirements**:
 

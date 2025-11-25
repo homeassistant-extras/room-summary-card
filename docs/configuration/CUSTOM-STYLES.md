@@ -49,6 +49,79 @@ styles:
     box-shadow: '0 4px 8px rgba(0,0,0,0.2)'
 ```
 
+#### Customizing Grid Layout
+
+![compact](../../assets/compact.png)
+
+You can customize the main grid layout using CSS variables:
+
+```yaml
+styles:
+  card:
+    '--user-grid-template-areas': "'i e'" # Horizontal layout: info left, entities right
+    '--user-grid-template-columns': '1fr 1.2fr' # Column sizes
+    '--user-grid-template-rows': '1fr' # Single row
+    '--user-grid-aspect-ratio': '16/9' # Change card aspect ratio
+```
+
+**Horizontal Layout Example:**
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+entities:
+  - vacuum.joey_essex
+  - cover.living_room_blinds
+  - input_boolean.air_filters_need_changed
+  - sensor.living_room_blinds_battery
+styles:
+  entities:
+    grid-template-columns: 1fr 1fr 1fr 1fr !important
+    grid-template-rows: 1fr  !important
+    align-items: normal !important
+  card:
+    '--user-grid-template-areas': "'i e'"
+    '--user-grid-template-columns': 1fr 1fr
+    '--user-grid-template-rows': 1fr
+    '--user-grid-aspect-ratio': 7/1
+  title:
+    margin-top: 14%
+features:
+  - exclude_default_entities
+  - hide_area_stats
+  - hide_room_icon
+```
+
+**Making the Card Rectangular and Shape to Content:**
+
+To make the card rectangular and size to its content instead of being square:
+
+```yaml
+styles:
+  card:
+    '--user-grid-template-areas': "'i e'"
+    '--user-grid-template-columns': '1fr 1.2fr'
+    '--user-grid-template-rows': '1fr'
+    '--user-grid-aspect-ratio': 'auto' # Remove aspect ratio constraint, size to content
+    # Or use a rectangular aspect ratio:
+    # '--user-grid-aspect-ratio': '16/9'  # Wide rectangular
+    # '--user-grid-aspect-ratio': '2/1'   # Very wide
+    # '--user-grid-aspect-ratio': '3/2'   # Slightly wide
+```
+
+**Common Aspect Ratio Values:**
+
+- `'auto'` or `'none'` - Remove aspect ratio, size to content
+- `'16/9'` - Wide rectangular (common for horizontal layouts)
+- `'2/1'` - Very wide rectangular
+- `'3/2'` - Slightly wide rectangular
+- `'1/1'` - Square (default)
+
+**Note:** For `grid-template-areas`, use single quotes around the entire value, and each row should be separated by spaces. For example:
+
+- Single row: `"'i e'"` (info left, entities right)
+- Default 4x4 grid: `"'i i i e' 'i i i e' 'r r . e' 'r r . e'"` (info, room icon, entities)
+
 #### Customizing Card Background Image Overlay
 
 When using card background images, you can customize or remove the default gradient overlay using the same `--user-background-image-overlay` variable:
@@ -302,13 +375,17 @@ styles:
 
 Some styles use CSS variables that can be overridden:
 
-| Variable                          | Area              | Description                                                                    |
-| --------------------------------- | ----------------- | ------------------------------------------------------------------------------ |
-| `--user-room-icon-size`           | card              | Size of room icon                                                              |
-| `--user-entity-icon-size`         | entity_icon       | Size of entity icons                                                           |
-| `--user-sensor-icon-size`         | sensors           | Size of sensor icons                                                           |
-| `--user-entity-label-display`     | entity_icon       | Control entity label display (set to `none` to hide)                           |
-| `--user-background-image-overlay` | card, entity_icon | Overlay gradient for card and icon background images (set to `none` to remove) |
+| Variable                          | Area              | Description                                                                         |
+| --------------------------------- | ----------------- | ----------------------------------------------------------------------------------- |
+| `--user-room-icon-size`           | card              | Size of room icon                                                                   |
+| `--user-entity-icon-size`         | entity_icon       | Size of entity icons                                                                |
+| `--user-sensor-icon-size`         | sensors           | Size of sensor icons                                                                |
+| `--user-entity-label-display`     | entity_icon       | Control entity label display (set to `none` to hide)                                |
+| `--user-background-image-overlay` | card, entity_icon | Overlay gradient for card and icon background images (set to `none` to remove)      |
+| `--user-grid-template-areas`      | card              | Grid template areas for main layout (e.g., `"'i e'"` for horizontal layout)         |
+| `--user-grid-template-columns`    | card              | Grid template columns (e.g., `1fr 1.2fr` for two columns)                           |
+| `--user-grid-template-rows`       | card              | Grid template rows (e.g., `1fr` for single row)                                     |
+| `--user-grid-aspect-ratio`        | card              | Aspect ratio of the grid container (e.g., `16/9`, `1/1`, `auto` to size to content) |
 
 Example:
 

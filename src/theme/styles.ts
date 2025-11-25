@@ -118,15 +118,14 @@ const cardContainerStyles = css`
 const gridLayoutStyles = css`
   .grid {
     display: grid;
-    grid-template-areas:
-      'i i i e'
-      'i i i e'
-      'r r . e'
-      'r r . e';
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-areas: var(
+      --user-grid-template-areas,
+      'i i i e' 'i i i e' 'r r . e' 'r r . e'
+    );
+    grid-template-columns: var(--user-grid-template-columns, 1fr 1fr 1fr 1fr);
+    grid-template-rows: var(--user-grid-template-rows, 1fr 1fr 1fr 1fr);
     justify-items: center;
-    aspect-ratio: 1/1;
+    aspect-ratio: var(--user-grid-aspect-ratio, 1/1);
     height: 100%;
     width: 100%;
     position: relative; /* For absolute positioning of clickable area */
