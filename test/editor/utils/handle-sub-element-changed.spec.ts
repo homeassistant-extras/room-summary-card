@@ -1,3 +1,4 @@
+import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import {
   handleEntitiesArrayUpdate,
   handleLightsArrayUpdate,
@@ -5,7 +6,6 @@ import {
   handleSingleEntityUpdate,
   handleSubElementChanged,
 } from '@editor/utils/handle-sub-element-changed';
-import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
 import type { SensorConfig } from '@type/config/sensor';
@@ -96,7 +96,10 @@ describe('handle-sub-element-changed.ts', () => {
 
       const result = handleEntitiesArrayUpdate(config, null, 1);
 
-      expect(result.config.entities).to.deep.equal(['light.one', 'light.three']);
+      expect(result.config.entities).to.deep.equal([
+        'light.one',
+        'light.three',
+      ]);
       expect(result.shouldGoBack).to.be.true;
     });
 
@@ -120,7 +123,10 @@ describe('handle-sub-element-changed.ts', () => {
 
       const result = handleEntitiesArrayUpdate(config, 'light.updated', 1);
 
-      expect(result.config.entities).to.deep.equal(['light.one', 'light.updated']);
+      expect(result.config.entities).to.deep.equal([
+        'light.one',
+        'light.updated',
+      ]);
       expect(result.shouldGoBack).to.be.false;
     });
 
@@ -189,7 +195,10 @@ describe('handle-sub-element-changed.ts', () => {
 
       const result = handleSensorsArrayUpdate(config, null, 1);
 
-      expect(result.config.sensors).to.deep.equal(['sensor.temp', 'sensor.pressure']);
+      expect(result.config.sensors).to.deep.equal([
+        'sensor.temp',
+        'sensor.pressure',
+      ]);
       expect(result.shouldGoBack).to.be.true;
     });
 
@@ -213,7 +222,10 @@ describe('handle-sub-element-changed.ts', () => {
 
       const result = handleSensorsArrayUpdate(config, 'sensor.updated', 1);
 
-      expect(result.config.sensors).to.deep.equal(['sensor.temp', 'sensor.updated']);
+      expect(result.config.sensors).to.deep.equal([
+        'sensor.temp',
+        'sensor.updated',
+      ]);
       expect(result.shouldGoBack).to.be.false;
     });
 
@@ -305,7 +317,10 @@ describe('handle-sub-element-changed.ts', () => {
 
       const result = handleLightsArrayUpdate(config, 'light.updated', 1);
 
-      expect(result.config.lights).to.deep.equal(['light.one', 'light.updated']);
+      expect(result.config.lights).to.deep.equal([
+        'light.one',
+        'light.updated',
+      ]);
       expect(result.shouldGoBack).to.be.false;
     });
 
@@ -407,7 +422,10 @@ describe('handle-sub-element-changed.ts', () => {
         1,
       );
 
-      expect(result.config.entities).to.deep.equal(['light.one', 'light.updated']);
+      expect(result.config.entities).to.deep.equal([
+        'light.one',
+        'light.updated',
+      ]);
       expect(result.shouldGoBack).to.be.false;
     });
 
@@ -430,7 +448,10 @@ describe('handle-sub-element-changed.ts', () => {
         3,
       );
 
-      expect(result.config.sensors).to.deep.equal(['sensor.updated', 'sensor.humidity']);
+      expect(result.config.sensors).to.deep.equal([
+        'sensor.updated',
+        'sensor.humidity',
+      ]);
       expect(result.shouldGoBack).to.be.false;
     });
 
@@ -453,7 +474,10 @@ describe('handle-sub-element-changed.ts', () => {
         2,
       );
 
-      expect(result.config.lights).to.deep.equal(['light.one', 'light.updated']);
+      expect(result.config.lights).to.deep.equal([
+        'light.one',
+        'light.updated',
+      ]);
       expect(result.shouldGoBack).to.be.false;
     });
 
@@ -493,12 +517,7 @@ describe('handle-sub-element-changed.ts', () => {
         type: 'entity',
       };
 
-      const result = handleSubElementChanged(
-        config,
-        null,
-        subElementConfig,
-        0,
-      );
+      const result = handleSubElementChanged(config, null, subElementConfig, 0);
 
       expect(result.config.entity).to.be.undefined;
       expect(result.shouldGoBack).to.be.true;
@@ -516,12 +535,7 @@ describe('handle-sub-element-changed.ts', () => {
         type: 'entity',
       };
 
-      const result = handleSubElementChanged(
-        config,
-        null,
-        subElementConfig,
-        1,
-      );
+      const result = handleSubElementChanged(config, null, subElementConfig, 1);
 
       expect(result.config.entities).to.deep.equal(['light.two']);
       expect(result.shouldGoBack).to.be.true;
@@ -556,4 +570,3 @@ describe('handle-sub-element-changed.ts', () => {
     });
   });
 });
-

@@ -24,6 +24,8 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
 
   @property({ attribute: false }) public type: 'entity' | 'sensor' = 'entity';
 
+  @property({ type: Boolean }) public isMainEntity = false;
+
   public setConfig(config: EntityConfig | string): void {
     if (typeof config === 'string') {
       this._config = { entity_id: config };
@@ -218,7 +220,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
-      ${this.type === 'entity' && this._config.entity_id
+      ${this._config.entity_id
         ? html`
             <room-summary-states-row-editor
               .hass=${this.hass}
@@ -227,22 +229,52 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
                 : undefined}
               .entityId=${this._config.entity_id}
               .mode=${'states'}
+              .isSensor=${this.type === 'sensor'}
+              .isMainEntity=${this.isMainEntity}
               label=${localize(this.hass, 'editor.entity.states')}
               @states-value-changed=${this._statesValueChanged}
             ></room-summary-states-row-editor>
-            <room-summary-states-row-editor
-              .hass=${this.hass}
-              .thresholds=${Array.isArray(this._config.thresholds)
-                ? this._config.thresholds
-                : undefined}
-              .entityId=${this._config.entity_id}
-              .mode=${'thresholds'}
-              label=${localize(this.hass, 'editor.entity.thresholds')}
-              @thresholds-value-changed=${this._thresholdsValueChanged}
-            ></room-summary-states-row-editor>
+            ${this.type === 'entity'
+              ? html`
+                  <room-summary-states-row-editor
+                    .hass=${this.hass}
+                    .thresholds=${Array.isArray(this._config.thresholds)
+                      ? this._config.thresholds
+                      : undefined}
+                    .entityId=${this._config.entity_id}
+                    .mode=${'thresholds'}
+                    label=${localize(this.hass, 'editor.entity.thresholds')}
+                    @thresholds-value-changed=${this._thresholdsValueChanged}
+                  ></room-summary-states-row-editor>
+                `
+              : nothing}
           `
         : nothing}
     `;
+  }
+
+  /**
+   * Removes empty string properties from a config object
+   */
+  private _cleanEmptyStrings(obj: any): any {
+    if (!obj || typeof obj !== 'object') return obj;
+    const cleaned: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      // Skip empty strings
+      if (value === '') continue;
+      // Recursively clean nested objects
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const cleanedValue = this._cleanEmptyStrings(value);
+        if (Object.keys(cleanedValue).length > 0) {
+          cleaned[key] = cleanedValue;
+        }
+      } else if (Array.isArray(value)) {
+        cleaned[key] = value.map((item) => this._cleanEmptyStrings(item));
+      } else {
+        cleaned[key] = value;
+      }
+    }
+    return cleaned;
   }
 
   private _statesValueChanged(ev: CustomEvent): void {
@@ -255,14 +287,19 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       return;
     }
 
+    // Clean empty strings from each state config
+    const cleanedStates = statesValue.map((state) =>
+      this._cleanEmptyStrings(state),
+    );
+
     const newConfig = {
       ...this._config,
       // Only set states if array has items, otherwise remove the property
-      ...(statesValue.length > 0 ? { states: statesValue } : {}),
+      ...(cleanedStates.length > 0 ? { states: cleanedStates } : {}),
     };
 
     // If states array is empty, ensure we remove the property
-    if (statesValue.length === 0 && 'states' in newConfig) {
+    if (cleanedStates.length === 0 && 'states' in newConfig) {
       delete newConfig.states;
     }
 
@@ -280,14 +317,21 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       return;
     }
 
+    // Clean empty strings from each threshold config
+    const cleanedThresholds = thresholdsValue.map((threshold) =>
+      this._cleanEmptyStrings(threshold),
+    );
+
     const newConfig = {
       ...this._config,
       // Only set thresholds if array has items, otherwise remove the property
-      ...(thresholdsValue.length > 0 ? { thresholds: thresholdsValue } : {}),
+      ...(cleanedThresholds.length > 0
+        ? { thresholds: cleanedThresholds }
+        : {}),
     };
 
     // If thresholds array is empty, ensure we remove the property
-    if (thresholdsValue.length === 0 && 'thresholds' in newConfig) {
+    if (cleanedThresholds.length === 0 && 'thresholds' in newConfig) {
       delete newConfig.thresholds;
     }
 

@@ -340,18 +340,24 @@ describe('entity-detail-editor.ts', () => {
       expect((statesRowEditor as any).hass).to.equal(mockHass);
     });
 
-    it('should not render states row editor when type is sensor', async () => {
+    it('should render states row editor but not thresholds when type is sensor', async () => {
       element.hass = mockHass;
       element.type = 'sensor';
       element['_config'] = mockEntityConfig;
 
       const result = element.render() as TemplateResult;
-      const el = await fixture(result);
+      // Wrap in a container div to ensure proper querying
+      const wrappedResult = html`<div>${result}</div>`;
+      const el = await fixture(wrappedResult);
 
-      const statesRowEditor = el.querySelector(
+      const statesRowEditors = el.querySelectorAll(
         'room-summary-states-row-editor',
       );
-      expect(statesRowEditor).to.not.exist;
+      // Should have one states row editor (for states)
+      expect(statesRowEditors.length).to.equal(1);
+      // Should not have thresholds (mode should be 'states')
+      const statesRowEditor = statesRowEditors[0] as RoomSummaryStatesRowEditor;
+      expect(statesRowEditor.mode).to.equal('states');
     });
 
     it('should not render states row editor when entity_id is missing', async () => {

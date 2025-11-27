@@ -235,17 +235,7 @@ export class RoomSummaryCardEditor extends LitElement {
    * @param {Config} config - The card configuration
    */
   setConfig(config: Config) {
-    this._config = {
-      ...config,
-      occupancy: {
-        ...config.occupancy,
-        entities: config.occupancy?.entities ?? [],
-      },
-      smoke: {
-        ...config.smoke,
-        entities: config.smoke?.entities ?? [],
-      },
-    };
+    this._config = { ...config };
   }
 
   private _valueChanged(ev: CustomEvent) {
@@ -307,6 +297,10 @@ export class RoomSummaryCardEditor extends LitElement {
     if (this._currentTab === 3 && config.field === 'entities') {
       config.type = 'sensor';
     }
+
+    // Set isMainEntity to true if we're on the main tab (tab 0) and field is 'entities'
+    // Main entity is edited on tab 0, entities list is edited on tab 1
+    config.isMainEntity = this._currentTab === 0 && config.field === 'entities';
 
     this._subElementEditorConfig = config;
   }

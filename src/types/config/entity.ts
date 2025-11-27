@@ -42,7 +42,7 @@ export type EntityFeatures = 'use_entity_icon';
  */
 export interface IconStyleProperties {
   /** Color to use when this condition is met */
-  icon_color: string;
+  icon_color?: string;
 
   /** Color to use for the title when this condition is met */
   title_color?: string;

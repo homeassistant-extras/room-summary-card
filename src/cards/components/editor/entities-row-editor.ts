@@ -23,6 +23,7 @@ declare global {
         type: 'entity' | 'sensor';
         elementConfig: EntityConfig | string;
         field: 'entities' | 'lights';
+        isMainEntity?: boolean;
       };
     };
   }
