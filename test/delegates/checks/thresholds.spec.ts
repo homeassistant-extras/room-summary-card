@@ -31,7 +31,6 @@ describe('climate-thresholds.ts', () => {
         problemSensors: [],
         lightEntities: [],
         thresholdSensors: [],
-
       };
 
       const result = climateThresholds(config, sensorData);
@@ -49,7 +48,6 @@ describe('climate-thresholds.ts', () => {
         problemSensors: [],
         lightEntities: [],
         thresholdSensors: [],
-
       };
 
       const result = climateThresholds(config, sensorData);
@@ -92,15 +90,15 @@ describe('climate-thresholds.ts', () => {
         description: 'Thresholds are number',
         thresholds: {
           temperature: 75,
-          humidity: 50
+          humidity: 50,
         },
-        thresholdSensors: []
+        thresholdSensors: [],
       },
       {
         description: 'Thresholds are entity',
         thresholds: {
           temperature: 'sensor.temperature_threshold',
-          humidity: 'sensor.humidity_threshold'
+          humidity: 'sensor.humidity_threshold',
         },
         thresholdSensors: [
           {
@@ -121,8 +119,8 @@ describe('climate-thresholds.ts', () => {
               unit_of_measurement: '%',
             },
           },
-        ]
-      }
+        ],
+      },
     ];
 
     testCases.forEach((testCase) => {
@@ -390,7 +388,6 @@ describe('climate-thresholds.ts', () => {
           problemSensors: [],
           lightEntities: [],
           thresholdSensors: [],
-
         };
 
         const result = climateThresholds(config, sensorData);
@@ -419,7 +416,6 @@ describe('climate-thresholds.ts', () => {
           problemSensors: [],
           lightEntities: [],
           thresholdSensors: [],
-
         };
 
         const result = climateThresholds(config, sensorData);
@@ -448,7 +444,6 @@ describe('climate-thresholds.ts', () => {
           problemSensors: [],
           lightEntities: [],
           thresholdSensors: [],
-
         };
 
         const result = climateThresholds(config, sensorData);
@@ -477,7 +472,6 @@ describe('climate-thresholds.ts', () => {
           problemSensors: [],
           lightEntities: [],
           thresholdSensors: [],
-
         };
 
         const result = climateThresholds(config, sensorData);
@@ -506,7 +500,6 @@ describe('climate-thresholds.ts', () => {
           problemSensors: [],
           lightEntities: [],
           thresholdSensors: [],
-
         };
 
         const result = climateThresholds(config, sensorData);
@@ -544,7 +537,6 @@ describe('climate-thresholds.ts', () => {
           problemSensors: [],
           lightEntities: [],
           thresholdSensors: [],
-
         };
 
         const result = climateThresholds(config, sensorData);
@@ -573,7 +565,6 @@ describe('climate-thresholds.ts', () => {
           problemSensors: [],
           lightEntities: [],
           thresholdSensors: [],
-
         };
 
         const result = climateThresholds(config, sensorData);
@@ -602,7 +593,6 @@ describe('climate-thresholds.ts', () => {
           problemSensors: [],
           lightEntities: [],
           thresholdSensors: [],
-
         };
 
         const result = climateThresholds(config, sensorData);
