@@ -1,6 +1,7 @@
 import * as commonStyleModule from '@theme/render/common-style';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import type { EntityInformation } from '@type/room';
+import * as stateColorModule from '@hass/common/entity/state_color';
 import { expect } from 'chai';
 import { nothing } from 'lit';
 import { styleMap } from 'lit-html/directives/style-map.js';
@@ -29,10 +30,18 @@ describe('icon-styles.ts', () => {
   let mockHass: any;
   let sandbox: sinon.SinonSandbox;
   let getStyleDataStub: sinon.SinonStub;
+  let stateColorBrightnessStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     getStyleDataStub = sandbox.stub(commonStyleModule, 'getStyleData');
+    stateColorBrightnessStub = sandbox.stub(
+      stateColorModule,
+      'stateColorBrightness',
+    );
+
+    // Default stub behavior
+    stateColorBrightnessStub.returns('');
 
     mockHass = {
       themes: {
@@ -77,6 +86,7 @@ describe('icon-styles.ts', () => {
           '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
           '--state-color-icon-theme': 'var(--theme-override)',
           '--background-image': undefined,
+          '--icon-filter': '',
         }),
       );
 
@@ -97,6 +107,7 @@ describe('icon-styles.ts', () => {
           '--background-opacity-icon': 'var(--opacity-icon-fill-inactive)',
           '--state-color-icon-theme': 'var(--theme-override)',
           '--background-image': undefined,
+          '--icon-filter': '',
         }),
       );
     });
@@ -120,6 +131,7 @@ describe('icon-styles.ts', () => {
           '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
           '--state-color-icon-theme': undefined,
           '--background-image': undefined,
+          '--icon-filter': '',
         }),
       );
     });
@@ -144,6 +156,61 @@ describe('icon-styles.ts', () => {
           '--background-opacity-icon': '1',
           '--state-color-icon-theme': 'var(--theme-override)',
           '--background-image': `url(${imageUrl})`,
+          '--icon-filter': '',
+        }),
+      );
+    });
+
+    it('should include brightness filter when entity has brightness attribute', () => {
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+      const entity = createEntityInfo('light', 'test', 'on', {
+        brightness: 100,
+      });
+      stateColorBrightnessStub.returns('brightness(69%)');
+
+      const result = renderEntityIconStyles(mockHass, entity);
+
+      expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
+      expect(result).to.deep.equal(
+        styleMap({
+          '--icon-color': 'var(--primary-color)',
+          '--icon-opacity': 'var(--opacity-icon-active)',
+          '--background-color-icon': 'var(--primary-color)',
+          '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
+          '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--icon-filter': 'brightness(69%)',
+        }),
+      );
+    });
+
+    it('should set empty icon filter when entity has no brightness', () => {
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+      const entity = createEntityInfo('switch', 'test', 'on');
+      stateColorBrightnessStub.returns('');
+
+      const result = renderEntityIconStyles(mockHass, entity);
+
+      expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
+      expect(result).to.deep.equal(
+        styleMap({
+          '--icon-color': 'var(--primary-color)',
+          '--icon-opacity': 'var(--opacity-icon-active)',
+          '--background-color-icon': 'var(--primary-color)',
+          '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
+          '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--icon-filter': '',
         }),
       );
     });
@@ -182,6 +249,7 @@ describe('icon-styles.ts', () => {
           '--background-opacity-icon': 0.5,
           '--state-color-icon-theme': 'var(--theme-override)',
           '--background-image': `url(${imageUrl})`,
+          '--icon-filter': '',
         }),
       );
     });
@@ -220,6 +288,7 @@ describe('icon-styles.ts', () => {
           '--background-opacity-icon': '1',
           '--state-color-icon-theme': 'var(--theme-override)',
           '--background-image': `url(${imageUrl})`,
+          '--icon-filter': '',
         }),
       );
     });
@@ -258,6 +327,7 @@ describe('icon-styles.ts', () => {
           '--background-opacity-icon': 0.5,
           '--state-color-icon-theme': 'var(--theme-override)',
           '--background-image': `url(${imageUrl})`,
+          '--icon-filter': '',
         }),
       );
     });
@@ -295,6 +365,7 @@ describe('icon-styles.ts', () => {
           '--background-opacity-icon': '1',
           '--state-color-icon-theme': 'var(--theme-override)',
           '--background-image': `url(${imageUrl})`,
+          '--icon-filter': '',
         }),
       );
     });
@@ -329,6 +400,7 @@ describe('icon-styles.ts', () => {
           '--background-opacity-icon': '1',
           '--state-color-icon-theme': 'var(--theme-override)',
           '--background-image': `url(${imageUrl})`,
+          '--icon-filter': '',
         }),
       );
     });

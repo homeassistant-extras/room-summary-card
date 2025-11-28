@@ -1,4 +1,5 @@
 import * as featureModule from '@config/feature';
+import * as stateColorModule from '@hass/common/entity/state_color';
 import * as commonStyleModule from '@theme/render/common-style';
 import { renderTextStyles } from '@theme/render/text-styles';
 import type { Config } from '@type/config';
@@ -33,15 +34,21 @@ describe('text-styles.ts', () => {
   let sandbox: sinon.SinonSandbox;
   let hasFeatureStub: sinon.SinonStub;
   let getStyleDataStub: sinon.SinonStub;
+  let stateColorBrightnessStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
     hasFeatureStub = sandbox.stub(featureModule, 'hasFeature');
     getStyleDataStub = sandbox.stub(commonStyleModule, 'getStyleData');
+    stateColorBrightnessStub = sandbox.stub(
+      stateColorModule,
+      'stateColorBrightness',
+    );
 
     // Default behavior for stubs
     hasFeatureStub.returns(false);
+    stateColorBrightnessStub.returns('');
 
     mockHass = {
       themes: {
@@ -92,6 +99,7 @@ describe('text-styles.ts', () => {
         styleMap({
           '--text-color': 'var(--primary-color)',
           '--state-color-text-theme': 'var(--theme-override)',
+          filter: '',
         }),
       );
 
@@ -108,6 +116,7 @@ describe('text-styles.ts', () => {
         styleMap({
           '--text-color': undefined,
           '--state-color-text-theme': undefined,
+          filter: '',
         }),
       );
 
@@ -133,6 +142,7 @@ describe('text-styles.ts', () => {
         styleMap({
           '--text-color': 'var(--primary-color)',
           '--state-color-text-theme': 'var(--theme-override)',
+          filter: '',
           'font-size': '18px',
           color: 'red',
         }),
@@ -206,6 +216,7 @@ describe('text-styles.ts', () => {
         styleMap({
           '--text-color': 'var(--pink-color)',
           '--state-color-text-theme': 'var(--theme-override)',
+          filter: '',
           'font-size': '18px',
         }),
       );
@@ -231,6 +242,7 @@ describe('text-styles.ts', () => {
         styleMap({
           '--text-color': 'var(--primary-color)',
           '--state-color-text-theme': 'var(--theme-override)',
+          filter: '',
         }),
       );
     });
@@ -258,6 +270,54 @@ describe('text-styles.ts', () => {
         styleMap({
           '--text-color': 'var(--green-color)',
           'font-size': '16px',
+        }),
+      );
+    });
+
+    it('should include brightness filter when entity has brightness attribute', () => {
+      const entity = createEntityInfo('light', 'test', 'on', {
+        brightness: 100,
+      });
+      stateColorBrightnessStub.returns('brightness(69%)');
+
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+
+      const result = renderTextStyles(mockHass, mockConfig, entity);
+
+      expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
+      expect(result).to.deep.equal(
+        styleMap({
+          '--text-color': 'var(--primary-color)',
+          '--state-color-text-theme': 'var(--theme-override)',
+          filter: 'brightness(69%)',
+        }),
+      );
+    });
+
+    it('should set empty filter when entity has no brightness', () => {
+      const entity = createEntityInfo('switch', 'test', 'on');
+      stateColorBrightnessStub.returns('');
+
+      getStyleDataStub.returns({
+        active: true,
+        cssColor: 'var(--primary-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'active',
+      });
+
+      const result = renderTextStyles(mockHass, mockConfig, entity);
+
+      expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
+      expect(result).to.deep.equal(
+        styleMap({
+          '--text-color': 'var(--primary-color)',
+          '--state-color-text-theme': 'var(--theme-override)',
+          filter: '',
         }),
       );
     });

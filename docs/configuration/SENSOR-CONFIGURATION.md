@@ -80,8 +80,6 @@ sensors:
 
 When an `attribute` is specified, the sensor will display the formatted attribute value using Home Assistant's attribute display formatting. This is useful when you want to show a specific attribute (like `temperature`, `humidity`, `battery_level`, etc.) instead of the entity's primary state value.
 
-![Sensors Config](../../assets/sensors-config.gif)
-
 When the sensor state matches a configured state, the card will:
 
 - Display the custom icon (e.g., `mdi:door-open` when state is "on")

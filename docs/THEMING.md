@@ -241,6 +241,27 @@ The card automatically adapts to both light and dark modes with:
 - **Text Contrast**: Appropriate text colors for readability
 - **Border Adjustments**: Climate borders remain visible in all themes
 - **State-Based Colors**: Card background colors based on entity state (works in both light and dark modes)
+- **Brightness Filters**: Automatic brightness adjustments for cards, icons, and text based on entity brightness attributes
+
+### Automatic Brightness Filters
+
+The card automatically applies brightness filters to provide visual feedback that matches entity brightness levels. This feature is particularly useful for dimmable lights, where the card, icon, and text brightness automatically adjust to reflect the current brightness setting.
+
+![Brightness Filters](../assets/brightness.gif)
+
+**Brightness Filter Behavior:**
+
+- **Card backgrounds**: Dimmed proportionally to entity brightness via `--background-filter` CSS variable
+- **Entity icons**: Brightness adjusted to match entity state via `--icon-filter` CSS variable
+- **Text elements**: Brightness applied to active entities via `filter` CSS property
+
+The brightness calculation ensures smooth visual transitions:
+
+- Brightness 0 (fully dimmed) → ~49% visual brightness
+- Brightness 255 (fully bright) → 100% visual brightness
+- Intermediate values scale proportionally
+
+This automatic feature works seamlessly with all themes and requires no configuration. The filters are dynamically updated as entity brightness changes.
 
 ### Theme Mode Variables
 

@@ -4,7 +4,9 @@ import {
   styleMap,
 } from 'lit-html/directives/style-map.js';
 
+import { stateColorBrightness } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
+import type { HassEntity } from '@hass/ws/types';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { nothing } from 'lit';
@@ -29,6 +31,8 @@ export const renderEntityIconStyles = (
   isMainRoomEntity?: boolean,
   config?: Config,
 ): DirectiveResult<typeof StyleMapDirective> | typeof nothing => {
+  const { state } = entity as { state: HassEntity };
+  const filter = stateColorBrightness(state);
   const styleData = getStyleData(hass, 'icon', entity, isActive);
 
   if (!styleData) return nothing;
@@ -55,5 +59,6 @@ export const renderEntityIconStyles = (
     '--background-opacity-icon': opacity,
     '--state-color-icon-theme': styleData.themeOverride,
     '--background-image': image ? `url(${image})` : undefined,
+    '--icon-filter': filter,
   });
 };

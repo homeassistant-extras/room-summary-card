@@ -41,12 +41,17 @@ describe('card-styles.ts', () => {
   let getBackgroundOpacityStub: sinon.SinonStub;
   let getOccupancyCssVarsStub: sinon.SinonStub;
   let getSmokeCssVarsStub: sinon.SinonStub;
+  let stateColorBrightnessStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
     stateActiveStub = sandbox.stub(stateActiveModule, 'stateActive');
     stateColorCssStub = sandbox.stub(stateColorModule, 'stateColorCss');
+    stateColorBrightnessStub = sandbox.stub(
+      stateColorModule,
+      'stateColorBrightness',
+    );
     getThemeColorOverrideStub = sandbox.stub(
       customThemeModule,
       'getThemeColorOverride',
@@ -69,6 +74,7 @@ describe('card-styles.ts', () => {
     // Default stub behaviors
     stateActiveStub.returns(false);
     stateColorCssStub.returns('var(--primary-color)');
+    stateColorBrightnessStub.returns('');
     getThresholdResultStub.returns(undefined);
     getThemeColorOverrideStub.returns('var(--theme-override)');
     hasFeatureStub.returns(false);
@@ -114,6 +120,7 @@ describe('card-styles.ts', () => {
       expect(styles).to.deep.equal(
         styleMap({
           '--background-color-card': undefined,
+          '--background-filter': '',
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-image': undefined,
           '--background-opacity-card': 'var(--opacity-background-inactive)',
@@ -155,6 +162,7 @@ describe('card-styles.ts', () => {
           '--background-color-card': 'var(--active-color)',
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-image': 'url(/local/bedroom.jpg)',
+          '--background-filter': '',
           '--background-opacity-card': '0.5',
           'border-radius': '8px',
           padding: '16px',
@@ -191,6 +199,7 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined, // Should be undefined due to active being false
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-image': undefined,
+          '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-active)',
         }),
       );
@@ -232,6 +241,7 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-image': undefined,
+          '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...occupancyStyles,
         }),
@@ -271,6 +281,7 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'rgb(255, 0, 0)',
           '--background-image': undefined,
+          '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
@@ -301,6 +312,59 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-image': undefined,
+          '--background-filter': '',
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+        }),
+      );
+    });
+
+    it('should include brightness filter when entity has brightness attribute', () => {
+      const entity = createEntityInfo('light.test', 'on', { brightness: 100 });
+      stateColorBrightnessStub.returns('brightness(69%)');
+
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        false,
+        undefined,
+        false,
+      );
+
+      expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-filter': 'brightness(69%)',
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+        }),
+      );
+    });
+
+    it('should set empty background filter when entity has no brightness', () => {
+      const entity = createEntityInfo('switch.test', 'on');
+      stateColorBrightnessStub.returns('');
+
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        false,
+        undefined,
+        false,
+      );
+
+      expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );

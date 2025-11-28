@@ -39,6 +39,7 @@ export const styles = css`
     bottom: 0;
     background-color: var(--background-color-icon);
     opacity: var(--background-opacity-icon);
+    filter: var(--icon-filter, none);
   }
 
   /* Icon background image styling */
@@ -56,6 +57,7 @@ export const styles = css`
     color: var(--icon-color);
     opacity: var(--icon-opacity);
     --mdc-icon-size: 100%;
+    filter: var(--icon-filter, none);
   }
 
   /* Entity label styling */

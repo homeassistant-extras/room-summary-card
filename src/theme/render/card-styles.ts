@@ -9,7 +9,10 @@ import {
   getOccupancyCssVars,
   getSmokeCssVars,
 } from '@delegates/checks/occupancy';
-import { stateColorCss } from '@hass/common/entity/state_color';
+import {
+  stateColorBrightness,
+  stateColorCss,
+} from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
 import { getThresholdResult } from '@theme/threshold-color';
@@ -56,6 +59,7 @@ export const renderCardStyles = (
     ? getSmokeCssVars(isSmokeDetected, config.smoke)
     : getOccupancyCssVars(isOccupied, config.occupancy);
   const cssColor = stateColorCss(state, 'card', active);
+  const filter = stateColorBrightness(state);
 
   let backgroundColorCard: string | undefined;
   if (skipStyles) {
@@ -69,6 +73,7 @@ export const renderCardStyles = (
     '--background-color-card': backgroundColorCard,
     '--state-color-card-theme': themeOverride,
     '--background-image': image ? `url(${image})` : undefined,
+    '--background-filter': filter,
     ...opacity,
     ...alarmVars,
     ...config.styles?.card,
