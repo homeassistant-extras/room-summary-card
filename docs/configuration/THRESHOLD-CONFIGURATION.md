@@ -8,8 +8,8 @@ Configure climate-based border styling thresholds and mold detection:
 
 ```yaml
 thresholds:
-  temperature: 75 # Temperature threshold in current unit
-  humidity: 55 # Humidity threshold as percentage
+  temperature: 75 # Temperature threshold in current unit or entity
+  humidity: 55 # Humidity threshold as percentage or entity
   mold: 50 # Mold threshold as percentage
   temperature_operator: gt # Comparison operator for temperature (default: gt)
   humidity_operator: gt # Comparison operator for humidity (default: gt)
@@ -77,6 +77,11 @@ thresholds:
 # Custom humidity threshold
 thresholds:
   humidity: 50  # 50%
+
+# Entity thresholds
+thresholds:
+  temperature: sensor.main_temperature # Specific entity for temperature value from entity
+  humidity: sensor.main_humidity # Specific entity for humidity value from entity
 
 # Mold threshold
 thresholds:

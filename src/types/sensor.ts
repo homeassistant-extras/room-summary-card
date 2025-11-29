@@ -39,6 +39,9 @@ export interface SensorData {
 
   /** Light entities in the area (for multi-light background feature) */
   lightEntities: EntityState[];
+
+  /** Threshold sensor */
+  thresholdSensors: EntityState[];
 }
 /**
  * Represents a display-ready sensor that can be either individual or averaged

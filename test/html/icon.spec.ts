@@ -42,6 +42,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -56,6 +57,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [createEntityState('entity1')],
         lightEntities: [],
+        thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -76,6 +78,7 @@ describe('icon.ts', () => {
           createEntityState('entity3'),
         ],
         lightEntities: [],
+        thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -91,6 +94,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [createEntityState('entity1', 'off')],
         lightEntities: [],
+        thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -106,6 +110,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [createEntityState('entity1', 'on')],
         lightEntities: [],
+        thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -125,6 +130,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: manyEntities,
         lightEntities: [],
+        thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -143,6 +149,7 @@ describe('icon.ts', () => {
           createEntityState('entity.with.dots'),
         ],
         lightEntities: [],
+        thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -158,6 +165,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [createEntityState('entity1')],
         lightEntities: [],
+        thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
 
@@ -178,6 +186,7 @@ describe('icon.ts', () => {
         problemSensors: [],
         lightEntities: [],
         mold: moldSensor,
+        thresholdSensors: [],
       };
       const result = renderProblemIndicator(
         mockHass,
@@ -202,6 +211,7 @@ describe('icon.ts', () => {
         problemSensors: [],
         lightEntities: [],
         mold: moldSensor,
+        thresholdSensors: [],
       };
       const result = renderProblemIndicator(
         mockHass,

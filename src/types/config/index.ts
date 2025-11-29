@@ -61,11 +61,11 @@ export interface Config {
 
   /** Custom thresholds for temperature and humidity */
   thresholds?: {
-    /** Temperature threshold value */
-    temperature?: number;
+    /** Temperature threshold value or entity ID */
+    temperature?: number | string;
 
-    /** Humidity threshold value */
-    humidity?: number;
+    /** Humidity threshold value or entity ID */
+    humidity?: number | string;
 
     /** Mold threshold value (percentage) */
     mold?: number;

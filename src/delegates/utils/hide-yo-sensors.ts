@@ -36,6 +36,7 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   const classSensors: EntityState[] = [];
   const problemSensors: EntityState[] = [];
   const lightEntities: EntityState[] = [];
+  const thresholdSensors: EntityState[] = [];
   let mold: EntityState | undefined = undefined;
 
   // Get configured light entity IDs if multi-light feature is enabled
@@ -51,6 +52,12 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
   // Get array of entity IDs from config.sensors for quick lookup
   const configSensorIds = config.sensors?.map(getSensorEntityId) || [];
+  const thresholdSensorIds = [
+    config.thresholds?.humidity,
+    config.thresholds?.temperature,
+  ]
+    .filter((s) => typeof s === 'string')
+    .map(getSensorEntityId);
 
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
@@ -61,10 +68,18 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
     // Check if this is a configured light entity (always process these)
     const isConfiguredLight = configuredLightIds.includes(entity.entity_id);
+    // Check if this is a configured threshold entity (always process these)
+    const isThresholdEntity = thresholdSensorIds.includes(entity.entity_id);
 
     // If it's not a config sensor, not in the area, and not a configured light, skip it
     // If it's a config sensor or configured light, always include it since the user has explicitly included it
-    if (!isConfigSensor && !isInArea && !isConfiguredLight) return;
+    if (
+      !isConfigSensor &&
+      !isInArea &&
+      !isConfiguredLight &&
+      !isThresholdEntity
+    )
+      return;
 
     const state = getState(hass.states, entity.entity_id);
     if (!state) return;
@@ -98,6 +113,11 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
       return;
     }
 
+    if (isThresholdEntity) {
+      thresholdSensors.push(state);
+      return;
+    }
+
     // If we're skipping default entities, don't process further
     if (skipDefaultEntities) return;
 
@@ -128,5 +148,6 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     problemSensors,
     mold,
     lightEntities,
+    thresholdSensors,
   };
 };

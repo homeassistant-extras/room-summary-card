@@ -43,6 +43,23 @@ const getSensorValue = (
 };
 
 /**
+ * Gets threshold value - from specific entity in thresholdSensors sensors, or number configuration
+ */
+const getThresholdSensorValue = (
+  sensors: SensorData['thresholdSensors'],
+  config?: string | number,
+): number | null => {
+  if (!config) return null;
+  if (typeof config === 'number') return config;
+
+  if (config) {
+    const sensor = sensors.find((s) => s.entity_id === config);
+    if (sensor) return Number(sensor.state);
+  }
+  return null;
+};
+
+/**
  * Checks if a numeric value meets a threshold condition using the specified operator
  *
  * @param value - The numeric value to test
@@ -100,8 +117,17 @@ export const climateThresholds = memoizeOne(
       config.thresholds?.humidity_entity,
     );
 
-    const tempThreshold = config.thresholds?.temperature ?? 80;
-    const humidThreshold = config.thresholds?.humidity ?? 60;
+    let tempThreshold =
+      getThresholdSensorValue(
+        sensorData.thresholdSensors,
+        config.thresholds?.temperature,
+      ) ?? 80;
+    let humidThreshold =
+      getThresholdSensorValue(
+        sensorData.thresholdSensors,
+        config.thresholds?.humidity,
+      ) ?? 60;
+
     const tempOperator = config.thresholds?.temperature_operator ?? 'gt';
     const humidOperator = config.thresholds?.humidity_operator ?? 'gt';
 
