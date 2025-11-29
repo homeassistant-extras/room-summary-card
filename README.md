@@ -64,8 +64,8 @@ You can configure temperature, humidity, and mold thresholds to trigger visual i
 
 ```yaml
 thresholds:
-  temperature: 80 # °F (default: 80)
-  humidity: 60 # % (default: 60)
+  temperature: 80 # °F (default: 80) or entity ID (e.g., sensor.temp_threshold)
+  humidity: 60 # % (default: 60) or entity ID (e.g., sensor.humidity_threshold)
   mold: 50 # % (no default - shows whenever mold sensor is present)
   temperature_entity: sensor.living_room_temp # Specific sensor (optional)
   humidity_entity: sensor.living_room_humidity # Specific sensor (optional)
@@ -73,8 +73,10 @@ thresholds:
   humidity_operator: gt # Comparison operator (default: gt)
 ```
 
+**Dynamic Thresholds**: `temperature` and `humidity` can be either numeric values or entity IDs. When using entity IDs, the threshold value is read from the entity's state, allowing for dynamic threshold configuration.
+
 **Comparison Operators**: Use `gt` (>), `gte` (>=), `lt` (<), `lte` (<=), or `eq` (=) to control when thresholds trigger. Perfect for heating scenarios (use `lt` for temperature) or medical conditions (use `lt` for low humidity).
-y
+
 **Mold Indicator**: When mold levels exceed the threshold, an animated indicator appears in the bottom left area near problem entities with pulsing effects and warning symbols.
 
 **Individual Sensor Support**: When you specify `temperature_entity` or `humidity_entity`, the card will look for that specific sensor in both:
@@ -349,6 +351,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Entity Picture Display`**: automatic display of entity pictures with optional override - thanks @Zipp0KMS, @pheitman
 - [x] **`Custom Labels`**: entity and sensor labels with state/threshold-based overrides - thanks @ojm88
 - [x] **`Smoke Detection`**: visual indicators for smoke detectors - thanks @Arjan-21
+- [x] **`Entity-Based Threshold Values`**: **⭐ Contributor ⭐** dynamic threshold based on entity - thanks @Micky2149
 
 ## Contributing
 

@@ -49,7 +49,7 @@ The mold indicator provides a prominent visual warning when mold levels exceed y
 - **Visual Design**: Animated red gradient background with pulsing effects
 - **Components**: Shows the mold sensor icon and current value
 - **Animations**: Includes pulsing, bouncing, and glowing effects to draw attention
-- **Warning Symbol**: Displays a flashing warning triangle (⚠) for additional emphasis
+- **Warning Symbol**: Displays a flashing warning bug mold symbol for additional emphasis
 - **Hover Effects**: Scales up and intensifies animations on hover
 
 ![Moldy](../../assets/moldy.png)
@@ -80,8 +80,8 @@ thresholds:
 
 # Entity thresholds
 thresholds:
-  temperature: sensor.main_temperature # Specific entity for temperature value from entity
-  humidity: sensor.main_humidity # Specific entity for humidity value from entity
+  temperature: sensor.main_temperature # Specific entity for temperature value
+  humidity: sensor.main_humidity # Specific entity for humidity value
 
 # Mold threshold
 thresholds:

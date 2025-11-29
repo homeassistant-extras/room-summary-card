@@ -47,16 +47,15 @@ const getSensorValue = (
  */
 const getThresholdSensorValue = (
   sensors: SensorData['thresholdSensors'],
+  defaultValue: number,
   config?: string | number,
-): number | null => {
-  if (!config) return null;
+): number => {
+  if (!config) return defaultValue;
   if (typeof config === 'number') return config;
 
-  if (config) {
-    const sensor = sensors.find((s) => s.entity_id === config);
-    if (sensor) return Number(sensor.state);
-  }
-  return null;
+  const sensor = sensors.find((s) => s.entity_id === config);
+  if (sensor) return Number(sensor.state);
+  return defaultValue;
 };
 
 /**
@@ -117,16 +116,16 @@ export const climateThresholds = memoizeOne(
       config.thresholds?.humidity_entity,
     );
 
-    let tempThreshold =
-      getThresholdSensorValue(
-        sensorData.thresholdSensors,
-        config.thresholds?.temperature,
-      ) ?? 80;
-    let humidThreshold =
-      getThresholdSensorValue(
-        sensorData.thresholdSensors,
-        config.thresholds?.humidity,
-      ) ?? 60;
+    const tempThreshold = getThresholdSensorValue(
+      sensorData.thresholdSensors,
+      80,
+      config.thresholds?.temperature,
+    );
+    const humidThreshold = getThresholdSensorValue(
+      sensorData.thresholdSensors,
+      60,
+      config.thresholds?.humidity,
+    );
 
     const tempOperator = config.thresholds?.temperature_operator ?? 'gt';
     const humidOperator = config.thresholds?.humidity_operator ?? 'gt';

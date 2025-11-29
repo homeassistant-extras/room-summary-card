@@ -117,6 +117,19 @@ thresholds:
   humidity: 60
 ```
 
+### With Dynamic Entity-Based Thresholds
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+thresholds:
+  temperature: sensor.temperature_threshold # Threshold value from entity
+  humidity: sensor.humidity_threshold # Threshold value from entity
+  mold: 50
+```
+
+This allows you to dynamically adjust thresholds by updating the sensor entities, perfect for scenarios where thresholds change based on time of day, season, or other conditions.
+
 ### Exclude Default Entities
 
 ```yaml

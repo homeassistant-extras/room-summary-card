@@ -1,7 +1,7 @@
+import * as stateColorModule from '@hass/common/entity/state_color';
 import * as commonStyleModule from '@theme/render/common-style';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import type { EntityInformation } from '@type/room';
-import * as stateColorModule from '@hass/common/entity/state_color';
 import { expect } from 'chai';
 import { nothing } from 'lit';
 import { styleMap } from 'lit-html/directives/style-map.js';

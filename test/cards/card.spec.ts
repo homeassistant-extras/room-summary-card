@@ -17,8 +17,8 @@ describe('card.ts', () => {
 
   beforeEach(() => {
     actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
-      bind: () => { },
-      handleAction: () => { },
+      bind: () => {},
+      handleAction: () => {},
     });
     getRoomPropertiesStub = stub(setupCardModule, 'getRoomProperties').returns({
       roomInfo: { area_name: 'Living Room' },

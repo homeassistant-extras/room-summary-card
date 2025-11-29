@@ -44,14 +44,14 @@ describe('sensor-collection.ts', () => {
       'attributeDisplay',
     ).returns(html`<span>attribute value</span>`);
     actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
-      bind: () => { },
-      handleAction: () => { },
+      bind: () => {},
+      handleAction: () => {},
     });
     handleClickActionStub = stub(
       actionHandlerModule,
       'handleClickAction',
     ).returns({
-      handleEvent: () => { },
+      handleEvent: () => {},
     });
 
     mockHass = {
