@@ -52,12 +52,11 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
   // Get array of entity IDs from config.sensors for quick lookup
   const configSensorIds = config.sensors?.map(getSensorEntityId) || [];
-  const thresholdSensorIds = [
-    config.thresholds?.humidity,
-    config.thresholds?.temperature,
-  ]
-    .filter((s) => typeof s === 'string')
-    .map(getSensorEntityId);
+  const thresholdSensorIds = new Set(
+    [config.thresholds?.humidity, config.thresholds?.temperature]
+      .filter((s) => typeof s === 'string')
+      .map(getSensorEntityId),
+  );
 
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
@@ -69,7 +68,7 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     // Check if this is a configured light entity (always process these)
     const isConfiguredLight = configuredLightIds.includes(entity.entity_id);
     // Check if this is a configured threshold entity (always process these)
-    const isThresholdEntity = thresholdSensorIds.includes(entity.entity_id);
+    const isThresholdEntity = thresholdSensorIds.has(entity.entity_id);
 
     // If it's not a config sensor, not in the area, and not a configured light, skip it
     // If it's a config sensor or configured light, always include it since the user has explicitly included it
@@ -86,15 +85,14 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
     // Collect light entities for multi-light background feature
     if (multiLightEnabled) {
-      if (isConfiguredLight) {
-        // Always include explicitly configured lights
-        lightEntities.push(state);
-      } else if (
-        !config.lights?.length &&
-        isInArea &&
-        entity.entity_id.startsWith('light.')
+      if (
+        isConfiguredLight ||
+        (!config.lights?.length &&
+          isInArea &&
+          entity.entity_id.startsWith('light.'))
       ) {
-        // Auto-discover lights in area only if no lights are manually configured
+        // Always include explicitly configured lights, or auto-discover lights in area
+        // only if no lights are manually configured
         lightEntities.push(state);
       }
     }

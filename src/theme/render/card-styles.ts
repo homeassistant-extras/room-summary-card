@@ -41,31 +41,30 @@ export const renderCardStyles = (
   isOccupied: boolean,
   isSmokeDetected: boolean,
   image?: string | null,
-  isActive?: boolean,
+  isActive: boolean = false,
 ): DirectiveResult<typeof StyleMapDirective> => {
   const { state } = entity as { state: HassEntity };
-  const active = isActive ?? false;
   const thresholdResult = getThresholdResult(entity);
   const themeOverride = getThemeColorOverride(
     hass,
     entity,
     thresholdResult,
-    active,
+    isActive,
   );
   const skipStyles = hasFeature(config, 'skip_entity_styles');
-  const opacity = getBackgroundOpacity(config, active);
+  const opacity = getBackgroundOpacity(config, isActive);
   // Smoke takes priority over occupancy - if smoke is detected, use smoke CSS vars
   const alarmVars = isSmokeDetected
     ? getSmokeCssVars(isSmokeDetected, config.smoke)
     : getOccupancyCssVars(isOccupied, config.occupancy);
-  const cssColor = stateColorCss(state, 'card', active);
+  const cssColor = stateColorCss(state, 'card', isActive);
   const filter = stateColorBrightness(state);
 
   let backgroundColorCard: string | undefined;
   if (skipStyles) {
     backgroundColorCard = undefined;
   } else {
-    backgroundColorCard = active ? cssColor : undefined;
+    backgroundColorCard = isActive ? cssColor : undefined;
   }
 
   // Return complete style map

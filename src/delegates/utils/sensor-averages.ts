@@ -14,7 +14,7 @@ const getNumericEntitiesByClass = (
       entity.attributes.device_class === deviceClass &&
       isNumericState(entity) &&
       entity.state.trim() !== '' &&
-      !isNaN(Number(entity.state)),
+      !Number.isNaN(Number(entity.state)),
   );
 };
 

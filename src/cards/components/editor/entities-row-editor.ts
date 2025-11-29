@@ -189,13 +189,8 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
 
     // In single mode, replace instead of add
     if (this.single) {
-      if (this.field === 'entities') {
-        (ev.target as any).value = '';
-        fireEvent(this, 'value-changed', { value: [value] });
-      } else {
-        (ev.target as any).value = '';
-        fireEvent(this, 'value-changed', { value: [value] });
-      }
+      (ev.target as any).value = '';
+      fireEvent(this, 'value-changed', { value: [value] });
       return;
     }
 

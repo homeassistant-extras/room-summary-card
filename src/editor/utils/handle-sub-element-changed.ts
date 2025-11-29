@@ -27,7 +27,7 @@ function normalizeEntityValue(
   if (!value) {
     return undefined;
   }
-  return typeof value === 'string' ? value : value;
+  return value;
 }
 
 /**
