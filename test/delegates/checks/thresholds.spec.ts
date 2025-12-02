@@ -89,16 +89,16 @@ describe('climate-thresholds.ts', () => {
       {
         description: 'Thresholds are number',
         thresholds: {
-          temperature: 75,
-          humidity: 50,
+          temperature: [{ value: 75 }],
+          humidity: [{ value: 50 }],
         },
         thresholdSensors: [],
       },
       {
         description: 'Thresholds are entity',
         thresholds: {
-          temperature: 'sensor.temperature_threshold',
-          humidity: 'sensor.humidity_threshold',
+          temperature: [{ value: 'sensor.temperature_threshold' }],
+          humidity: [{ value: 'sensor.humidity_threshold' }],
         },
         thresholdSensors: [
           {
@@ -164,9 +164,18 @@ describe('climate-thresholds.ts', () => {
           const config: Config = {
             area: 'test',
             thresholds: {
-              ...testCase.thresholds,
-              temperature_entity: 'sensor.specific_temp',
-              humidity_entity: 'sensor.specific_humidity',
+              temperature: [
+                {
+                  entity_id: 'sensor.specific_temp',
+                  ...testCase.thresholds.temperature[0],
+                },
+              ],
+              humidity: [
+                {
+                  entity_id: 'sensor.specific_humidity',
+                  ...testCase.thresholds.humidity[0],
+                },
+              ],
             },
           };
           const sensorData: SensorData = {
@@ -227,9 +236,18 @@ describe('climate-thresholds.ts', () => {
           const config: Config = {
             area: 'test',
             thresholds: {
-              ...testCase.thresholds,
-              temperature_entity: 'sensor.individual_temp',
-              humidity_entity: 'sensor.individual_humidity',
+              temperature: [
+                {
+                  entity_id: 'sensor.individual_temp',
+                  ...testCase.thresholds.temperature[0],
+                },
+              ],
+              humidity: [
+                {
+                  entity_id: 'sensor.individual_humidity',
+                  ...testCase.thresholds.humidity[0],
+                },
+              ],
             },
           };
           const sensorData: SensorData = {
@@ -283,8 +301,12 @@ describe('climate-thresholds.ts', () => {
           const config: Config = {
             area: 'test',
             thresholds: {
-              ...testCase.thresholds,
-              temperature_entity: 'sensor.wrong_device_class',
+              temperature: [
+                {
+                  entity_id: 'sensor.wrong_device_class',
+                  ...testCase.thresholds.temperature[0],
+                },
+              ],
             },
           };
           const sensorData: SensorData = {
@@ -370,8 +392,7 @@ describe('climate-thresholds.ts', () => {
         const config: Config = {
           area: 'test',
           thresholds: {
-            temperature: 75,
-            temperature_operator: 'gt',
+            temperature: [{ value: 75, operator: 'gt' }],
           },
         };
         const sensorData: SensorData = {
@@ -398,8 +419,7 @@ describe('climate-thresholds.ts', () => {
         const config: Config = {
           area: 'test',
           thresholds: {
-            temperature: 75,
-            temperature_operator: 'lt',
+            temperature: [{ value: 75, operator: 'lt' }],
           },
         };
         const sensorData: SensorData = {
@@ -426,8 +446,7 @@ describe('climate-thresholds.ts', () => {
         const config: Config = {
           area: 'test',
           thresholds: {
-            temperature: 75,
-            temperature_operator: 'lte',
+            temperature: [{ value: 75, operator: 'lte' }],
           },
         };
         const sensorData: SensorData = {
@@ -454,8 +473,7 @@ describe('climate-thresholds.ts', () => {
         const config: Config = {
           area: 'test',
           thresholds: {
-            temperature: 75,
-            temperature_operator: 'eq',
+            temperature: [{ value: 75, operator: 'eq' }],
           },
         };
         const sensorData: SensorData = {
@@ -482,8 +500,7 @@ describe('climate-thresholds.ts', () => {
         const config: Config = {
           area: 'test',
           thresholds: {
-            humidity: 60,
-            humidity_operator: 'gte',
+            humidity: [{ value: 60, operator: 'gte' }],
           },
         };
         const sensorData: SensorData = {
@@ -510,10 +527,8 @@ describe('climate-thresholds.ts', () => {
         const config: Config = {
           area: 'test',
           thresholds: {
-            temperature: 70,
-            humidity: 50,
-            temperature_operator: 'lt', // Below 70°F
-            humidity_operator: 'lt', // Below 50%
+            temperature: [{ value: 70, operator: 'lt' }], // Below 70°F
+            humidity: [{ value: 50, operator: 'lt' }], // Below 50%
           },
         };
         const sensorData: SensorData = {
@@ -547,8 +562,7 @@ describe('climate-thresholds.ts', () => {
         const config: Config = {
           area: 'test',
           thresholds: {
-            temperature: 75,
-            // No operator specified, should default to 'gt'
+            temperature: [{ value: 75 }], // No operator specified, should default to 'gt'
           },
         };
         const sensorData: SensorData = {
@@ -575,8 +589,7 @@ describe('climate-thresholds.ts', () => {
         const config: Config = {
           area: 'test',
           thresholds: {
-            temperature: 75,
-            temperature_operator: 'unknown' as any, // Invalid operator
+            temperature: [{ value: 75, operator: 'unknown' as any }], // Invalid operator
           },
         };
         const sensorData: SensorData = {
@@ -598,6 +611,261 @@ describe('climate-thresholds.ts', () => {
         const result = climateThresholds(config, sensorData);
         // Should default to 'gt' behavior (value > threshold)
         expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+    });
+
+    describe('array threshold behavior', () => {
+      it('should activate when any entry in temperature array trips threshold', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: [
+              { value: 80 }, // First threshold not met (75 < 80)
+              { value: 70 }, // Second threshold met (75 > 70)
+              { value: 90 }, // Third threshold not met (75 < 90)
+            ],
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 75,
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          thresholdSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        // Should be hot because second entry (70) is tripped
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+
+      it('should activate when any entry in humidity array trips threshold', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            humidity: [
+              { value: 50 }, // First threshold not met (45 < 50)
+              { value: 40 }, // Second threshold met (45 > 40)
+              { value: 60 }, // Third threshold not met (45 < 60)
+            ],
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'humidity',
+              average: 45,
+              uom: '%',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          thresholdSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        // Should be humid because second entry (40) is tripped
+        expect(result).to.deep.equal({ hot: false, humid: true });
+      });
+
+      it('should not activate when no entries in array trip threshold', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: [
+              { value: 80 }, // Not met (75 < 80)
+              { value: 90 }, // Not met (75 < 90)
+            ],
+            humidity: [
+              { value: 50 }, // Not met (45 < 50)
+              { value: 60 }, // Not met (45 < 60)
+            ],
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 75,
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+            {
+              device_class: 'humidity',
+              average: 45,
+              uom: '%',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          thresholdSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        expect(result).to.deep.equal({ hot: false, humid: false });
+      });
+
+      it('should handle multiple entries with different operators', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: [
+              { value: 80, operator: 'gt' }, // Not met (75 < 80)
+              { value: 70, operator: 'lt' }, // Not met (75 > 70)
+              { value: 75, operator: 'gte' }, // Met (75 >= 75)
+            ],
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 75,
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          thresholdSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        // Should be hot because third entry (gte 75) is met
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+
+      it('should handle multiple entries with different entity IDs', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: [
+              { entity_id: 'sensor.temp1', value: 80 }, // Not met (70 < 80)
+              { entity_id: 'sensor.temp2', value: 70 }, // Met (75 > 70)
+            ],
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 72, // Average not used when entity_id specified
+              uom: '°F',
+              states: [
+                {
+                  entity_id: 'sensor.temp1',
+                  state: '70',
+                  domain: 'sensor',
+                  attributes: {},
+                },
+                {
+                  entity_id: 'sensor.temp2',
+                  state: '75',
+                  domain: 'sensor',
+                  attributes: {},
+                },
+              ],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          thresholdSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        // Should be hot because second entry (sensor.temp2 > 70) is met
+        expect(result).to.deep.equal({ hot: true, humid: false });
+      });
+
+      it('should return false when array is empty (no thresholds to check)', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: [],
+            humidity: [],
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 85, // Above default 80, but no thresholds configured
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+            {
+              device_class: 'humidity',
+              average: 65, // Above default 60, but no thresholds configured
+              uom: '%',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          thresholdSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        // Empty array means no thresholds to check, so should return false
+        expect(result).to.deep.equal({ hot: false, humid: false });
+      });
+
+      it('should handle array with empty object (uses default threshold)', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: [{}], // Empty object uses defaults
+            humidity: [{}],
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 85, // Above default 80
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+            {
+              device_class: 'humidity',
+              average: 65, // Above default 60
+              uom: '%',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          thresholdSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+        // Should use default thresholds
+        expect(result).to.deep.equal({ hot: true, humid: true });
       });
     });
   });

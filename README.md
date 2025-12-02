@@ -64,44 +64,45 @@ You can configure temperature, humidity, and mold thresholds to trigger visual i
 
 ```yaml
 thresholds:
-  temperature: 80 # °F (default: 80) or entity ID (e.g., sensor.temp_threshold)
-  humidity: 60 # % (default: 60) or entity ID (e.g., sensor.humidity_threshold)
+  temperature:
+    - value: 80 # °F (optional - defaults to 80) or entity ID (e.g., sensor.temp_threshold)
+      operator: gt # Comparison operator (optional - default: gt)
+      # entity_id is optional - if omitted, uses averaged temperature sensor
+  humidity:
+    - value: 60 # % (optional - defaults to 60) or entity ID (e.g., sensor.humidity_threshold)
+      operator: gt # Comparison operator (optional - default: gt)
+      # entity_id is optional - if omitted, uses averaged humidity sensor
   mold: 50 # % (no default - shows whenever mold sensor is present)
-  temperature_entity: sensor.living_room_temp # Specific sensor (optional)
-  humidity_entity: sensor.living_room_humidity # Specific sensor (optional)
-  temperature_operator: gt # Comparison operator (default: gt)
-  humidity_operator: gt # Comparison operator (default: gt)
 ```
 
-**Dynamic Thresholds**: `temperature` and `humidity` can be either numeric values or entity IDs. When using entity IDs, the threshold value is read from the entity's state, allowing for dynamic threshold configuration.
+**Simple Configuration**: All fields are optional! You can skip properties or the whole section to use all defaults (80°F for temperature, 60% for humidity, `gt` operator, averaged sensor). Or specify only the fields you want to customize.
+
+**Specific Sensors**: If you need to check a specific sensor instead of the average, add `entity_id` to the threshold entry.
+
+**Dynamic Thresholds**: The `value` field can be either a numeric value or an entity ID. When using an entity ID, the threshold value is read from the entity's state, allowing for dynamic threshold configuration.
+
+**Multiple Thresholds**: You can configure multiple threshold entries for temperature and humidity, each checking different sensors with different values and operators.
 
 **Comparison Operators**: Use `gt` (>), `gte` (>=), `lt` (<), `lte` (<=), or `eq` (=) to control when thresholds trigger. Perfect for heating scenarios (use `lt` for temperature) or medical conditions (use `lt` for low humidity).
 
 **Mold Indicator**: When mold levels exceed the threshold, an animated indicator appears in the bottom left area near problem entities with pulsing effects and warning symbols.
 
-**Individual Sensor Support**: When you specify `temperature_entity` or `humidity_entity`, the card will look for that specific sensor in both:
-
-1. **Individual sensors** (from `config.sensors`) - if the entity has the correct device class
-2. **Averaged sensors** (from `config.sensor_classes`) - as a fallback
-
-This allows you to use configured individual sensors for climate thresholds even when their device class isn't included in `sensor_classes`.
-
-#### Example: Using Individual Sensors for Thresholds
+#### Example: Using Multiple Thresholds
 
 ```yaml
-sensors:
-  - sensor.living_room_temp_1 # Individual temperature sensor
-  - sensor.living_room_humidity # Individual humidity sensor
-sensor_classes:
-  - pressure # Only pressure sensors from area
 thresholds:
-  temperature: 75
-  humidity: 50
-  temperature_entity: sensor.living_room_temp_1 # Uses individual sensor
-  humidity_entity: sensor.living_room_humidity # Uses individual sensor
+  temperature:
+    - value: 75 # Uses averaged temperature sensor
+      operator: gt
+    - entity_id: sensor.bedroom_temp # Also check specific sensor
+      value: 70
+      operator: gt
+  humidity:
+    - value: 50 # Uses averaged humidity sensor
+      operator: gt
 ```
 
-In this example, the climate thresholds will use the individual temperature and humidity sensors, even though `temperature` and `humidity` aren't in `sensor_classes`.
+In this example, the card will trigger the hot border if either the averaged temperature exceeds 75°F or the bedroom temperature exceeds 70°F.
 
 ### Entity Status
 

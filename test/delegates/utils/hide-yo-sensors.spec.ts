@@ -9,9 +9,15 @@ import { stub, type SinonStub } from 'sinon';
 describe('get-sensors.ts', () => {
   let mockHass: HomeAssistant;
   let calculateAveragesStub: SinonStub;
+  let defaultConfig: Config;
 
   beforeEach(() => {
     calculateAveragesStub = stub(sensorAveragesModule, 'calculateAverages');
+
+    // Default config used by most tests - can be overridden in individual tests
+    defaultConfig = {
+      area: 'living_room',
+    };
 
     mockHass = {
       states: {
@@ -117,16 +123,12 @@ describe('get-sensors.ts', () => {
   });
 
   it('should return SensorData with individual and averaged properties', () => {
-    const config: Config = {
-      area: 'living_room',
-    };
-
     const mockAveraged = [
       e('sensor', 'averaged_temp', '72', { device_class: 'temperature' }),
     ];
     calculateAveragesStub.returns(mockAveraged);
 
-    const result = getSensors(mockHass, config);
+    const result = getSensors(mockHass, defaultConfig);
 
     expect(result).to.have.keys([
       'individual',
@@ -142,7 +144,7 @@ describe('get-sensors.ts', () => {
 
   it('should call calculateAverages with correct parameters', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       sensor_classes: ['temperature', 'humidity', 'pressure'],
     };
 
@@ -166,11 +168,7 @@ describe('get-sensors.ts', () => {
   });
 
   it('should use default sensor classes when not specified', () => {
-    const config: Config = {
-      area: 'living_room',
-    };
-
-    getSensors(mockHass, config);
+    getSensors(mockHass, defaultConfig);
 
     const [, sensorClasses] = calculateAveragesStub.firstCall.args;
     expect(sensorClasses).to.deep.equal([
@@ -182,7 +180,7 @@ describe('get-sensors.ts', () => {
 
   it('should return config sensors in individual array', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       sensors: ['sensor.custom_sensor_2', 'sensor.custom_sensor_1'],
     };
 
@@ -195,7 +193,7 @@ describe('get-sensors.ts', () => {
 
   it('should handle SensorConfig format in sensors array', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       sensors: [
         { entity_id: 'sensor.custom_sensor_2' },
         { entity_id: 'sensor.custom_sensor_1' },
@@ -211,7 +209,7 @@ describe('get-sensors.ts', () => {
 
   it('should handle mixed string and SensorConfig formats in sensors array', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       sensors: [
         'sensor.custom_sensor_2',
         { entity_id: 'sensor.custom_sensor_1' },
@@ -231,7 +229,7 @@ describe('get-sensors.ts', () => {
 
   it('should exclude sensors from other areas', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       sensors: [],
     };
 
@@ -245,7 +243,7 @@ describe('get-sensors.ts', () => {
 
   it('should exclude sensors from other areas unless configured', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       sensors: ['sensor.other_area_temp'], // This is in kitchen area
     };
 
@@ -259,7 +257,7 @@ describe('get-sensors.ts', () => {
 
   it('should include sensors from other areas when configured with SensorConfig format', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       sensors: [{ entity_id: 'sensor.other_area_temp' }], // This is in kitchen area
     };
 
@@ -273,7 +271,7 @@ describe('get-sensors.ts', () => {
 
   it('should skip default entities when exclude_default_entities is enabled', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       features: ['exclude_default_entities'],
     };
 
@@ -285,7 +283,7 @@ describe('get-sensors.ts', () => {
 
   it('should still include config sensors when exclude_default_entities is enabled', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       features: ['exclude_default_entities'],
       sensors: ['sensor.custom_sensor_1'],
     };
@@ -314,7 +312,7 @@ describe('get-sensors.ts', () => {
     );
 
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       sensors: ['sensor.device_area_sensor'],
     };
 
@@ -327,7 +325,7 @@ describe('get-sensors.ts', () => {
 
   it('should handle missing entities gracefully', () => {
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       sensors: [
         'sensor.living_room_temperature',
         'sensor.nonexistent_sensor', // This doesn't exist
@@ -391,7 +389,7 @@ describe('get-sensors.ts', () => {
     };
 
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       features: ['multi_light_background'],
     };
 
@@ -427,7 +425,7 @@ describe('get-sensors.ts', () => {
     };
 
     const config: Config = {
-      area: 'living_room',
+      ...defaultConfig,
       features: ['multi_light_background'],
       lights: ['light.kitchen_light', 'light.bedroom_light'],
     };
@@ -456,14 +454,230 @@ describe('get-sensors.ts', () => {
       labels: [],
     };
 
-    const config: Config = {
-      area: 'living_room',
-      // No multi_light_background feature
-    };
-
-    const result = getSensors(mockHass, config);
+    const result = getSensors(mockHass, defaultConfig);
 
     expect(result.lightEntities).to.be.an('array');
     expect(result.lightEntities).to.have.lengthOf(0);
+  });
+
+  describe('threshold sensors collection', () => {
+    beforeEach(() => {
+      // Add threshold sensor entities
+      mockHass.states['sensor.temperature_threshold'] = e(
+        'sensor',
+        'temperature_threshold',
+        '75',
+        {
+          device_class: 'temperature',
+          unit_of_measurement: '°F',
+        },
+      );
+      mockHass.states['sensor.humidity_threshold'] = e(
+        'sensor',
+        'humidity_threshold',
+        '60',
+        {
+          device_class: 'humidity',
+          unit_of_measurement: '%',
+        },
+      );
+      mockHass.states['sensor.other_area_threshold'] = e(
+        'sensor',
+        'other_area_threshold',
+        '80',
+        {
+          device_class: 'temperature',
+        },
+      );
+
+      mockHass.entities['sensor.temperature_threshold'] = {
+        entity_id: 'sensor.temperature_threshold',
+        device_id: 'device_threshold_1',
+        area_id: 'living_room',
+        labels: [],
+      };
+      mockHass.entities['sensor.humidity_threshold'] = {
+        entity_id: 'sensor.humidity_threshold',
+        device_id: 'device_threshold_2',
+        area_id: 'living_room',
+        labels: [],
+      };
+      mockHass.entities['sensor.other_area_threshold'] = {
+        entity_id: 'sensor.other_area_threshold',
+        device_id: 'device_threshold_3',
+        area_id: 'kitchen', // Different area
+        labels: [],
+      };
+    });
+
+    it('should collect threshold sensors when value is a string (entity ID)', () => {
+      const config: Config = {
+        ...defaultConfig,
+        thresholds: {
+          temperature: [
+            {
+              value: 'sensor.temperature_threshold', // Entity ID string
+            },
+          ],
+          humidity: [
+            {
+              value: 'sensor.humidity_threshold', // Entity ID string
+            },
+          ],
+        },
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.thresholdSensors).to.be.an('array');
+      expect(result.thresholdSensors).to.have.lengthOf(2);
+      expect(
+        result.thresholdSensors.map((s) => s.entity_id),
+      ).to.include.members([
+        'sensor.temperature_threshold',
+        'sensor.humidity_threshold',
+      ]);
+    });
+
+    it('should NOT collect threshold sensors when value is a number', () => {
+      const config: Config = {
+        ...defaultConfig,
+        thresholds: {
+          temperature: [
+            {
+              value: 75, // Number, not entity ID
+            },
+          ],
+          humidity: [
+            {
+              value: 60, // Number, not entity ID
+            },
+          ],
+        },
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.thresholdSensors).to.be.an('array');
+      expect(result.thresholdSensors).to.have.lengthOf(0);
+    });
+
+    it('should NOT collect threshold sensors when value is omitted', () => {
+      const config: Config = {
+        ...defaultConfig,
+        thresholds: {
+          temperature: [
+            {
+              // value omitted - uses default
+            },
+          ],
+          humidity: [
+            {
+              // value omitted - uses default
+            },
+          ],
+        },
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.thresholdSensors).to.be.an('array');
+      expect(result.thresholdSensors).to.have.lengthOf(0);
+    });
+
+    it('should collect multiple threshold sensors from different entries', () => {
+      const config: Config = {
+        ...defaultConfig,
+        thresholds: {
+          temperature: [
+            {
+              value: 'sensor.temperature_threshold',
+            },
+            {
+              value: 'sensor.other_area_threshold',
+            },
+          ],
+          humidity: [
+            {
+              value: 'sensor.humidity_threshold',
+            },
+          ],
+        },
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.thresholdSensors).to.be.an('array');
+      expect(result.thresholdSensors).to.have.lengthOf(3);
+      expect(
+        result.thresholdSensors.map((s) => s.entity_id),
+      ).to.include.members([
+        'sensor.temperature_threshold',
+        'sensor.other_area_threshold',
+        'sensor.humidity_threshold',
+      ]);
+    });
+
+    it('should handle mixed number and string values correctly', () => {
+      const config: Config = {
+        ...defaultConfig,
+        thresholds: {
+          temperature: [
+            {
+              value: 75, // Number - should NOT be collected
+            },
+            {
+              value: 'sensor.temperature_threshold', // String - should be collected
+            },
+          ],
+          humidity: [
+            {
+              value: 60, // Number - should NOT be collected
+            },
+          ],
+        },
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.thresholdSensors).to.be.an('array');
+      expect(result.thresholdSensors).to.have.lengthOf(1);
+      expect(result.thresholdSensors[0]!.entity_id).to.equal(
+        'sensor.temperature_threshold',
+      );
+    });
+
+    it('should ignore entity_id field when collecting threshold sensors', () => {
+      const config: Config = {
+        ...defaultConfig,
+        thresholds: {
+          temperature: [
+            {
+              entity_id: 'sensor.living_room_temperature', // This is NOT collected
+              value: 'sensor.temperature_threshold', // This IS collected
+            },
+          ],
+        },
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.thresholdSensors).to.be.an('array');
+      expect(result.thresholdSensors).to.have.lengthOf(1);
+      expect(result.thresholdSensors[0]!.entity_id).to.equal(
+        'sensor.temperature_threshold',
+      );
+      // entity_id should NOT be in thresholdSensors
+      expect(result.thresholdSensors.map((s) => s.entity_id)).to.not.include(
+        'sensor.living_room_temperature',
+      );
+    });
+
+    it('should return empty thresholdSensors array when no thresholds configured', () => {
+      const result = getSensors(mockHass, defaultConfig);
+
+      expect(result.thresholdSensors).to.be.an('array');
+      expect(result.thresholdSensors).to.have.lengthOf(0);
+    });
   });
 });

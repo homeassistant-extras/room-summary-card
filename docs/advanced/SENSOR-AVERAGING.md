@@ -86,8 +86,9 @@ sensors:
 sensor_classes:
   - pressure # Only pressure sensors from area
 thresholds:
-  temperature: 75
-  temperature_entity: sensor.living_room_temp_1 # Uses living room temp only
+  temperature:
+    - entity_id: sensor.living_room_temp_1
+      value: 75 # Uses living room temp only
 ```
 
 In this configuration:
@@ -99,7 +100,7 @@ In this configuration:
 
 #### Threshold Lookup Priority
 
-When `temperature_entity` or `humidity_entity` is specified, the system looks for the sensor in this order:
+When `entity_id` is specified in a threshold entry, the system looks for the sensor in this order:
 
 1. **Individual sensors** (from `config.sensors`) - if the entity has the correct device class
 2. **Averaged sensors** (from `config.sensor_classes`) - as a fallback

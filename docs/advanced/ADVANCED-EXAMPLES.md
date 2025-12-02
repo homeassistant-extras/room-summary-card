@@ -27,8 +27,12 @@ background:
   image: /local/images/living-room.jpg
   opacity: 25
 thresholds:
-  temperature: 75
-  humidity: 55
+  temperature:
+    - entity_id: sensor.temp
+      value: 75
+  humidity:
+    - entity_id: sensor.humidity
+      value: 55
 navigate: /lovelace/living-room
 features:
   - hide_area_stats
@@ -984,8 +988,10 @@ styles:
 type: custom:room-summary-card
 area: garage
 thresholds:
-  temperature: 90  # Red border above 90°F
-  humidity: 80     # Blue border above 80%
+  temperature:
+    - value: 90  # Red border above 90°F
+  humidity:
+    - value: 80     # Blue border above 80%
 background:
   image_entity: camera.garage_cam
   opacity: 15
@@ -994,15 +1000,19 @@ background:
 type: custom:room-summary-card
 area: wine_cellar
 thresholds:
-  temperature: 65  # Red border above 65°F
-  humidity: 70     # Blue border above 70%
+  temperature:
+    - value: 65  # Red border above 65°F
+  humidity:
+    - value: 70     # Blue border above 70%
 
 # Celsius thresholds
 type: custom:room-summary-card
 area: greenhouse
 thresholds:
-  temperature: 32  # Red border above 32°C
-  humidity: 75     # Blue border above 75%
+  temperature:
+    - value: 32  # Red border above 32°C
+  humidity:
+    - value: 75     # Blue border above 75%
 ```
 
 ## Custom Styles with Complex Configurations
@@ -1077,8 +1087,10 @@ sensor_classes:
   - humidity
 sensor_layout: stacked
 thresholds:
-  temperature: 72
-  humidity: 50
+  temperature:
+    - value: 72
+  humidity:
+    - value: 50
 features:
   - hide_room_icon
 styles:

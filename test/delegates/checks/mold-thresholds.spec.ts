@@ -168,8 +168,8 @@ describe('mold-thresholds.ts', () => {
       const config: Config = {
         area: 'test',
         thresholds: {
-          temperature: 80,
-          humidity: 60,
+          temperature: [{ value: 80 }],
+          humidity: [{ value: 60 }],
           mold: 50,
         },
       };

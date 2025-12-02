@@ -87,8 +87,11 @@
    type: custom:room-summary-card
    area: living_room
    thresholds:
-     temperature: 75 # Must be configured
-     humidity: 55
+     temperature:
+       - value: 75 # Must be configured or defaults to 80
+     humidity:
+       - entity_id: sensor.humidity # maybe need an entity if not using defaults
+         value: 55
    ```
 
 2. **Verify sensor device classes**: Sensors must have `device_class: temperature` or `device_class: humidity`

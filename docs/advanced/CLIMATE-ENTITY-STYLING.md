@@ -42,9 +42,11 @@ The card shows colored borders based on sensor thresholds:
    type: custom:room-summary-card
    area: living_room
    thresholds:
-     temperature: 75 # Custom temperature threshold
-     humidity: 55 # Custom humidity threshold
-     humidity_entity: sensor.living_room_humidity # Specific entity for humidity threshold (advanced)
+     temperature:
+       - value: 75 # Custom temperature threshold
+     humidity:
+       - entity_id: sensor.living_room_humidity
+         value: 55 # Custom humidity threshold
    ```
 
 3. **Skip feature**: Can be disabled with feature flag

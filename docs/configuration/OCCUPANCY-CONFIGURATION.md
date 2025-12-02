@@ -342,8 +342,10 @@ occupancy:
   entities:
     - binary_sensor.kitchen_motion
 thresholds:
-  temperature: 75
-  humidity: 60
+  temperature:
+    - value: 75
+  humidity:
+    - value: 60
 ```
 
 ### With Feature Flags

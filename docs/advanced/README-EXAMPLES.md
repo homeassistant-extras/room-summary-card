@@ -36,7 +36,8 @@ Example YAML configurations to replicate each screenshot shown below. See my per
       - type: custom:room-summary-card
         area: garage
         thresholds:
-          temperature: 90
+          temperature:
+            - value: 90
         entities:
           - entity_id: binary_sensor.garage_door_tilt_window_door_is_open
             tap_action:

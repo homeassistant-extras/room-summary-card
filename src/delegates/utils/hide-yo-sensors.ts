@@ -52,11 +52,23 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
   // Get array of entity IDs from config.sensors for quick lookup
   const configSensorIds = config.sensors?.map(getSensorEntityId) || [];
-  const thresholdSensorIds = new Set(
-    [config.thresholds?.humidity, config.thresholds?.temperature]
-      .filter((s) => typeof s === 'string')
-      .map(getSensorEntityId),
-  );
+
+  // Extract threshold entity IDs from threshold entries' value properties
+  const thresholdSensorIds = new Set<string>();
+  if (config.thresholds?.temperature) {
+    config.thresholds.temperature.forEach((entry) => {
+      if (typeof entry.value === 'string') {
+        thresholdSensorIds.add(entry.value);
+      }
+    });
+  }
+  if (config.thresholds?.humidity) {
+    config.thresholds.humidity.forEach((entry) => {
+      if (typeof entry.value === 'string') {
+        thresholdSensorIds.add(entry.value);
+      }
+    });
+  }
 
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {

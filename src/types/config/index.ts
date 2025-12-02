@@ -8,6 +8,20 @@ import type { EntityConfig } from './entity';
 import type { SensorConfig } from './sensor';
 
 /**
+ * Configuration for a single threshold entry
+ */
+export interface ThresholdEntry {
+  /** Entity ID to check for this threshold (optional - if omitted, uses averaged sensor) */
+  entity_id?: string;
+
+  /** Threshold value to compare against (number) or entity ID to lookup threshold value from (optional - defaults to 80°F for temperature, 60% for humidity) */
+  value?: number | string;
+
+  /** Comparison operator (optional - default: 'gt' for greater than) */
+  operator?: ComparisonOperator;
+}
+
+/**
  * Configuration settings for entity display and behavior within Home Assistant.
  */
 export interface Config {
@@ -61,26 +75,14 @@ export interface Config {
 
   /** Custom thresholds for temperature and humidity */
   thresholds?: {
-    /** Temperature threshold value or entity ID */
-    temperature?: number | string;
+    /** Temperature threshold configurations (array format) */
+    temperature?: ThresholdEntry[];
 
-    /** Humidity threshold value or entity ID */
-    humidity?: number | string;
+    /** Humidity threshold configurations (array format) */
+    humidity?: ThresholdEntry[];
 
     /** Mold threshold value (percentage) */
     mold?: number;
-
-    /** Temperature entity ID for dynamic thresholds */
-    temperature_entity?: string;
-
-    /** Humidity entity ID for dynamic thresholds */
-    humidity_entity?: string;
-
-    /** Temperature comparison operator (default: 'gt' for greater than) */
-    temperature_operator?: ComparisonOperator;
-
-    /** Humidity comparison operator (default: 'gt' for greater than) */
-    humidity_operator?: ComparisonOperator;
   };
 
   background?: {

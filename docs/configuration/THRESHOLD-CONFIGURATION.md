@@ -8,11 +8,15 @@ Configure climate-based border styling thresholds and mold detection:
 
 ```yaml
 thresholds:
-  temperature: 75 # Temperature threshold in current unit or entity
-  humidity: 55 # Humidity threshold as percentage or entity
+  temperature:
+    - value: 75 # Temperature threshold in current unit or entity (optional - defaults to 80°F)
+      operator: gt # Comparison operator (optional - default: gt)
+      # entity_id is optional - if omitted, uses averaged temperature sensor
+  humidity:
+    - value: 55 # Humidity threshold (optional - defaults to 60%)
+      operator: gt # Comparison operator (optional - default: gt)
+      # entity_id is optional - if omitted, uses averaged humidity sensor
   mold: 50 # Mold threshold as percentage
-  temperature_operator: gt # Comparison operator for temperature (default: gt)
-  humidity_operator: gt # Comparison operator for humidity (default: gt)
 ```
 
 **How It Works**:
@@ -22,7 +26,12 @@ thresholds:
 - **Mold sensors** with values at or above the threshold display an animated indicator near problem entities (bottom left)
 - Thresholds respect the current unit of measurement (°F, °C, %)
 - Can be disabled with the `skip_climate_styles` feature flag
-- For advanced cases an entity can be configured as the one to trip the threshold.
+- Multiple threshold entries can be configured for each type, allowing different sensors to have different thresholds
+- Each threshold entry can specify the threshold value (`value`), which entity to check (`entity_id`), and the comparison operator (`operator`) - all fields are optional
+- If `entity_id` is omitted, the card uses the averaged sensor value for that device class (temperature or humidity)
+- If `value` is omitted, defaults are used: 80°F (26.7°C) for temperature, 60% for humidity
+- If `operator` is omitted, defaults to `gt` (greater than)
+- For advanced cases an entity can be configured as the one to trip the threshold for `value`.
 
 ### Comparison Operators
 
@@ -66,63 +75,98 @@ The mold indicator provides a prominent visual warning when mold levels exceed y
 **Examples**:
 
 ```yaml
+# Minimal configuration - uses all defaults (80°F for temp, 60% for humidity, gt operator)
+#thresholds:
+
+# Simple threshold - uses averaged sensor (entity_id not needed)
 # Celsius threshold
 thresholds:
-  temperature: 24  # 24°C
+  temperature:
+    - value: 24  # 24°C
 
 # Fahrenheit threshold
 thresholds:
-  temperature: 75  # 75°F
+  temperature:
+    - value: 75  # 75°F
 
 # Custom humidity threshold
 thresholds:
-  humidity: 50  # 50%
+  humidity:
+    - value: 50  # 50%
 
-# Entity thresholds
+# All thresholds together (simple form)
 thresholds:
-  temperature: sensor.main_temperature # Specific entity for temperature value
-  humidity: sensor.main_humidity # Specific entity for humidity value
-
-# Mold threshold
-thresholds:
-  mold: 45  # 45% mold level
-
-# All thresholds together
-thresholds:
-  temperature: 78
-  humidity: 65
+  temperature:
+    - value: 78
+  humidity:
+    - value: 65
   mold: 50
 
-# specific entities trigger the threshold, not average
-# this is not needed in most scenarios
+# Specific entity threshold - when you need to check a particular sensor
 thresholds:
-  temperature: 75
-  humidity: 55
-  mold: 50
-  temperature_entity: sensor.living_room_temperature # Specific entity for temperature threshold
-  humidity_entity: sensor.living_room_humidity # Specific entity for humidity threshold
+  temperature:
+    - entity_id: sensor.living_room_temp  # Check this specific sensor
+      value: 75
+      operator: gt
+
+# Dynamic threshold values from entities
+thresholds:
+  temperature:
+    - value: sensor.main_temperature # Threshold value read from entity
+      # Uses averaged temperature sensor by default
+  humidity:
+    - value: sensor.main_humidity # Threshold value read from entity
+      # Uses averaged humidity sensor by default
+
+# Multiple threshold entries for different sensors
+thresholds:
+  temperature:
+    - entity_id: sensor.living_room_temp
+      value: 75
+      operator: gt
+    - entity_id: sensor.bedroom_temp
+      value: 70
+      operator: gt
+  humidity:
+    - entity_id: sensor.living_room_humidity
+      value: 55
+      operator: gt
 
 # Heating scenario - detect when temperature is below threshold
 thresholds:
-  temperature: 68
-  temperature_operator: lt # Trigger when temperature < 68°F
+  temperature:
+    - value: 68
+      operator: lt # Trigger when temperature < 68°F
 
 # Medical condition - detect when humidity is too low
 thresholds:
-  humidity: 30
-  humidity_operator: lt # Trigger when humidity < 30%
+  humidity:
+    - value: 30
+      operator: lt # Trigger when humidity < 30%
 
 # Combined heating and low humidity detection
 thresholds:
-  temperature: 70
-  humidity: 35
-  temperature_operator: lt # Below 70°F
-  humidity_operator: lt # Below 35%
+  temperature:
+    - value: 70
+      operator: lt # Below 70°F
+  humidity:
+    - value: 35
+      operator: lt # Below 35%
 
 # Exact temperature monitoring
 thresholds:
-  temperature: 72
-  temperature_operator: eq # Trigger only when exactly 72°F
+  temperature:
+    - value: 72
+      operator: eq # Trigger only when exactly 72°F
+
+# Mix of averaged and specific sensors
+thresholds:
+  temperature:
+    - value: 75  # Uses averaged temperature sensor
+      operator: gt
+    - entity_id: sensor.bedroom_temp  # Also check specific sensor
+      value: 70
+      operator: gt
 ```
 
 **Default values**: 80°F (26.7°C) for temperature, 60% for humidity, no default for mold (indicator shows whenever mold sensor is present)

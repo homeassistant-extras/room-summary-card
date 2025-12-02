@@ -101,8 +101,10 @@ sensor_layout: bottom
 type: custom:room-summary-card
 area: garage
 thresholds:
-  temperature: 85 # Red border above 85°F
-  humidity: 70 # Blue border above 70%
+  temperature:
+    - value: 85 # Red border above 85°F
+  humidity:
+    - value: 70 # Blue border above 70%
   mold: 50 # Animated mold indicator above 50%
 ```
 
@@ -113,8 +115,10 @@ type: custom:room-summary-card
 area: basement
 thresholds:
   mold: 45 # Shows animated mold warning when levels exceed 45%
-  temperature: 65 # Lower temperature threshold for basement
-  humidity: 60
+  temperature:
+    - value: 65 # Lower temperature threshold for basement
+  humidity:
+    - value: 60
 ```
 
 ### With Dynamic Entity-Based Thresholds
@@ -123,8 +127,10 @@ thresholds:
 type: custom:room-summary-card
 area: living_room
 thresholds:
-  temperature: sensor.temperature_threshold # Threshold value from entity
-  humidity: sensor.humidity_threshold # Threshold value from entity
+  temperature:
+    - value: sensor.temperature_threshold # Threshold value from entity
+  humidity:
+    - value: sensor.humidity_threshold # Threshold value from entity
   mold: 50
 ```
 
@@ -310,11 +316,13 @@ occupancy:
   card_border_color: '#4CAF50'
   icon_color: '#8BC34A'
 thresholds:
-  temperature: 75
-  humidity: 55
+  temperature:
+    - entity_id: sensor.specific_temp_sensor  # Check specific sensor
+      value: 75
+  humidity:
+    - entity_id: sensor.specific_humidity_sensor  # Check specific sensor
+      value: 55
   mold: 50
-  temperature_entity: sensor.specific_temp_sensor
-  humidity_entity: sensor.specific_humidity_sensor
 navigate: /lovelace/living-room
 features:
   - hide_area_stats
@@ -398,8 +406,10 @@ For climate-based border styling:
 type: custom:room-summary-card
 area: living_room
 thresholds:
-  temperature: 75 # Custom temperature threshold
-  humidity: 55 # Custom humidity threshold
+  temperature:
+    - value: 75 # Custom temperature threshold
+  humidity:
+    - value: 55 # Custom humidity threshold
 ```
 
 ## Custom Styling Examples

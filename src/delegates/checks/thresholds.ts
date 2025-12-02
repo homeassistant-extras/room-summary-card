@@ -1,6 +1,6 @@
 import { hasFeature } from '@config/feature';
 import type { ComparisonOperator } from '@type/comparison';
-import type { Config } from '@type/config';
+import type { Config, ThresholdEntry } from '@type/config';
 import type { SensorData } from '@type/sensor';
 import memoizeOne from 'memoize-one';
 
@@ -59,6 +59,47 @@ const getThresholdSensorValue = (
 };
 
 /**
+ * Checks if any threshold entry in an array matches the sensor data
+ *
+ * @param thresholdEntries - Array of threshold configurations
+ * @param sensorData - Sensor data containing individual and averaged sensors
+ * @param deviceClass - Device class to filter sensors ('temperature' or 'humidity')
+ * @returns true if any threshold condition is met
+ */
+const checkThresholdEntries = (
+  // coalesce to [{}] so that we always have at least one entry to iterate for default values
+  thresholdEntries: ThresholdEntry[] = [{}],
+  sensorData: SensorData,
+  deviceClass: 'temperature' | 'humidity',
+): boolean => {
+  for (const entry of thresholdEntries) {
+    const sensorValue = getSensorValue(
+      sensorData,
+      deviceClass,
+      entry.entity_id,
+    );
+
+    if (sensorValue === null) {
+      continue;
+    }
+
+    // Get threshold value - can be a number or entity ID string
+    const thresholdValue = getThresholdSensorValue(
+      sensorData.thresholdSensors,
+      deviceClass === 'temperature' ? 80 : 60, // Default thresholds
+      entry.value,
+    );
+
+    const operator = entry.operator ?? 'gt';
+    if (meetsThreshold(sensorValue, thresholdValue, operator)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/**
  * Checks if a numeric value meets a threshold condition using the specified operator
  *
  * @param value - The numeric value to test
@@ -105,36 +146,23 @@ export const climateThresholds = memoizeOne(
     if (hasFeature(config, 'skip_climate_styles'))
       return { hot: false, humid: false };
 
-    const temp = getSensorValue(
+    const thresholds = config.thresholds;
+
+    const hot = checkThresholdEntries(
+      thresholds?.temperature,
       sensorData,
       'temperature',
-      config.thresholds?.temperature_entity,
     );
-    const humidity = getSensorValue(
+
+    const humid = checkThresholdEntries(
+      thresholds?.humidity,
       sensorData,
       'humidity',
-      config.thresholds?.humidity_entity,
     );
-
-    const tempThreshold = getThresholdSensorValue(
-      sensorData.thresholdSensors,
-      80,
-      config.thresholds?.temperature,
-    );
-    const humidThreshold = getThresholdSensorValue(
-      sensorData.thresholdSensors,
-      60,
-      config.thresholds?.humidity,
-    );
-
-    const tempOperator = config.thresholds?.temperature_operator ?? 'gt';
-    const humidOperator = config.thresholds?.humidity_operator ?? 'gt';
 
     return {
-      hot: temp ? meetsThreshold(temp, tempThreshold, tempOperator) : false,
-      humid: humidity
-        ? meetsThreshold(humidity, humidThreshold, humidOperator)
-        : false,
+      hot,
+      humid,
     };
   },
 );
