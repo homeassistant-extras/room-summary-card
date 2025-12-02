@@ -317,10 +317,10 @@ occupancy:
   icon_color: '#8BC34A'
 thresholds:
   temperature:
-    - entity_id: sensor.specific_temp_sensor  # Check specific sensor
+    - entity_id: sensor.specific_temp_sensor # Check specific sensor
       value: 75
   humidity:
-    - entity_id: sensor.specific_humidity_sensor  # Check specific sensor
+    - entity_id: sensor.specific_humidity_sensor # Check specific sensor
       value: 55
   mold: 50
 navigate: /lovelace/living-room
@@ -398,8 +398,8 @@ To use problem detection, label entities with "problem":
 
 For climate-based border styling:
 
-- Temperature sensors with `device_class: temperature` and values above threshold trigger red borders
-- Humidity sensors with `device_class: humidity` and values above threshold trigger blue borders
+- Temperature sensors with `device_class: temperature` and values meeting threshold trigger colored borders (red by default)
+- Humidity sensors with `device_class: humidity` and values meeting threshold trigger colored borders (blue by default)
 - Configure thresholds in the card configuration:
 
 ```yaml
@@ -410,6 +410,25 @@ thresholds:
     - value: 75 # Custom temperature threshold
   humidity:
     - value: 55 # Custom humidity threshold
+```
+
+**Custom threshold colors**:
+
+```yaml
+type: custom:room-summary-card
+area: basement
+thresholds:
+  temperature:
+    - value: 70
+      operator: lt
+      color: blue # Blue border when temp < 70°F
+    - value: 85
+      operator: gt
+      color: red # Red border when temp > 85°F
+  humidity:
+    - value: 50
+      operator: lt
+      color: orange # Orange border when humidity < 50%
 ```
 
 ## Custom Styling Examples

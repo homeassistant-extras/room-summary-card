@@ -51,7 +51,7 @@ describe('setup-card.ts', () => {
       config: { entity_id: 'light.test' },
       state: s('light', 'test', 'on'),
     });
-    climateThresholdsStub.returns({ hot: false, humid: false });
+    climateThresholdsStub.returns({ hot: false, humid: false, hotColor: undefined, humidColor: undefined });
     getBackgroundImageUrlStub.resolves('/local/bg.jpg');
     getOccupancyStateStub.returns(false);
     getSmokeStateStub.returns(false);
@@ -97,6 +97,7 @@ describe('setup-card.ts', () => {
         'sensors',
         'image',
         'isActive',
+        'thresholds',
         'flags',
       ]);
       expect(result.image).to.be.a('promise');

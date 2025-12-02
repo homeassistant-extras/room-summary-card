@@ -43,6 +43,8 @@ describe('thresholds-row-editor.ts', () => {
       'editor.threshold.humidity_entity': 'Humidity Entity',
       'editor.threshold.temperature_operator': 'Temperature Operator',
       'editor.threshold.humidity_operator': 'Humidity Operator',
+      'editor.threshold.temperature_color': 'Temperature Color',
+      'editor.threshold.humidity_color': 'Humidity Color',
       'editor.threshold.operator.greater_than': 'Greater than (>)',
       'editor.threshold.operator.greater_than_or_equal':
         'Greater than or equal (≥)',
@@ -157,7 +159,7 @@ describe('thresholds-row-editor.ts', () => {
       ]);
 
       expect(schema).to.be.an('array');
-      expect(schema.length).to.equal(3);
+      expect(schema.length).to.equal(4);
 
       const entityField = schema.find((s) => s.name === 'entity_id') as any;
       expect(entityField).to.exist;
@@ -184,6 +186,12 @@ describe('thresholds-row-editor.ts', () => {
       expect(operatorField?.label).to.equal(
         'editor.threshold.temperature_operator',
       );
+
+      const colorField = schema.find((s) => s.name === 'color') as any;
+      expect(colorField).to.exist;
+      expect(colorField?.required).to.be.false;
+      expect(colorField?.label).to.equal('editor.threshold.temperature_color');
+      expect(colorField?.selector?.ui_color).to.exist;
     });
 
     it('should create schema with correct structure for humidity', () => {
@@ -192,7 +200,7 @@ describe('thresholds-row-editor.ts', () => {
       ]);
 
       expect(schema).to.be.an('array');
-      expect(schema.length).to.equal(3);
+      expect(schema.length).to.equal(4);
 
       const entityField = schema.find((s) => s.name === 'entity_id') as any;
       expect(entityField).to.exist;
@@ -214,6 +222,12 @@ describe('thresholds-row-editor.ts', () => {
       expect(operatorField?.label).to.equal(
         'editor.threshold.humidity_operator',
       );
+
+      const colorField = schema.find((s) => s.name === 'color') as any;
+      expect(colorField).to.exist;
+      expect(colorField?.required).to.be.false;
+      expect(colorField?.label).to.equal('editor.threshold.humidity_color');
+      expect(colorField?.selector?.ui_color).to.exist;
     });
 
     it('should memoize schema for same parameters', () => {

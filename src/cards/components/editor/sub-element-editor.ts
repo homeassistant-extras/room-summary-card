@@ -113,7 +113,7 @@ export class RoomSummarySubElementEditor extends LitElement {
   }
 
   private _goBack(): void {
-    fireEvent(this, 'go-back', undefined);
+    fireEvent(this, 'go-back');
   }
 
   static override styles: CSSResult = css`

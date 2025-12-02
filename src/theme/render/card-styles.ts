@@ -9,6 +9,7 @@ import {
   getOccupancyCssVars,
   getSmokeCssVars,
 } from '@delegates/checks/occupancy';
+import type { ClimateThresholds } from '@delegates/checks/thresholds';
 import {
   stateColorBrightness,
   stateColorCss,
@@ -23,7 +24,7 @@ import { getThemeColorOverride } from '../custom-theme';
 
 /**
  * Generates a style map for a card component based on the current Home Assistant theme,
- * entity state, configuration, optional background image, occupancy state, and smoke detection.
+ * entity state, configuration, optional background image, occupancy state, smoke detection, and climate thresholds.
  *
  * @param hass - The Home Assistant instance containing theme and state information.
  * @param config - The configuration object for the card.
@@ -32,6 +33,7 @@ import { getThemeColorOverride } from '../custom-theme';
  * @param isSmokeDetected - Whether smoke is detected (takes priority over occupancy).
  * @param image - (Optional) A URL or path to a background image for the card.
  * @param isActive - Whether the room is considered active (for styling).
+ * @param thresholds - Climate threshold results containing hot/humid flags and custom colors.
  * @returns A DirectiveResult containing the computed style map for the card.
  */
 export const renderCardStyles = (
@@ -42,6 +44,7 @@ export const renderCardStyles = (
   isSmokeDetected: boolean,
   image?: string | null,
   isActive: boolean = false,
+  thresholds?: ClimateThresholds,
 ): DirectiveResult<typeof StyleMapDirective> => {
   const { state } = entity as { state: HassEntity };
   const thresholdResult = getThresholdResult(entity);
@@ -67,6 +70,17 @@ export const renderCardStyles = (
     backgroundColorCard = isActive ? cssColor : undefined;
   }
 
+  // Generate threshold CSS variables
+  const thresholdVars: Record<string, string | undefined> = {};
+  if (thresholds) {
+    if (thresholds.hot && thresholds.hotColor) {
+      thresholdVars['--threshold-hot-color'] = thresholds.hotColor;
+    }
+    if (thresholds.humid && thresholds.humidColor) {
+      thresholdVars['--threshold-humid-color'] = thresholds.humidColor;
+    }
+  }
+
   // Return complete style map
   return styleMap({
     '--background-color-card': backgroundColorCard,
@@ -75,6 +89,7 @@ export const renderCardStyles = (
     '--background-filter': filter,
     ...opacity,
     ...alarmVars,
+    ...thresholdVars,
     ...config.styles?.card,
   });
 };

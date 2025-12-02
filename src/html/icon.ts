@@ -45,30 +45,45 @@ export const renderProblemIndicator = (
 };
 
 /**
+ * Options for rendering a room icon
+ */
+export interface RoomIconOptions {
+  /** Whether this is the main room entity (will handle hiding logic internally) */
+  isMainRoomEntity?: boolean;
+  /** Whether the room is considered active (for styling) */
+  isActive?: boolean;
+  /** Whether the room has a background image */
+  hasImage?: boolean;
+  /** Whether the room is occupied (for occupancy styling) */
+  occupied?: boolean;
+  /** Whether smoke is detected (takes priority over occupancy) */
+  smoke?: boolean;
+}
+
+/**
  * Creates a room icon element for an entity
  *
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {EntityInformation} entity - Information about the entity
  * @param {Config} config - The configuration object
- * @param {boolean} isMainRoomEntity - Whether this is the main room entity (will handle hiding logic internally)
- * @param {boolean} isActive - Whether the room is considered active (for styling)
- * @param {boolean} hasImage - Whether the room has a background image
- * @param {boolean} occupied - Whether the room is occupied (for occupancy styling)
- * @param {boolean} smoke - Whether smoke is detected (takes priority over occupancy)
+ * @param {RoomIconOptions} options - Optional styling and behavior options
  * @returns {TemplateResult | typeof nothing} A Lit template containing the room icon element or nothing if state doesn't exist
  */
 export const renderRoomIcon = (
   hass: HomeAssistant,
   entity: EntityInformation,
   config: Config,
-  isMainRoomEntity: boolean = false,
-  isActive?: boolean,
-  hasImage?: boolean,
-  occupied?: boolean,
-  smoke?: boolean,
+  options: RoomIconOptions = {},
 ): TemplateResult | typeof nothing => {
   const { state } = entity;
   const stickyEntitiesEnabled = config.features?.includes('sticky_entities');
+  const {
+    isMainRoomEntity = false,
+    isActive,
+    hasImage,
+    occupied,
+    smoke,
+  } = options;
 
   // If state is undefined and sticky entities is not enabled, return nothing
   if (!state && !stickyEntitiesEnabled) return nothing;

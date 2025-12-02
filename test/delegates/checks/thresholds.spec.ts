@@ -35,7 +35,8 @@ describe('climate-thresholds.ts', () => {
 
       const result = climateThresholds(config, sensorData);
 
-      expect(result).to.deep.equal({ hot: false, humid: false });
+      expect(result).to.have.property('hot', false);
+      expect(result).to.have.property('humid', false);
     });
 
     it('should return false when temperature or humidity sensors are missing', () => {
@@ -52,7 +53,8 @@ describe('climate-thresholds.ts', () => {
 
       const result = climateThresholds(config, sensorData);
 
-      expect(result).to.deep.equal({ hot: false, humid: false });
+      expect(result).to.have.property('hot', false);
+      expect(result).to.have.property('humid', false);
     });
 
     it('should detect hot and humid conditions using default thresholds', () => {
@@ -82,7 +84,8 @@ describe('climate-thresholds.ts', () => {
 
       const result = climateThresholds(config, sensorData);
 
-      expect(result).to.deep.equal({ hot: true, humid: true });
+      expect(result).to.have.property('hot', true);
+      expect(result).to.have.property('humid', true);
     });
 
     const testCases = [
@@ -157,7 +160,8 @@ describe('climate-thresholds.ts', () => {
 
           const result = climateThresholds(config, sensorData);
 
-          expect(result).to.deep.equal({ hot: true, humid: false });
+          expect(result).to.have.property('hot', true);
+          expect(result).to.have.property('humid', false);
         });
 
         it('should use specific entity states when entity IDs are configured', () => {
@@ -229,7 +233,8 @@ describe('climate-thresholds.ts', () => {
 
           const result = climateThresholds(config, sensorData);
 
-          expect(result).to.deep.equal({ hot: true, humid: false });
+          expect(result).to.have.property('hot', true);
+          expect(result).to.have.property('humid', false);
         });
 
         it('should use individual sensors when entity ID matches and device class is correct', () => {
@@ -294,7 +299,8 @@ describe('climate-thresholds.ts', () => {
 
           const result = climateThresholds(config, sensorData);
 
-          expect(result).to.deep.equal({ hot: true, humid: false });
+          expect(result).to.have.property('hot', true);
+          expect(result).to.have.property('humid', false);
         });
 
         it('should fall back to averaged sensors when individual sensor device class does not match', () => {
@@ -337,7 +343,8 @@ describe('climate-thresholds.ts', () => {
 
           const result = climateThresholds(config, sensorData);
 
-          expect(result).to.deep.equal({ hot: false, humid: false });
+          expect(result).to.have.property('hot', false);
+      expect(result).to.have.property('humid', false);
         });
 
         it('should use averaged sensors when no specific entity is configured', () => {
@@ -382,7 +389,8 @@ describe('climate-thresholds.ts', () => {
 
           const result = climateThresholds(config, sensorData);
 
-          expect(result).to.deep.equal({ hot: false, humid: false });
+          expect(result).to.have.property('hot', false);
+      expect(result).to.have.property('humid', false);
         });
       });
     });
@@ -412,7 +420,8 @@ describe('climate-thresholds.ts', () => {
         };
 
         const result = climateThresholds(config, sensorData);
-        expect(result).to.deep.equal({ hot: true, humid: false });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should use lt operator for temperature', () => {
@@ -439,7 +448,8 @@ describe('climate-thresholds.ts', () => {
         };
 
         const result = climateThresholds(config, sensorData);
-        expect(result).to.deep.equal({ hot: true, humid: false });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should use lte operator for temperature', () => {
@@ -466,7 +476,8 @@ describe('climate-thresholds.ts', () => {
         };
 
         const result = climateThresholds(config, sensorData);
-        expect(result).to.deep.equal({ hot: true, humid: false });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should use eq operator for temperature', () => {
@@ -493,7 +504,8 @@ describe('climate-thresholds.ts', () => {
         };
 
         const result = climateThresholds(config, sensorData);
-        expect(result).to.deep.equal({ hot: true, humid: false });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should use gte operator for humidity', () => {
@@ -520,7 +532,8 @@ describe('climate-thresholds.ts', () => {
         };
 
         const result = climateThresholds(config, sensorData);
-        expect(result).to.deep.equal({ hot: false, humid: true });
+        expect(result).to.have.property('hot', false);
+        expect(result).to.have.property('humid', true);
       });
 
       it('should use both temperature and humidity operators together', () => {
@@ -555,7 +568,8 @@ describe('climate-thresholds.ts', () => {
         };
 
         const result = climateThresholds(config, sensorData);
-        expect(result).to.deep.equal({ hot: true, humid: true });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', true);
       });
 
       it('should default to gt operator when no operator is specified', () => {
@@ -582,7 +596,8 @@ describe('climate-thresholds.ts', () => {
         };
 
         const result = climateThresholds(config, sensorData);
-        expect(result).to.deep.equal({ hot: true, humid: false });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should use default gt operator for unknown operator', () => {
@@ -610,7 +625,8 @@ describe('climate-thresholds.ts', () => {
 
         const result = climateThresholds(config, sensorData);
         // Should default to 'gt' behavior (value > threshold)
-        expect(result).to.deep.equal({ hot: true, humid: false });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', false);
       });
     });
 
@@ -644,7 +660,8 @@ describe('climate-thresholds.ts', () => {
 
         const result = climateThresholds(config, sensorData);
         // Should be hot because second entry (70) is tripped
-        expect(result).to.deep.equal({ hot: true, humid: false });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should activate when any entry in humidity array trips threshold', () => {
@@ -676,7 +693,8 @@ describe('climate-thresholds.ts', () => {
 
         const result = climateThresholds(config, sensorData);
         // Should be humid because second entry (40) is tripped
-        expect(result).to.deep.equal({ hot: false, humid: true });
+        expect(result).to.have.property('hot', false);
+        expect(result).to.have.property('humid', true);
       });
 
       it('should not activate when no entries in array trip threshold', () => {
@@ -717,7 +735,8 @@ describe('climate-thresholds.ts', () => {
         };
 
         const result = climateThresholds(config, sensorData);
-        expect(result).to.deep.equal({ hot: false, humid: false });
+        expect(result).to.have.property('hot', false);
+      expect(result).to.have.property('humid', false);
       });
 
       it('should handle multiple entries with different operators', () => {
@@ -749,7 +768,8 @@ describe('climate-thresholds.ts', () => {
 
         const result = climateThresholds(config, sensorData);
         // Should be hot because third entry (gte 75) is met
-        expect(result).to.deep.equal({ hot: true, humid: false });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should handle multiple entries with different entity IDs', () => {
@@ -793,7 +813,8 @@ describe('climate-thresholds.ts', () => {
 
         const result = climateThresholds(config, sensorData);
         // Should be hot because second entry (sensor.temp2 > 70) is met
-        expect(result).to.deep.equal({ hot: true, humid: false });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should return false when array is empty (no thresholds to check)', () => {
@@ -829,7 +850,8 @@ describe('climate-thresholds.ts', () => {
 
         const result = climateThresholds(config, sensorData);
         // Empty array means no thresholds to check, so should return false
-        expect(result).to.deep.equal({ hot: false, humid: false });
+        expect(result).to.have.property('hot', false);
+      expect(result).to.have.property('humid', false);
       });
 
       it('should handle array with empty object (uses default threshold)', () => {
@@ -865,7 +887,96 @@ describe('climate-thresholds.ts', () => {
 
         const result = climateThresholds(config, sensorData);
         // Should use default thresholds
-        expect(result).to.deep.equal({ hot: true, humid: true });
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', true);
+      });
+    });
+
+    describe('custom threshold colors', () => {
+      it('should return custom color when threshold is triggered with color property', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: [
+              {
+                value: 70,
+                operator: 'lt',
+                color: 'blue',
+              },
+            ],
+            humidity: [
+              {
+                value: 85,
+                operator: 'gt',
+                color: 'red',
+              },
+            ],
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 65, // Below 70, should trigger
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+            {
+              device_class: 'humidity',
+              average: 90, // Above 85, should trigger
+              uom: '%',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          thresholdSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+
+        expect(result).to.have.property('hot', true);
+        expect(result).to.have.property('humid', true);
+        expect(result).to.have.property('hotColor', 'blue');
+        expect(result).to.have.property('humidColor', 'red');
+      });
+
+      it('should not return color when threshold is not triggered', () => {
+        const config: Config = {
+          area: 'test',
+          thresholds: {
+            temperature: [
+              {
+                value: 70,
+                operator: 'lt',
+                color: 'blue',
+              },
+            ],
+          },
+        };
+        const sensorData: SensorData = {
+          individual: [],
+          averaged: [
+            {
+              device_class: 'temperature',
+              average: 75, // Above 70, should not trigger
+              uom: '°F',
+              states: [],
+              domain: 'sensor',
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          thresholdSensors: [],
+        };
+
+        const result = climateThresholds(config, sensorData);
+
+        expect(result).to.have.property('hot', false);
+        expect(result.hotColor).to.be.undefined;
       });
     });
   });

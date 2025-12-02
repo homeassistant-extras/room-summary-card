@@ -17,10 +17,7 @@ const getSensorValue = (
     const individualSensor = sensorData.individual.find(
       (s) => s.entity_id === entityId,
     );
-    if (
-      individualSensor &&
-      individualSensor.attributes.device_class === deviceClass
-    ) {
+    if (individualSensor?.attributes.device_class === deviceClass) {
       return Number(individualSensor.state);
     }
   }
@@ -64,15 +61,15 @@ const getThresholdSensorValue = (
  * @param thresholdEntries - Array of threshold configurations
  * @param sensorData - Sensor data containing individual and averaged sensors
  * @param deviceClass - Device class to filter sensors ('temperature' or 'humidity')
- * @returns true if any threshold condition is met
+ * @returns Object with triggered flag and color if threshold is met
  */
 const checkThresholdEntries = (
-  // coalesce to [{}] so that we always have at least one entry to iterate for default values
-  thresholdEntries: ThresholdEntry[] = [{}],
+  thresholdEntries: ThresholdEntry[] | undefined,
   sensorData: SensorData,
   deviceClass: 'temperature' | 'humidity',
-): boolean => {
-  for (const entry of thresholdEntries) {
+): { triggered: boolean; color?: string } => {
+  // coalesce to [{}] so that we always have at least one entry to iterate for default values
+  for (const entry of thresholdEntries || [{}]) {
     const sensorValue = getSensorValue(
       sensorData,
       deviceClass,
@@ -92,11 +89,11 @@ const checkThresholdEntries = (
 
     const operator = entry.operator ?? 'gt';
     if (meetsThreshold(sensorValue, thresholdValue, operator)) {
-      return true;
+      return { triggered: true, color: entry.color };
     }
   }
 
-  return false;
+  return { triggered: false };
 };
 
 /**
@@ -129,40 +126,51 @@ const meetsThreshold = (
 };
 
 /**
+ * Result of climate threshold evaluation
+ */
+export interface ClimateThresholds {
+  hot: boolean;
+  humid: boolean;
+  hotColor?: string;
+  humidColor?: string;
+}
+
+/**
  * Generates border styles based on temperature and humidity thresholds
  *
  * @param {Config} config - Configuration object
  * @param {SensorData} sensorData - Sensor data containing individual and averaged sensors
- * @returns {Object} Border style configuration with hot and humid properties
+ * @returns {ClimateThresholds} Border style configuration with hot and humid properties and their colors
  */
 export const climateThresholds = memoizeOne(
-  (
-    config: Config,
-    sensorData: SensorData,
-  ): {
-    hot: boolean;
-    humid: boolean;
-  } => {
+  (config: Config, sensorData: SensorData): ClimateThresholds => {
     if (hasFeature(config, 'skip_climate_styles'))
-      return { hot: false, humid: false };
+      return {
+        hot: false,
+        humid: false,
+        hotColor: undefined,
+        humidColor: undefined,
+      };
 
     const thresholds = config.thresholds;
 
-    const hot = checkThresholdEntries(
+    const hotResult = checkThresholdEntries(
       thresholds?.temperature,
       sensorData,
       'temperature',
     );
 
-    const humid = checkThresholdEntries(
+    const humidResult = checkThresholdEntries(
       thresholds?.humidity,
       sensorData,
       'humidity',
     );
 
     return {
-      hot,
-      humid,
+      hot: hotResult.triggered,
+      humid: humidResult.triggered,
+      hotColor: hotResult.color,
+      humidColor: humidResult.color,
     };
   },
 );

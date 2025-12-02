@@ -19,6 +19,9 @@ export interface ThresholdEntry {
 
   /** Comparison operator (optional - default: 'gt' for greater than) */
   operator?: ComparisonOperator;
+
+  /** Custom color for border when threshold is triggered (optional - if omitted, uses default red for temperature, blue for humidity) */
+  color?: string;
 }
 
 /**

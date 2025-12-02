@@ -13,6 +13,7 @@ import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderRoomIcon } from '@/html/icon';
 import { hasFeature } from '@config/feature';
+import type { ClimateThresholds } from '@delegates/checks/thresholds';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
@@ -55,6 +56,12 @@ export class RoomSummaryCard extends LitElement {
    */
   @state()
   private _isActive: boolean = false;
+
+  /**
+   * Climate thresholds result
+   */
+  @state()
+  private _thresholds!: ClimateThresholds;
 
   /**
    * Flags for various states
@@ -115,15 +122,17 @@ export class RoomSummaryCard extends LitElement {
       sensors,
       image,
       isActive,
-      flags: { occupied, smoke, dark, hot, humid },
+      thresholds,
+      flags: { occupied, smoke, dark },
     } = getRoomProperties(hass, this._config);
 
     this.occupied = occupied;
     this.smoke = smoke;
     this.dark = dark;
-    this.hot = hot;
-    this.humid = humid;
+    this.hot = thresholds.hot;
+    this.humid = thresholds.humid;
     this._isActive = isActive;
+    this._thresholds = thresholds;
 
     // Handle async image resolution
     image.then((resolvedImage) => {
@@ -211,11 +220,13 @@ export class RoomSummaryCard extends LitElement {
       this._hass,
       this._roomEntity,
       this._config,
-      true,
-      this._isActive,
-      !!this._image,
-      this.occupied,
-      this.smoke,
+      {
+        isMainRoomEntity: true,
+        isActive: this._isActive,
+        hasImage: !!this._image,
+        occupied: this.occupied,
+        smoke: this.smoke,
+      },
     );
 
     const cardStyle = renderCardStyles(
@@ -226,6 +237,7 @@ export class RoomSummaryCard extends LitElement {
       this.smoke,
       this._image,
       this._isActive,
+      this._thresholds,
     );
 
     const problems = renderProblemIndicator(

@@ -219,6 +219,20 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       ? this._config.thresholds
       : undefined;
 
+    const thresholdsEditor =
+      this.type === 'entity'
+        ? html`
+            <room-summary-states-row-editor
+              .hass=${this.hass}
+              .thresholds=${thresholds}
+              .entityId=${this._config.entity_id}
+              .mode=${'thresholds'}
+              label=${localize(this.hass, 'editor.entity.thresholds')}
+              @thresholds-value-changed=${this._thresholdsValueChanged}
+            ></room-summary-states-row-editor>
+          `
+        : nothing;
+
     return html`
       <ha-form
         .hass=${this.hass}
@@ -239,18 +253,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
               label=${localize(this.hass, 'editor.entity.states')}
               @states-value-changed=${this._statesValueChanged}
             ></room-summary-states-row-editor>
-            ${this.type === 'entity'
-              ? html`
-                  <room-summary-states-row-editor
-                    .hass=${this.hass}
-                    .thresholds=${thresholds}
-                    .entityId=${this._config.entity_id}
-                    .mode=${'thresholds'}
-                    label=${localize(this.hass, 'editor.entity.thresholds')}
-                    @thresholds-value-changed=${this._thresholdsValueChanged}
-                  ></room-summary-states-row-editor>
-                `
-              : nothing}
+            ${thresholdsEditor}
           `
         : nothing}
     `;

@@ -346,7 +346,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Mold Indicator`**: animated warning indicator for mold detection with threshold-based display - thanks @ma-gu-16
 - [x] **`Entity Labels`**: display entity names under icons for better identification - thanks @Ltek
 - [x] **`Clickable Sensors`**: individual sensors in info section open more info dialog - thanks @enrico-semrau
-- [x] **`Threshold-Based Icon Coloring`**: dynamic icon colors based on sensor values with configurable thresholds and operators - thanks @fusionstream, @marcokreeft87
+- [x] **`Threshold-Based Icon Coloring`**: dynamic icon colors based on sensor values with configurable thresholds and operators - thanks @fusionstream, @marcokreeft87, @a0365d9b
 - [x] **`State-Based Icon Coloring`**: exact state & attribute matching for sensors like washing machines, device trackers, and status indicators - thanks @marcokreeft87 and @zoic21!
 - [x] **`Multi-Light Background`**: card background lights up when any light entity in the room is on - thanks @joshkay, @ojm88
 - [x] **`Entity Picture Display`**: automatic display of entity pictures with optional override - thanks @Zipp0KMS, @pheitman

@@ -47,17 +47,17 @@ const hostThemeStyles = css`
  */
 const haCardThemeStyles = css`
   :host([hot]) ha-card {
-    border-left: 3px solid var(--error-color) !important;
-    border-top: 3px solid var(--error-color) !important;
-    border-right: 3px solid var(--error-color);
-    border-bottom: 3px solid var(--error-color);
+    border-left: 3px solid var(--threshold-hot-color, var(--error-color)) !important;
+    border-top: 3px solid var(--threshold-hot-color, var(--error-color)) !important;
+    border-right: 3px solid var(--threshold-hot-color, var(--error-color));
+    border-bottom: 3px solid var(--threshold-hot-color, var(--error-color));
   }
 
   :host([humid]) ha-card {
-    border-left: 3px solid var(--info-color);
-    border-top: 3px solid var(--info-color);
-    border-right: 3px solid var(--info-color) !important;
-    border-bottom: 3px solid var(--info-color) !important;
+    border-left: 3px solid var(--threshold-humid-color, var(--info-color));
+    border-top: 3px solid var(--threshold-humid-color, var(--info-color));
+    border-right: 3px solid var(--threshold-humid-color, var(--info-color)) !important;
+    border-bottom: 3px solid var(--threshold-humid-color, var(--info-color)) !important;
   }
 
   :host([image]) ha-card {

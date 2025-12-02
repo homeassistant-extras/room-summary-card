@@ -103,6 +103,7 @@ describe('card-styles.ts', () => {
         false,
         undefined,
         false,
+        undefined,
       );
 
       expect(getThresholdResultStub.calledWith(entity)).to.be.true;
@@ -151,6 +152,7 @@ describe('card-styles.ts', () => {
         false,
         image,
         true,
+        undefined,
       );
 
       expect(getThresholdResultStub.calledWith(entity)).to.be.true;
@@ -223,6 +225,7 @@ describe('card-styles.ts', () => {
         false,
         undefined,
         false,
+        undefined,
       );
 
       expect(getThresholdResultStub.calledWith(entity)).to.be.true;
@@ -265,6 +268,7 @@ describe('card-styles.ts', () => {
         false,
         undefined,
         false,
+        undefined,
       );
 
       expect(getThresholdResultStub.calledWith(entity)).to.be.true;
@@ -297,6 +301,7 @@ describe('card-styles.ts', () => {
         false,
         undefined,
         undefined as any,
+        undefined,
       );
 
       expect(
@@ -330,6 +335,7 @@ describe('card-styles.ts', () => {
         false,
         undefined,
         false,
+        undefined,
       );
 
       expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
@@ -356,9 +362,138 @@ describe('card-styles.ts', () => {
         false,
         undefined,
         false,
+        undefined,
       );
 
       expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-filter': '',
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+        }),
+      );
+    });
+
+    it('should include threshold color CSS variables when thresholds are provided', () => {
+      const entity = createEntityInfo('light.test');
+      const thresholds = {
+        hot: true,
+        humid: false,
+        hotColor: 'blue',
+        humidColor: undefined,
+      };
+
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        false,
+        undefined,
+        false,
+        thresholds,
+      );
+
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-filter': '',
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+          '--threshold-hot-color': 'blue',
+        }),
+      );
+    });
+
+    it('should include humid threshold CSS variable when humid threshold is triggered with color', () => {
+      const entity = createEntityInfo('light.test');
+      const thresholds = {
+        hot: false,
+        humid: true,
+        hotColor: undefined,
+        humidColor: 'purple',
+      };
+
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        false,
+        undefined,
+        false,
+        thresholds,
+      );
+
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-filter': '',
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+          '--threshold-humid-color': 'purple',
+        }),
+      );
+    });
+
+    it('should include both threshold color CSS variables when both are triggered', () => {
+      const entity = createEntityInfo('light.test');
+      const thresholds = {
+        hot: true,
+        humid: true,
+        hotColor: 'red',
+        humidColor: 'green',
+      };
+
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        false,
+        undefined,
+        false,
+        thresholds,
+      );
+
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-filter': '',
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+          '--threshold-hot-color': 'red',
+          '--threshold-humid-color': 'green',
+        }),
+      );
+    });
+
+    it('should not include threshold CSS variables when thresholds are triggered but no colors provided', () => {
+      const entity = createEntityInfo('light.test');
+      const thresholds = {
+        hot: true,
+        humid: true,
+        hotColor: undefined,
+        humidColor: undefined,
+      };
+
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        false,
+        false,
+        undefined,
+        false,
+        thresholds,
+      );
+
       expect(styles).to.deep.equal(
         styleMap({
           '--background-color-card': undefined,

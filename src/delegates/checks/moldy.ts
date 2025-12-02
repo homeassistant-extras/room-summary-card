@@ -23,7 +23,7 @@ export const shouldShowMoldIndicator = (
   const moldValue = Number(mold.state);
 
   // If the value is not a valid number, don't show the indicator
-  if (isNaN(moldValue)) {
+  if (Number.isNaN(moldValue)) {
     return false;
   }
 

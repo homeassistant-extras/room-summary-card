@@ -201,13 +201,10 @@ describe('entity-slider.ts', () => {
 
       // Verify renderRoomIcon is called
       expect(renderRoomIconStub.called).to.be.true;
-      expect(
-        renderRoomIconStub.calledWith(
-          mockHass,
-          element['_entity'],
-          element.config,
-        ),
-      ).to.be.true;
+      const call = renderRoomIconStub.getCall(0);
+      expect(call.args[0]).to.equal(mockHass);
+      expect(call.args[1]).to.equal(element['_entity']);
+      expect(call.args[2]).to.equal(element.config);
     });
 
     it('should not apply dragging class when not dragging', async () => {

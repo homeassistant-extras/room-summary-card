@@ -89,11 +89,13 @@
       "add_temperature_threshold": "Add Temperature Threshold",
       "temperature_operator": "Temperature Operator",
       "temperature_entity": "Temperature Entity",
+      "temperature_color": "Temperature Border Color",
       "humidity_threshold": "Humidity threshold",
       "humidity_thresholds": "Humidity Thresholds",
       "add_humidity_threshold": "Add Humidity Threshold",
       "humidity_operator": "Humidity Operator",
       "humidity_entity": "Humidity Entity",
+      "humidity_color": "Humidity Border Color",
       "mold_threshold": "Mold threshold",
       "operator": {
         "equal": "Equal (=)",

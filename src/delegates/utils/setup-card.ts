@@ -1,5 +1,8 @@
 import { getOccupancyState, getSmokeState } from '@delegates/checks/occupancy';
-import { climateThresholds } from '@delegates/checks/thresholds';
+import {
+  climateThresholds,
+  type ClimateThresholds,
+} from '@delegates/checks/thresholds';
 import { getArea } from '@delegates/retrievers/area';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
@@ -16,12 +19,11 @@ export interface RoomProperties {
   sensors: SensorData;
   image: Promise<string | undefined | null>;
   isActive: boolean;
+  thresholds: ClimateThresholds;
   flags: {
     occupied: boolean;
     smoke: boolean;
     dark: boolean;
-    hot: boolean;
-    humid: boolean;
   };
 }
 
@@ -62,12 +64,12 @@ export const getRoomProperties = (
     sensors,
     image,
     isActive,
+    thresholds,
     flags: {
       // Smoke takes priority over occupancy - if smoke is detected, don't show occupancy
       occupied: smokeDetected ? false : occupied,
       smoke: smokeDetected,
       dark: hass.themes.darkMode,
-      ...thresholds,
     },
   };
 };

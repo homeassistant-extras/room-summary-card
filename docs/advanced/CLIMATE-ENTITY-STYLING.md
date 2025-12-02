@@ -19,8 +19,9 @@ off: mdi:snowflake-off
 
 The card shows colored borders based on sensor thresholds:
 
-- **Red border**: Temperature above threshold (configurable)
-- **Blue border**: Humidity above threshold (configurable)
+- **Red border** (default): Temperature above threshold
+- **Blue border** (default): Humidity above threshold
+- **Custom colors**: You can customize border colors for each threshold entry
 
 ![Climate Borders](../../assets/climate.png)
 
@@ -47,6 +48,25 @@ The card shows colored borders based on sensor thresholds:
      humidity:
        - entity_id: sensor.living_room_humidity
          value: 55 # Custom humidity threshold
+   ```
+
+   **Custom threshold colors**:
+
+   ```yaml
+   type: custom:room-summary-card
+   area: basement
+   thresholds:
+     temperature:
+       - value: 70
+         operator: lt
+         color: blue # Blue border when temp < 70°F
+       - value: 85
+         operator: gt
+         color: red # Red border when temp > 85°F
+     humidity:
+       - value: 50
+         operator: lt
+         color: orange # Orange border when humidity < 50%
    ```
 
 3. **Skip feature**: Can be disabled with feature flag

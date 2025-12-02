@@ -40,12 +40,16 @@ describe('card.ts', () => {
       },
       image: Promise.resolve(null),
       isActive: true,
+      thresholds: {
+        hot: false,
+        humid: false,
+        hotColor: undefined,
+        humidColor: undefined,
+      },
       flags: {
         occupied: true,
         smoke: false,
         dark: true,
-        hot: false,
-        humid: false,
       },
     });
     card = new RoomSummaryCard();
@@ -134,14 +138,19 @@ describe('card.ts', () => {
           averaged: [],
           problemSensors: [],
           lightEntities: [],
+          thresholdSensors: [],
         },
         image: Promise.resolve(null),
         isActive: false,
+        thresholds: {
+          hot: false,
+          humid: false,
+          hotColor: undefined,
+          humidColor: undefined,
+        },
         flags: {
           occupied: false,
           dark: false,
-          hot: false,
-          humid: false,
         },
       });
 
@@ -166,14 +175,19 @@ describe('card.ts', () => {
           averaged: [],
           problemSensors: [],
           lightEntities: [],
+          thresholdSensors: [],
         },
         image: Promise.resolve('/local/test.jpg'),
         isActive: true,
+        thresholds: {
+          hot: false,
+          humid: false,
+          hotColor: undefined,
+          humidColor: undefined,
+        },
         flags: {
           occupied: true,
           dark: true,
-          hot: false,
-          humid: false,
         },
       });
 
@@ -209,14 +223,19 @@ describe('card.ts', () => {
           averaged: [],
           problemSensors: [],
           lightEntities: [],
+          thresholdSensors: [],
         },
         image: Promise.resolve('/local/test.jpg'),
         isActive: true,
+        thresholds: {
+          hot: false,
+          humid: false,
+          hotColor: undefined,
+          humidColor: undefined,
+        },
         flags: {
           occupied: true,
           dark: true,
-          hot: false,
-          humid: false,
         },
       });
 
@@ -252,14 +271,19 @@ describe('card.ts', () => {
           averaged: [],
           problemSensors: [],
           lightEntities: [],
+          thresholdSensors: [],
         },
         image: Promise.resolve('/local/test.jpg'),
         isActive: true,
+        thresholds: {
+          hot: false,
+          humid: false,
+          hotColor: undefined,
+          humidColor: undefined,
+        },
         flags: {
           occupied: true,
           dark: true,
-          hot: false,
-          humid: false,
         },
       });
 

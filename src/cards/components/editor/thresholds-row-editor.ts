@@ -127,6 +127,14 @@ export class RoomSummaryThresholdsRowEditor extends LitElement {
             },
           },
         },
+        {
+          name: 'color',
+          label: isTemperature
+            ? 'editor.threshold.temperature_color'
+            : 'editor.threshold.humidity_color',
+          required: false,
+          selector: { ui_color: {} },
+        },
       ];
     },
   );

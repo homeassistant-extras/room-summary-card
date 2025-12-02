@@ -21,17 +21,49 @@ thresholds:
 
 **How It Works**:
 
-- **Temperature sensors** with values meeting the threshold condition trigger red borders
-- **Humidity sensors** with values meeting the threshold condition trigger blue borders
+- **Temperature sensors** with values meeting the threshold condition trigger red borders (by default)
+- **Humidity sensors** with values meeting the threshold condition trigger blue borders (by default)
 - **Mold sensors** with values at or above the threshold display an animated indicator near problem entities (bottom left)
 - Thresholds respect the current unit of measurement (°F, °C, %)
 - Can be disabled with the `skip_climate_styles` feature flag
 - Multiple threshold entries can be configured for each type, allowing different sensors to have different thresholds
-- Each threshold entry can specify the threshold value (`value`), which entity to check (`entity_id`), and the comparison operator (`operator`) - all fields are optional
+- Each threshold entry can specify the threshold value (`value`), which entity to check (`entity_id`), the comparison operator (`operator`), and a custom border color (`color`) - all fields are optional
 - If `entity_id` is omitted, the card uses the averaged sensor value for that device class (temperature or humidity)
 - If `value` is omitted, defaults are used: 80°F (26.7°C) for temperature, 60% for humidity
 - If `operator` is omitted, defaults to `gt` (greater than)
+- If `color` is omitted, default colors are used: red (`var(--error-color)`) for temperature, blue (`var(--info-color)`) for humidity
 - For advanced cases an entity can be configured as the one to trip the threshold for `value`.
+
+### Custom Border Colors
+
+You can customize the border color when a threshold is triggered by adding a `color` property to any threshold entry:
+
+```yaml
+thresholds:
+  temperature:
+    - value: 70
+      operator: lt
+      color: blue # Custom blue border when temp < 70°F
+    - value: 85
+      operator: gt
+      color: red # Custom red border when temp > 85°F
+  humidity:
+    - value: 50
+      operator: lt
+      color: orange # Custom orange border when humidity < 50%
+```
+
+**Color Format**:
+
+- Accepts any valid CSS color value (hex, rgb, named colors, CSS variables)
+- Examples: `blue`, `#FF5733`, `rgb(255, 87, 51)`, `var(--warning-color)`
+- If omitted, defaults to red for temperature (`var(--error-color)`) and blue for humidity (`var(--info-color)`)
+
+**Use Cases**:
+
+- **Different severity levels**: Use different colors for different threshold ranges (e.g., yellow for warning, red for critical)
+- **Heating vs cooling**: Use blue for cold temperatures, red for hot temperatures
+- **Custom branding**: Match your dashboard theme with custom colors
 
 ### Comparison Operators
 
@@ -167,6 +199,42 @@ thresholds:
     - entity_id: sensor.bedroom_temp  # Also check specific sensor
       value: 70
       operator: gt
+
+# Custom colors for different threshold ranges
+thresholds:
+  temperature:
+    - value: 70
+      operator: lt
+      color: blue  # Blue border when temp < 70°F (too cold)
+    - value: 85
+      operator: gt
+      color: red  # Red border when temp > 85°F (too hot)
+  humidity:
+    - value: 30
+      operator: lt
+      color: orange  # Orange border when humidity < 30% (too dry)
+    - value: 70
+      operator: gt
+      color: purple  # Purple border when humidity > 70% (too humid)
+
+# Basement example with custom colors
+thresholds:
+  temperature:
+    - value: 70
+      operator: lt
+      color: blue  # Blue alarm when basement is too cold
+    - value: 85
+      operator: gt
+      color: red  # Red alarm when basement is too hot
 ```
 
 **Default values**: 80°F (26.7°C) for temperature, 60% for humidity, no default for mold (indicator shows whenever mold sensor is present)
+
+**Field Reference**:
+
+| Field       | Type             | Default                     | Description                                                                   |
+| ----------- | ---------------- | --------------------------- | ----------------------------------------------------------------------------- |
+| `entity_id` | string           | Averaged sensor             | Entity ID to check for this threshold. If omitted, uses averaged sensor value |
+| `value`     | number \| string | 80°F (temp), 60% (humidity) | Threshold value (number) or entity ID (string) to lookup threshold value      |
+| `operator`  | string           | `gt`                        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq`                           |
+| `color`     | string           | Red (temp), Blue (humidity) | Custom border color when threshold is triggered. Accepts any CSS color value  |
