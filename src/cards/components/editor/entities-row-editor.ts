@@ -67,6 +67,8 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
     const items =
       this.field === 'entities' ? this.entities || [] : this.lights || [];
 
+    const addEntityClass = `add-entity${this.single ? ' single-mode' : ''}`;
+
     return html`
       <label>
         ${this.label ||
@@ -170,7 +172,7 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
       ${!this.single || items.length === 0
         ? html`
             <ha-entity-picker
-              class="add-entity ${this.single ? 'single-mode' : ''}"
+              class=${addEntityClass}
               .hass=${this.hass}
               .includeEntities=${this.availableEntities}
               @value-changed=${this._addEntity}

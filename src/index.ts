@@ -11,6 +11,7 @@ import { RoomSummaryEntitiesRowEditor } from '@cards/components/editor/entities-
 import { RoomSummaryEntityDetailEditor } from '@cards/components/editor/entity-detail-editor';
 import { RoomSummaryStatesRowEditor } from '@cards/components/editor/states-row-editor';
 import { RoomSummarySubElementEditor } from '@cards/components/editor/sub-element-editor';
+import { RoomSummaryThresholdsRowEditor } from '@cards/components/editor/thresholds-row-editor';
 import { EntityCollection } from '@cards/components/entity-collection/entity-collection';
 import { EntitySlider } from '@cards/components/entity-slider/entity-slider';
 import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
@@ -36,6 +37,10 @@ customElements.define(
 customElements.define(
   'room-summary-states-row-editor',
   RoomSummaryStatesRowEditor,
+);
+customElements.define(
+  'room-summary-thresholds-row-editor',
+  RoomSummaryThresholdsRowEditor,
 );
 customElements.define(
   'room-summary-sub-element-editor',

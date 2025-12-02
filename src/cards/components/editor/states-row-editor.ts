@@ -52,7 +52,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     return `${this.mode}-${index}`;
   }
 
-  private _getStateSchema = memoizeOne(
+  private readonly _getStateSchema = memoizeOne(
     (
       entity_id: string,
       hass: HomeAssistant,
@@ -122,7 +122,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     },
   );
 
-  private _getThresholdSchema = memoizeOne(
+  private readonly _getThresholdSchema = memoizeOne(
     (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
       return [
         {
@@ -219,7 +219,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     },
   );
 
-  private _computeLabelCallback = (schema: HaFormSchema): string => {
+  private readonly _computeLabelCallback = (schema: HaFormSchema): string => {
     if (!schema.label) return '';
     return `${localize(this.hass as any, schema.label as TranslationKey)} ${
       schema.required

@@ -138,7 +138,7 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
   /**
    * Handle drag start (mouse)
    */
-  private _handleDragStart = (e: MouseEvent): void => {
+  private readonly _handleDragStart = (e: MouseEvent): void => {
     this._isDragging = true;
     this._dragStartY = e.clientY;
     this._dragStartPosition = this._yPosition;
@@ -150,7 +150,7 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
   /**
    * Handle drag start (touch)
    */
-  private _handleTouchStart = (e: TouchEvent): void => {
+  private readonly _handleTouchStart = (e: TouchEvent): void => {
     if (!e.touches[0]) return;
 
     this._isDragging = true;
@@ -164,7 +164,7 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
   /**
    * Handle drag move (mouse)
    */
-  private _handleDragMove = (e: MouseEvent): void => {
+  private readonly _handleDragMove = (e: MouseEvent): void => {
     if (!this._isDragging) return;
 
     const containerHeight = this.offsetHeight;
@@ -183,7 +183,7 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
   /**
    * Handle drag move (touch)
    */
-  private _handleTouchMove = (e: TouchEvent): void => {
+  private readonly _handleTouchMove = (e: TouchEvent): void => {
     if (!this._isDragging || !e.touches[0]) return;
 
     const containerHeight = this.offsetHeight;
@@ -202,7 +202,7 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
   /**
    * Handle drag end (mouse)
    */
-  private _handleDragEnd = (): void => {
+  private readonly _handleDragEnd = (): void => {
     this._isDragging = false;
     document.removeEventListener('mousemove', this._handleDragMove);
     document.removeEventListener('mouseup', this._handleDragEnd);
@@ -218,7 +218,7 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
   /**
    * Handle drag end (touch)
    */
-  private _handleTouchEnd = (): void => {
+  private readonly _handleTouchEnd = (): void => {
     this._isDragging = false;
     document.removeEventListener('touchmove', this._handleTouchMove);
     document.removeEventListener('touchend', this._handleTouchEnd);

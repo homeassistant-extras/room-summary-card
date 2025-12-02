@@ -44,7 +44,7 @@ export class RoomSummaryCardEditor extends LitElement {
   /**
    * Reference to the tab bar container for scroll detection
    */
-  private _tabContainerRef: Ref<HTMLDivElement> = createRef();
+  private readonly _tabContainerRef: Ref<HTMLDivElement> = createRef();
 
   /**
    * Sub-element editor configuration for editing individual entities

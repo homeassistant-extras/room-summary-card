@@ -85,9 +85,13 @@
     "threshold": {
       "thresholds": "Thresholds",
       "temperature_threshold": "Temperature threshold",
+      "temperature_thresholds": "Temperature Thresholds",
+      "add_temperature_threshold": "Add Temperature Threshold",
       "temperature_operator": "Temperature Operator",
       "temperature_entity": "Temperature Entity",
       "humidity_threshold": "Humidity threshold",
+      "humidity_thresholds": "Humidity Thresholds",
+      "add_humidity_threshold": "Add Humidity Threshold",
       "humidity_operator": "Humidity Operator",
       "humidity_entity": "Humidity Entity",
       "mold_threshold": "Mold threshold",

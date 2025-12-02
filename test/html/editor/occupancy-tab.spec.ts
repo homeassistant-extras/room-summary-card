@@ -158,4 +158,108 @@ describe('occupancy-tab.ts', () => {
     expect(localizeStub.called).to.be.true;
     expect(localizeStub.firstCall.args[1]).to.equal('editor.alarm.alarm_info');
   });
+
+  it('should render thresholds-row-editor components', async () => {
+    const result = renderOccupancyTab({
+      hass: mockHass,
+      config: mockConfig,
+      entities: ['binary_sensor.occupancy', 'sensor.temperature'],
+      onValueChanged,
+    });
+
+    const el = await fixture(html`<div>${result}</div>`);
+    const thresholdsEditors = el.querySelectorAll(
+      'room-summary-thresholds-row-editor',
+    );
+
+    expect(thresholdsEditors.length).to.equal(2);
+  });
+
+  it('should render temperature thresholds editor with correct props', async () => {
+    const configWithThresholds: Config = {
+      ...mockConfig,
+      thresholds: {
+        temperature: [{ value: 75, operator: 'gt' }],
+      },
+    };
+
+    const result = renderOccupancyTab({
+      hass: mockHass,
+      config: configWithThresholds,
+      entities: ['sensor.temperature'],
+      onValueChanged,
+    });
+
+    const el = await fixture(html`<div>${result}</div>`);
+    const thresholdsEditors = el.querySelectorAll(
+      'room-summary-thresholds-row-editor',
+    );
+
+    // Temperature editor is the first one
+    const temperatureEditor = thresholdsEditors[0];
+
+    expect(temperatureEditor).to.exist;
+    expect((temperatureEditor as any).thresholds).to.deep.equal([
+      { value: 75, operator: 'gt' },
+    ]);
+    expect((temperatureEditor as any).thresholdType).to.equal('temperature');
+  });
+
+  it('should render humidity thresholds editor with correct props', async () => {
+    const configWithThresholds: Config = {
+      ...mockConfig,
+      thresholds: {
+        humidity: [{ value: 60, operator: 'gt' }],
+      },
+    };
+
+    const result = renderOccupancyTab({
+      hass: mockHass,
+      config: configWithThresholds,
+      entities: ['sensor.humidity'],
+      onValueChanged,
+    });
+
+    const el = await fixture(html`<div>${result}</div>`);
+    const thresholdsEditors = el.querySelectorAll(
+      'room-summary-thresholds-row-editor',
+    );
+
+    // Humidity editor is the second one
+    const humidityEditor = thresholdsEditors[1];
+
+    expect(humidityEditor).to.exist;
+    expect((humidityEditor as any).thresholds).to.deep.equal([
+      { value: 60, operator: 'gt' },
+    ]);
+    expect((humidityEditor as any).thresholdType).to.equal('humidity');
+  });
+
+  it('should render mold threshold form', async () => {
+    const configWithMold: Config = {
+      ...mockConfig,
+      thresholds: {
+        mold: 70,
+      },
+    };
+
+    const result = renderOccupancyTab({
+      hass: mockHass,
+      config: configWithMold,
+      entities: [],
+      onValueChanged,
+    });
+
+    const el = await fixture(html`<div>${result}</div>`);
+    const forms = el.querySelectorAll('ha-form');
+    // Should have one form for occupancy/smoke and one for mold
+    expect(forms.length).to.be.greaterThan(1);
+
+    // Find the mold form
+    const moldForm = Array.from(forms).find(
+      (form) => (form as any).data?.mold !== undefined,
+    );
+    expect(moldForm).to.exist;
+    expect((moldForm as any).data.mold).to.equal(70);
+  });
 });

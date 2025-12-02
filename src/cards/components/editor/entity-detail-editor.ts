@@ -47,7 +47,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     return this._config;
   }
 
-  private _entitiesSchema = memoizeOne(
+  private readonly _entitiesSchema = memoizeOne(
     (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
       return [
         {
@@ -172,7 +172,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     },
   );
 
-  private _sensorsSchema = memoizeOne(
+  private readonly _sensorsSchema = memoizeOne(
     (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
       return [
         {
@@ -212,6 +212,13 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
         ? this._entitiesSchema(this._config.entity_id, this.hass)
         : this._sensorsSchema(this._config.entity_id, this.hass);
 
+    const states = Array.isArray(this._config.states)
+      ? this._config.states
+      : undefined;
+    const thresholds = Array.isArray(this._config.thresholds)
+      ? this._config.thresholds
+      : undefined;
+
     return html`
       <ha-form
         .hass=${this.hass}
@@ -224,9 +231,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
         ? html`
             <room-summary-states-row-editor
               .hass=${this.hass}
-              .states=${Array.isArray(this._config.states)
-                ? this._config.states
-                : undefined}
+              .states=${states}
               .entityId=${this._config.entity_id}
               .mode=${'states'}
               .isSensor=${this.type === 'sensor'}
@@ -238,9 +243,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
               ? html`
                   <room-summary-states-row-editor
                     .hass=${this.hass}
-                    .thresholds=${Array.isArray(this._config.thresholds)
-                      ? this._config.thresholds
-                      : undefined}
+                    .thresholds=${thresholds}
                     .entityId=${this._config.entity_id}
                     .mode=${'thresholds'}
                     label=${localize(this.hass, 'editor.entity.thresholds')}
@@ -339,7 +342,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     fireEvent(this, 'config-changed', { config: newConfig });
   }
 
-  private _computeLabelCallback = (schema: HaFormSchema): string => {
+  private readonly _computeLabelCallback = (schema: HaFormSchema): string => {
     if (!schema.label) return '';
     return `${localize(this.hass as any, schema.label as TranslationKey)} ${
       schema.required

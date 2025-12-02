@@ -155,4 +155,29 @@ export const styles = css`
     font-size: 0.9em;
     line-height: 1.5;
   }
+
+  ha-expansion-panel {
+    margin-top: 10px;
+    display: block;
+    --expansion-panel-content-padding: 0;
+    border-radius: var(--ha-border-radius-md);
+    --ha-card-border-radius: var(--ha-border-radius-md);
+  }
+
+  .thresholds-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .thresholds-title {
+    font-weight: 500;
+  }
+
+  .thresholds-section {
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 `;

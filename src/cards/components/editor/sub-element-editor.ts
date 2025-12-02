@@ -24,7 +24,7 @@ export class RoomSummarySubElementEditor extends LitElement {
 
   @property({ attribute: false }) public config!: SubElementEditorConfig;
 
-  @state() private _guiModeAvailable = true;
+  @state() private readonly _guiModeAvailable = true;
 
   @state() private _guiMode = true;
 
