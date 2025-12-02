@@ -344,7 +344,7 @@ describe('climate-thresholds.ts', () => {
           const result = climateThresholds(config, sensorData);
 
           expect(result).to.have.property('hot', false);
-      expect(result).to.have.property('humid', false);
+          expect(result).to.have.property('humid', false);
         });
 
         it('should use averaged sensors when no specific entity is configured', () => {
@@ -390,7 +390,7 @@ describe('climate-thresholds.ts', () => {
           const result = climateThresholds(config, sensorData);
 
           expect(result).to.have.property('hot', false);
-      expect(result).to.have.property('humid', false);
+          expect(result).to.have.property('humid', false);
         });
       });
     });
@@ -736,7 +736,7 @@ describe('climate-thresholds.ts', () => {
 
         const result = climateThresholds(config, sensorData);
         expect(result).to.have.property('hot', false);
-      expect(result).to.have.property('humid', false);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should handle multiple entries with different operators', () => {
@@ -851,7 +851,7 @@ describe('climate-thresholds.ts', () => {
         const result = climateThresholds(config, sensorData);
         // Empty array means no thresholds to check, so should return false
         expect(result).to.have.property('hot', false);
-      expect(result).to.have.property('humid', false);
+        expect(result).to.have.property('humid', false);
       });
 
       it('should handle array with empty object (uses default threshold)', () => {

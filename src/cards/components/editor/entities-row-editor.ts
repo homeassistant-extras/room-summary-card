@@ -283,7 +283,7 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
     }
   }
 
-  static override styles: CSSResult = css`
+  static override readonly styles: CSSResult = css`
     ha-entity-picker {
       margin-top: 8px;
     }

@@ -3,7 +3,6 @@ import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
 import { localize } from '@localize/localize';
 import type { StateConfig, ThresholdConfig } from '@type/config/entity';
-import type { TranslationKey } from '@type/locale';
 import {
   css,
   html,
@@ -221,7 +220,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
 
   private readonly _computeLabelCallback = (schema: HaFormSchema): string => {
     if (!schema.label) return '';
-    return `${localize(this.hass as any, schema.label as TranslationKey)} ${
+    return `${localize(this.hass!, schema.label)} ${
       schema.required
         ? `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.required')})`
         : `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.optional')})`
@@ -515,7 +514,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     `;
   }
 
-  static override styles: CSSResult = css`
+  static override readonly styles: CSSResult = css`
     :host {
       margin-bottom: 20px;
       display: block;

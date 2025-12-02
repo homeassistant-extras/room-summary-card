@@ -253,7 +253,7 @@ export class RoomSummaryCardEditor extends LitElement {
       return;
     }
 
-    this._config = { ...this._config!, [field]: value };
+    this._config = { ...this._config, [field]: value };
     cleanAndFireConfigChanged(this, this._config);
   }
 
@@ -266,7 +266,7 @@ export class RoomSummaryCardEditor extends LitElement {
       return;
     }
 
-    this._config = { ...this._config!, sensors: value };
+    this._config = { ...this._config, sensors: value };
     cleanAndFireConfigChanged(this, this._config);
   }
 
@@ -282,7 +282,7 @@ export class RoomSummaryCardEditor extends LitElement {
     // Convert array back to single entity (take first element or undefined)
     const entityValue = value.length > 0 ? value[0] : undefined;
 
-    this._config = { ...this._config!, entity: entityValue };
+    this._config = { ...this._config, entity: entityValue };
     cleanAndFireConfigChanged(this, this._config);
   }
 

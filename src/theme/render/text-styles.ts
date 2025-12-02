@@ -1,7 +1,5 @@
 import { hasFeature } from '@config/feature';
-import { stateColorBrightness } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
-import type { HassEntity } from '@hass/ws/types';
 import { processHomeAssistantColors } from '@theme/colors';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
@@ -34,8 +32,6 @@ export const renderTextStyles = (
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   if (skipStyles) return nothing;
 
-  const { state } = entity as { state: HassEntity };
-  const filter = stateColorBrightness(state);
   const styleData = getStyleData(hass, 'text', entity, isActive);
 
   if (!styleData) return nothing;
@@ -49,7 +45,6 @@ export const renderTextStyles = (
     ? styleMap({
         '--text-color': titleColor,
         '--state-color-text-theme': styleData.themeOverride,
-        filter: filter,
         ...config.styles?.title,
       })
     : styleMap({
