@@ -252,6 +252,20 @@ const sensorLabelStyles = css`
 `;
 
 /**
+ * Full card action overlay styles
+ */
+const cardOverlayStyles = css`
+  .card-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    cursor: pointer;
+  }
+`;
+
+/**
  * Combined styles for the Room Summary Card
  * Exports all style categories as a single CSS template
  */
@@ -265,4 +279,5 @@ export const styles = css`
   ${statusEntityStyles}
   ${occupancyStyles}
   ${moldStyles}
+  ${cardOverlayStyles}
 `;

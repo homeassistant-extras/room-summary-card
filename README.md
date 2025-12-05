@@ -353,6 +353,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Custom Labels`**: entity and sensor labels with state/threshold-based overrides - thanks @ojm88
 - [x] **`Smoke Detection`**: visual indicators for smoke detectors - thanks @Arjan-21
 - [x] **`Entity-Based Threshold Values`**: **⭐ Contributor ⭐** dynamic threshold based on entity - thanks @Micky2149
+- [x] **`Full Card Actions`**: make entire card clickable with larger touch targets for mobile-friendly navigation - thanks @devkaiwang
 
 ## Contributing
 

@@ -67,10 +67,34 @@ describe('state_color.ts', () => {
       );
     });
 
+    it('should not return unavailable color when active is true even if state is unavailable', () => {
+      const stateObj = createStateObj('light.test', UNAVAILABLE);
+      stateColorPropertiesStub = stub(
+        stateColorModule,
+        'stateColorProperties',
+      ).returns(['--some-color-property']);
+      computeCssVariableStub.returns('var(--some-color-property)');
+      // When active is true, should show active color even if entity is unavailable
+      expect(stateColorCss(stateObj, 'test', true)).to.equal(
+        'var(--some-color-property)',
+      );
+    });
+
     it('should respect provided state parameter over entity state', () => {
       const stateObj = createStateObj('light.test', 'on');
-      expect(stateColorCss(stateObj, 'test', true, UNAVAILABLE)).to.equal(
+      // When active is false/undefined, unavailable state should return unavailable color
+      expect(stateColorCss(stateObj, 'test', false, UNAVAILABLE)).to.equal(
         'var(--state-unavailable-color)',
+      );
+      // When active is true, unavailable state should not return unavailable color
+      // (allows active state to be shown even when entity is unavailable)
+      stateColorPropertiesStub = stub(
+        stateColorModule,
+        'stateColorProperties',
+      ).returns(['--some-color-property']);
+      computeCssVariableStub.returns('var(--some-color-property)');
+      expect(stateColorCss(stateObj, 'test', true, UNAVAILABLE)).to.equal(
+        'var(--some-color-property)',
       );
     });
 

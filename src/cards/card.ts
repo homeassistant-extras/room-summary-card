@@ -13,6 +13,10 @@ import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderRoomIcon } from '@/html/icon';
 import { hasFeature } from '@config/feature';
+import {
+  actionHandler,
+  handleClickAction,
+} from '@delegates/action-handler-delegate';
 import type { ClimateThresholds } from '@delegates/checks/thresholds';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import { fireEvent } from '@hass/common/dom/fire_event';
@@ -280,6 +284,17 @@ export class RoomSummaryCard extends LitElement {
           <!-- Problem Indicator -->
           ${problems}
         </div>
+
+        <!-- Full Card Action Overlay -->
+        ${hasFeature(this._config, 'full_card_actions')
+          ? html`
+              <div
+                class="card-overlay"
+                @action=${handleClickAction(this, this._roomEntity)}
+                .actionHandler=${actionHandler(this._roomEntity)}
+              ></div>
+            `
+          : nothing}
       </ha-card>
     `;
   }
