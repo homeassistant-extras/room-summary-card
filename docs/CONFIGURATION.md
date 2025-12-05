@@ -92,6 +92,7 @@ features:
   - ignore_entity
   - sticky_entities
   - slider
+  - full_card_actions
 ```
 
 | Feature                  | Description                                                                                    |
@@ -109,6 +110,7 @@ features:
 | ignore_entity            | Ignore the custom entity configuration and use default room entity (useful with auto-entities) |
 | sticky_entities          | Keep entity positions stable even when state is unavailable (prevents UI layout shifts)        |
 | slider                   | Display the first entity as a draggable slider for brightness control                          |
+| full_card_actions        | Make entire card clickable with tap/hold actions for mobile-friendly navigation                |
 
 ### Using `ignore_entity` with Auto-Entities
 

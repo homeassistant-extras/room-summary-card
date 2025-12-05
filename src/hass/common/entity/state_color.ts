@@ -54,7 +54,7 @@ export const stateColorCss = (
   state?: string,
 ) => {
   const compareState = state ?? stateObj?.state;
-  if (compareState === UNAVAILABLE) {
+  if (compareState === UNAVAILABLE && !active) {
     return `var(--state-unavailable-color)`;
   }
 

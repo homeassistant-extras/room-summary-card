@@ -364,6 +364,24 @@ describe('card.ts', () => {
       expect(entityCollection).to.exist;
       expect(entitySlider).to.not.exist;
     });
+
+    it('should render card overlay when full_card_actions feature is enabled', async () => {
+      card.setConfig({ area: 'living_room', features: ['full_card_actions'] });
+      card.hass = mockHass;
+      const el = await fixture(card.render() as TemplateResult);
+      const overlay = el.querySelector('.card-overlay');
+
+      expect(overlay).to.exist;
+    });
+
+    it('should not render card overlay when full_card_actions feature is not enabled', async () => {
+      card.setConfig({ area: 'living_room' });
+      card.hass = mockHass;
+      const el = await fixture(card.render() as TemplateResult);
+      const overlay = el.querySelector('.card-overlay');
+
+      expect(overlay).to.not.exist;
+    });
   });
 
   describe('getConfigElement()', () => {

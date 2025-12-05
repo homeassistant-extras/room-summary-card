@@ -151,7 +151,8 @@ export type Features =
   | 'show_entity_labels'
   | 'multi_light_background'
   | 'sticky_entities'
-  | 'slider';
+  | 'slider'
+  | 'full_card_actions';
 
 /**
  * @file Occupancy Configuration Types

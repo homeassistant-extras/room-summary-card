@@ -51,7 +51,12 @@ describe('setup-card.ts', () => {
       config: { entity_id: 'light.test' },
       state: s('light', 'test', 'on'),
     });
-    climateThresholdsStub.returns({ hot: false, humid: false, hotColor: undefined, humidColor: undefined });
+    climateThresholdsStub.returns({
+      hot: false,
+      humid: false,
+      hotColor: undefined,
+      humidColor: undefined,
+    });
     getBackgroundImageUrlStub.resolves('/local/bg.jpg');
     getOccupancyStateStub.returns(false);
     getSmokeStateStub.returns(false);

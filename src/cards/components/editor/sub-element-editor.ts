@@ -116,7 +116,7 @@ export class RoomSummarySubElementEditor extends LitElement {
     fireEvent(this, 'go-back');
   }
 
-  static override styles: CSSResult = css`
+  static override readonly styles: CSSResult = css`
     .header {
       display: flex;
       justify-content: space-between;
