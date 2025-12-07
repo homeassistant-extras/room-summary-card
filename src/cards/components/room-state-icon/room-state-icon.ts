@@ -39,7 +39,6 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   /**
    * Home Assistant instance
    */
-  @state()
   private _hass!: HomeAssistant;
 
   /**
@@ -68,7 +67,13 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   /**
    * Entity information containing state and configuration
    */
-  @property({ type: Object }) entity!: EntityInformation;
+  @property({
+    type: Object,
+    hasChanged: (newVal: EntityInformation, oldVal: EntityInformation) => {
+      return !equal(newVal, oldVal);
+    },
+  })
+  entity!: EntityInformation;
 
   /**
    * Whether this is the main room entity (for applying room-specific hiding logic)

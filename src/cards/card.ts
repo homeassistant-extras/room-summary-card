@@ -133,10 +133,7 @@ export class RoomSummaryCard extends LitElement {
     this.occupied = occupied;
     this.smoke = smoke;
     this.dark = dark;
-    this.hot = thresholds.hot;
-    this.humid = thresholds.humid;
     this._isActive = isActive;
-    this._thresholds = thresholds;
 
     // Handle async image resolution
     image.then((resolvedImage) => {
@@ -158,6 +155,12 @@ export class RoomSummaryCard extends LitElement {
     }
     if (!equal(sensors, this._sensors)) {
       this._sensors = sensors;
+      shouldRender = true;
+    }
+    if (!equal(thresholds, this._thresholds)) {
+      this._thresholds = thresholds;
+      this.hot = thresholds.hot;
+      this.humid = thresholds.humid;
       shouldRender = true;
     }
 
