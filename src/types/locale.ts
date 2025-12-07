@@ -60,6 +60,8 @@ export type TranslationKey =
   | 'editor.features.exclude_default_entities_desc'
   | 'editor.features.features'
   | 'editor.features.features_info'
+  | 'editor.features.full_card_actions'
+  | 'editor.features.full_card_actions_desc'
   | 'editor.features.ignore_entity_desc'
   | 'editor.features.show_entity_labels_desc'
   | 'editor.features.slider'

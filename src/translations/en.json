@@ -167,6 +167,7 @@
       "exclude_default_entities": "Exclude Default Entities",
       "sticky_entities": "Sticky Entities",
       "slider": "Slider",
+      "full_card_actions": "Full Card Actions",
       "sticky_entities_info": "Keep entity positions stable even when their state is unavailable. This prevents UI layout shifts and makes it easier to tap entities on touch dashboards.",
       "features_info": "Configure global features that affect how entities are displayed and handled:",
       "show_entity_labels_desc": "Show entity labels under each entity icon",
@@ -174,6 +175,7 @@
       "ignore_entity_desc": "Ignore the entity property in the configuration",
       "sticky_entities_desc": "Keep entity positions even when state is unavailable",
       "slider_desc": "Display a single entity in a slider layout instead of the entity collection",
+      "full_card_actions_desc": "Make the entire card clickable using the room entity's tap/hold/double-tap actions",
       "options": "Options"
     }
   }

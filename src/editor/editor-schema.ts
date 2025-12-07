@@ -568,6 +568,10 @@ const featuresSchema = (hass: HomeAssistant): HaFormSchema => {
                 ),
                 value: 'skip_entity_styles',
               },
+              {
+                label: localize(hass, 'editor.features.full_card_actions'),
+                value: 'full_card_actions',
+              },
             ],
           },
         },

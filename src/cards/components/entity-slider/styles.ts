@@ -28,7 +28,6 @@ export const styles = css`
     box-shadow:
       inset 0 2px 4px rgba(0, 0, 0, 0.3),
       inset 0 -1px 2px rgba(255, 255, 255, 0.1);
-    z-index: 0;
   }
 
   /* Thin line slider */
@@ -42,7 +41,6 @@ export const styles = css`
     width: 2px;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 2px;
-    z-index: 0;
   }
 
   /* Filled/Progress bar - shows brightness level */
@@ -56,7 +54,6 @@ export const styles = css`
     width: 50%;
     background: rgba(var(--rgb-primary-color, 0, 0, 0), 0.2);
     border-radius: 100px;
-    z-index: 0;
     transition: top 0.1s ease;
   }
 
@@ -75,7 +72,6 @@ export const styles = css`
       rgba(0, 0, 0, 0.3)
     );
     border-radius: 3px;
-    z-index: 0;
   }
 
   /* Dual rail - two parallel lines */
@@ -96,7 +92,6 @@ export const styles = css`
       rgba(0, 0, 0, 0.2) 10px,
       rgba(0, 0, 0, 0.2) 12px
     );
-    z-index: 0;
   }
 
   /* Dots/Ticks at regular intervals */
@@ -117,7 +112,6 @@ export const styles = css`
       transparent calc(25% + 3px)
     );
     border-radius: 4px;
-    z-index: 0;
   }
 
   /* Notched track with indents */
@@ -138,7 +132,6 @@ export const styles = css`
       rgba(0, 0, 0, 0.15) 12%
     );
     border-radius: 100px;
-    z-index: 0;
   }
 
   /* Grid with horizontal lines */
@@ -158,7 +151,6 @@ export const styles = css`
       rgba(0, 0, 0, 0.15) calc(25% + 1px),
       transparent calc(25% + 1px)
     );
-    z-index: 0;
   }
 
   /* Glow line with blur effect */
@@ -175,7 +167,6 @@ export const styles = css`
     box-shadow:
       0 0 8px rgba(var(--rgb-primary-color, 66, 133, 244), 0.6),
       0 0 12px rgba(var(--rgb-primary-color, 66, 133, 244), 0.3);
-    z-index: 0;
   }
 
   /* Shadow trail that follows icon position */
@@ -192,7 +183,6 @@ export const styles = css`
       rgba(0, 0, 0, 0.15) 0%,
       transparent 70%
     );
-    z-index: 0;
     transition: top 0.1s ease;
     pointer-events: none;
   }
@@ -209,7 +199,6 @@ export const styles = css`
     background: transparent;
     border: 2px solid rgba(0, 0, 0, 0.2);
     border-radius: 100px;
-    z-index: 0;
   }
 
   .icon-container {
