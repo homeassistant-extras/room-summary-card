@@ -2,7 +2,7 @@
   "compilerOptions": {
     /* Base Options: */
     "skipLibCheck": true,
-    "target": "es2022",
+    "target": "es2015",
     "moduleResolution": "node",
     "isolatedModules": true,
     "experimentalDecorators": true,

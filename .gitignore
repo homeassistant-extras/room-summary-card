@@ -10,6 +10,7 @@
 !*.ts
 !.prettierrc
 !.nycrc
+!.browserslistrc
 !.node-version
 !assets/**
 !dist/**

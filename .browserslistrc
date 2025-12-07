@@ -1,0 +1,10 @@
+# Support for older iPad Safari versions
+# iPad 1: iOS 3.2-5.1.1 (Safari 4-5)
+# iPad 2: iOS 4.3-9.3.5 (Safari 4-9)
+# Targeting iOS Safari 5+ for reasonable compatibility
+# Note: iPad 1 may have limited support due to missing Custom Elements API
+ios_saf >= 5
+# Also include other modern browsers
+last 2 versions
+> 0.5%
+not dead
