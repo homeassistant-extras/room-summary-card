@@ -132,6 +132,7 @@
       "card_styles": "Card Styles",
       "entities_container_styles": "Entities Container Styles",
       "entity_icon_styles": "Entity Icon Styles",
+      "room_entity_icon_styles": "Main Room Entity Icon Styles",
       "sensor_styles": "Sensor Styles",
       "stats_styles": "Stats Styles",
       "title_styles": "Title Styles",

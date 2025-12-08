@@ -166,6 +166,12 @@ export const getEntitiesStylesSchema = (
           required: false,
           selector: { object: {} },
         },
+        {
+          name: 'room_entity_icon',
+          label: 'editor.styles.room_entity_icon_styles',
+          required: false,
+          selector: { object: {} },
+        },
       ],
     },
     {

@@ -798,5 +798,67 @@ describe('room-state-icon.ts', () => {
       expect(callArgs).to.have.property('--icon-color', 'blue');
       expect(callArgs).to.have.property('--threshold-color', 'red');
     });
+
+    it('should spread room_entity_icon styles from config when isMainRoomEntity is true', () => {
+      const configWithRoomEntityIconStyles = {
+        ...mockConfig,
+        styles: {
+          entity_icon: {
+            '--icon-size': '32px',
+            '--icon-color': 'blue',
+          },
+          room_entity_icon: {
+            '--room-icon-size': '48px',
+            '--room-icon-color': 'red',
+          },
+        },
+      } as Config;
+      element.config = configWithRoomEntityIconStyles;
+      element.isMainRoomEntity = true;
+
+      getThresholdResultStub.returns({});
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      // Verify that stylesToHostCss was called with merged styles including room_entity_icon
+      expect(stylesToHostCssStub.called).to.be.true;
+      const callArgs = stylesToHostCssStub.getCall(0).args[0];
+      expect(callArgs).to.have.property('--icon-size', '32px');
+      expect(callArgs).to.have.property('--icon-color', 'blue');
+      expect(callArgs).to.have.property('--room-icon-size', '48px');
+      expect(callArgs).to.have.property('--room-icon-color', 'red');
+    });
+
+    it('should not spread room_entity_icon styles when isMainRoomEntity is false', () => {
+      const configWithRoomEntityIconStyles = {
+        ...mockConfig,
+        styles: {
+          entity_icon: {
+            '--icon-size': '32px',
+            '--icon-color': 'blue',
+          },
+          room_entity_icon: {
+            '--room-icon-size': '48px',
+            '--room-icon-color': 'red',
+          },
+        },
+      } as Config;
+      element.config = configWithRoomEntityIconStyles;
+      element.isMainRoomEntity = false;
+
+      getThresholdResultStub.returns({});
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      // Verify that stylesToHostCss was called without room_entity_icon styles
+      expect(stylesToHostCssStub.called).to.be.true;
+      const callArgs = stylesToHostCssStub.getCall(0).args[0];
+      expect(callArgs).to.have.property('--icon-size', '32px');
+      expect(callArgs).to.have.property('--icon-color', 'blue');
+      expect(callArgs).to.not.have.property('--room-icon-size');
+      expect(callArgs).to.not.have.property('--room-icon-color');
+    });
   });
 });

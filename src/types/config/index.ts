@@ -8,23 +8,6 @@ import type { EntityConfig } from './entity';
 import type { SensorConfig } from './sensor';
 
 /**
- * Configuration for a single threshold entry
- */
-export interface ThresholdEntry {
-  /** Entity ID to check for this threshold (optional - if omitted, uses averaged sensor) */
-  entity_id?: string;
-
-  /** Threshold value to compare against (number) or entity ID to lookup threshold value from (optional - defaults to 80°F for temperature, 60% for humidity) */
-  value?: number | string;
-
-  /** Comparison operator (optional - default: 'gt' for greater than) */
-  operator?: ComparisonOperator;
-
-  /** Custom color for border when threshold is triggered (optional - if omitted, uses default red for temperature, blue for humidity) */
-  color?: string;
-}
-
-/**
  * Configuration settings for entity display and behavior within Home Assistant.
  */
 export interface Config {
@@ -122,6 +105,9 @@ export interface Config {
     /** CSS properties for individual entity icons */
     entity_icon?: Record<string, string>;
 
+    /** CSS properties for the main room entity icon */
+    room_entity_icon?: Record<string, string>;
+
     /** Sensor CSS properties as an object */
     sensors?: Record<string, string>;
 
@@ -179,4 +165,21 @@ export interface AlarmConfig {
     | 'disable_icon_styles'
     | 'disable_icon_animation'
   )[];
+}
+
+/**
+ * Configuration for a single threshold entry
+ */
+export interface ThresholdEntry {
+  /** Entity ID to check for this threshold (optional - if omitted, uses averaged sensor) */
+  entity_id?: string;
+
+  /** Threshold value to compare against (number) or entity ID to lookup threshold value from (optional - defaults to 80°F for temperature, 60% for humidity) */
+  value?: number | string;
+
+  /** Comparison operator (optional - default: 'gt' for greater than) */
+  operator?: ComparisonOperator;
+
+  /** Custom color for border when threshold is triggered (optional - if omitted, uses default red for temperature, blue for humidity) */
+  color?: string;
 }

@@ -27,6 +27,7 @@ export type TranslationKey =
   | 'editor.icon.disable_icon_color'
   | 'editor.styles.entities_container_styles'
   | 'editor.styles.entity_icon_styles'
+  | 'editor.styles.room_entity_icon_styles'
   | 'editor.entity.entity_id'
   | 'editor.entity.entity_label'
   | 'editor.entity.entity_attribute'

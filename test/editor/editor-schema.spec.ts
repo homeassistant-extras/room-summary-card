@@ -171,6 +171,12 @@ describe('editor-schema.ts', () => {
             required: false,
             selector: { object: {} },
           },
+          {
+            name: 'room_entity_icon',
+            label: 'editor.styles.room_entity_icon_styles',
+            required: false,
+            selector: { object: {} },
+          },
         ],
       });
       expect(schema[1]).to.deep.equal({
@@ -521,6 +527,10 @@ describe('editor-schema.ts', () => {
                     {
                       label: 'editor.card.skip_card_background_styles',
                       value: 'skip_entity_styles',
+                    },
+                    {
+                      label: 'editor.features.full_card_actions',
+                      value: 'full_card_actions',
                     },
                   ],
                 },
