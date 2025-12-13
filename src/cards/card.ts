@@ -84,6 +84,13 @@ export class RoomSummaryCard extends LitElement {
   private smoke!: boolean;
   @property({ type: Boolean, reflect: true, attribute: 'icon-bg' })
   private iconBackground!: boolean;
+
+  /**
+   * Whether to render the card with a frosted-glass overlay.
+   * This is auto-detected from active HA theme name.
+   */
+  @property({ type: Boolean, reflect: true, attribute: 'frosted-glass' })
+  private frostedGlass: boolean = false;
   private _image?: string | null;
 
   /**
@@ -129,6 +136,10 @@ export class RoomSummaryCard extends LitElement {
       thresholds,
       flags: { occupied, smoke, dark },
     } = getRoomProperties(hass, this._config);
+
+    // Detect Frosted Glass themes (e.g. "Frosted Glass", "Frosted Glass Lite").
+    this.frostedGlass =
+      hass.themes?.theme?.startsWith('Frosted Glass') ?? false;
 
     this.occupied = occupied;
     this.smoke = smoke;

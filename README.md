@@ -304,13 +304,15 @@ The card supports multiple themes out of the box:
 - **Default Home Assistant** themes
 - **[UI Minimalist](https://ui-lovelace-minimalist.github.io/UI/)** theme
 - **[iOS Themes](https://github.com/basnijholt/lovelace-ios-themes)**
+- **[Frosted Glass](https://github.com/wessamlauf/homeassistant-frosted-glass-themes)** theme
 
 ### Theme Examples
 
-| Default HA                            | UI Minimalist                                    |
-| ------------------------------------- | ------------------------------------------------ |
-| ![HA Dark](assets/default-dark.png)   | ![Minimalist Dark](assets/minimalist-dark.png)   |
-| ![HA Light](assets/default-light.png) | ![Minimalist Light](assets/minimalist-light.png) |
+| Theme         | Light                                            | Dark                                           |
+| ------------- | ------------------------------------------------ | ---------------------------------------------- |
+| Default HA    | ![HA Light](assets/default-light.png)            | ![HA Dark](assets/default-dark.png)            |
+| UI Minimalist | ![Minimalist Light](assets/minimalist-light.png) | ![Minimalist Dark](assets/minimalist-dark.png) |
+| Frosted Glass | ![Frosted Light](assets/frosted-light.png)       | ![Frosted Dark](assets/frosted-dark.png)       |
 
 See the [Theming Guide](docs/THEMING.md) for detailed color configuration and custom theme support.
 
@@ -354,6 +356,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Smoke Detection`**: visual indicators for smoke detectors - thanks @Arjan-21
 - [x] **`Entity-Based Threshold Values`**: **⭐ Contributor ⭐** dynamic threshold based on entity - thanks @Micky2149
 - [x] **`Full Card Actions`**: make entire card clickable with larger touch targets for mobile-friendly navigation - thanks @devkaiwang
+- [x] **`Frosted Glass Theme Support`**: automatic detection and styling for Frosted Glass themes with transparent blurred card effects - thanks @devkaiwang
 
 ## Contributing
 

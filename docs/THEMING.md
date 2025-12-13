@@ -39,6 +39,15 @@ The card automatically adapts to these Home Assistant themes:
 
 [See iOS Theme Discussion](https://github.com/homeassistant-extras/room-summary-card/issues/16)
 
+### Frosted Glass
+
+- **Frosted Glass Aesthetic**: Transparent and blurred card elements create depth and layering
+- **Automatic Detection**: Card automatically detects Frosted Glass themes and applies appropriate styling
+- **Light & Dark Modes**: Supports both Frosted Glass and Frosted Glass Lite variants
+- **Backdrop Filter**: Uses theme's backdrop-filter and glass tint variables for seamless integration
+
+![Frosted Light](../assets/frosted-light.png) ![Frosted Dark](../assets/frosted-dark.png)
+
 ## Color System
 
 The card uses a hierarchical color system with the following priority:
