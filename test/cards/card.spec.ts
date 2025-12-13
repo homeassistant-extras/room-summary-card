@@ -294,6 +294,66 @@ describe('card.ts', () => {
       expect(card['image']).to.be.true; // Should be true when iconBackground is not set
       expect(card['iconBackground']).to.be.false;
     });
+
+    it('should detect Frosted Glass theme and set frostedGlass property', () => {
+      const frostedHass = {
+        ...mockHass,
+        themes: { darkMode: false, theme: 'Frosted Glass' },
+      } as any as HomeAssistant;
+
+      card.hass = frostedHass;
+      expect(card['frostedGlass']).to.be.true;
+    });
+
+    it('should detect Frosted Glass Lite theme and set frostedGlass property', () => {
+      const frostedLiteHass = {
+        ...mockHass,
+        themes: { darkMode: false, theme: 'Frosted Glass Lite' },
+      } as any as HomeAssistant;
+
+      card.hass = frostedLiteHass;
+      expect(card['frostedGlass']).to.be.true;
+    });
+
+    it('should not set frostedGlass property for non-Frosted Glass themes', () => {
+      const defaultHass = {
+        ...mockHass,
+        themes: { darkMode: false, theme: 'default' },
+      } as any as HomeAssistant;
+
+      card.hass = defaultHass;
+      expect(card['frostedGlass']).to.be.false;
+    });
+
+    it('should not set frostedGlass property when theme is undefined', () => {
+      const undefinedThemeHass = {
+        ...mockHass,
+        themes: { darkMode: false, theme: undefined },
+      } as any as HomeAssistant;
+
+      card.hass = undefinedThemeHass;
+      expect(card['frostedGlass']).to.be.false;
+    });
+
+    it('should update frostedGlass property when theme changes', () => {
+      // Start with default theme
+      const defaultHass = {
+        ...mockHass,
+        themes: { darkMode: false, theme: 'default' },
+      } as any as HomeAssistant;
+
+      card.hass = defaultHass;
+      expect(card['frostedGlass']).to.be.false;
+
+      // Switch to Frosted Glass theme
+      const frostedHass = {
+        ...mockHass,
+        themes: { darkMode: false, theme: 'Frosted Glass' },
+      } as any as HomeAssistant;
+
+      card.hass = frostedHass;
+      expect(card['frostedGlass']).to.be.true;
+    });
   });
 
   describe('styles', () => {

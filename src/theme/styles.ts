@@ -12,6 +12,7 @@ import { occupancyStyles } from './css/occupancy';
 import {
   colorsDark,
   colorsLight,
+  frostedGlassThemeColors,
   minimalistThemeColors,
   themeColors,
 } from './themes';
@@ -23,6 +24,7 @@ const hostThemeStyles = css`
   /* Card Themes and Colors */
   :host {
     ${minimalistThemeColors}
+    ${frostedGlassThemeColors}
     ${themeColors}
     ${colorsLight}
   }
@@ -87,6 +89,16 @@ const cardContainerStyles = css`
     overflow: hidden;
     height: 100%;
     width: 100%;
+    position: relative;
+  }
+
+  :host([frosted-glass]) ha-card {
+    /* Frosted Glass theme uses a transparent base + an overlay pseudo-element */
+    background: transparent;
+    box-shadow: var(--theme-box-shadow-frosted);
+    border-radius: var(--theme-border-radius-frosted);
+    border: var(--theme-border-width-frosted) solid
+      var(--theme-border-color-frosted);
   }
 
   :host([image]) ha-card::before {
@@ -109,6 +121,18 @@ const cardContainerStyles = css`
     background-color: var(--background-color-card);
     opacity: var(--opacity-theme, var(--background-opacity-card));
     filter: var(--background-filter, none);
+  }
+
+  :host([frosted-glass]) ha-card::before {
+    /* Mimic Frosted Glass card-mod overlay within our shadow DOM */
+    background-color: var(--theme-glass-tint-frosted);
+    opacity: 1;
+    filter: none;
+    backdrop-filter: var(--theme-backdrop-filter-frosted);
+    -webkit-backdrop-filter: var(--theme-backdrop-filter-frosted);
+    box-shadow: var(--theme-glass-inset-shadow-frosted);
+    border-radius: inherit;
+    pointer-events: none;
   }
 `;
 
