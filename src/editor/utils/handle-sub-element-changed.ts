@@ -20,10 +20,15 @@ export interface SubElementChangeResult {
 }
 
 /**
+ * Type alias for entity configuration values that can be EntityConfig, string, null, or undefined
+ */
+type EntityConfigValue = EntityConfig | string | null | undefined;
+
+/**
  * Normalizes a value to either a string or EntityConfig
  */
 function normalizeEntityValue(
-  value: EntityConfig | string | null | undefined,
+  value: EntityConfigValue,
 ): EntityConfig | string | undefined {
   if (!value) {
     return undefined;
@@ -36,7 +41,7 @@ function normalizeEntityValue(
  */
 export function handleSingleEntityUpdate(
   config: Config,
-  value: EntityConfig | string | null | undefined,
+  value: EntityConfigValue,
 ): SubElementChangeResult {
   if (!value) {
     return {
@@ -60,7 +65,7 @@ export function handleSingleEntityUpdate(
  */
 export function handleEntitiesArrayUpdate(
   config: Config,
-  value: EntityConfig | string | null | undefined,
+  value: EntityConfigValue,
   index: number,
 ): SubElementChangeResult {
   const newConfigEntities = (config.entities || []).concat();
@@ -87,7 +92,7 @@ export function handleEntitiesArrayUpdate(
  */
 export function handleSensorsArrayUpdate(
   config: Config,
-  value: EntityConfig | string | null | undefined,
+  value: EntityConfigValue,
   index: number,
 ): SubElementChangeResult {
   const newConfigSensors = (config.sensors || []).concat();

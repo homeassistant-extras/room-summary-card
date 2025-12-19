@@ -80,8 +80,49 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
           'ui.panel.lovelace.editor.card.config.optional',
         )})`}
       </label>
-      ${!this.single
+      ${this.single
         ? html`
+            <div class="entities">
+              ${repeat(
+                items,
+                (item, index) => this._getKey(item, index),
+                (item, index) => html`
+                  <div class="entity">
+                    <ha-entity-picker
+                      allow-custom-entity
+                      hide-clear-icon
+                      .hass=${this.hass}
+                      .value=${this._getEntityId(item)}
+                      .index=${index}
+                      .includeEntities=${this.availableEntities}
+                      @value-changed=${this._valueChanged}
+                    ></ha-entity-picker>
+                    <ha-icon-button
+                      .label=${this.hass!.localize(
+                        'ui.components.entity.entity-picker.clear',
+                      )}
+                      class="remove-icon"
+                      .index=${index}
+                      @click=${this._removeRow}
+                    >
+                      <ha-icon icon="mdi:close"></ha-icon>
+                    </ha-icon-button>
+                    <ha-icon-button
+                      .label=${this.hass!.localize(
+                        'ui.components.entity.entity-picker.edit',
+                      )}
+                      class="edit-icon"
+                      .index=${index}
+                      @click=${this._editRow}
+                    >
+                      <ha-icon icon="mdi:pencil"></ha-icon>
+                    </ha-icon-button>
+                  </div>
+                `,
+              )}
+            </div>
+          `
+        : html`
             <ha-sortable
               handle-selector=".handle"
               @item-moved=${this._rowMoved}
@@ -129,58 +170,17 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
                 )}
               </div>
             </ha-sortable>
-          `
-        : html`
-            <div class="entities">
-              ${repeat(
-                items,
-                (item, index) => this._getKey(item, index),
-                (item, index) => html`
-                  <div class="entity">
-                    <ha-entity-picker
-                      allow-custom-entity
-                      hide-clear-icon
-                      .hass=${this.hass}
-                      .value=${this._getEntityId(item)}
-                      .index=${index}
-                      .includeEntities=${this.availableEntities}
-                      @value-changed=${this._valueChanged}
-                    ></ha-entity-picker>
-                    <ha-icon-button
-                      .label=${this.hass!.localize(
-                        'ui.components.entity.entity-picker.clear',
-                      )}
-                      class="remove-icon"
-                      .index=${index}
-                      @click=${this._removeRow}
-                    >
-                      <ha-icon icon="mdi:close"></ha-icon>
-                    </ha-icon-button>
-                    <ha-icon-button
-                      .label=${this.hass!.localize(
-                        'ui.components.entity.entity-picker.edit',
-                      )}
-                      class="edit-icon"
-                      .index=${index}
-                      @click=${this._editRow}
-                    >
-                      <ha-icon icon="mdi:pencil"></ha-icon>
-                    </ha-icon-button>
-                  </div>
-                `,
-              )}
-            </div>
           `}
-      ${!this.single || items.length === 0
-        ? html`
+      ${this.single && items.length > 0
+        ? nothing
+        : html`
             <ha-entity-picker
               class=${addEntityClass}
               .hass=${this.hass}
               .includeEntities=${this.availableEntities}
               @value-changed=${this._addEntity}
             ></ha-entity-picker>
-          `
-        : nothing}
+          `}
     `;
   }
 
@@ -225,43 +225,46 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
     }
   }
 
+  private _updateItemInArray<T extends EntityRowItem | LightRowItem>(
+    array: T[],
+    index: number,
+    value: string,
+  ): T[] {
+    const newArray = array.concat();
+    if (value === '' || value === undefined) {
+      newArray.splice(index, 1);
+    } else {
+      const currentItem = newArray[index];
+      if (typeof currentItem === 'string') {
+        newArray[index] = value as T;
+      } else {
+        const itemObj = currentItem as EntityConfig | LightConfigObject;
+        newArray[index] = {
+          ...itemObj,
+          entity_id: value,
+        } as T;
+      }
+    }
+    return newArray;
+  }
+
   private _valueChanged(ev: CustomEvent): void {
     const value = ev.detail.value;
     const index = (ev.target as any).index;
 
     if (this.field === 'entities') {
-      const newConfigEntities = (this.entities || []).concat();
-      if (value === '' || value === undefined) {
-        newConfigEntities.splice(index, 1);
-      } else {
-        const currentItem = newConfigEntities[index];
-        if (typeof currentItem === 'string') {
-          newConfigEntities[index] = value;
-        } else {
-          newConfigEntities[index] = {
-            ...currentItem,
-            entity_id: value,
-          };
-        }
-      }
+      const newConfigEntities = this._updateItemInArray(
+        this.entities || [],
+        index,
+        value,
+      );
       fireEvent(this, 'value-changed', { value: newConfigEntities });
     } else {
-      const newConfigLights = (this.lights || []).concat();
-      if (value === '' || value === undefined) {
-        newConfigLights.splice(index, 1);
-      } else {
-        const currentItem = newConfigLights[index];
-        if (typeof currentItem === 'string') {
-          // If current item is a string, replace with new string
-          newConfigLights[index] = value;
-        } else {
-          // If current item is an object, update entity_id but preserve type
-          newConfigLights[index] = {
-            ...currentItem,
-            entity_id: value,
-          };
-        }
-      }
+      const newConfigLights = this._updateItemInArray(
+        this.lights || [],
+        index,
+        value,
+      );
       fireEvent(this, 'value-changed', { value: newConfigLights });
     }
   }

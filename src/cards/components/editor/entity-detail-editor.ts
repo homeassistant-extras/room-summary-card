@@ -247,12 +247,14 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       return nothing;
     }
 
-    const schema =
-      this.type === 'entity'
-        ? this._entitiesSchema(this._config.entity_id, this.hass)
-        : this.type === 'sensor'
-          ? this._sensorsSchema(this._config.entity_id, this.hass)
-          : this._lightsSchema(this._config.entity_id, this.hass);
+    let schema: HaFormSchema[];
+    if (this.type === 'entity') {
+      schema = this._entitiesSchema(this._config.entity_id, this.hass);
+    } else if (this.type === 'sensor') {
+      schema = this._sensorsSchema(this._config.entity_id, this.hass);
+    } else {
+      schema = this._lightsSchema(this._config.entity_id, this.hass);
+    }
 
     // Only access states/thresholds for entity/sensor types, not for lights
     const states =

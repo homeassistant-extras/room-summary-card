@@ -24,7 +24,12 @@ export const stripPrefixFromEntityName = (
       if (newName.length) {
         // If first word already has an upper case letter (e.g. from brand name)
         // leave as-is, otherwise capitalize the first word.
-        return hasUpperCase(newName.substr(0, newName.indexOf(' ')))
+        // Replicate substr(0, indexOf(' ')) behavior: when no space, indexOf returns -1,
+        // and substr(0, -1) returns an empty string.
+        const spaceIndex = newName.indexOf(' ');
+        const firstWord =
+          spaceIndex === -1 ? '' : newName.substring(0, spaceIndex);
+        return hasUpperCase(firstWord)
           ? newName
           : newName[0]?.toUpperCase() + newName.slice(1);
       }

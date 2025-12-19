@@ -94,6 +94,51 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     });
   }
 
+  // Helper function to check if entity should be processed
+  const shouldProcessEntity = (
+    entityId: string,
+    isConfigSensor: boolean,
+    isInArea: boolean,
+    isConfiguredLight: boolean,
+    isThresholdEntity: boolean,
+  ): boolean => {
+    return isConfigSensor || isInArea || isConfiguredLight || isThresholdEntity;
+  };
+
+  // Helper function to collect light entities
+  const collectLightEntity = (
+    state: EntityState,
+    entityId: string,
+    isConfiguredLight: boolean,
+    isInArea: boolean,
+  ): void => {
+    if (isConfiguredLight) {
+      if (ambientLightIds.has(entityId)) {
+        ambientLightEntities.push(state);
+      } else {
+        lightEntities.push(state);
+      }
+    } else if (
+      !config.lights?.length &&
+      isInArea &&
+      entityId.startsWith('light.')
+    ) {
+      lightEntities.push(state);
+    }
+  };
+
+  // Helper function to check if entity is a class sensor
+  const isClassSensor = (
+    state: EntityState,
+    deviceClass: string | undefined,
+  ): boolean => {
+    return (
+      state.domain === 'sensor' &&
+      !!deviceClass &&
+      sensorClasses.includes(deviceClass)
+    );
+  };
+
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
     // Check if this sensor is explicitly configured
@@ -109,34 +154,23 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     // If it's not a config sensor, not in the area, and not a configured light, skip it
     // If it's a config sensor or configured light, always include it since the user has explicitly included it
     if (
-      !isConfigSensor &&
-      !isInArea &&
-      !isConfiguredLight &&
-      !isThresholdEntity
-    )
+      !shouldProcessEntity(
+        entity.entity_id,
+        isConfigSensor,
+        isInArea,
+        isConfiguredLight,
+        isThresholdEntity,
+      )
+    ) {
       return;
+    }
 
     const state = getState(hass.states, entity.entity_id);
     if (!state) return;
 
     // Collect light entities for multi-light background feature
     if (multiLightEnabled) {
-      if (isConfiguredLight) {
-        // Configured light - check if it's ambient or regular
-        if (ambientLightIds.has(entity.entity_id)) {
-          ambientLightEntities.push(state);
-        } else {
-          lightEntities.push(state);
-        }
-      } else if (
-        !config.lights?.length &&
-        isInArea &&
-        entity.entity_id.startsWith('light.')
-      ) {
-        // Auto-discovered light (only when no lights are manually configured)
-        // Auto-discovered lights are always regular (not ambient)
-        lightEntities.push(state);
-      }
+      collectLightEntity(state, entity.entity_id, isConfiguredLight, isInArea);
     }
 
     if (entity?.labels?.includes('problem')) {
@@ -163,11 +197,7 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
     // Check if this is a sensor with a device class we care about
     const deviceClass = state.attributes?.device_class;
-    if (
-      state.domain === 'sensor' &&
-      deviceClass &&
-      sensorClasses.includes(deviceClass)
-    ) {
+    if (isClassSensor(state, deviceClass)) {
       classSensors.push(state);
     }
   });

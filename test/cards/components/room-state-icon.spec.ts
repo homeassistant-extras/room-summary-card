@@ -16,7 +16,7 @@ import * as iconStylesModule from '@theme/render/icon-styles';
 import * as thresholdColorModule from '@theme/threshold-color';
 import * as styleConverterModule from '@theme/util/style-converter';
 import type { Config } from '@type/config';
-import type { EntityConfig } from '@type/config/entity';
+import type { EntityConfig, EntityFeatures } from '@type/config/entity';
 import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
@@ -896,11 +896,11 @@ describe('room-state-icon.ts', () => {
         html`<state-display class="test-state-display"></state-display>`,
       );
 
-      const entityWithShowState = {
+      const entityWithShowState: EntityInformation = {
         ...mockEntity,
         config: {
           ...mockEntityConfig,
-          features: ['show_state'],
+          features: ['show_state'] as EntityFeatures[],
         },
       };
 
@@ -960,7 +960,7 @@ describe('room-state-icon.ts', () => {
         },
       );
 
-      const entityWithPicture = {
+      const entityWithPicture: EntityInformation = {
         ...mockEntity,
         state: {
           ...mockEntityState,
@@ -971,7 +971,7 @@ describe('room-state-icon.ts', () => {
         },
         config: {
           ...mockEntityConfig,
-          features: ['show_state'],
+          features: ['show_state'] as EntityFeatures[],
         },
       };
 
