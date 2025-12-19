@@ -19,6 +19,8 @@ export interface RoomProperties {
   sensors: SensorData;
   image: Promise<string | undefined | null>;
   isActive: boolean;
+  /** Whether the icon should be styled as active (excludes ambient lights) */
+  isIconActive: boolean;
   thresholds: ClimateThresholds;
   flags: {
     occupied: boolean;
@@ -53,10 +55,24 @@ export const getRoomProperties = (
   const smokeDetected = getSmokeState(hass, config.smoke);
   const occupied = getOccupancyState(hass, config.occupancy);
 
-  // Calculate if room is active - either room entity is active or any light is active
-  const isActive =
-    (roomEntity.state && stateActive(roomEntity.state)) ||
-    sensors.lightEntities.some((entityState) => stateActive(entityState));
+  // Calculate if room entity is active
+  const roomEntityActive = roomEntity.state && stateActive(roomEntity.state);
+
+  // Calculate if any regular (non-ambient) light is active
+  const regularLightActive = sensors.lightEntities.some((entityState) =>
+    stateActive(entityState),
+  );
+
+  // Calculate if any ambient light is active
+  const ambientLightActive = sensors.ambientLightEntities.some((entityState) =>
+    stateActive(entityState),
+  );
+
+  // isActive: room entity OR any light (regular or ambient) - used for card background
+  const isActive = roomEntityActive || regularLightActive || ambientLightActive;
+
+  // isIconActive: room entity OR any regular light (NOT ambient) - used for icon styling
+  const isIconActive = roomEntityActive || regularLightActive;
 
   return {
     roomInfo,
@@ -64,6 +80,7 @@ export const getRoomProperties = (
     sensors,
     image,
     isActive,
+    isIconActive,
     thresholds,
     flags: {
       // Smoke takes priority over occupancy - if smoke is detected, don't show occupancy

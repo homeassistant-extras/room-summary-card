@@ -88,6 +88,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -118,6 +119,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -145,6 +147,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -168,6 +171,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -197,6 +201,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -222,6 +227,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -247,6 +253,7 @@ describe('info.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 

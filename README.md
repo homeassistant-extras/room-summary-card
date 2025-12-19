@@ -350,7 +350,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Clickable Sensors`**: individual sensors in info section open more info dialog - thanks @enrico-semrau
 - [x] **`Threshold-Based Icon Coloring`**: dynamic icon colors based on sensor values with configurable thresholds and operators - thanks @fusionstream, @marcokreeft87, @a0365d9b
 - [x] **`State-Based Icon Coloring`**: exact state & attribute matching for sensors like washing machines, device trackers, and status indicators - thanks @marcokreeft87 and @zoic21!
-- [x] **`Multi-Light Background`**: card background lights up when any light entity in the room is on - thanks @joshkay, @ojm88
+- [x] **`Multi-Light Background`**: card background lights up when any light entity in the room is on - thanks @joshkay, @ojm88, @fonix232
 - [x] **`Entity Picture Display`**: automatic display of entity pictures with optional override - thanks @Zipp0KMS, @pheitman
 - [x] **`Custom Labels`**: entity and sensor labels with state/threshold-based overrides - thanks @ojm88
 - [x] **`Smoke Detection`**: visual indicators for smoke detectors - thanks @Arjan-21

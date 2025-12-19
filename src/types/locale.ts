@@ -143,7 +143,9 @@ export type TranslationKey =
   | 'editor.styles.title_styles'
   | 'editor.layout.vertical_stack'
   | 'editor.layout.bottom'
-  | 'editor.styles.card_styles';
+  | 'editor.styles.card_styles'
+  | 'editor.light.type'
+  | 'editor.light.ambient';
 
 export interface Translation {
   /** The translation key */

@@ -40,6 +40,9 @@ export interface SensorData {
   /** Light entities in the area (for multi-light background feature) */
   lightEntities: EntityState[];
 
+  /** Ambient light entities that only affect the background, not the icon/title */
+  ambientLightEntities: EntityState[];
+
   /** Threshold sensor */
   thresholdSensors: EntityState[];
 }

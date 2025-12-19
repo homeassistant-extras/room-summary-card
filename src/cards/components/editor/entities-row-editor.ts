@@ -1,6 +1,7 @@
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import type { EntityConfig } from '@type/config/entity';
+import type { LightConfig, LightConfigObject } from '@type/config/light';
 import {
   css,
   html,
@@ -15,13 +16,13 @@ import { repeat } from 'lit/directives/repeat.js';
 declare global {
   interface HASSDomEvents {
     'value-changed': {
-      value: (EntityConfig | string)[] | string[];
+      value: (EntityConfig | string)[] | LightConfig[];
     };
     'edit-detail-element': {
       subElementConfig: {
         index: number;
-        type: 'entity' | 'sensor';
-        elementConfig: EntityConfig | string;
+        type: 'entity' | 'sensor' | 'light';
+        elementConfig: EntityConfig | LightConfigObject | string;
         field: 'entities' | 'lights';
         isMainEntity?: boolean;
       };
@@ -30,13 +31,14 @@ declare global {
 }
 
 type EntityRowItem = EntityConfig | string;
+type LightRowItem = LightConfig;
 
 export class RoomSummaryEntitiesRowEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
   @property({ attribute: false }) public entities?: EntityRowItem[];
 
-  @property({ attribute: false }) public lights?: string[];
+  @property({ attribute: false }) public lights?: LightRowItem[];
 
   @property() public label?: string;
 
@@ -46,13 +48,13 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
 
   @property({ attribute: false }) public availableEntities?: string[];
 
-  private _getKey(item: EntityRowItem, index: number): string {
+  private _getKey(item: EntityRowItem | LightRowItem, index: number): string {
     // Generate a stable key based on entity_id and index
-    const entityId = typeof item === 'string' ? item : item.entity_id;
+    const entityId = this._getEntityId(item);
     return `${entityId}-${index}`;
   }
 
-  private _getEntityId(item: EntityRowItem): string {
+  private _getEntityId(item: EntityRowItem | LightRowItem): string {
     if (typeof item === 'string') {
       return item;
     }
@@ -201,7 +203,9 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
       (ev.target as any).value = '';
       fireEvent(this, 'value-changed', { value: newConfigEntities });
     } else {
-      const newConfigLights = [...(this.lights || []), value];
+      // For lights, convert string to LightConfig
+      const lightValue: LightConfig = value;
+      const newConfigLights = [...(this.lights || []), lightValue];
       (ev.target as any).value = '';
       fireEvent(this, 'value-changed', { value: newConfigLights });
     }
@@ -246,7 +250,17 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
       if (value === '' || value === undefined) {
         newConfigLights.splice(index, 1);
       } else {
-        newConfigLights[index] = value;
+        const currentItem = newConfigLights[index];
+        if (typeof currentItem === 'string') {
+          // If current item is a string, replace with new string
+          newConfigLights[index] = value;
+        } else {
+          // If current item is an object, update entity_id but preserve type
+          newConfigLights[index] = {
+            ...currentItem,
+            entity_id: value,
+          };
+        }
       }
       fireEvent(this, 'value-changed', { value: newConfigLights });
     }
@@ -256,12 +270,21 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
     const index = (ev.currentTarget as any).index;
     const items =
       this.field === 'entities' ? this.entities || [] : this.lights || [];
-    const elementConfig = items[index] as EntityConfig | string;
+    const elementConfig = items[index] as
+      | EntityConfig
+      | LightConfigObject
+      | string;
+
+    // Determine the type based on field
+    let elementType: 'entity' | 'sensor' | 'light' = 'entity';
+    if (this.field === 'lights') {
+      elementType = 'light';
+    }
 
     fireEvent(this, 'edit-detail-element', {
       subElementConfig: {
         index,
-        type: 'entity',
+        type: elementType,
         elementConfig,
         field: this.field,
       },

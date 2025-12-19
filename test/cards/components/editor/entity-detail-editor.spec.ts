@@ -2,6 +2,7 @@ import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityConfig, StateConfig } from '@type/config/entity';
+import type { LightConfigObject } from '@type/config/light';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -74,6 +75,15 @@ describe('entity-detail-editor.ts', () => {
       expect(element['_config']).to.deep.equal({ entity_id: 'light.bedroom' });
     });
 
+    it('should accept LightConfigObject', () => {
+      const lightConfig: LightConfigObject = {
+        entity_id: 'light.living_room',
+        type: 'ambient',
+      };
+      element.setConfig(lightConfig);
+      expect(element['_config']).to.deep.equal(lightConfig);
+    });
+
     it('should create a copy of the config object', () => {
       element.setConfig(mockEntityConfig);
       expect(element['_config']).to.not.equal(mockEntityConfig);
@@ -90,6 +100,15 @@ describe('entity-detail-editor.ts', () => {
     it('should set value with string', () => {
       element.value = 'switch.fan';
       expect(element['_config']).to.deep.equal({ entity_id: 'switch.fan' });
+    });
+
+    it('should set value with LightConfigObject', () => {
+      const lightConfig: LightConfigObject = {
+        entity_id: 'light.living_room',
+        type: 'ambient',
+      };
+      element.value = lightConfig;
+      expect(element['_config']).to.deep.equal(lightConfig);
     });
 
     it('should clear config when value is undefined', () => {
@@ -358,6 +377,44 @@ describe('entity-detail-editor.ts', () => {
       // Should not have thresholds (mode should be 'states')
       const statesRowEditor = statesRowEditors[0] as RoomSummaryStatesRowEditor;
       expect(statesRowEditor.mode).to.equal('states');
+    });
+
+    it('should not render states row editor when type is light', async () => {
+      element.hass = mockHass;
+      element.type = 'light';
+      const lightConfig: LightConfigObject = {
+        entity_id: 'light.living_room',
+        type: 'ambient',
+      };
+      element['_config'] = lightConfig;
+
+      const result = element.render() as TemplateResult;
+      // Wrap in a container div to ensure proper querying
+      const wrappedResult = html`<div>${result}</div>`;
+      const el = await fixture(wrappedResult);
+
+      const statesRowEditor = el.querySelector(
+        'room-summary-states-row-editor',
+      );
+      expect(statesRowEditor).to.not.exist;
+    });
+
+    it('should render light schema with entity_id and type fields', async () => {
+      element.hass = mockHass;
+      element.type = 'light';
+      const lightConfig: LightConfigObject = {
+        entity_id: 'light.living_room',
+        type: 'ambient',
+      };
+      element['_config'] = lightConfig;
+
+      const result = element.render() as TemplateResult;
+      const wrappedResult = html`<div>${result}</div>`;
+      const el = await fixture(wrappedResult);
+
+      const form = el.querySelector('ha-form');
+      expect(form).to.exist;
+      expect((form as any).data).to.deep.equal(lightConfig);
     });
 
     it('should not render states row editor when entity_id is missing', async () => {
@@ -732,7 +789,7 @@ describe('entity-detail-editor.ts', () => {
 
       element.value = { entity_id: 'light.three', label: 'Three' };
       expect(element['_config']?.entity_id).to.equal('light.three');
-      expect(element['_config']?.label).to.equal('Three');
+      expect((element['_config'] as EntityConfig)?.label).to.equal('Three');
     });
 
     it('should handle clearing and resetting value', () => {

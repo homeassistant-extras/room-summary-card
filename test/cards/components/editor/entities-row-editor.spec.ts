@@ -447,7 +447,7 @@ describe('entities-row-editor.ts', () => {
       expect(fireEventStub.firstCall.args[2]).to.deep.equal({
         subElementConfig: {
           index: 1,
-          type: 'entity',
+          type: 'light',
           elementConfig: mockLights[1],
           field: 'lights',
         },

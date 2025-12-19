@@ -46,6 +46,8 @@ describe('setup-card.ts', () => {
       averaged: [],
       problemSensors: [],
       lightEntities: [],
+      ambientLightEntities: [],
+      thresholdSensors: [],
     });
     getRoomEntityStub.returns({
       config: { entity_id: 'light.test' },
@@ -92,6 +94,8 @@ describe('setup-card.ts', () => {
           averaged: [],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
         }),
       ).to.be.true;
 
@@ -102,6 +106,7 @@ describe('setup-card.ts', () => {
         'sensors',
         'image',
         'isActive',
+        'isIconActive',
         'thresholds',
         'flags',
       ]);
@@ -146,10 +151,13 @@ describe('setup-card.ts', () => {
           averaged: [],
           problemSensors: [],
           lightEntities: [s('light', 'bedroom', 'off')],
+          ambientLightEntities: [],
+          thresholdSensors: [],
         });
 
         const result = getRoomProperties(mockHass, config);
         expect(result.isActive).to.be.true;
+        expect(result.isIconActive).to.be.true;
       });
 
       it('should return true when room entity is inactive but light entities are active', () => {
@@ -170,10 +178,13 @@ describe('setup-card.ts', () => {
             s('light', 'bedroom', 'off'),
             s('light', 'kitchen', 'on'),
           ],
+          ambientLightEntities: [],
+          thresholdSensors: [],
         });
 
         const result = getRoomProperties(mockHass, config);
         expect(result.isActive).to.be.true;
+        expect(result.isIconActive).to.be.true;
       });
 
       it('should return false when both room entity and light entities are inactive', () => {
@@ -194,10 +205,13 @@ describe('setup-card.ts', () => {
             s('light', 'bedroom', 'off'),
             s('light', 'kitchen', 'off'),
           ],
+          ambientLightEntities: [],
+          thresholdSensors: [],
         });
 
         const result = getRoomProperties(mockHass, config);
         expect(result.isActive).to.be.false;
+        expect(result.isIconActive).to.be.false;
       });
 
       it('should return false when room entity has no state and no light entities are active', () => {
@@ -215,10 +229,13 @@ describe('setup-card.ts', () => {
           averaged: [],
           problemSensors: [],
           lightEntities: [s('light', 'bedroom', 'off')],
+          ambientLightEntities: [],
+          thresholdSensors: [],
         });
 
         const result = getRoomProperties(mockHass, config);
         expect(result.isActive).to.be.false;
+        expect(result.isIconActive).to.be.false;
       });
 
       it('should return false when lightEntities array is empty', () => {
@@ -236,10 +253,37 @@ describe('setup-card.ts', () => {
           averaged: [],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
         });
 
         const result = getRoomProperties(mockHass, config);
         expect(result.isActive).to.be.false;
+        expect(result.isIconActive).to.be.false;
+      });
+
+      it('should set isActive true but isIconActive false when only ambient lights are on', () => {
+        const config: Config = { area: 'living_room' };
+
+        // Mock room entity as inactive
+        getRoomEntityStub.returns({
+          config: { entity_id: 'light.living_room' },
+          state: s('light', 'living_room', 'off'),
+        });
+
+        // Mock sensors with ambient light on but no regular lights
+        getSensorsStub.returns({
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+          ambientLightEntities: [s('light', 'led_strip', 'on')],
+          thresholdSensors: [],
+        });
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.isActive).to.be.true;
+        expect(result.isIconActive).to.be.false;
       });
     });
 

@@ -42,6 +42,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
@@ -57,6 +58,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [createEntityState('entity1')],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
@@ -78,6 +80,7 @@ describe('icon.ts', () => {
           createEntityState('entity3'),
         ],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
@@ -94,6 +97,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [createEntityState('entity1', 'off')],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
@@ -110,6 +114,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [createEntityState('entity1', 'on')],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
@@ -130,6 +135,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: manyEntities,
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
@@ -149,6 +155,7 @@ describe('icon.ts', () => {
           createEntityState('entity.with.dots'),
         ],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
@@ -165,6 +172,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [createEntityState('entity1')],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       });
       const el = await fixture(result as TemplateResult);
@@ -185,6 +193,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         mold: moldSensor,
         thresholdSensors: [],
       };
@@ -210,6 +219,7 @@ describe('icon.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         mold: moldSensor,
         thresholdSensors: [],
       };

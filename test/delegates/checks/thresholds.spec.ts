@@ -30,6 +30,7 @@ describe('climate-thresholds.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -48,6 +49,7 @@ describe('climate-thresholds.ts', () => {
         ],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -79,6 +81,7 @@ describe('climate-thresholds.ts', () => {
         ],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -155,6 +158,7 @@ describe('climate-thresholds.ts', () => {
             ],
             problemSensors: [],
             lightEntities: [],
+            ambientLightEntities: [],
             thresholdSensors: testCase.thresholdSensors,
           };
 
@@ -228,6 +232,7 @@ describe('climate-thresholds.ts', () => {
             ],
             problemSensors: [],
             lightEntities: [],
+            ambientLightEntities: [],
             thresholdSensors: testCase.thresholdSensors,
           };
 
@@ -294,6 +299,7 @@ describe('climate-thresholds.ts', () => {
             ],
             problemSensors: [],
             lightEntities: [],
+            ambientLightEntities: [],
             thresholdSensors: testCase.thresholdSensors,
           };
 
@@ -338,6 +344,7 @@ describe('climate-thresholds.ts', () => {
             ],
             problemSensors: [],
             lightEntities: [],
+            ambientLightEntities: [],
             thresholdSensors: testCase.thresholdSensors,
           };
 
@@ -384,6 +391,7 @@ describe('climate-thresholds.ts', () => {
             ],
             problemSensors: [],
             lightEntities: [],
+            ambientLightEntities: [],
             thresholdSensors: testCase.thresholdSensors,
           };
 
@@ -416,6 +424,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -444,6 +453,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -472,6 +482,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -500,6 +511,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -528,6 +540,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -564,6 +577,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -592,6 +606,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -620,6 +635,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -655,6 +671,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -688,6 +705,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -731,6 +749,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -763,6 +782,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -808,6 +828,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -845,6 +866,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -882,6 +904,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -933,6 +956,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 
@@ -970,6 +994,7 @@ describe('climate-thresholds.ts', () => {
           ],
           problemSensors: [],
           lightEntities: [],
+          ambientLightEntities: [],
           thresholdSensors: [],
         };
 

@@ -1,15 +1,16 @@
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import type { EntityConfig } from '@type/config/entity';
+import type { LightConfigObject } from '@type/config/light';
 import type { CSSResult, TemplateResult } from 'lit';
 import { css, html, LitElement, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 export interface SubElementEditorConfig {
   index?: number;
-  elementConfig?: EntityConfig | string;
+  elementConfig?: EntityConfig | LightConfigObject | string;
   field: 'entities' | 'lights';
-  type: 'entity' | 'sensor';
+  type: 'entity' | 'sensor' | 'light';
   isMainEntity?: boolean;
 }
 
@@ -64,7 +65,7 @@ export class RoomSummarySubElementEditor extends LitElement {
   private _renderEditor() {
     const type = this.config.type;
 
-    if (type === 'entity' || type === 'sensor') {
+    if (type === 'entity' || type === 'sensor' || type === 'light') {
       if (this._guiMode) {
         return html`
           <room-summary-entity-detail-editor

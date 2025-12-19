@@ -65,6 +65,7 @@ export function renderEntitiesTab(params: EntitiesTabParams): TemplateResult {
           </li>
           <li>${localize(hass, 'editor.features.ignore_entity_desc')}</li>
           <li>${localize(hass, 'editor.features.sticky_entities_desc')}</li>
+          <li>${localize(hass, 'editor.features.slider_desc')}</li>
         </ul>
       </div>
       <ha-form

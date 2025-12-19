@@ -36,10 +36,12 @@ describe('card.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       },
       image: Promise.resolve(null),
       isActive: true,
+      isIconActive: true,
       thresholds: {
         hot: false,
         humid: false,

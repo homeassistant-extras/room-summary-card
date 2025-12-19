@@ -3,10 +3,25 @@ import { getDevice } from '@delegates/retrievers/device';
 import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
 import type { Config } from '@type/config';
+import type { LightConfig } from '@type/config/light';
 import type { SensorConfig } from '@type/config/sensor';
 import type { EntityState } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { calculateAverages } from './sensor-averages';
+
+/**
+ * Helper function to extract entity_id from LightConfig
+ */
+const getLightEntityId = (light: LightConfig): string => {
+  return typeof light === 'string' ? light : light.entity_id;
+};
+
+/**
+ * Helper function to check if a light config is ambient type
+ */
+const isAmbientLight = (light: LightConfig): boolean => {
+  return typeof light !== 'string' && light.type === 'ambient';
+};
 
 /**
  * Retrieves sensor data for a given area based on the provided configuration.
@@ -36,13 +51,22 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   const classSensors: EntityState[] = [];
   const problemSensors: EntityState[] = [];
   const lightEntities: EntityState[] = [];
+  const ambientLightEntities: EntityState[] = [];
   const thresholdSensors: EntityState[] = [];
   let mold: EntityState | undefined = undefined;
 
-  // Get configured light entity IDs if multi-light feature is enabled
-  let configuredLightIds: string[] = [];
+  // Get configured light entity IDs and their types if multi-light feature is enabled
+  // Build a map of entity_id -> isAmbient for quick lookup
+  const configuredLightIds: string[] = [];
+  const ambientLightIds = new Set<string>();
   if (multiLightEnabled && config.lights && config.lights.length > 0) {
-    configuredLightIds = config.lights;
+    config.lights.forEach((light) => {
+      const entityId = getLightEntityId(light);
+      configuredLightIds.push(entityId);
+      if (isAmbientLight(light)) {
+        ambientLightIds.add(entityId);
+      }
+    });
   }
 
   // Helper function to extract entity_id from string or SensorConfig
@@ -97,14 +121,20 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
     // Collect light entities for multi-light background feature
     if (multiLightEnabled) {
-      if (
-        isConfiguredLight ||
-        (!config.lights?.length &&
-          isInArea &&
-          entity.entity_id.startsWith('light.'))
+      if (isConfiguredLight) {
+        // Configured light - check if it's ambient or regular
+        if (ambientLightIds.has(entity.entity_id)) {
+          ambientLightEntities.push(state);
+        } else {
+          lightEntities.push(state);
+        }
+      } else if (
+        !config.lights?.length &&
+        isInArea &&
+        entity.entity_id.startsWith('light.')
       ) {
-        // Always include explicitly configured lights, or auto-discover lights in area
-        // only if no lights are manually configured
+        // Auto-discovered light (only when no lights are manually configured)
+        // Auto-discovered lights are always regular (not ambient)
         lightEntities.push(state);
       }
     }
@@ -158,6 +188,7 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     problemSensors,
     mold,
     lightEntities,
+    ambientLightEntities,
     thresholdSensors,
   };
 };

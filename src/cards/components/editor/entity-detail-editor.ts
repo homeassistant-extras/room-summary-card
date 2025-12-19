@@ -4,6 +4,7 @@ import type { UiAction } from '@hass/panels/lovelace/editor/hui-element-editor';
 import type { HomeAssistant } from '@hass/types';
 import { localize } from '@localize/localize';
 import type { EntityConfig } from '@type/config/entity';
+import type { LightConfigObject } from '@type/config/light';
 import {
   css,
   html,
@@ -19,13 +20,14 @@ import './states-row-editor';
 export class RoomSummaryEntityDetailEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @state() private _config?: EntityConfig;
+  @state() private _config?: EntityConfig | LightConfigObject;
 
-  @property({ attribute: false }) public type: 'entity' | 'sensor' = 'entity';
+  @property({ attribute: false }) public type: 'entity' | 'sensor' | 'light' =
+    'entity';
 
   @property({ type: Boolean }) public isMainEntity = false;
 
-  public setConfig(config: EntityConfig | string): void {
+  public setConfig(config: EntityConfig | LightConfigObject | string): void {
     if (typeof config === 'string') {
       this._config = { entity_id: config };
     } else {
@@ -34,7 +36,9 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
   }
 
   @property({ attribute: false })
-  public set value(value: EntityConfig | string | undefined) {
+  public set value(
+    value: EntityConfig | LightConfigObject | string | undefined,
+  ) {
     if (!value) {
       this._config = undefined;
       return;
@@ -42,7 +46,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     this.setConfig(value);
   }
 
-  public get value(): EntityConfig | undefined {
+  public get value(): EntityConfig | LightConfigObject | undefined {
     return this._config;
   }
 
@@ -201,6 +205,39 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     },
   );
 
+  private readonly _lightsSchema = memoizeOne(
+    (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
+      return [
+        {
+          name: 'entity_id',
+          required: true,
+          label: 'editor.entity.entity_id',
+          selector: {
+            entity: {
+              filter: { domain: ['light', 'switch'] },
+            },
+          },
+        },
+        {
+          name: 'type',
+          label: 'editor.light.type',
+          required: false,
+          selector: {
+            select: {
+              mode: 'dropdown' as const,
+              options: [
+                {
+                  label: localize(hass, 'editor.light.ambient') || 'Ambient',
+                  value: 'ambient',
+                },
+              ],
+            },
+          },
+        },
+      ];
+    },
+  );
+
   override render(): TemplateResult | typeof nothing {
     if (!this.hass || !this._config) {
       return nothing;
@@ -209,14 +246,21 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     const schema =
       this.type === 'entity'
         ? this._entitiesSchema(this._config.entity_id, this.hass)
-        : this._sensorsSchema(this._config.entity_id, this.hass);
+        : this.type === 'sensor'
+          ? this._sensorsSchema(this._config.entity_id, this.hass)
+          : this._lightsSchema(this._config.entity_id, this.hass);
 
-    const states = Array.isArray(this._config.states)
-      ? this._config.states
-      : undefined;
-    const thresholds = Array.isArray(this._config.thresholds)
-      ? this._config.thresholds
-      : undefined;
+    // Only access states/thresholds for entity/sensor types, not for lights
+    const states =
+      this.type !== 'light' &&
+      Array.isArray((this._config as EntityConfig).states)
+        ? (this._config as EntityConfig).states
+        : undefined;
+    const thresholds =
+      this.type !== 'light' &&
+      Array.isArray((this._config as EntityConfig).thresholds)
+        ? (this._config as EntityConfig).thresholds
+        : undefined;
 
     const thresholdsEditor =
       this.type === 'entity'
@@ -240,7 +284,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
         .computeLabel=${this._computeLabelCallback}
         @value-changed=${this._valueChanged}
       ></ha-form>
-      ${this._config.entity_id
+      ${this._config.entity_id && this.type !== 'light'
         ? html`
             <room-summary-states-row-editor
               .hass=${this.hass}

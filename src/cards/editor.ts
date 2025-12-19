@@ -186,6 +186,8 @@ export class RoomSummaryCardEditor extends LitElement {
             config: this._config,
             entities: value.entities as string[],
             onValueChanged: this._valueChanged.bind(this),
+            onLightsRowChanged: this._lightsRowChanged.bind(this),
+            onEditDetailElement: this._editDetailElement.bind(this),
           });
         },
         error: (error) => html`${error}`,
@@ -270,6 +272,19 @@ export class RoomSummaryCardEditor extends LitElement {
     cleanAndFireConfigChanged(this, this._config);
   }
 
+  private _lightsRowChanged(ev: CustomEvent) {
+    const value = ev.detail.value;
+
+    // Guard: only process if value is an array (from our custom component)
+    // If it's a string, it's from the picker directly and should be ignored
+    if (!Array.isArray(value)) {
+      return;
+    }
+
+    this._config = { ...this._config, lights: value };
+    cleanAndFireConfigChanged(this, this._config);
+  }
+
   private _entityRowChanged(ev: CustomEvent) {
     const value = ev.detail.value;
 
@@ -296,6 +311,11 @@ export class RoomSummaryCardEditor extends LitElement {
     // Set type to 'sensor' if we're on the sensors tab (tab 3)
     if (this._currentTab === 3 && config.field === 'entities') {
       config.type = 'sensor';
+    }
+
+    // Set type to 'light' if we're on the lights tab (tab 2)
+    if (this._currentTab === 2 && config.field === 'lights') {
+      config.type = 'light';
     }
 
     // Set isMainEntity to true if we're on the main tab (tab 0) and field is 'entities'

@@ -10,6 +10,7 @@ import {
   getSmokeCssVars,
 } from '@delegates/checks/occupancy';
 import type { ClimateThresholds } from '@delegates/checks/thresholds';
+import { stateActive } from '@hass/common/entity/state_active';
 import {
   stateColorBrightness,
   stateColorCss,
@@ -18,9 +19,10 @@ import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
 import { getThresholdResult } from '@theme/threshold-color';
 import type { Config } from '@type/config';
-import type { EntityInformation } from '@type/room';
+import type { EntityInformation, EntityState } from '@type/room';
 import { getBackgroundOpacity } from '../background/background-bits';
 import { getThemeColorOverride } from '../custom-theme';
+import { getRgbColor } from '../get-rgb';
 
 /**
  * Generates a style map for a card component based on the current Home Assistant theme,
@@ -34,6 +36,7 @@ import { getThemeColorOverride } from '../custom-theme';
  * @param image - (Optional) A URL or path to a background image for the card.
  * @param isActive - Whether the room is considered active (for styling).
  * @param thresholds - Climate threshold results containing hot/humid flags and custom colors.
+ * @param ambientLightEntities - (Optional) Array of ambient light entity states for background color.
  * @returns A DirectiveResult containing the computed style map for the card.
  */
 export const renderCardStyles = (
@@ -45,23 +48,38 @@ export const renderCardStyles = (
   image?: string | null,
   isActive: boolean = false,
   thresholds?: ClimateThresholds,
+  ambientLightEntities?: EntityState[],
 ): DirectiveResult<typeof StyleMapDirective> => {
   const { state } = entity as { state: HassEntity };
   const thresholdResult = getThresholdResult(entity);
-  const themeOverride = getThemeColorOverride(
-    hass,
-    entity,
-    thresholdResult,
-    isActive,
+
+  // Find the first active ambient light for background color
+  const activeAmbientLight = ambientLightEntities?.find((light) =>
+    stateActive(light),
   );
+
+  // Get theme override - use ambient light's color if active, otherwise use entity's color
+  let themeOverride: string | undefined;
+  if (activeAmbientLight) {
+    // Extract RGB color from the active ambient light
+    themeOverride = getRgbColor(activeAmbientLight, '', '', true);
+  }
+  // Fall back to entity's theme color if no ambient light color
+  if (!themeOverride) {
+    themeOverride = getThemeColorOverride(hass, entity, thresholdResult, isActive);
+  }
+
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   const opacity = getBackgroundOpacity(config, isActive);
   // Smoke takes priority over occupancy - if smoke is detected, use smoke CSS vars
   const alarmVars = isSmokeDetected
     ? getSmokeCssVars(isSmokeDetected, config.smoke)
     : getOccupancyCssVars(isOccupied, config.occupancy);
-  const cssColor = stateColorCss(state, 'card', isActive);
-  const filter = stateColorBrightness(state);
+
+  // Use ambient light's state for color if active, otherwise use entity's state
+  const stateForColor = activeAmbientLight || state;
+  const cssColor = stateColorCss(stateForColor as HassEntity, 'card', isActive);
+  const filter = stateColorBrightness(stateForColor as HassEntity);
 
   let backgroundColorCard: string | undefined;
   if (skipStyles) {

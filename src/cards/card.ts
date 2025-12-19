@@ -56,10 +56,16 @@ export class RoomSummaryCard extends LitElement {
   private _sensors!: SensorData;
 
   /**
-   * Whether the room is considered active (for styling)
+   * Whether the room is considered active (for card background styling)
    */
   @state()
   private _isActive: boolean = false;
+
+  /**
+   * Whether the icon should be styled as active (excludes ambient lights)
+   */
+  @state()
+  private _isIconActive: boolean = false;
 
   /**
    * Climate thresholds result
@@ -133,6 +139,7 @@ export class RoomSummaryCard extends LitElement {
       sensors,
       image,
       isActive,
+      isIconActive,
       thresholds,
       flags: { occupied, smoke, dark },
     } = getRoomProperties(hass, this._config);
@@ -145,6 +152,7 @@ export class RoomSummaryCard extends LitElement {
     this.smoke = smoke;
     this.dark = dark;
     this._isActive = isActive;
+    this._isIconActive = isIconActive;
 
     // Handle async image resolution
     image.then((resolvedImage) => {
@@ -240,7 +248,7 @@ export class RoomSummaryCard extends LitElement {
       this._config,
       {
         isMainRoomEntity: true,
-        isActive: this._isActive,
+        isActive: this._isIconActive,
         hasImage: !!this._image,
         occupied: this.occupied,
         smoke: this.smoke,
@@ -256,6 +264,7 @@ export class RoomSummaryCard extends LitElement {
       this._image,
       this._isActive,
       this._thresholds,
+      this._sensors?.ambientLightEntities,
     );
 
     const problems = renderProblemIndicator(
@@ -274,7 +283,7 @@ export class RoomSummaryCard extends LitElement {
             this._roomEntity,
             this._config,
             this._sensors,
-            this._isActive,
+            this._isIconActive,
           )}
 
           <!-- Room Icon -->

@@ -5,6 +5,7 @@
 
 import type { ComparisonOperator } from '../comparison';
 import type { EntityConfig } from './entity';
+import type { LightConfig } from './light';
 import type { SensorConfig } from './sensor';
 
 /**
@@ -92,7 +93,7 @@ export interface Config {
   };
 
   /** Light entities to track for multi-light background (overrides automatic discovery) */
-  lights?: string[];
+  lights?: LightConfig[];
 
   /** Custom styling configuration */
   styles?: {

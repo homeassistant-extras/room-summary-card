@@ -9,10 +9,11 @@ import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
 import * as backgroundBitsModule from '@theme/background/background-bits';
 import * as customThemeModule from '@theme/custom-theme';
+import * as getRgbColorModule from '@theme/get-rgb';
 import { renderCardStyles } from '@theme/render/card-styles';
 import * as thresholdColorModule from '@theme/threshold-color';
 import type { Config } from '@type/config';
-import type { EntityInformation } from '@type/room';
+import type { EntityInformation, EntityState } from '@type/room';
 
 // Helper to create entity information for testing
 const createEntityInfo = (
@@ -42,6 +43,7 @@ describe('card-styles.ts', () => {
   let getOccupancyCssVarsStub: sinon.SinonStub;
   let getSmokeCssVarsStub: sinon.SinonStub;
   let stateColorBrightnessStub: sinon.SinonStub;
+  let getRgbColorStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -70,6 +72,7 @@ describe('card-styles.ts', () => {
       'getOccupancyCssVars',
     );
     getSmokeCssVarsStub = sandbox.stub(occupancyModule, 'getSmokeCssVars');
+    getRgbColorStub = sandbox.stub(getRgbColorModule, 'getRgbColor');
 
     // Default stub behaviors
     stateActiveStub.returns(false);
@@ -83,6 +86,7 @@ describe('card-styles.ts', () => {
     });
     getOccupancyCssVarsStub.returns({});
     getSmokeCssVarsStub.returns({});
+    getRgbColorStub.returns(undefined);
 
     mockHass = { themes: { darkMode: false } };
     mockConfig = { area: 'test_area' };
@@ -503,6 +507,276 @@ describe('card-styles.ts', () => {
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
+    });
+
+    describe('ambient light logic', () => {
+      const createAmbientLightState = (
+        entityId: string,
+        state = 'on',
+        attributes = {},
+      ): EntityState => ({
+        entity_id: entityId,
+        state,
+        attributes,
+        domain: 'light',
+      });
+
+      it('should use ambient light RGB color for theme override when active ambient light exists', () => {
+        const entity = createEntityInfo('light.main');
+        const ambientLight = createAmbientLightState('light.ambient', 'on', {
+          rgb_color: [255, 200, 100],
+        });
+
+        stateActiveStub.withArgs(ambientLight).returns(true);
+        getRgbColorStub
+          .withArgs(ambientLight, '', '', true)
+          .returns('rgb(255, 200, 100)');
+
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          entity,
+          false,
+          false,
+          undefined,
+          false,
+          undefined,
+          [ambientLight],
+        );
+
+        expect(getRgbColorStub.calledWith(ambientLight, '', '', true)).to.be
+          .true;
+        expect(getThemeColorOverrideStub.called).to.be.false;
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--state-color-card-theme': 'rgb(255, 200, 100)',
+            '--background-image': undefined,
+            '--background-filter': '',
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+          }),
+        );
+      });
+
+      it('should fall back to entity theme color when no active ambient light exists', () => {
+        const entity = createEntityInfo('light.main');
+        const ambientLight = createAmbientLightState('light.ambient', 'off');
+
+        stateActiveStub.withArgs(ambientLight).returns(false);
+
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          entity,
+          false,
+          false,
+          undefined,
+          false,
+          undefined,
+          [ambientLight],
+        );
+
+        expect(getRgbColorStub.called).to.be.false;
+        expect(
+          getThemeColorOverrideStub.calledWith(
+            mockHass,
+            entity,
+            undefined,
+            false,
+          ),
+        ).to.be.true;
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--state-color-card-theme': 'var(--theme-override)',
+            '--background-image': undefined,
+            '--background-filter': '',
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+          }),
+        );
+      });
+
+      it('should fall back to entity theme color when ambientLightEntities is undefined', () => {
+        const entity = createEntityInfo('light.main');
+
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          entity,
+          false,
+          false,
+          undefined,
+          false,
+          undefined,
+          undefined,
+        );
+
+        expect(getRgbColorStub.called).to.be.false;
+        expect(
+          getThemeColorOverrideStub.calledWith(
+            mockHass,
+            entity,
+            undefined,
+            false,
+          ),
+        ).to.be.true;
+      });
+
+      it('should fall back to entity theme color when ambientLightEntities is empty', () => {
+        const entity = createEntityInfo('light.main');
+
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          entity,
+          false,
+          false,
+          undefined,
+          false,
+          undefined,
+          [],
+        );
+
+        expect(getRgbColorStub.called).to.be.false;
+        expect(
+          getThemeColorOverrideStub.calledWith(
+            mockHass,
+            entity,
+            undefined,
+            false,
+          ),
+        ).to.be.true;
+      });
+
+      it('should fall back to entity theme color when active ambient light has no RGB color', () => {
+        const entity = createEntityInfo('light.main');
+        const ambientLight = createAmbientLightState('light.ambient', 'on');
+
+        stateActiveStub.withArgs(ambientLight).returns(true);
+        getRgbColorStub.withArgs(ambientLight, '', '', true).returns(undefined);
+
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          entity,
+          false,
+          false,
+          undefined,
+          false,
+          undefined,
+          [ambientLight],
+        );
+
+        expect(getRgbColorStub.calledWith(ambientLight, '', '', true)).to.be
+          .true;
+        expect(
+          getThemeColorOverrideStub.calledWith(
+            mockHass,
+            entity,
+            undefined,
+            false,
+          ),
+        ).to.be.true;
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--state-color-card-theme': 'var(--theme-override)',
+            '--background-image': undefined,
+            '--background-filter': '',
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+          }),
+        );
+      });
+
+      it('should use active ambient light state for color calculation instead of entity state', () => {
+        const entity = createEntityInfo('light.main', 'off');
+        const ambientLight = createAmbientLightState('light.ambient', 'on', {
+          rgb_color: [100, 150, 200],
+        });
+
+        stateActiveStub.withArgs(ambientLight).returns(true);
+        getRgbColorStub
+          .withArgs(ambientLight, '', '', true)
+          .returns('rgb(100, 150, 200)');
+        stateColorCssStub
+          .withArgs(ambientLight as any, 'card', false)
+          .returns('var(--ambient-color)');
+        stateColorBrightnessStub
+          .withArgs(ambientLight as any)
+          .returns('brightness(80%)');
+
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          entity,
+          false,
+          false,
+          undefined,
+          false,
+          undefined,
+          [ambientLight],
+        );
+
+        // Should use ambient light state for color calculation
+        expect(stateColorCssStub.calledWith(ambientLight as any, 'card', false))
+          .to.be.true;
+        expect(stateColorBrightnessStub.calledWith(ambientLight as any)).to.be
+          .true;
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--state-color-card-theme': 'rgb(100, 150, 200)',
+            '--background-image': undefined,
+            '--background-filter': 'brightness(80%)',
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+          }),
+        );
+      });
+
+      it('should use first active ambient light when multiple ambient lights exist', () => {
+        const entity = createEntityInfo('light.main');
+        const ambientLight1 = createAmbientLightState('light.ambient1', 'off');
+        const ambientLight2 = createAmbientLightState('light.ambient2', 'on', {
+          rgb_color: [200, 100, 50],
+        });
+        const ambientLight3 = createAmbientLightState('light.ambient3', 'on', {
+          rgb_color: [50, 100, 200],
+        });
+
+        stateActiveStub.withArgs(ambientLight1).returns(false);
+        stateActiveStub.withArgs(ambientLight2).returns(true);
+        stateActiveStub.withArgs(ambientLight3).returns(true);
+        getRgbColorStub
+          .withArgs(ambientLight2, '', '', true)
+          .returns('rgb(200, 100, 50)');
+
+        const styles = renderCardStyles(
+          mockHass,
+          mockConfig,
+          entity,
+          false,
+          false,
+          undefined,
+          false,
+          undefined,
+          [ambientLight1, ambientLight2, ambientLight3],
+        );
+
+        // Should use the first active ambient light (ambientLight2)
+        expect(getRgbColorStub.calledWith(ambientLight2, '', '', true)).to.be
+          .true;
+        expect(getRgbColorStub.calledWith(ambientLight3, '', '', true)).to.be
+          .false;
+        expect(styles).to.deep.equal(
+          styleMap({
+            '--background-color-card': undefined,
+            '--state-color-card-theme': 'rgb(200, 100, 50)',
+            '--background-image': undefined,
+            '--background-filter': '',
+            '--background-opacity-card': 'var(--opacity-background-inactive)',
+          }),
+        );
+      });
     });
   });
 });

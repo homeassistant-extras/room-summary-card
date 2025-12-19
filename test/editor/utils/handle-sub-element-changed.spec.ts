@@ -8,6 +8,7 @@ import {
 } from '@editor/utils/handle-sub-element-changed';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
+import type { LightConfigObject } from '@type/config/light';
 import type { SensorConfig } from '@type/config/sensor';
 import { expect } from 'chai';
 
@@ -377,6 +378,63 @@ describe('handle-sub-element-changed.ts', () => {
 
       expect(result.config.entities).to.deep.equal(['light.other']);
     });
+
+    it('should update light with LightConfigObject when type is set', () => {
+      const config: Config = {
+        ...baseConfig,
+        lights: ['light.one', 'light.two'],
+      };
+
+      const lightConfigObject: LightConfigObject = {
+        entity_id: 'light.updated',
+        type: 'ambient',
+      };
+
+      const result = handleLightsArrayUpdate(config, lightConfigObject, 1);
+
+      expect(result.config.lights?.[1]).to.deep.equal({
+        entity_id: 'light.updated',
+        type: 'ambient',
+      });
+      expect(result.shouldGoBack).to.be.false;
+    });
+
+    it('should simplify LightConfigObject to string when type is undefined', () => {
+      const config: Config = {
+        ...baseConfig,
+        lights: ['light.one', 'light.two'],
+      };
+
+      const lightConfigObject: LightConfigObject = {
+        entity_id: 'light.updated',
+        type: undefined,
+      };
+
+      const result = handleLightsArrayUpdate(config, lightConfigObject, 0);
+
+      // Should simplify to just the entity_id string when type is undefined
+      expect(result.config.lights?.[0]).to.equal('light.updated');
+      expect(result.config.lights?.[1]).to.equal('light.two');
+      expect(result.shouldGoBack).to.be.false;
+    });
+
+    it('should simplify LightConfigObject to string when type property is missing', () => {
+      const config: Config = {
+        ...baseConfig,
+        lights: ['light.one'],
+      };
+
+      // Create an object that has entity_id but no type property
+      const lightConfigObject = {
+        entity_id: 'light.updated',
+      } as LightConfigObject;
+
+      const result = handleLightsArrayUpdate(config, lightConfigObject, 0);
+
+      // Should simplify to just the entity_id string
+      expect(result.config.lights?.[0]).to.equal('light.updated');
+      expect(result.shouldGoBack).to.be.false;
+    });
   });
 
   describe('handleSubElementChanged', () => {
@@ -566,6 +624,66 @@ describe('handle-sub-element-changed.ts', () => {
       );
 
       expect(result.config.lights?.[0]).to.equal('light.extracted');
+      expect(result.shouldGoBack).to.be.false;
+    });
+
+    it('should handle LightConfigObject with type for lights array update', () => {
+      const config: Config = {
+        ...baseConfig,
+        lights: ['light.one'],
+      };
+
+      const lightConfigObject: LightConfigObject = {
+        entity_id: 'light.ambient',
+        type: 'ambient',
+      };
+
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'lights',
+        index: 0,
+        type: 'light',
+      };
+
+      const result = handleSubElementChanged(
+        config,
+        lightConfigObject,
+        subElementConfig,
+        2,
+      );
+
+      expect(result.config.lights?.[0]).to.deep.equal({
+        entity_id: 'light.ambient',
+        type: 'ambient',
+      });
+      expect(result.shouldGoBack).to.be.false;
+    });
+
+    it('should handle LightConfigObject without type for lights array update', () => {
+      const config: Config = {
+        ...baseConfig,
+        lights: ['light.one'],
+      };
+
+      const lightConfigObject: LightConfigObject = {
+        entity_id: 'light.simple',
+        type: undefined,
+      };
+
+      const subElementConfig: SubElementEditorConfig = {
+        field: 'lights',
+        index: 0,
+        type: 'light',
+      };
+
+      const result = handleSubElementChanged(
+        config,
+        lightConfigObject,
+        subElementConfig,
+        2,
+      );
+
+      // Should simplify to string when type is undefined
+      expect(result.config.lights?.[0]).to.equal('light.simple');
       expect(result.shouldGoBack).to.be.false;
     });
   });

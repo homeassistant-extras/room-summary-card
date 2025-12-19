@@ -316,6 +316,7 @@ describe('sensor-collection.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -407,6 +408,7 @@ describe('sensor-collection.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -452,6 +454,7 @@ describe('sensor-collection.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -499,6 +502,7 @@ describe('sensor-collection.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 
@@ -560,6 +564,7 @@ describe('sensor-collection.ts', () => {
         averaged: [],
         problemSensors: [],
         lightEntities: [],
+        ambientLightEntities: [],
         thresholdSensors: [],
       };
 

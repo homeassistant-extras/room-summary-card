@@ -136,6 +136,7 @@ describe('get-sensors.ts', () => {
       'problemSensors',
       'mold',
       'lightEntities',
+      'ambientLightEntities',
       'thresholdSensors',
     ]);
     expect(result.individual).to.be.an('array');
@@ -458,6 +459,111 @@ describe('get-sensors.ts', () => {
 
     expect(result.lightEntities).to.be.an('array');
     expect(result.lightEntities).to.have.lengthOf(0);
+  });
+
+  describe('ambient lights', () => {
+    beforeEach(() => {
+      // Add light entities to the mock
+      mockHass.states['light.living_room_main'] = e(
+        'light',
+        'living_room_main',
+        'on',
+      );
+      mockHass.states['light.living_room_led'] = e(
+        'light',
+        'living_room_led',
+        'on',
+      );
+      mockHass.entities['light.living_room_main'] = {
+        entity_id: 'light.living_room_main',
+        device_id: 'device_7',
+        area_id: 'living_room',
+        labels: [],
+      };
+      mockHass.entities['light.living_room_led'] = {
+        entity_id: 'light.living_room_led',
+        device_id: 'device_8',
+        area_id: 'living_room',
+        labels: [],
+      };
+    });
+
+    it('should separate ambient lights from regular lights', () => {
+      const config: Config = {
+        ...defaultConfig,
+        features: ['multi_light_background'],
+        lights: [
+          'light.living_room_main',
+          { entity_id: 'light.living_room_led', type: 'ambient' },
+        ],
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.lightEntities).to.have.lengthOf(1);
+      expect(result.lightEntities[0]!.entity_id).to.equal(
+        'light.living_room_main',
+      );
+
+      expect(result.ambientLightEntities).to.have.lengthOf(1);
+      expect(result.ambientLightEntities[0]!.entity_id).to.equal(
+        'light.living_room_led',
+      );
+    });
+
+    it('should handle lights config with entity_id object format as regular light', () => {
+      const config: Config = {
+        ...defaultConfig,
+        features: ['multi_light_background'],
+        lights: [
+          { entity_id: 'light.living_room_main' },
+          { entity_id: 'light.living_room_led', type: 'ambient' },
+        ],
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.lightEntities).to.have.lengthOf(1);
+      expect(result.lightEntities[0]!.entity_id).to.equal(
+        'light.living_room_main',
+      );
+
+      expect(result.ambientLightEntities).to.have.lengthOf(1);
+      expect(result.ambientLightEntities[0]!.entity_id).to.equal(
+        'light.living_room_led',
+      );
+    });
+
+    it('should return empty ambientLightEntities when no ambient lights are configured', () => {
+      const config: Config = {
+        ...defaultConfig,
+        features: ['multi_light_background'],
+        lights: ['light.living_room_main', 'light.living_room_led'],
+      };
+
+      const result = getSensors(mockHass, config);
+
+      expect(result.lightEntities).to.have.lengthOf(2);
+      expect(result.ambientLightEntities).to.have.lengthOf(0);
+    });
+
+    it('should auto-discover regular lights only (not ambient) when no lights configured', () => {
+      const config: Config = {
+        ...defaultConfig,
+        features: ['multi_light_background'],
+        // No lights configured - should auto-discover
+      };
+
+      const result = getSensors(mockHass, config);
+
+      // Auto-discovered lights go to lightEntities, not ambientLightEntities
+      expect(result.lightEntities).to.have.lengthOf(2);
+      expect(result.lightEntities.map((l) => l.entity_id)).to.include.members([
+        'light.living_room_main',
+        'light.living_room_led',
+      ]);
+      expect(result.ambientLightEntities).to.have.lengthOf(0);
+    });
   });
 
   describe('threshold sensors collection', () => {

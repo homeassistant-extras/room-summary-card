@@ -51,6 +51,53 @@ lights:
 
 **Note:** The `lights` configuration accepts any entity type (light, switch, binary_sensor, etc.) that reports an on/off state.
 
+## Ambient Lights
+
+Ambient lights are a special type of light that only affect the card background, not the main icon or title. This is useful when you have RGB LED strips or accent lighting that should color the background while a main ceiling light colors the icon.
+
+![Ambient-Light](../../assets/ambient.gif)
+
+### Ambient Light Configuration
+
+To mark a light as ambient, use the extended object format with `type: ambient`:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - multi_light_background
+lights:
+  - light.living_room_ceiling # Regular light - affects icon AND background
+  - entity_id: light.living_room_led_strip
+    type: ambient # Ambient light - affects background ONLY
+```
+
+### How It Works
+
+- **Regular lights** (string format or object without `type`): Affect both the card background AND the main icon/title styling when on
+- **Ambient lights** (`type: ambient`): Only affect the card background styling when on, the icon/title remain unaffected
+
+This allows for scenarios like:
+
+- Red LED strips coloring the background
+- Yellow ceiling light coloring the icon
+- Both can be on simultaneously with distinct visual effects
+
+### Ambient Light Example
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+features:
+  - multi_light_background
+lights:
+  - light.bedroom_ceiling # Main light - yellow icon when on
+  - entity_id: light.bedroom_rgb_strip
+    type: ambient # LED strip - red background, icon stays yellow
+  - entity_id: light.bedroom_nightlight
+    type: ambient # Another ambient light
+```
+
 ## Examples
 
 ### Basic Multi-Light Setup

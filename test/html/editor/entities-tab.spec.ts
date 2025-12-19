@@ -156,7 +156,7 @@ describe('entities-tab.ts', () => {
     const list = el.querySelector('ul');
 
     expect(list).to.exist;
-    expect(list?.querySelectorAll('li').length).to.equal(4);
+    expect(list?.querySelectorAll('li').length).to.equal(5);
   });
 
   it('should call schema functions with correct parameters', () => {

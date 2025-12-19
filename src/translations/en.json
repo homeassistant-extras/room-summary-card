@@ -14,7 +14,7 @@
       "disable_background_image": "Disable Background Image",
       "multi_light_background": "Multi-Light Background",
       "light_entities": "Light Entities",
-      "multi_light_background_info": "Configure which light entities should be tracked for the multi-light background feature. When enabled, the card background (dark mode only) and room icon will light up when any of these lights are on. The card automatically discovers all lights in the area if no entities are specified."
+      "multi_light_background_info": "Configure which light entities should be tracked for the multi-light background feature. When enabled, the card background and room icon will light up when any of these lights are on. The card automatically discovers all lights in the area if no entities are specified."
     },
     "entity": {
       "entity_id": "Entity",
@@ -178,6 +178,10 @@
       "slider_desc": "Display a single entity in a slider layout instead of the entity collection",
       "full_card_actions_desc": "Make the entire card clickable using the room entity's tap/hold/double-tap actions",
       "options": "Options"
+    },
+    "light": {
+      "type": "Type",
+      "ambient": "Ambient"
     }
   }
 }

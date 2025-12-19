@@ -6,6 +6,7 @@
 import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
+import type { LightConfig, LightConfigObject } from '@type/config/light';
 import type { SensorConfig } from '@type/config/sensor';
 
 /**
@@ -115,7 +116,7 @@ export function handleSensorsArrayUpdate(
  */
 export function handleLightsArrayUpdate(
   config: Config,
-  value: EntityConfig | string | null | undefined,
+  value: EntityConfig | LightConfigObject | string | null | undefined,
   index: number,
 ): SubElementChangeResult {
   const newConfigLights = (config.lights || []).concat();
@@ -128,10 +129,27 @@ export function handleLightsArrayUpdate(
     };
   }
 
-  // Lights are always strings - extract entity_id if EntityConfig
-  const entityId =
-    typeof value === 'string' ? value : (value as EntityConfig).entity_id;
-  newConfigLights[index] = entityId;
+  // Lights can be strings or LightConfigObject
+  // If it's a string, use it directly
+  // If it's a LightConfigObject (has type property), use it as object
+  // If it's an EntityConfig (has label/attribute/icon/etc but no type), extract entity_id as string
+  let lightConfig: LightConfig;
+  if (typeof value === 'string') {
+    lightConfig = value;
+  } else if ('type' in value) {
+    // It's a LightConfigObject - use it as is, but simplify to string if type is undefined
+    const lightObj: LightConfigObject = {
+      entity_id: value.entity_id,
+      ...(value.type ? { type: value.type } : {}),
+    };
+    // If type is not set, simplify to just the entity_id string
+    lightConfig = lightObj.type ? lightObj : lightObj.entity_id;
+  } else {
+    // It's an EntityConfig (has label/attribute/icon/etc but no type) - extract just entity_id as string
+    lightConfig = value.entity_id;
+  }
+
+  newConfigLights[index] = lightConfig;
 
   return {
     config: { ...config, lights: newConfigLights },
@@ -144,7 +162,7 @@ export function handleLightsArrayUpdate(
  */
 export function handleSubElementChanged(
   config: Config,
-  value: EntityConfig | string | null | undefined,
+  value: EntityConfig | LightConfigObject | string | null | undefined,
   subElementConfig: SubElementEditorConfig,
   currentTab: number,
 ): SubElementChangeResult {
