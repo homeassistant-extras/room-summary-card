@@ -7,6 +7,7 @@ import {
 import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
 import { attributeDisplay } from '@html/attribute-display';
+import { stateDisplay } from '@html/state-display';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
@@ -219,6 +220,10 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       }
     }
 
+    // Check if show_state feature is enabled for this entity
+    const showState =
+      hasEntityFeature(this.entity, 'show_state') && !this._hideIconContent;
+
     return html`
       ${stylesToHostCss(iconStyles)}
       <div
@@ -235,6 +240,11 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
               .icon=${thresholdResult?.icon || this.entity.config.icon}
             ></ha-state-icon>`}
         ${label ? html`<div class="entity-label">${label}</div>` : nothing}
+        ${showState
+          ? html`<div class="entity-state">
+              ${stateDisplay(this._hass, state)}
+            </div>`
+          : nothing}
       </div>
     `;
   }

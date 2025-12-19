@@ -113,6 +113,10 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
                   label: localize(hass, 'editor.entity.use_entity_icon'),
                   value: 'use_entity_icon',
                 },
+                {
+                  label: localize(hass, 'editor.entity.show_state'),
+                  value: 'show_state',
+                },
               ],
             },
           },

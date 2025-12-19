@@ -70,6 +70,19 @@ export const styles = css`
     display: var(--user-entity-label-display, block);
   }
 
+  /* Entity state styling */
+  .entity-state {
+    position: absolute;
+    font-size: var(--user-entity-state-font-size, 0.6em);
+    text-align: center;
+    overflow: hidden;
+    margin-top: 90%;
+    display: block;
+    color: var(--user-entity-state-color, var(--secondary-text-color));
+    opacity: var(--user-entity-state-opacity, 1);
+    font-weight: var(--user-entity-state-font-weight, normal);
+  }
+
   .box {
     cursor: pointer;
     align-self: center;

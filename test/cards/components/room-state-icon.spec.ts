@@ -9,6 +9,7 @@ import type {
 } from '@hass/data/lovelace/config/action';
 import type { HomeAssistant } from '@hass/types';
 import * as attributeDisplayModule from '@html/attribute-display';
+import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
 import * as iconStylesModule from '@theme/render/icon-styles';
@@ -34,6 +35,8 @@ describe('room-state-icon.ts', () => {
   let getEntityLabelStub: sinon.SinonStub;
   let getThresholdResultStub: sinon.SinonStub;
   let attributeDisplayStub: sinon.SinonStub;
+  let hasEntityFeatureStub: sinon.SinonStub;
+  let stateDisplayStub: sinon.SinonStub;
 
   const mockEntityState: EntityState = createStateEntity(
     'light',
@@ -102,6 +105,12 @@ describe('room-state-icon.ts', () => {
       attributeDisplayModule,
       'attributeDisplay',
     ).returns(html`<span>attribute value</span>`);
+    hasEntityFeatureStub = stub(featureModule, 'hasEntityFeature').returns(
+      false,
+    );
+    stateDisplayStub = stub(stateDisplayModule, 'stateDisplay').returns(
+      html`<state-display></state-display>`,
+    );
 
     mockHass = {
       states: {
@@ -126,6 +135,8 @@ describe('room-state-icon.ts', () => {
     getEntityLabelStub.restore();
     getThresholdResultStub.restore();
     attributeDisplayStub.restore();
+    hasEntityFeatureStub.restore();
+    stateDisplayStub.restore();
   });
 
   describe('properties', () => {
@@ -859,6 +870,126 @@ describe('room-state-icon.ts', () => {
       expect(callArgs).to.have.property('--icon-color', 'blue');
       expect(callArgs).to.not.have.property('--room-icon-size');
       expect(callArgs).to.not.have.property('--room-icon-color');
+    });
+  });
+
+  describe('show_state feature', () => {
+    beforeEach(() => {
+      // Reset stubs
+      hasFeatureStub.returns(true); // Enable show_entity_labels
+      hasEntityFeatureStub.restore();
+      stateDisplayStub.restore();
+    });
+
+    it('should render state display when show_state feature is enabled', async () => {
+      hasEntityFeatureStub.restore();
+      hasEntityFeatureStub = stub(featureModule, 'hasEntityFeature').callsFake(
+        (entity: any, feature: string) => {
+          if (feature === 'show_state') return true;
+          if (feature === 'use_entity_icon') return false;
+          return false;
+        },
+      );
+
+      stateDisplayStub.restore();
+      stateDisplayStub = stub(stateDisplayModule, 'stateDisplay').returns(
+        html`<state-display class="test-state-display"></state-display>`,
+      );
+
+      const entityWithShowState = {
+        ...mockEntity,
+        config: {
+          ...mockEntityConfig,
+          features: ['show_state'],
+        },
+      };
+
+      element.entity = entityWithShowState;
+      element.config = {
+        ...mockConfig,
+        features: ['show_entity_labels'],
+      };
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      const el = await fixture(result);
+      const stateDisplay = el.querySelector('.entity-state');
+
+      expect(stateDisplay).to.exist;
+      expect(hasEntityFeatureStub.calledWith(entityWithShowState, 'show_state'))
+        .to.be.true;
+      expect(stateDisplayStub.calledWith(mockHass, mockEntityState)).to.be.true;
+    });
+
+    it('should not render state display when show_state feature is disabled', async () => {
+      hasEntityFeatureStub = stub(featureModule, 'hasEntityFeature').returns(
+        false,
+      );
+
+      const entityWithoutShowState = {
+        ...mockEntity,
+        config: {
+          ...mockEntityConfig,
+          features: [],
+        },
+      };
+
+      element.entity = entityWithoutShowState;
+      element.config = {
+        ...mockConfig,
+        features: ['show_entity_labels'],
+      };
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      const el = await fixture(result);
+      const stateDisplay = el.querySelector('.entity-state');
+
+      expect(stateDisplay).to.not.exist;
+      expect(stateDisplayStub.called).to.be.false;
+    });
+
+    it('should not render state display when icon content is hidden', async () => {
+      hasEntityFeatureStub = stub(featureModule, 'hasEntityFeature').callsFake(
+        (entity: any, feature: string) => {
+          if (feature === 'show_state') return true;
+          if (feature === 'use_entity_icon') return false;
+          return false;
+        },
+      );
+
+      const entityWithPicture = {
+        ...mockEntity,
+        state: {
+          ...mockEntityState,
+          attributes: {
+            ...mockEntityState.attributes,
+            entity_picture: '/local/picture.jpg',
+          },
+        },
+        config: {
+          ...mockEntityConfig,
+          features: ['show_state'],
+        },
+      };
+
+      element.entity = entityWithPicture;
+      element.config = {
+        ...mockConfig,
+        features: ['show_entity_labels'],
+      };
+      element.hass = mockHass; // This triggers hideIconContent
+
+      const result = element.render() as TemplateResult;
+      expect(result).to.not.equal(nothing);
+
+      const el = await fixture(result);
+      const stateDisplay = el.querySelector('.entity-state');
+
+      expect(stateDisplay).to.not.exist;
+      expect(stateDisplayStub.called).to.be.false;
     });
   });
 });

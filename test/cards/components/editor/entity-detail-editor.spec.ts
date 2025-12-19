@@ -195,6 +195,10 @@ describe('entity-detail-editor.ts', () => {
                   label: 'Use Entity Icon',
                   value: 'use_entity_icon',
                 },
+                {
+                  label: 'Show State',
+                  value: 'show_state',
+                },
               ],
             },
           },

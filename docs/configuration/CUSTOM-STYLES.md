@@ -381,6 +381,10 @@ Some styles use CSS variables that can be overridden:
 | `--user-entity-icon-size`         | entity_icon       | Size of entity icons                                                                |
 | `--user-sensor-icon-size`         | sensors           | Size of sensor icons                                                                |
 | `--user-entity-label-display`     | entity_icon       | Control entity label display (set to `none` to hide)                                |
+| `--user-entity-state-font-size`   | entity_icon       | Font size for entity state text (default: `0.6em`)                                  |
+| `--user-entity-state-color`       | entity_icon       | Text color for entity state (default: `var(--secondary-text-color)`)                |
+| `--user-entity-state-opacity`     | entity_icon       | Opacity for entity state text (default: `1`)                                        |
+| `--user-entity-state-font-weight` | entity_icon       | Font weight for entity state text (default: `normal`)                               |
 | `--user-background-image-overlay` | card, entity_icon | Overlay gradient for card and icon background images (set to `none` to remove)      |
 | `--user-grid-template-areas`      | card              | Grid template areas for main layout (e.g., `"'i e'"` for horizontal layout)         |
 | `--user-grid-template-columns`    | card              | Grid template columns (e.g., `1fr 1.2fr` for two columns)                           |
@@ -400,6 +404,36 @@ styles:
     '--mdc-icon-size': 28px # Individual icon size
     '--user-entity-label-display': none # Hide all entity labels
 ```
+
+### Styling Entity State Display
+
+When the `show_state` feature is enabled for an entity, you can customize the state display appearance using CSS variables:
+
+```yaml
+entities:
+  - entity_id: light.living_room
+    features:
+      - show_state
+    styles:
+      '--opacity-icon-fill-inactive': 0 # hide the bubble
+      '--opacity-icon-fill-active': 0 # hide the bubble
+
+      '--user-entity-state-font-size': 0.8em # Larger state text
+      '--user-entity-state-color': '#ff6b6b' # Custom red color
+      '--user-entity-state-opacity': 0.9 # Slightly transparent
+      '--user-entity-state-font-weight': bold # Bold state text
+```
+
+You can also style all entity states globally:
+
+```yaml
+styles:
+  entity_icon:
+    '--user-entity-state-font-size': 0.7em # Size for all entity states
+    '--user-entity-state-color': '#4ecdc4' # Color for all entity states
+```
+
+![Entity States](../../assets/state-display.png)
 
 ### Hiding Individual Entity Labels
 

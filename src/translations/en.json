@@ -26,6 +26,7 @@
       "ignore_entity": "Ignore Entity",
       "show_entity_labels": "Show Entity Labels",
       "use_entity_icon": "Use Entity Icon",
+      "show_state": "Show State",
       "styles": "Styles",
       "states": "States",
       "add_state": "Add State",

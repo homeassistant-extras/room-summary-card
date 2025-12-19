@@ -35,7 +35,7 @@ export interface EntityConfig extends BaseEntityConfig {
 }
 
 /** Features to enable or disable for the entity */
-export type EntityFeatures = 'use_entity_icon';
+export type EntityFeatures = 'use_entity_icon' | 'show_state';
 
 /**
  * Common icon properties for state and threshold configurations

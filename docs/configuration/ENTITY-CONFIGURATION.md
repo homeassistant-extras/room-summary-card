@@ -75,9 +75,10 @@ entities:
 
 The `features` array allows you to enable specific behaviors for individual entities:
 
-| Feature         | Description                                     |
-| --------------- | ----------------------------------------------- |
-| use_entity_icon | Display entity icon instead of `entity_picture` |
+| Feature         | Description                                                                         |
+| --------------- | ----------------------------------------------------------------------------------- |
+| use_entity_icon | Display entity icon instead of `entity_picture`                                     |
+| show_state      | Display entity state value below the entity label (e.g., brightness %, temperature) |
 
 ### Action Configuration
 
@@ -105,6 +106,29 @@ entities:
     features:
       - use_entity_icon
 ```
+
+### Showing Entity State
+
+To display the entity's current state value below the entity label, add the `show_state` feature. This is useful for displaying brightness percentages, temperatures, or other state values:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - show_entity_labels
+entities:
+  # Display state value below label (e.g., "Brightness %", "64.2°F")
+  - entity_id: light.living_room
+    features:
+      - show_state
+  - entity_id: sensor.temperature
+    features:
+      - show_state
+```
+
+![Entity States](../../assets/state-display.png)
+
+See [Custom Styles Configuration](CUSTOM-STYLES.md#styling-entity-state-display) for all available CSS variables.
 
 ## Color Priority
 
