@@ -137,6 +137,30 @@ const schemeStyles = (
           },
         ],
       },
+
+      {
+        name: 'icon_opacity_preset',
+        label: 'editor.styles.icon_opacity_preset',
+        required: false,
+        selector: {
+          select: {
+            mode: 'dropdown' as const,
+            options: [
+              {
+                label: localize(hass, 'editor.styles.icon_opacity_default'),
+                value: 'default',
+              },
+              {
+                label: localize(
+                  hass,
+                  'editor.styles.icon_opacity_high_visibility',
+                ),
+                value: 'high_visibility',
+              },
+            ],
+          },
+        },
+      },
     ],
   };
 };

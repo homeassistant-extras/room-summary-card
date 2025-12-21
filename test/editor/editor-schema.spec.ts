@@ -494,6 +494,26 @@ describe('editor-schema.ts', () => {
                 },
               ],
             },
+            {
+              name: 'icon_opacity_preset',
+              label: 'editor.styles.icon_opacity_preset',
+              required: false,
+              selector: {
+                select: {
+                  mode: 'dropdown',
+                  options: [
+                    {
+                      label: 'editor.styles.icon_opacity_default',
+                      value: 'default',
+                    },
+                    {
+                      label: 'editor.styles.icon_opacity_high_visibility',
+                      value: 'high_visibility',
+                    },
+                  ],
+                },
+              },
+            },
           ],
         },
         {

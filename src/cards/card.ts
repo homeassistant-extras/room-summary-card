@@ -97,6 +97,8 @@ export class RoomSummaryCard extends LitElement {
    */
   @property({ type: Boolean, reflect: true, attribute: 'frosted-glass' })
   private frostedGlass: boolean = false;
+  @property({ type: String, reflect: true, attribute: 'icon-opacity-preset' })
+  private iconOpacityPreset?: string;
   private _image?: string | null;
 
   /**
@@ -153,6 +155,7 @@ export class RoomSummaryCard extends LitElement {
     this.dark = dark;
     this._isActive = isActive;
     this._isIconActive = isIconActive;
+    this.iconOpacityPreset = this._config.icon_opacity_preset;
 
     // Handle async image resolution
     image.then((resolvedImage) => {

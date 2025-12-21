@@ -356,6 +356,23 @@ describe('card.ts', () => {
       card.hass = frostedHass;
       expect(card['frostedGlass']).to.be.true;
     });
+
+    it('should set iconOpacityPreset property from config', () => {
+      card.setConfig({
+        area: 'living_room',
+        icon_opacity_preset: 'high_visibility',
+      });
+      card.hass = mockHass;
+      expect(card['iconOpacityPreset']).to.equal('high_visibility');
+    });
+
+    it('should set iconOpacityPreset to undefined when not in config', () => {
+      card.setConfig({
+        area: 'living_room',
+      });
+      card.hass = mockHass;
+      expect(card['iconOpacityPreset']).to.be.undefined;
+    });
   });
 
   describe('styles', () => {

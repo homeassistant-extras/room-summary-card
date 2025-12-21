@@ -95,6 +95,9 @@ export interface Config {
   /** Light entities to track for multi-light background (overrides automatic discovery) */
   lights?: LightConfig[];
 
+  /** Icon opacity preset for better visibility */
+  icon_opacity_preset?: 'default' | 'high_visibility';
+
   /** Custom styling configuration */
   styles?: {
     /** CSS properties for the card container */
