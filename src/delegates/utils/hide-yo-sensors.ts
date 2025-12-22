@@ -38,6 +38,7 @@ const isAmbientLight = (light: LightConfig): boolean => {
 export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
   const skipDefaultEntities = hasFeature(config, 'exclude_default_entities');
   const multiLightEnabled = hasFeature(config, 'multi_light_background');
+  const hideHiddenEntities = hasFeature(config, 'hide_hidden_entities');
 
   // Default sensor classes if not specified
   const sensorClasses = config.sensor_classes || [
@@ -141,6 +142,11 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
+    // Skip hidden entities if the feature is enabled
+    if (hideHiddenEntities && entity.hidden) {
+      return;
+    }
+
     // Check if this sensor is explicitly configured
     const isConfigSensor = configSensorIds.includes(entity.entity_id);
     const device = getDevice(hass.devices, entity.device_id);

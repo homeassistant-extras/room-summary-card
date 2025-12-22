@@ -79,6 +79,13 @@ const haCardThemeStyles = css`
     );
   }
 
+  :host([icon-opacity-preset='medium']) {
+    --opacity-icon-inactive: 0.6;
+    --opacity-icon-fill-inactive: 0.15;
+    --opacity-icon-active: 1;
+    --opacity-icon-fill-active: 0.2;
+  }
+
   :host([icon-opacity-preset='high_visibility']) {
     --opacity-icon-inactive: 1;
     --opacity-icon-fill-inactive: 0.2;

@@ -10,6 +10,7 @@ export interface EntityRegistryDisplayEntry {
   device_id: string;
   area_id: string;
   labels: string[];
+  hidden?: boolean;
   platform?: string;
 }
 

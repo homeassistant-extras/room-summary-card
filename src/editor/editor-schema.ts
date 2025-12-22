@@ -151,6 +151,10 @@ const schemeStyles = (
                 value: 'default',
               },
               {
+                label: localize(hass, 'editor.styles.icon_opacity_medium'),
+                value: 'medium',
+              },
+              {
                 label: localize(
                   hass,
                   'editor.styles.icon_opacity_high_visibility',
@@ -643,6 +647,10 @@ export const entityFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
           {
             label: localize(hass, 'editor.features.slider'),
             value: 'slider',
+          },
+          {
+            label: localize(hass, 'editor.features.hide_hidden_entities'),
+            value: 'hide_hidden_entities',
           },
         ],
       },

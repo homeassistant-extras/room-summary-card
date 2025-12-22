@@ -786,4 +786,136 @@ describe('get-sensors.ts', () => {
       expect(result.thresholdSensors).to.have.lengthOf(0);
     });
   });
+
+  describe('hide_hidden_entities feature', () => {
+    beforeEach(() => {
+      // Add a hidden sensor entity
+      mockHass.states['sensor.hidden_sensor'] = e(
+        'sensor',
+        'hidden_sensor',
+        '50',
+        {
+          device_class: 'temperature',
+        },
+      );
+      mockHass.entities['sensor.hidden_sensor'] = {
+        entity_id: 'sensor.hidden_sensor',
+        device_id: 'device_hidden',
+        area_id: 'living_room',
+        labels: [],
+        hidden: true,
+      };
+    });
+
+    it('should filter out hidden entities when hide_hidden_entities feature is enabled', () => {
+      const config: Config = {
+        ...defaultConfig,
+        features: ['hide_hidden_entities'],
+      };
+
+      getSensors(mockHass, config);
+
+      const [classSensors] = calculateAveragesStub.firstCall.args;
+      // Should not include the hidden sensor
+      expect(classSensors.map((s: any) => s.entity_id)).to.not.include(
+        'sensor.hidden_sensor',
+      );
+    });
+
+    it('should include hidden entities when hide_hidden_entities feature is disabled', () => {
+      const config: Config = {
+        ...defaultConfig,
+        // Feature not enabled
+      };
+
+      getSensors(mockHass, config);
+
+      const [classSensors] = calculateAveragesStub.firstCall.args;
+      // Should include the hidden sensor
+      expect(classSensors.map((s: any) => s.entity_id)).to.include(
+        'sensor.hidden_sensor',
+      );
+    });
+
+    it('should filter out hidden config sensors when hide_hidden_entities feature is enabled', () => {
+      const config: Config = {
+        ...defaultConfig,
+        features: ['hide_hidden_entities'],
+        sensors: ['sensor.hidden_sensor', 'sensor.custom_sensor_1'],
+      };
+
+      const result = getSensors(mockHass, config);
+
+      // Should only include non-hidden config sensor
+      expect(result.individual).to.have.lengthOf(1);
+      expect(result.individual[0]!.entity_id).to.equal('sensor.custom_sensor_1');
+      expect(result.individual.map((s) => s.entity_id)).to.not.include(
+        'sensor.hidden_sensor',
+      );
+    });
+
+    it('should filter out hidden threshold sensors when hide_hidden_entities feature is enabled', () => {
+      // Add hidden threshold sensor
+      mockHass.states['sensor.hidden_threshold'] = e(
+        'sensor',
+        'hidden_threshold',
+        '75',
+        {
+          device_class: 'temperature',
+        },
+      );
+      mockHass.entities['sensor.hidden_threshold'] = {
+        entity_id: 'sensor.hidden_threshold',
+        device_id: 'device_hidden_threshold',
+        area_id: 'living_room',
+        labels: [],
+        hidden: true,
+      };
+
+      const config: Config = {
+        ...defaultConfig,
+        features: ['hide_hidden_entities'],
+        thresholds: {
+          temperature: [
+            {
+              value: 'sensor.hidden_threshold',
+            },
+          ],
+        },
+      };
+
+      const result = getSensors(mockHass, config);
+
+      // Should not include hidden threshold sensor
+      expect(result.thresholdSensors).to.have.lengthOf(0);
+      expect(
+        result.thresholdSensors.map((s) => s.entity_id),
+      ).to.not.include('sensor.hidden_threshold');
+    });
+
+    it('should filter out hidden light entities when hide_hidden_entities feature is enabled', () => {
+      // Add hidden light entity
+      mockHass.states['light.hidden_light'] = e('light', 'hidden_light', 'on');
+      mockHass.entities['light.hidden_light'] = {
+        entity_id: 'light.hidden_light',
+        device_id: 'device_hidden_light',
+        area_id: 'living_room',
+        labels: [],
+        hidden: true,
+      };
+
+      const config: Config = {
+        ...defaultConfig,
+        features: ['hide_hidden_entities', 'multi_light_background'],
+      };
+
+      const result = getSensors(mockHass, config);
+
+      // Should not include hidden light entity
+      expect(result.lightEntities).to.have.lengthOf(0);
+      expect(result.lightEntities.map((l) => l.entity_id)).to.not.include(
+        'light.hidden_light',
+      );
+    });
+  });
 });

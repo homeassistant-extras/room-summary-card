@@ -44,6 +44,7 @@ export const getIconEntities = (
     : baseEntities.concat(configEntities);
 
   const stickyEntitiesEnabled = hasFeature(config, 'sticky_entities');
+  const hideHiddenEntities = hasFeature(config, 'hide_hidden_entities');
 
   // Process and transform entities
   const states = entities
@@ -51,6 +52,11 @@ export const getIconEntities = (
       // Transform string format to entity config for convenience
       if (typeof entity === 'string') {
         entity = { entity_id: entity };
+      }
+
+      // Skip hidden entities if the feature is enabled
+      if (hideHiddenEntities && hass.entities[entity.entity_id]?.hidden) {
+        return undefined;
       }
 
       const state = getState(hass.states, entity.entity_id);

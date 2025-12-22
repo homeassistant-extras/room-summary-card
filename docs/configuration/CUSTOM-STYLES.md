@@ -459,6 +459,18 @@ entities:
           '--user-entity-label-display': none # Hide label when temperature >= 75
 ```
 
+## Icon Opacity Preset
+
+For easier icon visibility adjustment, you can use the `icon_opacity_preset` option instead of manually setting CSS variables:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+icon_opacity_preset: high_visibility  # Options: default, medium, high_visibility
+```
+
+This is equivalent to setting the opacity CSS variables but provides a simpler interface. See the [main configuration documentation](../CONFIGURATION.md#icon-opacity-preset) for details.
+
 ## Home Assistant Variables
 
 > **Note:** The following Home Assistant CSS variables can be overridden, but these are not officially supported and may change with Home Assistant updates. Use at your own discretion.
@@ -474,6 +486,8 @@ entities:
 | `--opacity-icon-fill-inactive`  | Opacity for inactive icon fills  |
 | `--opacity-icon-active`         | Opacity for active icons         |
 | `--opacity-icon-fill-active`    | Opacity for active icon fills    |
+
+> **Tip:** Instead of manually setting `--opacity-icon-*` variables, consider using the `icon_opacity_preset` option for easier configuration.
 
 Example:
 

@@ -213,4 +213,70 @@ describe('icon-entities.ts', () => {
     expect(stickyEntity!.config.hold_action).to.be.undefined;
     expect(stickyEntity!.config.double_tap_action).to.be.undefined;
   });
+
+  it('should filter out hidden entities when hide_hidden_entities feature is enabled', () => {
+    // Add a hidden entity
+    mockHass.states['light.hidden_light'] = e('light', 'hidden_light', 'on');
+    mockHass.entities['light.hidden_light'] = {
+      entity_id: 'light.hidden_light',
+      device_id: 'device_hidden',
+      area_id: 'test_room',
+      labels: [],
+      hidden: true,
+    };
+
+    const config = {
+      area: 'test_room',
+      features: ['hide_hidden_entities'],
+      entities: ['light.hidden_light', 'light.test'],
+    } as any as Config;
+
+    const entities = getIconEntities(mockHass, config);
+    // Should include base entities and light.test, but not light.hidden_light
+    expect(entities).to.have.lengthOf(3); // Base entities + light.test
+    expect(entities.find((e) => e.config.entity_id === 'light.hidden_light')).to
+      .be.undefined;
+    expect(entities.find((e) => e.config.entity_id === 'light.test')).to.exist;
+  });
+
+  it('should include hidden entities when hide_hidden_entities feature is disabled', () => {
+    // Add a hidden entity
+    mockHass.states['light.hidden_light'] = e('light', 'hidden_light', 'on');
+    mockHass.entities['light.hidden_light'] = {
+      entity_id: 'light.hidden_light',
+      device_id: 'device_hidden',
+      area_id: 'test_room',
+      labels: [],
+      hidden: true,
+    };
+
+    const config = {
+      area: 'test_room',
+      entities: ['light.hidden_light', 'light.test'],
+    } as any as Config;
+
+    const entities = getIconEntities(mockHass, config);
+    // Should include base entities, light.hidden_light, and light.test
+    expect(entities).to.have.lengthOf(4); // Base entities + light.hidden_light + light.test
+    expect(entities.find((e) => e.config.entity_id === 'light.hidden_light')).to
+      .exist;
+  });
+
+  it('should filter out hidden base entities when hide_hidden_entities feature is enabled', () => {
+    // Mark base entity as hidden
+    mockHass.entities['light.test_room_light'] = {
+      ...mockHass.entities['light.test_room_light'],
+      hidden: true,
+    };
+
+    const config = {
+      area: 'test_room',
+      features: ['hide_hidden_entities'],
+    } as any as Config;
+
+    const entities = getIconEntities(mockHass, config);
+    // Should only include switch.test_room_fan, not the hidden light
+    expect(entities).to.have.lengthOf(1);
+    expect(entities[0]!.config.entity_id).to.equal('switch.test_room_fan');
+  });
 });

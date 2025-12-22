@@ -60,6 +60,7 @@ See [default entities](#default-entities)
 | sensor_classes | array            | See below                              | Device classes to average and display sensor readings for       |
 | thresholds     | object           | `80° / 60%`                            | Climate thresholds for temperature, humidity, and mold          |
 | slider_style   | string           | `minimalist`                           | Visual style of the slider track when slider feature is enabled |
+| icon_opacity_preset | string      | `default`                              | Icon opacity preset: `default`, `medium`, or `high_visibility` |
 | styles         | object           | `{}`                                   | Custom CSS styles for card areas                                |
 
 ### Default Entities
@@ -93,6 +94,7 @@ features:
   - sticky_entities
   - slider
   - full_card_actions
+  - hide_hidden_entities
 ```
 
 | Feature                  | Description                                                                                    |
@@ -111,6 +113,7 @@ features:
 | sticky_entities          | Keep entity positions stable even when state is unavailable (prevents UI layout shifts)        |
 | slider                   | Display the first entity as a draggable slider for brightness control                          |
 | full_card_actions        | Make entire card clickable with tap/hold actions for mobile-friendly navigation                |
+| hide_hidden_entities     | Skip entities that are marked as hidden in Home Assistant                                      |
 
 ### Using `ignore_entity` with Auto-Entities
 
@@ -182,6 +185,26 @@ styles:
 
 - See [Custom Styles Configuration](configuration/CUSTOM-STYLES.md) for style information.
 - See [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md) for complete color options.
+
+## Icon Opacity Preset
+
+The icon opacity preset allows you to easily adjust icon visibility without custom CSS. This is particularly useful for improving icon visibility on certain backgrounds or themes.
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+icon_opacity_preset: high_visibility
+```
+
+**Available Presets:**
+
+- `default` - Uses the standard theme opacity values (inactive icons: 0.2 opacity, inactive fills: 0.1/0.05)
+- `medium` - Balanced visibility (inactive icons: 0.6 opacity, inactive fills: 0.15)
+- `high_visibility` - Maximum visibility (inactive icons: 1.0 opacity, inactive fills: 0.2)
+
+**Note:** Active icons always use full opacity (1.0) regardless of preset. The preset only affects inactive icon states.
+
+This feature can be configured via the editor dropdown in the Styles section, or directly in YAML configuration.
 
 ## Alarm Detection (Occupancy & Smoke)
 

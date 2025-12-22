@@ -150,6 +150,23 @@ entities:
     icon: mdi:desktop-tower
 ```
 
+### Hide Hidden Entities
+
+Skip entities that are marked as hidden in Home Assistant's entity registry:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - hide_hidden_entities
+entities:
+  - light.living_room_main
+  - switch.living_room_fan
+  - sensor.living_room_temperature
+```
+
+This is useful when you have entities hidden in Home Assistant (via the entity registry) that you don't want to appear in the card, even if they're in the configured area or entity list.
+
 ### Hide Room Icon
 
 ```yaml

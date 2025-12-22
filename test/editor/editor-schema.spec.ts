@@ -507,6 +507,10 @@ describe('editor-schema.ts', () => {
                       value: 'default',
                     },
                     {
+                      label: 'editor.styles.icon_opacity_medium',
+                      value: 'medium',
+                    },
+                    {
                       label: 'editor.styles.icon_opacity_high_visibility',
                       value: 'high_visibility',
                     },

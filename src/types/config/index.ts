@@ -96,7 +96,7 @@ export interface Config {
   lights?: LightConfig[];
 
   /** Icon opacity preset for better visibility */
-  icon_opacity_preset?: 'default' | 'high_visibility';
+  icon_opacity_preset?: 'default' | 'medium' | 'high_visibility';
 
   /** Custom styling configuration */
   styles?: {
@@ -142,7 +142,8 @@ export type Features =
   | 'multi_light_background'
   | 'sticky_entities'
   | 'slider'
-  | 'full_card_actions';
+  | 'full_card_actions'
+  | 'hide_hidden_entities';
 
 /**
  * @file Occupancy Configuration Types
