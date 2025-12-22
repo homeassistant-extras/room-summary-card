@@ -599,6 +599,10 @@ describe('editor-schema.ts', () => {
                 label: 'editor.features.slider',
                 value: 'slider',
               },
+              {
+                label: 'editor.features.hide_hidden_entities',
+                value: 'hide_hidden_entities',
+              },
             ],
           },
         },
