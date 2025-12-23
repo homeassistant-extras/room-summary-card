@@ -91,7 +91,7 @@ When the sensor state matches a configured state, the card will:
 
 Sensors can have custom labels configured at multiple levels:
 
-1. **State/threshold label** (highest priority) - Displayed when a matching state or threshold configuration has a `label` property
+1. **State label** (highest priority) - Displayed when a matching state configuration has a `label` property
 2. **Entity-level label** - Displayed when the sensor has a `label` property configured
 3. **Attribute value** - Displayed when an `attribute` property is configured (replaces state display)
 4. **Sensor state value** (fallback) - Displayed when no label or attribute is configured (e.g., "75°F", "50%", "450 ppm")
@@ -110,17 +110,6 @@ sensors:
         icon_color: green
         icon: mdi:door-closed
         label: 'Closed' # Displayed instead of "off" when state matches
-
-  # Sensor with threshold-based labels
-  - entity_id: sensor.temperature
-    label: 'Temp' # Fallback label
-    thresholds:
-      - threshold: 80
-        icon_color: red
-        label: 'Hot' # Displayed instead of temperature value when >= 80°
-      - threshold: 60
-        icon_color: green
-        label: 'Warm' # Displayed instead of temperature value when >= 60°
 
   # Sensor with only entity-level label
   - entity_id: sensor.humidity

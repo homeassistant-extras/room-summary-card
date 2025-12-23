@@ -431,17 +431,6 @@ sensors:
         icon: mdi:door-closed
         label: 'Closed' # Displayed instead of state value when state is "off"
 
-  # Sensor with threshold-based label
-  - entity_id: sensor.temperature
-    label: 'Temp' # Fallback label
-    thresholds:
-      - threshold: 80
-        icon_color: red
-        label: 'Hot' # Displayed instead of temperature value when >= 80°
-      - threshold: 60
-        icon_color: green
-        label: 'Warm' # Displayed instead of temperature value when >= 60°
-
   # Sensor with only entity-level label
   - entity_id: sensor.humidity
     label: 'Humidity' # Always displayed instead of state value
