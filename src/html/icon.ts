@@ -8,7 +8,7 @@ import { html, nothing, type TemplateResult } from 'lit';
 import { stateDisplay } from './state-display';
 
 /**
- * Renders the problem indicator icon if problems exist
+ * Renders the problem indicator with count if problems exist
  *
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {SensorData} sensors - The sensor data
@@ -26,11 +26,9 @@ export const renderProblemIndicator = (
 
   return html`<div class="problems">
     ${problemSensors.length > 0
-      ? html`<ha-icon
-          .icon=${`mdi:numeric-${problemSensors.length}`}
-          class="status-entities"
-          ?has-problems=${problemExists}
-        ></ha-icon>`
+      ? html`<span class="status-entities" ?has-problems=${problemExists}
+          >${problemSensors.length}</span
+        >`
       : nothing}
     ${sensors.mold && shouldShowMoldIndicator(sensors.mold, config)
       ? html`<div class="mold-indicator">

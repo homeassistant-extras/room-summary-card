@@ -236,11 +236,13 @@ const statusEntityStyles = css`
   .status-entities {
     width: 26px;
     height: 26px;
+    aspect-ratio: 1;
     display: grid;
     place-items: center;
     color: var(--black-color);
     position: relative;
     z-index: 1;
+    font-weight: 600;
   }
 
   .status-entities::before {

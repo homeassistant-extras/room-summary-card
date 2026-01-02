@@ -409,9 +409,9 @@ describe('card.ts', () => {
         },
       ];
       const el = await fixture(card.render() as TemplateResult);
-      const problemIcon = el.querySelector('.status-entities')!;
-      expect(problemIcon).to.exist;
-      expect((problemIcon as any).icon).to.equal('mdi:numeric-2');
+      const problemIndicator = el.querySelector('.status-entities')!;
+      expect(problemIndicator).to.exist;
+      expect(problemIndicator.textContent).to.equal('2');
     });
 
     it('should render room icon using room-state-icon component', async () => {
