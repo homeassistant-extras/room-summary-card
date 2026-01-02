@@ -214,6 +214,38 @@ describe('icon-entities.ts', () => {
     expect(stickyEntity!.config.double_tap_action).to.be.undefined;
   });
 
+  it('should not apply sticky_entities to base entities, only user-defined entities', () => {
+    const config = {
+      area: 'test_room',
+      features: ['sticky_entities'],
+      entities: ['light.user_defined_missing'],
+    } as any as Config;
+
+    const entities = getIconEntities(mockHass, config);
+    const entityIds = entities.map((e) => e.config.entity_id);
+
+    // Base entities without state should be filtered out
+    // light.test_room_light exists (has state), so it should be included
+    // light.test_room doesn't exist (no state), so it should be filtered out
+    // switch.test_room_fan exists (has state), so it should be included
+    // fan.test_room doesn't exist (no state), so it should be filtered out
+    expect(entityIds).to.not.include('light.test_room');
+    expect(entityIds).to.not.include('fan.test_room');
+    expect(entityIds).to.include('light.test_room_light');
+    expect(entityIds).to.include('switch.test_room_fan');
+
+    // User-defined entity without state should be included as sticky
+    const stickyEntity = entities.find(
+      (e) => e.config.entity_id === 'light.user_defined_missing',
+    );
+    expect(stickyEntity).to.exist;
+    expect(stickyEntity!.state).to.be.undefined;
+    expect(entityIds).to.include('light.user_defined_missing');
+
+    // Should have 3 entities: 2 base entities with states + 1 sticky user-defined entity
+    expect(entities).to.have.lengthOf(3);
+  });
+
   it('should filter out hidden entities when hide_hidden_entities feature is enabled', () => {
     // Add a hidden entity
     mockHass.states['light.hidden_light'] = e('light', 'hidden_light', 'on');
@@ -267,7 +299,7 @@ describe('icon-entities.ts', () => {
     mockHass.entities['light.test_room_light'] = {
       ...mockHass.entities['light.test_room_light'],
       hidden: true,
-    };
+    } as any;
 
     const config = {
       area: 'test_room',

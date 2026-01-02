@@ -60,14 +60,19 @@ export const getIconEntities = (
       }
 
       const state = getState(hass.states, entity.entity_id);
+      const isBaseEntity = (baseEntities as string[]).includes(
+        entity.entity_id,
+      );
 
-      // If state is not found and sticky entities is disabled, return undefined
+      // If state is not found:
+      // - For base entities: always return undefined (don't apply sticky entities)
+      // - For config entities: apply sticky entities logic if enabled
       if (!state) {
-        if (!stickyEntitiesEnabled) {
+        if (isBaseEntity || !stickyEntitiesEnabled) {
           return undefined;
         }
 
-        // Return entity with undefined state for sticky entities
+        // Return entity with undefined state for sticky entities (user-defined only)
         return {
           config: entity,
           state: undefined,
