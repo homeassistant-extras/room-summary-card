@@ -72,6 +72,21 @@ sensors:
 sensor_layout: bottom
 ```
 
+#### Sensors with Custom Icons
+
+Sensors can be configured with custom icons without requiring state-based matching:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+sensors:
+  - entity_id: sensor.bwt_perla_regenerativ_level
+    icon: phu:water-softener
+  - entity_id: sensor.temperature
+    icon: mdi:thermometer
+sensor_layout: bottom
+```
+
 #### Sensors with State-Based Styling
 
 Sensors can be configured with state-based styling to change icons and styles based on sensor state:

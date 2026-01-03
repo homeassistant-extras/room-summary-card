@@ -142,6 +142,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
           action: 'more-info',
         },
         label: sensorConfig?.label,
+        icon: sensorConfig?.icon,
         states: sensorConfig?.states,
       },
       state: state,
@@ -153,6 +154,9 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
     // Get label (priority: state/threshold label > config label)
     const label = getEntityLabel(info, result);
 
+    // Icon priority: configured icon > state/threshold icon > default
+    const icon = sensorConfig?.icon || result?.icon;
+
     return html`
       <div
         class="sensor"
@@ -163,7 +167,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
         @action=${handleClickAction(this, info)}
         .actionHandler=${actionHandler(info)}
       >
-        ${this.renderStateIcon(state, result?.icon)}
+        ${this.renderStateIcon(state, icon)}
         ${this.renderSensorLabel(state, label, sensorConfig)}
       </div>
     `;

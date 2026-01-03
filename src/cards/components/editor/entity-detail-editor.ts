@@ -203,6 +203,13 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
               label: 'editor.entity.entity_attribute',
               selector: { attribute: { entity_id } },
             },
+            {
+              name: 'icon',
+              label: 'editor.entity.entity_icon',
+              selector: {
+                icon: {},
+              },
+            },
           ],
         },
       ];

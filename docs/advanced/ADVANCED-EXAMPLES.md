@@ -19,8 +19,10 @@ entities:
   - light.living_room_lamp
   - switch.living_room_fan
 sensors:
-  - sensor.living_room_temperature
-  - sensor.living_room_humidity
+  - entity_id: sensor.living_room_temperature
+    icon: mdi:thermometer
+  - entity_id: sensor.living_room_humidity
+    icon: mdi:water-percent
   - sensor.living_room_co2
 sensor_layout: bottom
 background:
