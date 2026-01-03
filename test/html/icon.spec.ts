@@ -52,7 +52,7 @@ describe('icon.ts', () => {
       expect(el.children.length).to.equal(0);
     });
 
-    it('should render icon with correct number when one problem entity exists', async () => {
+    it('should render text with correct number when one problem entity exists', async () => {
       const result = renderProblemIndicator(mockHass, mockConfig, {
         individual: [],
         averaged: [],
@@ -64,13 +64,13 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      const icon = el.querySelector('ha-icon');
-      expect(icon).to.exist;
-      expect((icon as any).icon).to.equal('mdi:numeric-1');
-      expect((icon as any).className).to.include('status-entities');
+      const indicator = el.querySelector('.status-entities');
+      expect(indicator).to.exist;
+      expect(indicator?.textContent).to.equal('1');
+      expect((indicator as any).className).to.include('status-entities');
     });
 
-    it('should render icon with correct number for multiple problem entities', async () => {
+    it('should render text with correct number for multiple problem entities', async () => {
       const result = renderProblemIndicator(mockHass, mockConfig, {
         individual: [],
         averaged: [],
@@ -86,9 +86,9 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      const icon = el.querySelector('ha-icon');
-      expect(icon).to.exist;
-      expect((icon as any).icon).to.equal('mdi:numeric-3');
+      const indicator = el.querySelector('.status-entities');
+      expect(indicator).to.exist;
+      expect(indicator?.textContent).to.equal('3');
     });
 
     it('should not have has-problems attribute when no problem entities are active', async () => {
@@ -103,9 +103,9 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      const icon = el.querySelector('ha-icon');
-      expect(icon).to.exist;
-      expect((icon as any).hasAttribute('has-problems')).to.be.false;
+      const indicator = el.querySelector('.status-entities');
+      expect(indicator).to.exist;
+      expect((indicator as any).hasAttribute('has-problems')).to.be.false;
     });
 
     it('should have has-problems attribute when problem entities are active', async () => {
@@ -120,9 +120,9 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      const icon = el.querySelector('ha-icon');
-      expect(icon).to.exist;
-      expect((icon as any).hasAttribute('has-problems')).to.be.true;
+      const indicator = el.querySelector('.status-entities');
+      expect(indicator).to.exist;
+      expect((indicator as any).hasAttribute('has-problems')).to.be.true;
     });
 
     // Edge cases
@@ -141,9 +141,29 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      const icon = el.querySelector('ha-icon');
-      expect(icon).to.exist;
-      expect((icon as any).icon).to.equal('mdi:numeric-10');
+      const indicator = el.querySelector('.status-entities');
+      expect(indicator).to.exist;
+      expect(indicator?.textContent).to.equal('10');
+    });
+
+    it('should handle numbers greater than 10 correctly', async () => {
+      const manyEntities = Array(34)
+        .fill(null)
+        .map((_, i) => createEntityState(`entity${i}`));
+      const result = renderProblemIndicator(mockHass, mockConfig, {
+        individual: [],
+        averaged: [],
+        problemSensors: manyEntities,
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      });
+      const el = await fixture(result as TemplateResult);
+
+      expect(el).to.exist;
+      const indicator = el.querySelector('.status-entities');
+      expect(indicator).to.exist;
+      expect(indicator?.textContent).to.equal('34');
     });
 
     it('should handle entities with special characters', async () => {
@@ -161,9 +181,9 @@ describe('icon.ts', () => {
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
-      const icon = el.querySelector('ha-icon');
-      expect(icon).to.exist;
-      expect((icon as any).icon).to.equal('mdi:numeric-2');
+      const indicator = el.querySelector('.status-entities');
+      expect(indicator).to.exist;
+      expect(indicator?.textContent).to.equal('2');
     });
 
     it('should properly combine multiple CSS classes', async () => {
@@ -177,9 +197,9 @@ describe('icon.ts', () => {
       });
       const el = await fixture(result as TemplateResult);
 
-      const icon = el.querySelector('ha-icon');
-      expect(icon).to.exist;
-      expect((icon as any).className).to.include('status-entities');
+      const indicator = el.querySelector('.status-entities');
+      expect(indicator).to.exist;
+      expect((indicator as any).className).to.include('status-entities');
     });
 
     it('should show mold indicator when mold sensor exists and should be shown', async () => {

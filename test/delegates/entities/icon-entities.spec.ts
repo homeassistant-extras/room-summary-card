@@ -134,7 +134,7 @@ describe('icon-entities.ts', () => {
     expect(customEntity.config.double_tap_action!.action).to.equal('none');
   });
 
-  it('should apply climate icons when domain is climate and skip_climate_styles is not set', () => {
+  it('should return climate entities without modifying state attributes', () => {
     // Add a climate entity to the mock
     mockHass.states['climate.test_room_thermostat'] = e(
       'climate',
@@ -160,37 +160,9 @@ describe('icon-entities.ts', () => {
     );
 
     expect(climateEntity).to.exist;
-    expect(climateEntity!.state!.attributes.icon).to.equal('mdi:fire'); // 'heat' state should map to 'mdi:fire' icon
-  });
-
-  it('should not apply climate icons when skip_climate_styles feature is enabled', () => {
-    // Add a climate entity to the mock
-    mockHass.states['climate.test_room_thermostat'] = e(
-      'climate',
-      'test_room_thermostat',
-      'heat',
-    );
-    mockHass.entities['climate.test_room_thermostat'] = {
-      entity_id: 'climate.test_room_thermostat',
-      device_id: 'device_4',
-      area_id: 'test_room',
-      labels: [],
-    };
-
-    const config = {
-      area: 'test_room',
-      features: ['skip_climate_styles'],
-      entities: ['climate.test_room_thermostat'],
-    } as any as Config;
-
-    const entities = getIconEntities(mockHass, config);
-    // Find the climate entity in the results
-    const climateEntity = entities.find(
-      (e) => e.config.entity_id === 'climate.test_room_thermostat',
-    );
-
-    expect(climateEntity).to.exist;
-    expect(climateEntity!.state!.attributes.icon).to.be.undefined; // No icon should be applied
+    expect(climateEntity!.state!.state).to.equal('heat');
+    // Climate icon logic is now handled at render time, not in state attributes
+    expect(climateEntity!.state!.attributes.icon).to.be.undefined;
   });
 
   it('should return unavailable entity when sticky_entities is enabled and entity state is missing', () => {
@@ -212,6 +184,38 @@ describe('icon-entities.ts', () => {
     expect(stickyEntity!.config.tap_action).to.be.undefined;
     expect(stickyEntity!.config.hold_action).to.be.undefined;
     expect(stickyEntity!.config.double_tap_action).to.be.undefined;
+  });
+
+  it('should not apply sticky_entities to base entities, only user-defined entities', () => {
+    const config = {
+      area: 'test_room',
+      features: ['sticky_entities'],
+      entities: ['light.user_defined_missing'],
+    } as any as Config;
+
+    const entities = getIconEntities(mockHass, config);
+    const entityIds = entities.map((e) => e.config.entity_id);
+
+    // Base entities without state should be filtered out
+    // light.test_room_light exists (has state), so it should be included
+    // light.test_room doesn't exist (no state), so it should be filtered out
+    // switch.test_room_fan exists (has state), so it should be included
+    // fan.test_room doesn't exist (no state), so it should be filtered out
+    expect(entityIds).to.not.include('light.test_room');
+    expect(entityIds).to.not.include('fan.test_room');
+    expect(entityIds).to.include('light.test_room_light');
+    expect(entityIds).to.include('switch.test_room_fan');
+
+    // User-defined entity without state should be included as sticky
+    const stickyEntity = entities.find(
+      (e) => e.config.entity_id === 'light.user_defined_missing',
+    );
+    expect(stickyEntity).to.exist;
+    expect(stickyEntity!.state).to.be.undefined;
+    expect(entityIds).to.include('light.user_defined_missing');
+
+    // Should have 3 entities: 2 base entities with states + 1 sticky user-defined entity
+    expect(entities).to.have.lengthOf(3);
   });
 
   it('should filter out hidden entities when hide_hidden_entities feature is enabled', () => {
@@ -267,7 +271,7 @@ describe('icon-entities.ts', () => {
     mockHass.entities['light.test_room_light'] = {
       ...mockHass.entities['light.test_room_light'],
       hidden: true,
-    };
+    } as any;
 
     const config = {
       area: 'test_room',

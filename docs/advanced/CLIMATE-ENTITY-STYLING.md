@@ -1,19 +1,31 @@
 ## Climate Entity Styling
 
-Climate entities receive special treatment with automatic icon and color changes based on their state.
+Climate entities receive special treatment with automatic icon and color changes based on their state and action.
 
-### Climate State Icons
+### Climate Icon Determination
 
-```yaml
-# Automatic icons based on climate state:
-auto: mdi:autorenew
-cool: mdi:snowflake
-heat: mdi:fire
-dry: mdi:water
-heat_cool: mdi:sun-snowflake
-fan_only: mdi:fan
-off: mdi:snowflake-off
-```
+Icons are determined by **HVAC action** (what the system is currently doing) rather than just the mode:
+
+1. **Primary**: Uses `hvac_action` attribute when available:
+   - `heating` → `mdi:fire`
+   - `cooling` → `mdi:snowflake`
+   - `drying` → `mdi:water-percent`
+   - `fan` → `mdi:fan`
+   - `idle` → `mdi:power`
+   - `off` → `mdi:power`
+   - `preheating` → `mdi:fire`
+   - `defrosting` → `mdi:fire`
+
+2. **Fallback**: Uses `state` value (hvac_mode) when `hvac_action` is not available:
+   - `auto` → `mdi:thermostat-auto`
+   - `cool` → `mdi:snowflake`
+   - `heat` → `mdi:fire`
+   - `dry` → `mdi:water-percent`
+   - `heat_cool` → `mdi:sun-snowflake-variant`
+   - `fan_only` → `mdi:fan`
+   - `off` → `mdi:power`
+
+This provides more accurate visual feedback - for example, a thermostat in `heat` mode that's currently `idle` will show the power icon rather than the fire icon, indicating it's not actively heating.
 
 ### Climate Border Styling
 

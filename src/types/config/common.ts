@@ -18,6 +18,9 @@ export interface BaseEntityConfig {
   /** Attribute to display instead of entity state */
   attribute?: string;
 
+  /** Custom icon to display for the entity */
+  icon?: string;
+
   /** State-based color and icon configuration */
   states?: StateConfig[];
 }

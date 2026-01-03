@@ -24,6 +24,20 @@ sensors:
   - entity_id: sensor.living_room_co2
 ```
 
+#### Object Format with Custom Icon
+
+You can configure a custom icon for sensors without requiring state-based matching:
+
+```yaml
+sensors:
+  - entity_id: sensor.bwt_perla_regenerativ_level
+    icon: phu:water-softener
+  - entity_id: sensor.temperature
+    icon: mdi:thermometer
+```
+
+The configured icon takes priority over state-based icons and the default entity icon.
+
 #### Object Format with State-Based Styling and Labels
 
 You can configure sensors with state-based styling and custom labels, similar to entity configuration:
@@ -127,9 +141,22 @@ sensors:
   - entity_id: sensor.battery_monitor
     label: 'Battery'
     attribute: battery_level # Shows battery level attribute, falls back to label if attribute missing
+
+  # Sensor with custom icon
+  - entity_id: sensor.bwt_perla_regenerativ_level
+    icon: phu:water-softener
 ```
 
 **Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified, it displays the formatted attribute value instead of the state. When labels are not configured, sensors display their normal state values.
+
+#### Icon Priority
+
+Icons are determined in the following priority order:
+1. **Configured icon** (`icon` property) - highest priority
+2. **State-based icon** (from `states` configuration when state matches)
+3. **Default entity icon** (from Home Assistant)
+
+This allows you to set a default icon for a sensor while still allowing state-based icons to override it when specific conditions are met.
 
 #### Mixed Format
 

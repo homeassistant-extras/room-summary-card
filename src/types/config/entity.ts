@@ -6,9 +6,6 @@ import type { BaseEntityConfig } from './common';
  * Configuration for an individual entity, including display and interaction options.
  */
 export interface EntityConfig extends BaseEntityConfig {
-  /** Custom icon to display for the entity */
-  icon?: string;
-
   /** Custom color for the on state */
   on_color?: string;
 

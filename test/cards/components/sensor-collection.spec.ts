@@ -583,4 +583,144 @@ describe('sensor-collection.ts', () => {
       expect(stateIcon).to.exist;
     });
   });
+
+  describe('sensor icon configuration', () => {
+    let getStateResultStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      element.hass = mockHass;
+      getStateResultStub = stub(thresholdColorModule, 'getStateResult');
+    });
+
+    afterEach(() => {
+      getStateResultStub.restore();
+    });
+
+    it('should use configured icon when sensor config has icon property', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.bwt_perla_regenerativ_level',
+            icon: 'phu:water-softener',
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          {
+            entity_id: 'sensor.bwt_perla_regenerativ_level',
+            state: '50',
+          } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      getStateResultStub.returns(undefined);
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      const icon = el.querySelector('ha-state-icon');
+      expect(icon).to.exist;
+      expect((icon as any)?.icon).to.equal('phu:water-softener');
+    });
+
+    it('should prioritize configured icon over state-based icon', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.humidity',
+            icon: 'phu:water-softener',
+            states: [
+              {
+                state: '45',
+                icon: 'mdi:water',
+                icon_color: 'blue',
+                styles: {},
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.humidity', state: '45' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      getStateResultStub.returns({
+        icon: 'mdi:water',
+        color: 'blue',
+        styles: {},
+      });
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Configured icon should take priority over state-based icon
+      const icon = el.querySelector('ha-state-icon');
+      expect(icon).to.exist;
+      expect((icon as any)?.icon).to.equal('phu:water-softener');
+    });
+
+    it('should fall back to state-based icon when config icon is not set', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.humidity',
+            states: [
+              {
+                state: '45',
+                icon: 'mdi:water',
+                icon_color: 'blue',
+                styles: {},
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.humidity', state: '45' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      getStateResultStub.returns({
+        icon: 'mdi:water',
+        color: 'blue',
+        styles: {},
+      });
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Should use state-based icon when no config icon
+      const icon = el.querySelector('ha-state-icon');
+      expect(icon).to.exist;
+      expect((icon as any)?.icon).to.equal('mdi:water');
+    });
+  });
 });

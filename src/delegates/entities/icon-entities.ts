@@ -5,16 +5,6 @@ import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
 import type { EntityInformation } from '@type/room';
 
-const climateIcons = {
-  auto: 'mdi:autorenew',
-  cool: 'mdi:snowflake',
-  heat: 'mdi:fire',
-  dry: 'mdi:water',
-  heat_cool: 'mdi:sun-snowflake',
-  fan_only: 'mdi:fan',
-  off: 'mdi:snowflake-off',
-} as Record<string, string>;
-
 /**
  * Gets entities to display icons for
  *
@@ -60,25 +50,26 @@ export const getIconEntities = (
       }
 
       const state = getState(hass.states, entity.entity_id);
+      const isBaseEntity = (baseEntities as string[]).includes(
+        entity.entity_id,
+      );
 
-      // If state is not found and sticky entities is disabled, return undefined
+      // If state is not found:
+      // - For base entities: always return undefined (don't apply sticky entities)
+      // - For config entities: apply sticky entities logic if enabled
       if (!state) {
-        if (!stickyEntitiesEnabled) {
+        if (isBaseEntity || !stickyEntitiesEnabled) {
           return undefined;
         }
 
-        // Return entity with undefined state for sticky entities
+        // Return entity with undefined state for sticky entities (user-defined only)
         return {
           config: entity,
           state: undefined,
         } as EntityInformation;
       }
 
-      const useClimateIcons =
-        !hasFeature(config, 'skip_climate_styles') &&
-        state.domain === 'climate';
-
-      // Create entity information with defaults and climate handling
+      // Create entity information with defaults
       return {
         config: {
           tap_action: { action: 'toggle' },
@@ -86,13 +77,7 @@ export const getIconEntities = (
           double_tap_action: { action: 'none' },
           ...entity,
         } as EntityConfig,
-        state: {
-          ...state,
-          attributes: {
-            icon: useClimateIcons ? climateIcons[state.state] : undefined,
-            ...state.attributes,
-          },
-        },
+        state,
       } as EntityInformation;
     })
     .filter((entity): entity is EntityInformation => entity !== undefined);
