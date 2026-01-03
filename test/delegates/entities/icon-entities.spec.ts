@@ -134,7 +134,7 @@ describe('icon-entities.ts', () => {
     expect(customEntity.config.double_tap_action!.action).to.equal('none');
   });
 
-  it('should apply climate icons when domain is climate and skip_climate_styles is not set', () => {
+  it('should return climate entities without modifying state attributes', () => {
     // Add a climate entity to the mock
     mockHass.states['climate.test_room_thermostat'] = e(
       'climate',
@@ -160,37 +160,9 @@ describe('icon-entities.ts', () => {
     );
 
     expect(climateEntity).to.exist;
-    expect(climateEntity!.state!.attributes.icon).to.equal('mdi:fire'); // 'heat' state should map to 'mdi:fire' icon
-  });
-
-  it('should not apply climate icons when skip_climate_styles feature is enabled', () => {
-    // Add a climate entity to the mock
-    mockHass.states['climate.test_room_thermostat'] = e(
-      'climate',
-      'test_room_thermostat',
-      'heat',
-    );
-    mockHass.entities['climate.test_room_thermostat'] = {
-      entity_id: 'climate.test_room_thermostat',
-      device_id: 'device_4',
-      area_id: 'test_room',
-      labels: [],
-    };
-
-    const config = {
-      area: 'test_room',
-      features: ['skip_climate_styles'],
-      entities: ['climate.test_room_thermostat'],
-    } as any as Config;
-
-    const entities = getIconEntities(mockHass, config);
-    // Find the climate entity in the results
-    const climateEntity = entities.find(
-      (e) => e.config.entity_id === 'climate.test_room_thermostat',
-    );
-
-    expect(climateEntity).to.exist;
-    expect(climateEntity!.state!.attributes.icon).to.be.undefined; // No icon should be applied
+    expect(climateEntity!.state!.state).to.equal('heat');
+    // Climate icon logic is now handled at render time, not in state attributes
+    expect(climateEntity!.state!.attributes.icon).to.be.undefined;
   });
 
   it('should return unavailable entity when sticky_entities is enabled and entity state is missing', () => {

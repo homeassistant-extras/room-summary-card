@@ -9,6 +9,7 @@ import type { HomeAssistant } from '@hass/types';
 import { attributeDisplay } from '@html/attribute-display';
 import { stateDisplay } from '@html/state-display';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
+import { computeEntityIcon } from '@theme/render/loot-box-icon';
 import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
@@ -224,6 +225,10 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     const showState =
       hasEntityFeature(this.entity, 'show_state') && !this._hideIconContent;
 
+    const icon = computeEntityIcon(this.entity, this._config, {
+      thresholdResult,
+    });
+
     return html`
       ${stylesToHostCss(iconStyles)}
       <div
@@ -237,7 +242,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
           : html`<ha-state-icon
               .hass=${this._hass}
               .stateObj=${state}
-              .icon=${thresholdResult?.icon || this.entity.config.icon}
+              .icon=${icon}
             ></ha-state-icon>`}
         ${label ? html`<div class="entity-label">${label}</div>` : nothing}
         ${showState

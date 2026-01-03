@@ -117,19 +117,31 @@ When no custom colors are set, entities use domain-based colors:
 | **Timer & Schedule**      | `timer`, `schedule`                               | Pink        |
 | **Unknown Domains**       | Any other domain                                  | Yellow      |
 
-### Climate Entity Colors
+### Climate Entity Colors and Icons
 
-Climate entities get special icon treatment based on their state:
+Climate entities get special treatment with **colors based on state** and **icons based on action**:
+
+**Icon Determination**:
+- Icons are determined by `hvac_action` (what the system is currently doing) when available
+- Falls back to `state` value (hvac_mode) when action is not available
+- Examples: `heating` → fire icon, `cooling` → snowflake icon, `idle` → power icon
+
+**Color Determination**:
+- Colors are based on the `state` value (hvac_mode) such as `heat`, `cool`, `auto`, etc.
+- This provides visual consistency while icons show current activity
 
 ```yaml
-# Climate state colors
-auto: green (mdi:autorenew)
-cool: blue (mdi:snowflake)
-heat: red (mdi:fire)
-dry: yellow (mdi:water)
-heat_cool: purple (mdi:sun-snowflake)
-fan_only: green (mdi:fan)
-off: grey (mdi:snowflake-off)
+# Climate state colors (for color determination)
+auto: green
+cool: blue
+heat: red
+dry: yellow
+heat_cool: purple
+fan_only: green
+off: grey
+
+# Icons are determined by hvac_action (e.g., heating, cooling, idle, defrosting)
+# or fall back to state value if action is not available
 ```
 
 ![Climate Icons](../assets/icons.png)

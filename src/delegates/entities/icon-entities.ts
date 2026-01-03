@@ -5,16 +5,6 @@ import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
 import type { EntityInformation } from '@type/room';
 
-const climateIcons = {
-  auto: 'mdi:autorenew',
-  cool: 'mdi:snowflake',
-  heat: 'mdi:fire',
-  dry: 'mdi:water',
-  heat_cool: 'mdi:sun-snowflake',
-  fan_only: 'mdi:fan',
-  off: 'mdi:snowflake-off',
-} as Record<string, string>;
-
 /**
  * Gets entities to display icons for
  *
@@ -79,11 +69,7 @@ export const getIconEntities = (
         } as EntityInformation;
       }
 
-      const useClimateIcons =
-        !hasFeature(config, 'skip_climate_styles') &&
-        state.domain === 'climate';
-
-      // Create entity information with defaults and climate handling
+      // Create entity information with defaults
       return {
         config: {
           tap_action: { action: 'toggle' },
@@ -91,13 +77,7 @@ export const getIconEntities = (
           double_tap_action: { action: 'none' },
           ...entity,
         } as EntityConfig,
-        state: {
-          ...state,
-          attributes: {
-            icon: useClimateIcons ? climateIcons[state.state] : undefined,
-            ...state.attributes,
-          },
-        },
+        state,
       } as EntityInformation;
     })
     .filter((entity): entity is EntityInformation => entity !== undefined);

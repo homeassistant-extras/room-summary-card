@@ -13,6 +13,7 @@ import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
 import * as iconStylesModule from '@theme/render/icon-styles';
+import * as lootBoxIconModule from '@theme/render/loot-box-icon';
 import * as thresholdColorModule from '@theme/threshold-color';
 import * as styleConverterModule from '@theme/util/style-converter';
 import type { Config } from '@type/config';
@@ -37,6 +38,7 @@ describe('room-state-icon.ts', () => {
   let attributeDisplayStub: sinon.SinonStub;
   let hasEntityFeatureStub: sinon.SinonStub;
   let stateDisplayStub: sinon.SinonStub;
+  let computeEntityIconStub: sinon.SinonStub;
 
   const mockEntityState: EntityState = createStateEntity(
     'light',
@@ -111,6 +113,10 @@ describe('room-state-icon.ts', () => {
     stateDisplayStub = stub(stateDisplayModule, 'stateDisplay').returns(
       html`<state-display></state-display>`,
     );
+    computeEntityIconStub = stub(
+      lootBoxIconModule,
+      'computeEntityIcon',
+    ).returns(undefined);
 
     mockHass = {
       states: {
@@ -137,6 +143,7 @@ describe('room-state-icon.ts', () => {
     attributeDisplayStub.restore();
     hasEntityFeatureStub.restore();
     stateDisplayStub.restore();
+    computeEntityIconStub.restore();
   });
 
   describe('properties', () => {
@@ -239,6 +246,14 @@ describe('room-state-icon.ts', () => {
       // Verify action handler functions are called
       expect(actionHandlerStub.calledWith(mockEntity)).to.be.true;
       expect(handleClickActionStub.calledWith(element, mockEntity)).to.be.true;
+
+      // Verify computeEntityIcon is called with correct parameters
+      expect(computeEntityIconStub.called).to.be.true;
+      expect(
+        computeEntityIconStub.calledWith(mockEntity, mockConfig, {
+          thresholdResult: undefined,
+        }),
+      ).to.be.true;
     });
 
     it('should render with correct HTML structure', async () => {
@@ -266,42 +281,18 @@ describe('room-state-icon.ts', () => {
       expect(stylesToHostCssStub.calledWith({})).to.be.true;
     });
 
-    it('should handle entity without custom icon', async () => {
-      const entityWithoutIcon = {
-        ...mockEntity,
-        config: { entity_id: 'light.living_room' },
-      };
-      element.entity = entityWithoutIcon;
-      element.isMainRoomEntity = false;
+    it('should call computeEntityIcon with correct parameters', () => {
+      const thresholdResult = { icon: 'mdi:threshold-icon' };
+      getThresholdResultStub.returns(thresholdResult);
 
-      const result = element.render() as TemplateResult;
-      expect(result).to.not.equal(nothing);
+      element.render();
 
-      // Use fixture to actually render and test the DOM
-      const el = await fixture(result);
+      expect(computeEntityIconStub.called).to.be.true;
       expect(
-        el.querySelector('ha-state-icon') ||
-          el.firstElementChild?.querySelector('ha-state-icon'),
-      ).to.exist;
-    });
-
-    it('should handle entity with custom icon', async () => {
-      const entityWithIcon = {
-        ...mockEntity,
-        config: { entity_id: 'light.living_room', icon: 'mdi:custom-icon' },
-      };
-      element.entity = entityWithIcon;
-      element.isMainRoomEntity = false;
-
-      const result = element.render() as TemplateResult;
-      expect(result).to.not.equal(nothing);
-
-      // Use fixture to actually render and test the DOM
-      const el = await fixture(result);
-      expect(
-        el.querySelector('ha-state-icon') ||
-          el.firstElementChild?.querySelector('ha-state-icon'),
-      ).to.exist;
+        computeEntityIconStub.calledWith(mockEntity, mockConfig, {
+          thresholdResult,
+        }),
+      ).to.be.true;
     });
 
     it('should show entity label when show_entity_labels feature is enabled', async () => {
