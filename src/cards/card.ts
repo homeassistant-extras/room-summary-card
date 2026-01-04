@@ -84,10 +84,8 @@ export class RoomSummaryCard extends LitElement {
   private humid!: boolean;
   @property({ type: Boolean, reflect: true })
   private image!: boolean;
-  @property({ type: Boolean, reflect: true })
-  private occupied!: boolean;
-  @property({ type: Boolean, reflect: true })
-  private smoke!: boolean;
+  @property({ type: String, reflect: true })
+  private alarm?: 'smoke' | 'gas' | 'water' | 'occupied';
   @property({ type: Boolean, reflect: true, attribute: 'icon-bg' })
   private iconBackground!: boolean;
 
@@ -143,15 +141,14 @@ export class RoomSummaryCard extends LitElement {
       isActive,
       isIconActive,
       thresholds,
-      flags: { occupied, smoke, dark },
+      flags: { alarm, dark },
     } = getRoomProperties(hass, this._config);
 
     // Detect Frosted Glass themes (e.g. "Frosted Glass", "Frosted Glass Lite").
     this.frostedGlass =
       hass.themes?.theme?.startsWith('Frosted Glass') ?? false;
 
-    this.occupied = occupied;
-    this.smoke = smoke;
+    this.alarm = alarm;
     this.dark = dark;
     this._isActive = isActive;
     this._isIconActive = isIconActive;
@@ -253,8 +250,7 @@ export class RoomSummaryCard extends LitElement {
         isMainRoomEntity: true,
         isActive: this._isIconActive,
         hasImage: !!this._image,
-        occupied: this.occupied,
-        smoke: this.smoke,
+        alarm: this.alarm,
       },
     );
 
@@ -262,8 +258,7 @@ export class RoomSummaryCard extends LitElement {
       this._hass,
       this._config,
       this._roomEntity,
-      this.occupied,
-      this.smoke,
+      this.alarm,
       this._image,
       this._isActive,
       this._thresholds,

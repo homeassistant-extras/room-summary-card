@@ -848,7 +848,9 @@ describe('get-sensors.ts', () => {
 
       // Should only include non-hidden config sensor
       expect(result.individual).to.have.lengthOf(1);
-      expect(result.individual[0]!.entity_id).to.equal('sensor.custom_sensor_1');
+      expect(result.individual[0]!.entity_id).to.equal(
+        'sensor.custom_sensor_1',
+      );
       expect(result.individual.map((s) => s.entity_id)).to.not.include(
         'sensor.hidden_sensor',
       );
@@ -888,9 +890,9 @@ describe('get-sensors.ts', () => {
 
       // Should not include hidden threshold sensor
       expect(result.thresholdSensors).to.have.lengthOf(0);
-      expect(
-        result.thresholdSensors.map((s) => s.entity_id),
-      ).to.not.include('sensor.hidden_threshold');
+      expect(result.thresholdSensors.map((s) => s.entity_id)).to.not.include(
+        'sensor.hidden_threshold',
+      );
     });
 
     it('should filter out hidden light entities when hide_hidden_entities feature is enabled', () => {

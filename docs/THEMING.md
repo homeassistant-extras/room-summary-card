@@ -122,11 +122,13 @@ When no custom colors are set, entities use domain-based colors:
 Climate entities get special treatment with **colors based on state** and **icons based on action**:
 
 **Icon Determination**:
+
 - Icons are determined by `hvac_action` (what the system is currently doing) when available
 - Falls back to `state` value (hvac_mode) when action is not available
 - Examples: `heating` → fire icon, `cooling` → snowflake icon, `idle` → power icon
 
 **Color Determination**:
+
 - Colors are based on the `state` value (hvac_mode) such as `heat`, `cool`, `auto`, etc.
 - This provides visual consistency while icons show current activity
 

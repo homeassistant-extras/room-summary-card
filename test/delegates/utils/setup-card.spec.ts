@@ -20,6 +20,8 @@ describe('setup-card.ts', () => {
   let getBackgroundImageUrlStub: SinonStub;
   let getOccupancyStateStub: SinonStub;
   let getSmokeStateStub: SinonStub;
+  let getGasStateStub: SinonStub;
+  let getWaterStateStub: SinonStub;
 
   beforeEach(() => {
     // Create stubs for all the delegate functions
@@ -33,6 +35,8 @@ describe('setup-card.ts', () => {
     );
     getOccupancyStateStub = stub(occupancyModule, 'getOccupancyState');
     getSmokeStateStub = stub(occupancyModule, 'getSmokeState');
+    getGasStateStub = stub(occupancyModule, 'getGasState');
+    getWaterStateStub = stub(occupancyModule, 'getWaterState');
 
     mockHass = {
       areas: { living_room: { area_id: 'living_room', name: 'Living Room' } },
@@ -62,6 +66,8 @@ describe('setup-card.ts', () => {
     getBackgroundImageUrlStub.resolves('/local/bg.jpg');
     getOccupancyStateStub.returns(false);
     getSmokeStateStub.returns(false);
+    getGasStateStub.returns(false);
+    getWaterStateStub.returns(false);
   });
 
   afterEach(() => {
@@ -72,6 +78,8 @@ describe('setup-card.ts', () => {
     getBackgroundImageUrlStub.restore();
     getOccupancyStateStub.restore();
     getSmokeStateStub.restore();
+    getGasStateStub.restore();
+    getWaterStateStub.restore();
   });
 
   describe('getRoomProperties', () => {
@@ -112,8 +120,7 @@ describe('setup-card.ts', () => {
       ]);
       expect(result.image).to.be.a('promise');
       expect(result.flags.dark).to.be.true;
-      expect(result.flags.occupied).to.be.false;
-      expect(result.flags.smoke).to.be.false;
+      expect(result.flags.alarm).to.be.undefined;
     });
 
     it('should return image as a promise that resolves to the image URL', async () => {
@@ -287,7 +294,7 @@ describe('setup-card.ts', () => {
       });
     });
 
-    describe('smoke and occupancy priority', () => {
+    describe('alarm priority system', () => {
       it('should call getSmokeState with smoke config', () => {
         const config: Config = {
           area: 'living_room',
@@ -298,58 +305,145 @@ describe('setup-card.ts', () => {
         expect(getSmokeStateStub.calledWith(mockHass, config.smoke)).to.be.true;
       });
 
-      it('should set smoke flag when smoke is detected', () => {
+      it('should call getGasState with gas config', () => {
+        const config: Config = {
+          area: 'living_room',
+          gas: { entities: ['binary_sensor.gas_1'] },
+        };
+        getRoomProperties(mockHass, config);
+
+        expect(getGasStateStub.calledWith(mockHass, config.gas)).to.be.true;
+      });
+
+      it('should call getWaterState with water config', () => {
+        const config: Config = {
+          area: 'living_room',
+          water: { entities: ['binary_sensor.water_1'] },
+        };
+        getRoomProperties(mockHass, config);
+
+        expect(getWaterStateStub.calledWith(mockHass, config.water)).to.be.true;
+      });
+
+      it('should set alarm to smoke when smoke is detected', () => {
         const config: Config = {
           area: 'living_room',
           smoke: { entities: ['binary_sensor.smoke_1'] },
         };
         getSmokeStateStub.returns(true);
+        getGasStateStub.returns(true);
+        getWaterStateStub.returns(true);
         getOccupancyStateStub.returns(true);
 
         const result = getRoomProperties(mockHass, config);
-        expect(result.flags.smoke).to.be.true;
-        expect(result.flags.occupied).to.be.false; // Occupancy suppressed when smoke detected
+        expect(result.flags.alarm).to.equal('smoke'); // Smoke takes highest priority
       });
 
-      it('should set occupied flag when only occupancy is detected', () => {
+      it('should set alarm to gas when gas is detected and smoke is not', () => {
+        const config: Config = {
+          area: 'living_room',
+          gas: { entities: ['binary_sensor.gas_1'] },
+        };
+        getSmokeStateStub.returns(false);
+        getGasStateStub.returns(true);
+        getWaterStateStub.returns(true);
+        getOccupancyStateStub.returns(true);
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.alarm).to.equal('gas'); // Gas takes priority over water and occupancy
+      });
+
+      it('should set alarm to water when water is detected and smoke/gas are not', () => {
+        const config: Config = {
+          area: 'living_room',
+          water: { entities: ['binary_sensor.water_1'] },
+        };
+        getSmokeStateStub.returns(false);
+        getGasStateStub.returns(false);
+        getWaterStateStub.returns(true);
+        getOccupancyStateStub.returns(true);
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.alarm).to.equal('water'); // Water takes priority over occupancy
+      });
+
+      it('should set alarm to occupied when only occupancy is detected', () => {
         const config: Config = {
           area: 'living_room',
           occupancy: { entities: ['binary_sensor.motion_1'] },
         };
         getSmokeStateStub.returns(false);
+        getGasStateStub.returns(false);
+        getWaterStateStub.returns(false);
         getOccupancyStateStub.returns(true);
 
         const result = getRoomProperties(mockHass, config);
-        expect(result.flags.smoke).to.be.false;
-        expect(result.flags.occupied).to.be.true;
+        expect(result.flags.alarm).to.equal('occupied');
       });
 
-      it('should suppress occupancy when smoke is detected even if occupancy is also detected', () => {
+      it('should set alarm to undefined when no alarms are detected', () => {
         const config: Config = {
           area: 'living_room',
           occupancy: { entities: ['binary_sensor.motion_1'] },
           smoke: { entities: ['binary_sensor.smoke_1'] },
-        };
-        getSmokeStateStub.returns(true);
-        getOccupancyStateStub.returns(true);
-
-        const result = getRoomProperties(mockHass, config);
-        expect(result.flags.smoke).to.be.true;
-        expect(result.flags.occupied).to.be.false; // Smoke takes priority
-      });
-
-      it('should set both flags to false when neither is detected', () => {
-        const config: Config = {
-          area: 'living_room',
-          occupancy: { entities: ['binary_sensor.motion_1'] },
-          smoke: { entities: ['binary_sensor.smoke_1'] },
+          gas: { entities: ['binary_sensor.gas_1'] },
+          water: { entities: ['binary_sensor.water_1'] },
         };
         getSmokeStateStub.returns(false);
+        getGasStateStub.returns(false);
+        getWaterStateStub.returns(false);
         getOccupancyStateStub.returns(false);
 
         const result = getRoomProperties(mockHass, config);
-        expect(result.flags.smoke).to.be.false;
-        expect(result.flags.occupied).to.be.false;
+        expect(result.flags.alarm).to.be.undefined;
+      });
+
+      it('should prioritize smoke over all other alarms', () => {
+        const config: Config = {
+          area: 'living_room',
+          occupancy: { entities: ['binary_sensor.motion_1'] },
+          smoke: { entities: ['binary_sensor.smoke_1'] },
+          gas: { entities: ['binary_sensor.gas_1'] },
+          water: { entities: ['binary_sensor.water_1'] },
+        };
+        getSmokeStateStub.returns(true);
+        getGasStateStub.returns(true);
+        getWaterStateStub.returns(true);
+        getOccupancyStateStub.returns(true);
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.alarm).to.equal('smoke');
+      });
+
+      it('should prioritize gas over water and occupancy when smoke is not detected', () => {
+        const config: Config = {
+          area: 'living_room',
+          occupancy: { entities: ['binary_sensor.motion_1'] },
+          gas: { entities: ['binary_sensor.gas_1'] },
+          water: { entities: ['binary_sensor.water_1'] },
+        };
+        getSmokeStateStub.returns(false);
+        getGasStateStub.returns(true);
+        getWaterStateStub.returns(true);
+        getOccupancyStateStub.returns(true);
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.alarm).to.equal('gas');
+      });
+
+      it('should prioritize water over occupancy when smoke and gas are not detected', () => {
+        const config: Config = {
+          area: 'living_room',
+          occupancy: { entities: ['binary_sensor.motion_1'] },
+          water: { entities: ['binary_sensor.water_1'] },
+        };
+        getSmokeStateStub.returns(false);
+        getGasStateStub.returns(false);
+        getWaterStateStub.returns(true);
+        getOccupancyStateStub.returns(true);
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.alarm).to.equal('water');
       });
     });
   });

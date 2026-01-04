@@ -152,6 +152,7 @@ sensors:
 #### Icon Priority
 
 Icons are determined in the following priority order:
+
 1. **Configured icon** (`icon` property) - highest priority
 2. **State-based icon** (from `states` configuration when state matches)
 3. **Default entity icon** (from Home Assistant)

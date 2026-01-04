@@ -40,6 +40,8 @@ export function cleanAndFireConfigChanged(
   cleanEmptyProps(config, 'thresholds');
   cleanEmptyProps(config, 'occupancy');
   cleanEmptyProps(config, 'smoke');
+  cleanEmptyProps(config, 'gas');
+  cleanEmptyProps(config, 'water');
 
   // @ts-ignore
   fireEvent(element, 'config-changed', { config });

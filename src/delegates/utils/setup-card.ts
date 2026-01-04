@@ -1,4 +1,9 @@
-import { getOccupancyState, getSmokeState } from '@delegates/checks/occupancy';
+import {
+  getGasState,
+  getOccupancyState,
+  getSmokeState,
+  getWaterState,
+} from '@delegates/checks/occupancy';
 import {
   climateThresholds,
   type ClimateThresholds,
@@ -23,8 +28,7 @@ export interface RoomProperties {
   isIconActive: boolean;
   thresholds: ClimateThresholds;
   flags: {
-    occupied: boolean;
-    smoke: boolean;
+    alarm?: 'smoke' | 'gas' | 'water' | 'occupied';
     dark: boolean;
   };
 }
@@ -53,6 +57,8 @@ export const getRoomProperties = (
   const thresholds = climateThresholds(config, sensors);
   const image = getBackgroundImageUrl(hass, config);
   const smokeDetected = getSmokeState(hass, config.smoke);
+  const gasDetected = getGasState(hass, config.gas);
+  const waterDetected = getWaterState(hass, config.water);
   const occupied = getOccupancyState(hass, config.occupancy);
 
   // Calculate if room entity is active
@@ -74,6 +80,18 @@ export const getRoomProperties = (
   // isIconActive: room entity OR any regular light (NOT ambient) - used for icon styling
   const isIconActive = roomEntityActive || regularLightActive;
 
+  // Determine alarm state with priority: Smoke > Gas > Water > Occupancy
+  let alarm: 'smoke' | 'gas' | 'water' | 'occupied' | undefined;
+  if (smokeDetected) {
+    alarm = 'smoke';
+  } else if (gasDetected) {
+    alarm = 'gas';
+  } else if (waterDetected) {
+    alarm = 'water';
+  } else if (occupied) {
+    alarm = 'occupied';
+  }
+
   return {
     roomInfo,
     roomEntity,
@@ -83,9 +101,7 @@ export const getRoomProperties = (
     isIconActive,
     thresholds,
     flags: {
-      // Smoke takes priority over occupancy - if smoke is detected, don't show occupancy
-      occupied: smokeDetected ? false : occupied,
-      smoke: smokeDetected,
+      alarm,
       dark: hass.themes.darkMode,
     },
   };

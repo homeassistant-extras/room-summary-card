@@ -744,6 +744,134 @@ describe('editor-schema.ts', () => {
             },
           ],
         },
+        {
+          name: 'gas',
+          label: 'editor.alarm.gas_detection',
+          type: 'expandable',
+          icon: 'mdi:gas-cylinder',
+          schema: [
+            {
+              name: 'entities',
+              label: 'editor.alarm.gas_sensors',
+              required: true,
+              selector: {
+                entity: {
+                  multiple: true,
+                  include_entities: entities,
+                  filter: {
+                    domain: ['binary_sensor'],
+                    device_class: ['gas'],
+                  },
+                },
+              },
+            },
+            {
+              name: 'card_border_color',
+              label: 'editor.card.card_border_color_gas',
+              required: false,
+              selector: { ui_color: {} },
+            },
+            {
+              name: 'icon_color',
+              label: 'editor.icon.icon_background_color_gas',
+              required: false,
+              selector: { ui_color: {} },
+            },
+            {
+              name: 'options',
+              label: 'editor.alarm.alarm_options',
+              required: false,
+              selector: {
+                select: {
+                  multiple: true,
+                  mode: 'list',
+                  options: [
+                    {
+                      label: 'editor.card.disable_card_border',
+                      value: 'disabled_card_styles',
+                    },
+                    {
+                      label: 'editor.card.disable_card_border_animations',
+                      value: 'disabled_card_styles_animation',
+                    },
+                    {
+                      label: 'editor.icon.disable_icon_color',
+                      value: 'disable_icon_styles',
+                    },
+                    {
+                      label: 'editor.icon.disable_icon_animations',
+                      value: 'disable_icon_animation',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        {
+          name: 'water',
+          label: 'editor.alarm.water_detection',
+          type: 'expandable',
+          icon: 'mdi:water-alert',
+          schema: [
+            {
+              name: 'entities',
+              label: 'editor.alarm.water_sensors',
+              required: true,
+              selector: {
+                entity: {
+                  multiple: true,
+                  include_entities: entities,
+                  filter: {
+                    domain: ['binary_sensor'],
+                    device_class: ['moisture'],
+                  },
+                },
+              },
+            },
+            {
+              name: 'card_border_color',
+              label: 'editor.card.card_border_color_water',
+              required: false,
+              selector: { ui_color: {} },
+            },
+            {
+              name: 'icon_color',
+              label: 'editor.icon.icon_background_color_water',
+              required: false,
+              selector: { ui_color: {} },
+            },
+            {
+              name: 'options',
+              label: 'editor.alarm.alarm_options',
+              required: false,
+              selector: {
+                select: {
+                  multiple: true,
+                  mode: 'list',
+                  options: [
+                    {
+                      label: 'editor.card.disable_card_border',
+                      value: 'disabled_card_styles',
+                    },
+                    {
+                      label: 'editor.card.disable_card_border_animations',
+                      value: 'disabled_card_styles_animation',
+                    },
+                    {
+                      label: 'editor.icon.disable_icon_color',
+                      value: 'disable_icon_styles',
+                    },
+                    {
+                      label: 'editor.icon.disable_icon_animations',
+                      value: 'disable_icon_animation',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
       ]);
     });
   });

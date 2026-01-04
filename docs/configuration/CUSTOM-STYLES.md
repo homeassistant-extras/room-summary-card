@@ -466,7 +466,7 @@ For easier icon visibility adjustment, you can use the `icon_opacity_preset` opt
 ```yaml
 type: custom:room-summary-card
 area: living_room
-icon_opacity_preset: high_visibility  # Options: default, medium, high_visibility
+icon_opacity_preset: high_visibility # Options: default, medium, high_visibility
 ```
 
 This is equivalent to setting the opacity CSS variables but provides a simpler interface. See the [main configuration documentation](../CONFIGURATION.md#icon-opacity-preset) for details.

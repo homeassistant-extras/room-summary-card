@@ -103,16 +103,10 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   isActive?: boolean;
 
   /**
-   * Whether the room is occupied (for occupancy styling)
+   * Current alarm state: 'smoke', 'gas', 'water', 'occupied', or undefined
    */
-  @property({ type: Boolean, reflect: true })
-  occupied?: boolean;
-
-  /**
-   * Whether smoke is detected (for smoke styling, takes priority over occupancy)
-   */
-  @property({ type: Boolean, reflect: true })
-  smoke?: boolean;
+  @property({ type: String, reflect: true })
+  alarm?: 'smoke' | 'gas' | 'water' | 'occupied';
 
   /**
    * Returns the component's styles

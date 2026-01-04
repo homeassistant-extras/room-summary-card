@@ -1,6 +1,6 @@
-import { computeEntityIcon } from '@theme/render/loot-box-icon';
 import * as featureModule from '@config/feature';
 import { createStateEntity } from '@test/test-helpers';
+import { computeEntityIcon } from '@theme/render/loot-box-icon';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
@@ -248,4 +248,3 @@ describe('loot-box-icon.ts', () => {
     });
   });
 });
-

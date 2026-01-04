@@ -1,6 +1,6 @@
-# Alarm Configuration (Occupancy & Smoke Detection)
+# Alarm Configuration (Occupancy, Smoke, Gas & Water Detection)
 
-The Room Summary Card supports alarm detection to provide visual feedback when rooms are occupied or when smoke is detected. This feature uses motion, occupancy, presence, or smoke sensors to dynamically change the card's appearance based on room status.
+The Room Summary Card supports alarm detection to provide visual feedback when rooms are occupied, when smoke is detected, when gas is detected, or when water is detected. This feature uses motion, occupancy, presence, smoke, gas, or moisture sensors to dynamically change the card's appearance based on room status.
 
 ![Occupancy](../../assets/occupancy.png)
 
@@ -8,10 +8,10 @@ The Room Summary Card supports alarm detection to provide visual feedback when r
 
 Alarm detection allows you to:
 
-- **Visual Indicators**: Change card borders and room icon colors when occupied or smoke is detected
-- **Multiple Sensors**: Combine multiple motion/occupancy/smoke sensors for reliable detection
+- **Visual Indicators**: Change card borders and room icon colors when alarms are detected
+- **Multiple Sensors**: Combine multiple sensors for reliable detection
 - **Customizable Styling**: Control which visual effects are applied
-- **Priority System**: Smoke detection takes priority over occupancy detection and uses a different color (default: red)
+- **Priority System**: Smoke > Gas > Water > Occupancy (higher priority alarms suppress lower priority ones)
 
 ## Basic Configuration
 
@@ -48,7 +48,43 @@ This configuration will:
 - Monitor the specified smoke detectors
 - Apply visual indicators when smoke is detected
 - Use error color by default (typically red)
-- **Take priority over occupancy detection** - if smoke is detected, occupancy indicators are suppressed
+- **Take priority over all other alarms** - if smoke is detected, all other alarm indicators are suppressed
+
+### Simple Gas Detection
+
+```yaml
+type: custom:room-summary-card
+area: basement
+gas:
+  entities:
+    - binary_sensor.basement_gas_detector
+    - binary_sensor.basement_gas_alarm
+```
+
+This configuration will:
+
+- Monitor the specified gas sensors
+- Apply visual indicators when gas is detected
+- Use orange color by default (`#FF9800`)
+- **Take priority over water and occupancy** - if gas is detected, water and occupancy indicators are suppressed
+
+### Simple Water Detection
+
+```yaml
+type: custom:room-summary-card
+area: bathroom
+water:
+  entities:
+    - binary_sensor.bathroom_water_leak
+    - binary_sensor.bathroom_moisture_sensor
+```
+
+This configuration will:
+
+- Monitor the specified water sensors
+- Apply visual indicators when water is detected
+- Use blue color by default (`#2196F3`)
+- **Take priority over occupancy** - if water is detected, occupancy indicators are suppressed
 
 ### Combined Occupancy and Smoke Detection
 
@@ -68,7 +104,7 @@ smoke:
   icon_color: '#FF1744' # Red icon background when smoke detected
 ```
 
-**Important**: When both occupancy and smoke are configured, smoke detection takes priority. If smoke is detected, the smoke colors and styles are used, and occupancy indicators are suppressed.
+**Important**: When multiple alarms are configured, the priority system applies: Smoke > Gas > Water > Occupancy. Higher priority alarms suppress lower priority ones.
 
 ### With Custom Colors
 
@@ -207,6 +243,33 @@ smoke:
 
 **Priority**: When smoke is detected, it takes priority over occupancy. The smoke colors and styles will be used, and occupancy indicators will be suppressed.
 
+### Combined All Alarms
+
+Use all alarm types together:
+
+```yaml
+type: custom:room-summary-card
+area: basement
+occupancy:
+  entities:
+    - binary_sensor.basement_motion
+  card_border_color: '#4CAF50' # Green when occupied
+smoke:
+  entities:
+    - binary_sensor.basement_smoke_detector
+  card_border_color: '#F44336' # Red when smoke detected (highest priority)
+gas:
+  entities:
+    - binary_sensor.basement_gas_detector
+  card_border_color: '#FF9800' # Orange when gas detected (second priority)
+water:
+  entities:
+    - binary_sensor.basement_water_leak
+  card_border_color: '#2196F3' # Blue when water detected (third priority)
+```
+
+**Priority**: Smoke > Gas > Water > Occupancy. Higher priority alarms suppress lower priority ones.
+
 ### Minimal Visual Feedback
 
 Only change the icon color without border effects:
@@ -276,6 +339,18 @@ The occupancy detection works with any binary sensor that has one of these devic
 The smoke detection works with binary sensors that have the `smoke` device class:
 
 - **`smoke`**: Smoke detectors (e.g., `binary_sensor.kitchen_smoke_detector`)
+
+### Gas Detection
+
+The gas detection works with binary sensors that have the `gas` device class:
+
+- **`gas`**: Gas sensors (e.g., `binary_sensor.basement_gas_detector`)
+
+### Water Detection
+
+The water detection works with binary sensors that have the `moisture` device class:
+
+- **`moisture`**: Water/moisture sensors (e.g., `binary_sensor.bathroom_water_leak`)
 
 ### Device Tracker Integration
 

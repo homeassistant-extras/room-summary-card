@@ -6,8 +6,10 @@ import {
 
 import { hasFeature } from '@config/feature';
 import {
+  getGasCssVars,
   getOccupancyCssVars,
   getSmokeCssVars,
+  getWaterCssVars,
 } from '@delegates/checks/occupancy';
 import type { ClimateThresholds } from '@delegates/checks/thresholds';
 import { stateActive } from '@hass/common/entity/state_active';
@@ -31,8 +33,7 @@ import { getRgbColor } from '../get-rgb';
  * @param hass - The Home Assistant instance containing theme and state information.
  * @param config - The configuration object for the card.
  * @param entity - The entity information, including its current state.
- * @param isOccupied - Whether the room is occupied.
- * @param isSmokeDetected - Whether smoke is detected (takes priority over occupancy).
+ * @param alarm - Current alarm state: 'smoke', 'gas', 'water', 'occupied', or undefined.
  * @param image - (Optional) A URL or path to a background image for the card.
  * @param isActive - Whether the room is considered active (for styling).
  * @param thresholds - Climate threshold results containing hot/humid flags and custom colors.
@@ -43,8 +44,7 @@ export const renderCardStyles = (
   hass: HomeAssistant,
   config: Config,
   entity: EntityInformation,
-  isOccupied: boolean,
-  isSmokeDetected: boolean,
+  alarm?: 'smoke' | 'gas' | 'water' | 'occupied',
   image?: string | null,
   isActive: boolean = false,
   thresholds?: ClimateThresholds,
@@ -66,15 +66,27 @@ export const renderCardStyles = (
   }
   // Fall back to entity's theme color if no ambient light color
   if (!themeOverride) {
-    themeOverride = getThemeColorOverride(hass, entity, thresholdResult, isActive);
+    themeOverride = getThemeColorOverride(
+      hass,
+      entity,
+      thresholdResult,
+      isActive,
+    );
   }
 
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   const opacity = getBackgroundOpacity(config, isActive);
-  // Smoke takes priority over occupancy - if smoke is detected, use smoke CSS vars
-  const alarmVars = isSmokeDetected
-    ? getSmokeCssVars(isSmokeDetected, config.smoke)
-    : getOccupancyCssVars(isOccupied, config.occupancy);
+  // Get alarm CSS vars based on current alarm state
+  let alarmVars: Record<string, string> = {};
+  if (alarm === 'smoke') {
+    alarmVars = getSmokeCssVars(true, config.smoke);
+  } else if (alarm === 'gas') {
+    alarmVars = getGasCssVars(true, config.gas);
+  } else if (alarm === 'water') {
+    alarmVars = getWaterCssVars(true, config.water);
+  } else if (alarm === 'occupied') {
+    alarmVars = getOccupancyCssVars(true, config.occupancy);
+  }
 
   // Use ambient light's state for color if active, otherwise use entity's state
   const stateForColor = activeAmbientLight || state;

@@ -61,12 +61,16 @@
       "icon_background": "Icon Background",
       "icon_background_color_occupied": "Icon Background Color (Occupied)",
       "icon_background_color_smoke": "Icon Background Color (Smoke Detected)",
+      "icon_background_color_gas": "Icon Background Color (Gas Detected)",
+      "icon_background_color_water": "Icon Background Color (Water Detected)",
       "hide_icon_only": "Hide Icon Only",
       "hide_room_icon": "Hide Room Icon"
     },
     "card": {
       "card_border_color_occupied": "Card Border Color (Occupied)",
       "card_border_color_smoke": "Card Border Color (Smoke Detected)",
+      "card_border_color_gas": "Card Border Color (Gas Detected)",
+      "card_border_color_water": "Card Border Color (Water Detected)",
       "disable_card_border": "Disable Card Border",
       "disable_card_border_animations": "Disable Card Border Animations",
       "skip_card_background_styles": "Skip Card Background Styles"
@@ -120,11 +124,15 @@
       "occupancy_info": "Configure motion, occupancy, and presence detection sensors. When any sensor detects activity, the card border and room icon can change color to indicate the room is occupied."
     },
     "alarm": {
-      "alarm_info": "Configure alarm detection sensors. Occupancy sensors detect motion/presence, while smoke detectors detect smoke. When smoke is detected, it takes priority over occupancy and uses a different color (default: red).",
+      "alarm_info": "Configure alarm detection sensors. Occupancy sensors detect motion/presence, smoke detectors detect smoke, gas sensors detect gas, and water sensors detect water. Priority: Smoke > Gas > Water > Occupancy.",
       "occupancy_detection": "Occupancy Detection",
       "smoke_detection": "Smoke Detection",
+      "gas_detection": "Gas Detection",
+      "water_detection": "Water Detection",
       "motion_occupancy_presence_sensors": "Motion/Occupancy/Presence Sensors",
       "smoke_detectors": "Smoke Detectors",
+      "gas_sensors": "Gas Sensors",
+      "water_sensors": "Water Sensors",
       "alarm_options": "Options"
     },
     "styles": {

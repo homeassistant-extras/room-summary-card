@@ -148,3 +148,61 @@ export const getSmokeCssVars = (
     'smoke-pulse',
   );
 };
+
+/**
+ * Gets the current gas state for a configured gas detector
+ * @param hass Home Assistant instance
+ * @param config Gas configuration
+ * @returns True if gas is detected, false otherwise
+ */
+export const getGasState = (
+  hass: HomeAssistant,
+  config?: AlarmConfig,
+): boolean => {
+  return getAlarmState(hass, config);
+};
+
+/**
+ * Gets CSS variables for gas styling based on current state
+ * @param isGasDetected Current gas detection state
+ * @param config Gas configuration
+ * @returns Object with CSS variable names and values
+ */
+export const getGasCssVars = (
+  isGasDetected: boolean,
+  config?: AlarmConfig,
+): Record<string, string> => {
+  return getAlarmCssVars(isGasDetected, config, 'gas', '#FF9800', 'gas-pulse');
+};
+
+/**
+ * Gets the current water state for a configured water sensor
+ * @param hass Home Assistant instance
+ * @param config Water configuration
+ * @returns True if water is detected, false otherwise
+ */
+export const getWaterState = (
+  hass: HomeAssistant,
+  config?: AlarmConfig,
+): boolean => {
+  return getAlarmState(hass, config);
+};
+
+/**
+ * Gets CSS variables for water styling based on current state
+ * @param isWaterDetected Current water detection state
+ * @param config Water configuration
+ * @returns Object with CSS variable names and values
+ */
+export const getWaterCssVars = (
+  isWaterDetected: boolean,
+  config?: AlarmConfig,
+): Record<string, string> => {
+  return getAlarmCssVars(
+    isWaterDetected,
+    config,
+    'water',
+    '#2196F3',
+    'water-pulse',
+  );
+};

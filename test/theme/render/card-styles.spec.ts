@@ -42,6 +42,8 @@ describe('card-styles.ts', () => {
   let getBackgroundOpacityStub: sinon.SinonStub;
   let getOccupancyCssVarsStub: sinon.SinonStub;
   let getSmokeCssVarsStub: sinon.SinonStub;
+  let getGasCssVarsStub: sinon.SinonStub;
+  let getWaterCssVarsStub: sinon.SinonStub;
   let stateColorBrightnessStub: sinon.SinonStub;
   let getRgbColorStub: sinon.SinonStub;
 
@@ -72,6 +74,8 @@ describe('card-styles.ts', () => {
       'getOccupancyCssVars',
     );
     getSmokeCssVarsStub = sandbox.stub(occupancyModule, 'getSmokeCssVars');
+    getGasCssVarsStub = sandbox.stub(occupancyModule, 'getGasCssVars');
+    getWaterCssVarsStub = sandbox.stub(occupancyModule, 'getWaterCssVars');
     getRgbColorStub = sandbox.stub(getRgbColorModule, 'getRgbColor');
 
     // Default stub behaviors
@@ -86,6 +90,8 @@ describe('card-styles.ts', () => {
     });
     getOccupancyCssVarsStub.returns({});
     getSmokeCssVarsStub.returns({});
+    getGasCssVarsStub.returns({});
+    getWaterCssVarsStub.returns({});
     getRgbColorStub.returns(undefined);
 
     mockHass = { themes: { darkMode: false } };
@@ -103,8 +109,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         false,
         undefined,
@@ -120,8 +125,6 @@ describe('card-styles.ts', () => {
         ),
       ).to.be.true;
       expect(getBackgroundOpacityStub.calledWith(mockConfig, false)).to.be.true;
-      expect(getOccupancyCssVarsStub.calledWith(false, mockConfig.occupancy)).to
-        .be.true;
       expect(styles).to.deep.equal(
         styleMap({
           '--background-color-card': undefined,
@@ -152,8 +155,7 @@ describe('card-styles.ts', () => {
         mockHass,
         configWithStyles,
         entity,
-        false,
-        false,
+        undefined,
         image,
         true,
         undefined,
@@ -190,8 +192,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         true,
       );
@@ -225,8 +226,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        true,
-        false,
+        'occupied',
         undefined,
         false,
         undefined,
@@ -268,8 +268,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         false,
         undefined,
@@ -301,8 +300,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         undefined as any,
         undefined,
@@ -335,8 +333,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         false,
         undefined,
@@ -362,8 +359,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         false,
         undefined,
@@ -394,8 +390,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         false,
         thresholds,
@@ -426,8 +421,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         false,
         thresholds,
@@ -458,8 +452,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         false,
         thresholds,
@@ -491,8 +484,7 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        false,
-        false,
+        undefined,
         undefined,
         false,
         thresholds,
@@ -536,8 +528,7 @@ describe('card-styles.ts', () => {
           mockHass,
           mockConfig,
           entity,
-          false,
-          false,
+          undefined,
           undefined,
           false,
           undefined,
@@ -568,8 +559,7 @@ describe('card-styles.ts', () => {
           mockHass,
           mockConfig,
           entity,
-          false,
-          false,
+          undefined,
           undefined,
           false,
           undefined,
@@ -603,8 +593,7 @@ describe('card-styles.ts', () => {
           mockHass,
           mockConfig,
           entity,
-          false,
-          false,
+          undefined,
           undefined,
           false,
           undefined,
@@ -629,8 +618,7 @@ describe('card-styles.ts', () => {
           mockHass,
           mockConfig,
           entity,
-          false,
-          false,
+          undefined,
           undefined,
           false,
           undefined,
@@ -659,8 +647,7 @@ describe('card-styles.ts', () => {
           mockHass,
           mockConfig,
           entity,
-          false,
-          false,
+          undefined,
           undefined,
           false,
           undefined,
@@ -709,8 +696,7 @@ describe('card-styles.ts', () => {
           mockHass,
           mockConfig,
           entity,
-          false,
-          false,
+          undefined,
           undefined,
           false,
           undefined,
@@ -754,8 +740,7 @@ describe('card-styles.ts', () => {
           mockHass,
           mockConfig,
           entity,
-          false,
-          false,
+          undefined,
           undefined,
           false,
           undefined,

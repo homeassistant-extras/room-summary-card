@@ -1,8 +1,12 @@
 import {
+  getGasCssVars,
+  getGasState,
   getOccupancyCssVars,
   getOccupancyState,
   getSmokeCssVars,
   getSmokeState,
+  getWaterCssVars,
+  getWaterState,
 } from '@delegates/checks/occupancy';
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
@@ -27,6 +31,10 @@ describe('occupancy.ts', () => {
         'binary_sensor.presence_1': s('binary_sensor', 'presence_1', 'on'),
         'binary_sensor.smoke_1': s('binary_sensor', 'smoke_1', 'on'),
         'binary_sensor.smoke_2': s('binary_sensor', 'smoke_2', 'off'),
+        'binary_sensor.gas_1': s('binary_sensor', 'gas_1', 'on'),
+        'binary_sensor.gas_2': s('binary_sensor', 'gas_2', 'off'),
+        'binary_sensor.water_1': s('binary_sensor', 'water_1', 'on'),
+        'binary_sensor.water_2': s('binary_sensor', 'water_2', 'off'),
       },
     } as any as HomeAssistant;
   });
@@ -488,6 +496,273 @@ describe('occupancy.ts', () => {
         '--smoke-icon-animation':
           'icon-breathe 3s ease-in-out infinite alternate',
       });
+    });
+  });
+
+  describe('getGasState', () => {
+    it('should return false when no config is provided', () => {
+      const result = getGasState(mockHass);
+      expect(result).to.be.false;
+    });
+
+    it('should return false when config has no entities', () => {
+      const config: AlarmConfig = { entities: [] };
+      const result = getGasState(mockHass, config);
+      expect(result).to.be.false;
+    });
+
+    it('should return true when any entity detects gas', () => {
+      stateActiveStub
+        .withArgs(mockHass.states['binary_sensor.gas_1'])
+        .returns(true);
+      stateActiveStub
+        .withArgs(mockHass.states['binary_sensor.gas_2'])
+        .returns(false);
+
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.gas_1', 'binary_sensor.gas_2'],
+      };
+      const result = getGasState(mockHass, config);
+      expect(result).to.be.true;
+    });
+
+    it('should return false when no entities detect gas', () => {
+      stateActiveStub.returns(false);
+
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.gas_1', 'binary_sensor.gas_2'],
+      };
+      const result = getGasState(mockHass, config);
+      expect(result).to.be.false;
+    });
+
+    it('should handle non-existent entities gracefully', () => {
+      stateActiveStub.returns(false);
+
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.non_existent', 'binary_sensor.gas_1'],
+      };
+      const result = getGasState(mockHass, config);
+      expect(result).to.be.false;
+    });
+  });
+
+  describe('getGasCssVars', () => {
+    it('should return empty object when no config is provided', () => {
+      const result = getGasCssVars(false);
+      expect(result).to.deep.equal({});
+    });
+
+    it('should return empty object when gas is not detected', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.gas_1'],
+        card_border_color: '#ff0000',
+        icon_color: '#ff0000',
+      };
+      const result = getGasCssVars(false, config);
+      expect(result).to.deep.equal({});
+    });
+
+    it('should return card border styles when gas detected with default colors', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.gas_1'],
+      };
+      const result = getGasCssVars(true, config);
+
+      expect(result).to.deep.equal({
+        '--gas-card-border': '3px solid #FF9800',
+        '--gas-card-border-color': '#FF9800',
+        '--gas-card-animation': 'gas-pulse 2s ease-in-out infinite alternate',
+        '--gas-icon-color': '#FF9800',
+        '--gas-icon-animation':
+          'icon-breathe 3s ease-in-out infinite alternate',
+      });
+    });
+
+    it('should use custom card border color when provided', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.gas_1'],
+        card_border_color: '#ff5722',
+      };
+      const result = getGasCssVars(true, config);
+
+      expect(result['--gas-card-border']).to.equal('3px solid #ff5722');
+      expect(result['--gas-card-border-color']).to.equal('#ff5722');
+    });
+
+    it('should use custom icon color when provided', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.gas_1'],
+        icon_color: '#ff9800',
+      };
+      const result = getGasCssVars(true, config);
+
+      expect(result['--gas-icon-color']).to.equal('#ff9800');
+    });
+
+    it('should disable card border styles when disabled_card_styles option is set', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.gas_1'],
+        options: ['disabled_card_styles'],
+      };
+      const result = getGasCssVars(true, config);
+
+      expect(result['--gas-card-border']).to.be.undefined;
+      expect(result['--gas-card-border-color']).to.be.undefined;
+      expect(result['--gas-card-animation']).to.be.undefined;
+      expect(result['--gas-icon-color']).to.equal('#FF9800');
+      expect(result['--gas-icon-animation']).to.equal(
+        'icon-breathe 3s ease-in-out infinite alternate',
+      );
+    });
+
+    it('should handle multiple disable options simultaneously', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.gas_1'],
+        options: [
+          'disabled_card_styles',
+          'disabled_card_styles_animation',
+          'disable_icon_styles',
+          'disable_icon_animation',
+        ],
+      };
+      const result = getGasCssVars(true, config);
+
+      expect(result).to.deep.equal({});
+    });
+  });
+
+  describe('getWaterState', () => {
+    it('should return false when no config is provided', () => {
+      const result = getWaterState(mockHass);
+      expect(result).to.be.false;
+    });
+
+    it('should return false when config has no entities', () => {
+      const config: AlarmConfig = { entities: [] };
+      const result = getWaterState(mockHass, config);
+      expect(result).to.be.false;
+    });
+
+    it('should return true when any entity detects water', () => {
+      stateActiveStub
+        .withArgs(mockHass.states['binary_sensor.water_1'])
+        .returns(true);
+      stateActiveStub
+        .withArgs(mockHass.states['binary_sensor.water_2'])
+        .returns(false);
+
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.water_1', 'binary_sensor.water_2'],
+      };
+      const result = getWaterState(mockHass, config);
+      expect(result).to.be.true;
+    });
+
+    it('should return false when no entities detect water', () => {
+      stateActiveStub.returns(false);
+
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.water_1', 'binary_sensor.water_2'],
+      };
+      const result = getWaterState(mockHass, config);
+      expect(result).to.be.false;
+    });
+
+    it('should handle non-existent entities gracefully', () => {
+      stateActiveStub.returns(false);
+
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.non_existent', 'binary_sensor.water_1'],
+      };
+      const result = getWaterState(mockHass, config);
+      expect(result).to.be.false;
+    });
+  });
+
+  describe('getWaterCssVars', () => {
+    it('should return empty object when no config is provided', () => {
+      const result = getWaterCssVars(false);
+      expect(result).to.deep.equal({});
+    });
+
+    it('should return empty object when water is not detected', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.water_1'],
+        card_border_color: '#0000ff',
+        icon_color: '#0000ff',
+      };
+      const result = getWaterCssVars(false, config);
+      expect(result).to.deep.equal({});
+    });
+
+    it('should return card border styles when water detected with default colors', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.water_1'],
+      };
+      const result = getWaterCssVars(true, config);
+
+      expect(result).to.deep.equal({
+        '--water-card-border': '3px solid #2196F3',
+        '--water-card-border-color': '#2196F3',
+        '--water-card-animation':
+          'water-pulse 2s ease-in-out infinite alternate',
+        '--water-icon-color': '#2196F3',
+        '--water-icon-animation':
+          'icon-breathe 3s ease-in-out infinite alternate',
+      });
+    });
+
+    it('should use custom card border color when provided', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.water_1'],
+        card_border_color: '#03a9f4',
+      };
+      const result = getWaterCssVars(true, config);
+
+      expect(result['--water-card-border']).to.equal('3px solid #03a9f4');
+      expect(result['--water-card-border-color']).to.equal('#03a9f4');
+    });
+
+    it('should use custom icon color when provided', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.water_1'],
+        icon_color: '#2196f3',
+      };
+      const result = getWaterCssVars(true, config);
+
+      expect(result['--water-icon-color']).to.equal('#2196f3');
+    });
+
+    it('should disable card border styles when disabled_card_styles option is set', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.water_1'],
+        options: ['disabled_card_styles'],
+      };
+      const result = getWaterCssVars(true, config);
+
+      expect(result['--water-card-border']).to.be.undefined;
+      expect(result['--water-card-border-color']).to.be.undefined;
+      expect(result['--water-card-animation']).to.be.undefined;
+      expect(result['--water-icon-color']).to.equal('#2196F3');
+      expect(result['--water-icon-animation']).to.equal(
+        'icon-breathe 3s ease-in-out infinite alternate',
+      );
+    });
+
+    it('should handle multiple disable options simultaneously', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.water_1'],
+        options: [
+          'disabled_card_styles',
+          'disabled_card_styles_animation',
+          'disable_icon_styles',
+          'disable_icon_animation',
+        ],
+      };
+      const result = getWaterCssVars(true, config);
+
+      expect(result).to.deep.equal({});
     });
   });
 });

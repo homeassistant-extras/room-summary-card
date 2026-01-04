@@ -3,6 +3,7 @@ import type { HaFormSchema } from '@hass/components/ha-form/types';
 import { getSensorNumericDeviceClasses } from '@hass/data/sensor';
 import type { HomeAssistant } from '@hass/types';
 import { localize } from '@localize/localize';
+import type { TranslationKey } from '@type/locale';
 import { INTERACTIONS } from './schema-constants';
 
 export const areaEntities = (hass: HomeAssistant, area: string) => {
@@ -466,57 +467,91 @@ export const getMainSchemaRest = (
 ];
 
 /**
- * Returns schema for a single alarm configuration (occupancy or smoke)
+ * Returns schema for a single alarm configuration (occupancy, smoke, gas_leak, or water_leak)
  */
 const getAlarmConfigSchema = (
   hass: HomeAssistant,
   entities: string[],
-  alarmType: 'occupancy' | 'smoke',
+  alarmType: 'occupancy' | 'smoke' | 'gas' | 'water',
 ): HaFormSchema => {
   const isSmoke = alarmType === 'smoke';
+  const isGas = alarmType === 'gas';
+  const isWater = alarmType === 'water';
+
+  let label: TranslationKey;
+  let icon: string;
+  let entitiesLabel: TranslationKey;
+  let deviceClass: string[];
+
+  if (isSmoke) {
+    label = 'editor.alarm.smoke_detection';
+    icon = 'mdi:smoke-detector';
+    entitiesLabel = 'editor.alarm.smoke_detectors';
+    deviceClass = ['smoke'];
+  } else if (isGas) {
+    label = 'editor.alarm.gas_detection';
+    icon = 'mdi:gas-cylinder';
+    entitiesLabel = 'editor.alarm.gas_sensors';
+    deviceClass = ['gas'];
+  } else if (isWater) {
+    label = 'editor.alarm.water_detection';
+    icon = 'mdi:water-alert';
+    entitiesLabel = 'editor.alarm.water_sensors';
+    deviceClass = ['moisture'];
+  } else {
+    label = 'editor.alarm.occupancy_detection';
+    icon = 'mdi:motion-sensor';
+    entitiesLabel = 'editor.alarm.motion_occupancy_presence_sensors';
+    deviceClass = ['motion', 'occupancy', 'presence'];
+  }
+
+  let cardBorderColorLabel: TranslationKey;
+  let iconColorLabel: TranslationKey;
+
+  if (isSmoke) {
+    cardBorderColorLabel = 'editor.card.card_border_color_smoke';
+    iconColorLabel = 'editor.icon.icon_background_color_smoke';
+  } else if (isGas) {
+    cardBorderColorLabel = 'editor.card.card_border_color_gas';
+    iconColorLabel = 'editor.icon.icon_background_color_gas';
+  } else if (isWater) {
+    cardBorderColorLabel = 'editor.card.card_border_color_water';
+    iconColorLabel = 'editor.icon.icon_background_color_water';
+  } else {
+    cardBorderColorLabel = 'editor.card.card_border_color_occupied';
+    iconColorLabel = 'editor.icon.icon_background_color_occupied';
+  }
+
   return {
     name: alarmType,
-    label: isSmoke
-      ? 'editor.alarm.smoke_detection'
-      : 'editor.alarm.occupancy_detection',
+    label,
     type: 'expandable' as const,
-    icon: isSmoke ? 'mdi:smoke-detector' : 'mdi:motion-sensor',
+    icon,
     schema: [
       {
         name: 'entities',
-        label: isSmoke
-          ? 'editor.alarm.smoke_detectors'
-          : 'editor.alarm.motion_occupancy_presence_sensors',
+        label: entitiesLabel,
         required: true,
         selector: {
           entity: {
             multiple: true,
             include_entities: entities,
-            filter: isSmoke
-              ? {
-                  domain: ['binary_sensor'],
-                  device_class: ['smoke'],
-                }
-              : {
-                  domain: ['binary_sensor'],
-                  device_class: ['motion', 'occupancy', 'presence'],
-                },
+            filter: {
+              domain: ['binary_sensor'],
+              device_class: deviceClass,
+            },
           },
         },
       },
       {
         name: 'card_border_color',
-        label: isSmoke
-          ? 'editor.card.card_border_color_smoke'
-          : 'editor.card.card_border_color_occupied',
+        label: cardBorderColorLabel,
         required: false,
         selector: { ui_color: {} },
       },
       {
         name: 'icon_color',
-        label: isSmoke
-          ? 'editor.icon.icon_background_color_smoke'
-          : 'editor.icon.icon_background_color_occupied',
+        label: iconColorLabel,
         required: false,
         selector: { ui_color: {} },
       },
@@ -563,6 +598,8 @@ export const getOccupancySchema = (
   return [
     getAlarmConfigSchema(hass, entities, 'occupancy'),
     getAlarmConfigSchema(hass, entities, 'smoke'),
+    getAlarmConfigSchema(hass, entities, 'gas'),
+    getAlarmConfigSchema(hass, entities, 'water'),
   ];
 };
 

@@ -60,6 +60,12 @@ export interface Config {
   /** Smoke detection configuration */
   smoke?: AlarmConfig;
 
+  /** Gas detection configuration */
+  gas?: AlarmConfig;
+
+  /** Water detection configuration */
+  water?: AlarmConfig;
+
   /** Custom thresholds for temperature and humidity */
   thresholds?: {
     /** Temperature threshold configurations (array format) */

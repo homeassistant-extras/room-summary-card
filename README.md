@@ -126,17 +126,21 @@ In this example, the card will trigger the hot border if either the averaged tem
 
 📖 **See [Problem Detection Example](docs/advanced/README-EXAMPLES.md#problem-detection) for configuration details.**
 
-### Occupancy Detection
+### Alarm Detection
 
-- Visual indicators when rooms are occupied using motion/occupancy sensors
-- Dynamic card borders and room icon colors based on occupancy status
-- Support for multiple sensor types (motion, occupancy, presence, device trackers)
-- Customizable colors and animation options
+- **Occupancy Detection**: Visual indicators when rooms are occupied using motion/occupancy/presence sensors
+- **Smoke Detection**: Visual indicators when smoke is detected using smoke detectors
+- **Gas Detection**: Visual indicators when gas is detected using gas sensors
+- **Water Detection**: Visual indicators when water leaks are detected using moisture sensors
+- Dynamic card borders and room icon colors based on alarm status
+- Support for multiple sensor types per alarm category
+- Customizable colors and animation options for each alarm type
 - Granular control over which visual effects are applied
+- **Priority System**: Smoke > Gas > Water > Occupancy (higher priority alarms suppress lower priority ones)
 
 ![Occupancy](assets/occupancy.png)
 
-📖 **See [Occupancy Detection Example](docs/advanced/README-EXAMPLES.md#occupancy-detection) for configuration details.**
+📖 **See [Alarm Detection Example](docs/advanced/README-EXAMPLES.md#occupancy-detection) for configuration details.**
 
 ### Room Statistics
 
@@ -353,7 +357,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Multi-Light Background`**: card background lights up when any light entity in the room is on - thanks @joshkay, @ojm88, @fonix232
 - [x] **`Entity Picture Display`**: automatic display of entity pictures with optional override - thanks @Zipp0KMS, @pheitman
 - [x] **`Custom Labels`**: entity and sensor labels with state/threshold-based overrides - thanks @ojm88
-- [x] **`Smoke Detection`**: visual indicators for smoke detectors - thanks @Arjan-21
+- [x] **`Smoke, Gas, Water Detection`**: visual indicators for alarm states - thanks @Arjan-21, @robex2005
 - [x] **`Entity-Based Threshold Values`**: **⭐ Contributor ⭐** dynamic threshold based on entity - thanks @Micky2149
 - [x] **`Full Card Actions`**: make entire card clickable with larger touch targets for mobile-friendly navigation - thanks @devkaiwang
 - [x] **`Frosted Glass Theme Support`**: automatic detection and styling for Frosted Glass themes with transparent blurred card effects - thanks @devkaiwang

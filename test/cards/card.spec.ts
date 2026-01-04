@@ -49,8 +49,7 @@ describe('card.ts', () => {
         humidColor: undefined,
       },
       flags: {
-        occupied: true,
-        smoke: false,
+        alarm: 'occupied',
         dark: true,
       },
     });
@@ -106,7 +105,7 @@ describe('card.ts', () => {
       expect(card['_sensors']).to.exist;
       expect(card['_roomInformation']).to.exist;
       expect(card['dark']).to.be.true; // Since mockHass has darkMode: true
-      expect(card['occupied']).to.be.true; // Should be set based on occupancy state
+      expect(card['alarm']).to.equal('occupied'); // Should be set based on alarm state
     });
 
     it('should update _hass when formatEntityState changes', () => {

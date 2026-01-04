@@ -44,24 +44,24 @@ See [default entities](#default-entities)
 
 ## Configuration Options
 
-| Name           | Type             | Default                                | Description                                                     |
-| -------------- | ---------------- | -------------------------------------- | --------------------------------------------------------------- |
-| area           | string           | **Required**                           | The area identifier for the room (e.g., 'shed', 'kitchen')      |
-| area_name      | string           | area name                              | Custom area name                                                |
-| entity         | string \| object | `light.<area>_light` or `light.<area>` | Main entity for the room                                        |
-| entities       | array            | See below                              | Additional entities to display                                  |
-| sensors        | array            | See below                              | Array of sensor entities to display in the card label area      |
-| lights         | array            | auto-discovered                        | Array of light entities for multi-light background              |
-| navigate       | string           | area name (dash-separated)             | Custom navigation path when clicking the room name / icon       |
-| background     | object           | See below                              | Background image configuration                                  |
-| occupancy      | object           | See below                              | Occupancy detection configuration                               |
-| features       | list             | See below                              | Optional flags to toggle different features                     |
-| sensor_layout  | string           | `default`                              | Layout for sensor display: `default`, `stacked`, or `bottom`    |
-| sensor_classes | array            | See below                              | Device classes to average and display sensor readings for       |
-| thresholds     | object           | `80° / 60%`                            | Climate thresholds for temperature, humidity, and mold          |
-| slider_style   | string           | `minimalist`                           | Visual style of the slider track when slider feature is enabled |
-| icon_opacity_preset | string      | `default`                              | Icon opacity preset: `default`, `medium`, or `high_visibility` |
-| styles         | object           | `{}`                                   | Custom CSS styles for card areas                                |
+| Name                | Type             | Default                                | Description                                                     |
+| ------------------- | ---------------- | -------------------------------------- | --------------------------------------------------------------- |
+| area                | string           | **Required**                           | The area identifier for the room (e.g., 'shed', 'kitchen')      |
+| area_name           | string           | area name                              | Custom area name                                                |
+| entity              | string \| object | `light.<area>_light` or `light.<area>` | Main entity for the room                                        |
+| entities            | array            | See below                              | Additional entities to display                                  |
+| sensors             | array            | See below                              | Array of sensor entities to display in the card label area      |
+| lights              | array            | auto-discovered                        | Array of light entities for multi-light background              |
+| navigate            | string           | area name (dash-separated)             | Custom navigation path when clicking the room name / icon       |
+| background          | object           | See below                              | Background image configuration                                  |
+| occupancy           | object           | See below                              | Occupancy detection configuration                               |
+| features            | list             | See below                              | Optional flags to toggle different features                     |
+| sensor_layout       | string           | `default`                              | Layout for sensor display: `default`, `stacked`, or `bottom`    |
+| sensor_classes      | array            | See below                              | Device classes to average and display sensor readings for       |
+| thresholds          | object           | `80° / 60%`                            | Climate thresholds for temperature, humidity, and mold          |
+| slider_style        | string           | `minimalist`                           | Visual style of the slider track when slider feature is enabled |
+| icon_opacity_preset | string           | `default`                              | Icon opacity preset: `default`, `medium`, or `high_visibility`  |
+| styles              | object           | `{}`                                   | Custom CSS styles for card areas                                |
 
 ### Default Entities
 
@@ -206,9 +206,9 @@ icon_opacity_preset: high_visibility
 
 This feature can be configured via the editor dropdown in the Styles section, or directly in YAML configuration.
 
-## Alarm Detection (Occupancy & Smoke)
+## Alarm Detection (Occupancy, Smoke, Gas & Water)
 
-The card supports alarm detection using motion, occupancy, presence, or smoke sensors to provide visual feedback when rooms are occupied or when smoke is detected:
+The card supports alarm detection using motion, occupancy, presence, smoke, gas, or moisture sensors to provide visual feedback when rooms are occupied or when alarms are detected:
 
 ```yaml
 type: custom:room-summary-card
@@ -224,14 +224,24 @@ smoke:
     - binary_sensor.living_room_smoke_detector
   card_border_color: '#F44336' # Red border when smoke detected
   icon_color: '#FF1744' # Red icon background when smoke detected
+gas:
+  entities:
+    - binary_sensor.living_room_gas_detector
+  card_border_color: '#FF9800' # Orange border when gas detected
+  icon_color: '#FF5722' # Orange icon background when gas detected
+water:
+  entities:
+    - binary_sensor.living_room_water_leak
+  card_border_color: '#2196F3' # Blue border when water detected
+  icon_color: '#03A9F4' # Blue icon background when water detected
 ```
 
 **Features:**
 
-- Visual indicators (card borders, icon colors) when occupied or smoke is detected
-- Support for multiple sensor types (motion, occupancy, presence for occupancy; smoke for smoke detection)
+- Visual indicators (card borders, icon colors) when alarms are detected
+- Support for multiple sensor types (motion, occupancy, presence for occupancy; smoke for smoke detection; gas for gas detection; moisture for water detection)
 - Customizable styling options
-- **Priority system**: Smoke detection takes priority over occupancy detection and uses different colors (default: red for smoke, green for occupancy)
+- **Priority system**: Smoke > Gas > Water > Occupancy (higher priority alarms suppress lower priority ones and use different colors)
 
 See [Alarm Configuration](configuration/OCCUPANCY-CONFIGURATION.md) for complete documentation and examples.
 
