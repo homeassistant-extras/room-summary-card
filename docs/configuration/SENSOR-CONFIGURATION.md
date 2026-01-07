@@ -72,6 +72,82 @@ sensors:
           border-radius: 4px
 ```
 
+#### Threshold-Based Styling
+
+Configure dynamic colors, icons, and labels based on numeric sensor values using thresholds:
+
+```yaml
+sensors:
+  - entity_id: sensor.temperature
+    label: 'Temperature' # Fallback label
+    thresholds:
+      - threshold: 25
+        operator: gt
+        icon_color: red
+        icon: mdi:thermometer-alert
+        label: 'Hot' # Custom label when temperature > 25°C
+        styles:
+          animation: pulse 2s ease-in-out infinite
+      - threshold: 20
+        operator: gte
+        icon_color: green
+        icon: mdi:thermometer
+        label: 'Normal' # Custom label when temperature >= 20°C
+      - threshold: 15
+        operator: lt
+        icon_color: blue
+        icon: mdi:thermometer-low
+        label: 'Cold' # Custom label when temperature < 15°C
+  - entity_id: sensor.humidity
+    thresholds:
+      - threshold: 60
+        operator: gt
+        icon_color: red
+        icon: mdi:water-alert
+        styles:
+          color: red # make the label red
+      - threshold: 40
+        operator: gte
+        icon_color: green
+        icon: mdi:water
+      - threshold: 40
+        operator: lt
+        icon_color: blue
+        icon: mdi:water-outline
+```
+
+**Supported operators:** `gt` (>), `gte` (>=), `lt` (<), `lte` (<=), `eq` (=). Default is `gte`.
+
+Thresholds are evaluated in descending order (highest threshold first), and the first matching threshold is applied. This allows you to create ranges like "green between 40-60%" by configuring thresholds appropriately.
+
+**Attribute-based thresholds:**
+
+You can also compare against entity attributes instead of the state value:
+
+```yaml
+sensors:
+  - entity_id: sensor.weather_station
+    thresholds:
+      - threshold: 30
+        operator: gt
+        icon_color: red
+        attribute: temperature # Compare against temperature attribute instead of state
+```
+
+When a threshold matches, the card will:
+
+- Display the custom icon (if configured)
+- Apply the custom icon color
+- Display the custom label (if configured) instead of the sensor's state value
+- Apply any CSS styles defined in the `styles` property
+
+**Priority order:**
+
+1. **State-based colors/icons** (exact state matches) - highest priority
+2. **Threshold colors/icons** (based on numeric values)
+3. **Configured icon** (from `icon` property)
+4. **Default entity icon** (from Home Assistant)
+
 #### Displaying Entity Attributes Instead of State
 
 You can configure sensors to display a specific attribute value instead of the entity state:

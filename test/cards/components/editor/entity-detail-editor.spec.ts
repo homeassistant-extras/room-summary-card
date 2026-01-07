@@ -363,10 +363,19 @@ describe('entity-detail-editor.ts', () => {
       expect((statesRowEditor as any).hass).to.equal(mockHass);
     });
 
-    it('should render states row editor but not thresholds when type is sensor', async () => {
+    it('should render states row editor and thresholds editor when type is sensor', async () => {
       element.hass = mockHass;
       element.type = 'sensor';
-      element['_config'] = mockEntityConfig;
+      element['_config'] = {
+        ...mockEntityConfig,
+        thresholds: [
+          {
+            threshold: 25,
+            operator: 'gt',
+            icon_color: 'red',
+          },
+        ],
+      };
 
       const result = element.render() as TemplateResult;
       // Wrap in a container div to ensure proper querying
@@ -376,11 +385,51 @@ describe('entity-detail-editor.ts', () => {
       const statesRowEditors = el.querySelectorAll(
         'room-summary-states-row-editor',
       );
-      // Should have one states row editor (for states)
-      expect(statesRowEditors.length).to.equal(1);
-      // Should not have thresholds (mode should be 'states')
-      const statesRowEditor = statesRowEditors[0] as RoomSummaryStatesRowEditor;
-      expect(statesRowEditor.mode).to.equal('states');
+      // Should have two states row editors (one for states, one for thresholds)
+      expect(statesRowEditors.length).to.equal(2);
+      // Find the thresholds editor
+      const thresholdsEditor = Array.from(statesRowEditors).find(
+        (editor) => (editor as RoomSummaryStatesRowEditor).mode === 'thresholds',
+      ) as RoomSummaryStatesRowEditor;
+      expect(thresholdsEditor).to.exist;
+      expect(thresholdsEditor.mode).to.equal('thresholds');
+    });
+
+    it('should allow configuring thresholds for sensors', async () => {
+      element.hass = mockHass;
+      element.type = 'sensor';
+      const sensorConfig = {
+        entity_id: 'sensor.temperature',
+        thresholds: [
+          {
+            threshold: 25,
+            operator: 'gt',
+            icon_color: 'red',
+            icon: 'mdi:thermometer-alert',
+          },
+          {
+            threshold: 20,
+            operator: 'gte',
+            icon_color: 'green',
+            icon: 'mdi:thermometer',
+          },
+        ],
+      };
+      element['_config'] = sensorConfig;
+
+      const result = element.render() as TemplateResult;
+      const wrappedResult = html`<div>${result}</div>`;
+      const el = await fixture(wrappedResult);
+
+      const statesRowEditors = el.querySelectorAll(
+        'room-summary-states-row-editor',
+      );
+      // Find the thresholds editor
+      const thresholdsEditor = Array.from(statesRowEditors).find(
+        (editor) => (editor as RoomSummaryStatesRowEditor).mode === 'thresholds',
+      ) as RoomSummaryStatesRowEditor;
+      expect(thresholdsEditor).to.exist;
+      expect(thresholdsEditor.thresholds).to.deep.equal(sensorConfig.thresholds);
     });
 
     it('should not render states row editor when type is light', async () => {

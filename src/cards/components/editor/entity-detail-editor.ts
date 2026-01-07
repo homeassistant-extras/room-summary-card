@@ -276,13 +276,15 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
         : undefined;
 
     const thresholdsEditor =
-      this.type === 'entity'
+      this.type === 'entity' || this.type === 'sensor'
         ? html`
             <room-summary-states-row-editor
               .hass=${this.hass}
               .thresholds=${thresholds}
               .entityId=${this._config.entity_id}
               .mode=${'thresholds'}
+              .isSensor=${this.type === 'sensor'}
+              .isMainEntity=${this.isMainEntity}
               label=${localize(this.hass, 'editor.entity.thresholds')}
               @thresholds-value-changed=${this._thresholdsValueChanged}
             ></room-summary-states-row-editor>

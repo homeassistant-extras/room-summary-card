@@ -12,9 +12,6 @@ export interface EntityConfig extends BaseEntityConfig {
   /** Custom color for the off state */
   off_color?: string;
 
-  /** Threshold-based color configuration */
-  thresholds?: ThresholdConfig[];
-
   /** Action to perform on tap */
   tap_action?: ActionConfig;
 

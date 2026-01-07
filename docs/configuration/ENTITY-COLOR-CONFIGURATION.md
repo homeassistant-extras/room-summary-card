@@ -183,6 +183,8 @@ entities:
 
 **Supported operators:** `gt` (>), `gte` (>=), `lt` (<), `lte` (<=), `eq` (=). Default is `gte`.
 
+> **Note:** Sensors also support thresholds! See [Sensor Configuration](../configuration/SENSOR-CONFIGURATION.md#threshold-based-styling) for details on configuring thresholds for sensor entities.
+
 ## Color Priority
 
 Colors are applied in this priority order:

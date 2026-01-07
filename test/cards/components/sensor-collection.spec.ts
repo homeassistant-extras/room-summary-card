@@ -373,15 +373,15 @@ describe('sensor-collection.ts', () => {
   });
 
   describe('state-based sensor styling', () => {
-    let getStateResultStub: sinon.SinonStub;
+    let getThresholdResultStub: sinon.SinonStub;
 
     beforeEach(() => {
       element.hass = mockHass;
-      getStateResultStub = stub(thresholdColorModule, 'getStateResult');
+      getThresholdResultStub = stub(thresholdColorModule, 'getThresholdResult');
     });
 
     afterEach(() => {
-      getStateResultStub.restore();
+      getThresholdResultStub.restore();
     });
 
     it('should apply custom icon when state matches', async () => {
@@ -412,7 +412,7 @@ describe('sensor-collection.ts', () => {
         thresholdSensors: [],
       };
 
-      getStateResultStub.returns({
+      getThresholdResultStub.returns({
         icon: 'mdi:water',
         color: 'blue',
         styles: {},
@@ -458,7 +458,7 @@ describe('sensor-collection.ts', () => {
         thresholdSensors: [],
       };
 
-      getStateResultStub.returns({
+      getThresholdResultStub.returns({
         icon: 'mdi:water',
         color: 'blue',
         styles: { 'background-color': 'lightblue', padding: '4px' },
@@ -474,8 +474,8 @@ describe('sensor-collection.ts', () => {
       expect(el.tagName).to.equal('DIV');
       expect(el.classList.contains('sensor')).to.be.true;
       // Check that styleMap was called (styles may be applied via Lit's styleMap directive)
-      // In the test environment, we verify getStateResult was called with correct config
-      expect(getStateResultStub.called).to.be.true;
+      // In the test environment, we verify getThresholdResult was called with correct config
+      expect(getThresholdResultStub.called).to.be.true;
     });
 
     it('should use default icon when no state matches', async () => {
@@ -506,7 +506,7 @@ describe('sensor-collection.ts', () => {
         thresholdSensors: [],
       };
 
-      getStateResultStub.returns(undefined);
+      getThresholdResultStub.returns(undefined);
 
       const sensor = element.sensors.individual[0]!;
       const el = await fixture(
@@ -568,7 +568,7 @@ describe('sensor-collection.ts', () => {
         thresholdSensors: [],
       };
 
-      getStateResultStub.returns(undefined);
+      getThresholdResultStub.returns(undefined);
 
       const sensor = element.sensors.individual[0]!;
       const el = await fixture(
@@ -585,15 +585,15 @@ describe('sensor-collection.ts', () => {
   });
 
   describe('sensor icon configuration', () => {
-    let getStateResultStub: sinon.SinonStub;
+    let getThresholdResultStub: sinon.SinonStub;
 
     beforeEach(() => {
       element.hass = mockHass;
-      getStateResultStub = stub(thresholdColorModule, 'getStateResult');
+      getThresholdResultStub = stub(thresholdColorModule, 'getThresholdResult');
     });
 
     afterEach(() => {
-      getStateResultStub.restore();
+      getThresholdResultStub.restore();
     });
 
     it('should use configured icon when sensor config has icon property', async () => {
@@ -620,7 +620,7 @@ describe('sensor-collection.ts', () => {
         thresholdSensors: [],
       };
 
-      getStateResultStub.returns(undefined);
+      getThresholdResultStub.returns(undefined);
 
       const sensor = element.sensors.individual[0]!;
       const el = await fixture(
@@ -661,7 +661,7 @@ describe('sensor-collection.ts', () => {
         thresholdSensors: [],
       };
 
-      getStateResultStub.returns({
+      getThresholdResultStub.returns({
         icon: 'mdi:water',
         color: 'blue',
         styles: {},
@@ -706,7 +706,7 @@ describe('sensor-collection.ts', () => {
         thresholdSensors: [],
       };
 
-      getStateResultStub.returns({
+      getThresholdResultStub.returns({
         icon: 'mdi:water',
         color: 'blue',
         styles: {},
@@ -721,6 +721,358 @@ describe('sensor-collection.ts', () => {
       const icon = el.querySelector('ha-state-icon');
       expect(icon).to.exist;
       expect((icon as any)?.icon).to.equal('mdi:water');
+    });
+  });
+
+  describe('threshold-based sensor styling', () => {
+    let getThresholdResultStub: sinon.SinonStub;
+    let getEntityLabelStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      element.hass = mockHass;
+      getThresholdResultStub = stub(
+        thresholdColorModule,
+        'getThresholdResult',
+      ).returns(undefined);
+      getEntityLabelStub = stub(thresholdColorModule, 'getEntityLabel').returns(
+        undefined,
+      );
+    });
+
+    afterEach(() => {
+      getThresholdResultStub.restore();
+      getEntityLabelStub.restore();
+    });
+
+    it('should pass thresholds to getThresholdResult', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.temperature',
+            thresholds: [
+              {
+                threshold: 25,
+                operator: 'gt',
+                icon_color: 'red',
+                icon: 'mdi:thermometer-alert',
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.temperature', state: '30' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      const sensor = element.sensors.individual[0]!;
+      await fixture(element['renderSingleSensor'](sensor as EntityState));
+
+      // Verify getThresholdResult was called
+      expect(getThresholdResultStub.called).to.be.true;
+      const entityInfo = getThresholdResultStub.firstCall.args[0];
+      expect(entityInfo.config.thresholds).to.deep.equal([
+        {
+          threshold: 25,
+          operator: 'gt',
+          icon_color: 'red',
+          icon: 'mdi:thermometer-alert',
+        },
+      ]);
+    });
+
+    it('should apply threshold colors to sensor icons', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.temperature',
+            thresholds: [
+              {
+                threshold: 25,
+                operator: 'gt',
+                icon_color: 'red',
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.temperature', state: '30' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      getThresholdResultStub.returns({
+        color: 'red',
+        icon: undefined,
+        label: undefined,
+        styles: undefined,
+      });
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Check that the color is applied via CSS variable
+      // el itself is the sensor div
+      expect(el.classList.contains('sensor')).to.be.true;
+      const sensorDiv = el as HTMLElement;
+      expect(sensorDiv.style.getPropertyValue('--sensor-icon-color')).to.equal(
+        'red',
+      );
+    });
+
+    it('should apply threshold icons when threshold matches', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.temperature',
+            thresholds: [
+              {
+                threshold: 25,
+                operator: 'gt',
+                icon_color: 'red',
+                icon: 'mdi:thermometer-alert',
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.temperature', state: '30' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      getThresholdResultStub.returns({
+        color: 'red',
+        icon: 'mdi:thermometer-alert',
+        label: undefined,
+        styles: undefined,
+      });
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Should use threshold icon
+      const icon = el.querySelector('ha-state-icon');
+      expect(icon).to.exist;
+      expect((icon as any)?.icon).to.equal('mdi:thermometer-alert');
+    });
+
+    it('should apply threshold labels when threshold matches', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.temperature',
+            thresholds: [
+              {
+                threshold: 25,
+                operator: 'gt',
+                icon_color: 'red',
+                label: 'Hot',
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.temperature', state: '30' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      getThresholdResultStub.returns({
+        color: 'red',
+        icon: undefined,
+        label: 'Hot',
+        styles: undefined,
+      });
+      getEntityLabelStub.returns('Hot');
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Verify getEntityLabel was called with the threshold result
+      expect(getEntityLabelStub.called).to.be.true;
+    });
+
+    it('should apply threshold styles when threshold matches', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.temperature',
+            thresholds: [
+              {
+                threshold: 25,
+                operator: 'gt',
+                icon_color: 'red',
+                styles: {
+                  animation: 'pulse 2s ease-in-out infinite',
+                },
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.temperature', state: '30' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      getThresholdResultStub.returns({
+        color: 'red',
+        icon: undefined,
+        label: undefined,
+        styles: {
+          animation: 'pulse 2s ease-in-out infinite',
+        },
+      });
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      // Check that styles are applied
+      // el itself is the sensor div
+      expect(el.classList.contains('sensor')).to.be.true;
+      const sensorDiv = el as HTMLElement;
+      expect(sensorDiv.style.animation).to.equal(
+        'pulse 2s ease-in-out infinite',
+      );
+    });
+
+    it('should handle multiple thresholds with priority ordering', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.temperature',
+            thresholds: [
+              {
+                threshold: 30,
+                operator: 'gt',
+                icon_color: 'red',
+                icon: 'mdi:thermometer-alert',
+              },
+              {
+                threshold: 20,
+                operator: 'gte',
+                icon_color: 'green',
+                icon: 'mdi:thermometer',
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.temperature', state: '25' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      // Simulate that threshold evaluation returns the higher priority threshold
+      getThresholdResultStub.returns({
+        color: 'green',
+        icon: 'mdi:thermometer',
+        label: undefined,
+        styles: undefined,
+      });
+
+      const sensor = element.sensors.individual[0]!;
+      await fixture(element['renderSingleSensor'](sensor as EntityState));
+
+      // Verify thresholds were passed correctly
+      expect(getThresholdResultStub.called).to.be.true;
+      const entityInfo = getThresholdResultStub.firstCall.args[0];
+      expect(entityInfo.config.thresholds).to.have.length(2);
+    });
+
+    it('should work with attribute-based thresholds', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.weather',
+            thresholds: [
+              {
+                threshold: 30,
+                operator: 'gt',
+                icon_color: 'red',
+                attribute: 'temperature',
+              },
+            ],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          {
+            entity_id: 'sensor.weather',
+            state: 'sunny',
+            domain: 'sensor',
+            attributes: { temperature: 35 },
+          } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      const sensor = element.sensors.individual[0]!;
+      await fixture(element['renderSingleSensor'](sensor as EntityState));
+
+      // Verify thresholds with attribute were passed
+      expect(getThresholdResultStub.called).to.be.true;
+      const entityInfo = getThresholdResultStub.firstCall.args[0];
+      expect(entityInfo.config.thresholds?.[0]?.attribute).to.equal(
+        'temperature',
+      );
     });
   });
 });

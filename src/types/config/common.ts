@@ -3,7 +3,7 @@
  * @description TypeScript type definitions for entity configuration.
  */
 
-import type { StateConfig } from './entity';
+import type { StateConfig, ThresholdConfig } from './entity';
 
 /**
  * Configuration for an individual sensor.
@@ -23,4 +23,7 @@ export interface BaseEntityConfig {
 
   /** State-based color and icon configuration */
   states?: StateConfig[];
+
+  /** Threshold-based color configuration */
+  thresholds?: ThresholdConfig[];
 }

@@ -122,8 +122,13 @@ export class RoomSummaryStatesRowEditor extends LitElement {
   );
 
   private readonly _getThresholdSchema = memoizeOne(
-    (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
-      return [
+    (
+      entity_id: string,
+      hass: HomeAssistant,
+      isSensor: boolean,
+      isMainEntity: boolean,
+    ): HaFormSchema[] => {
+      const schema: HaFormSchema[] = [
         {
           name: 'threshold',
           required: true,
@@ -136,12 +141,19 @@ export class RoomSummaryStatesRowEditor extends LitElement {
           label: 'editor.entity.threshold.icon_color',
           selector: { ui_color: {} },
         },
-        {
+      ];
+
+      // Only include title_color for main entity (not sensors, not entities list)
+      if (!isSensor && isMainEntity) {
+        schema.push({
           name: 'title_color',
           required: false,
           label: 'editor.entity.threshold.title_color',
           selector: { ui_color: {} },
-        },
+        });
+      }
+
+      schema.push(
         {
           name: 'operator',
           required: false,
@@ -214,7 +226,9 @@ export class RoomSummaryStatesRowEditor extends LitElement {
           required: false,
           selector: { object: {} },
         },
-      ];
+      );
+
+      return schema;
     },
   );
 
@@ -488,7 +502,12 @@ export class RoomSummaryStatesRowEditor extends LitElement {
                   <ha-form
                     .hass=${this.hass}
                     .data=${item}
-                    .schema=${this._getThresholdSchema(entityId, this.hass!)}
+                    .schema=${this._getThresholdSchema(
+                      entityId,
+                      this.hass!,
+                      this.isSensor,
+                      this.isMainEntity,
+                    )}
                     .computeLabel=${this._computeLabelCallback}
                     @value-changed=${(ev: CustomEvent) =>
                       this._itemValueChanged(index, ev)}

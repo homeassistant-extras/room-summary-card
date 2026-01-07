@@ -144,6 +144,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
         label: sensorConfig?.label,
         icon: sensorConfig?.icon,
         states: sensorConfig?.states,
+        thresholds: sensorConfig?.thresholds,
       },
       state: state,
     };
