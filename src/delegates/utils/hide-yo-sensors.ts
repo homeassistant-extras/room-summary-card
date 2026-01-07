@@ -179,7 +179,10 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
       collectLightEntity(state, entity.entity_id, isConfiguredLight, isInArea);
     }
 
-    if (entity?.labels?.includes('problem')) {
+    if (
+      entity?.labels?.includes('problem') ||
+      state.attributes?.device_class === 'problem'
+    ) {
       problemSensors.push(state);
     }
 

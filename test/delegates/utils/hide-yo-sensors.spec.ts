@@ -920,4 +920,129 @@ describe('get-sensors.ts', () => {
       );
     });
   });
+
+  describe('problem sensors detection', () => {
+    beforeEach(() => {
+      // Add problem entities with different detection methods
+      mockHass.states['binary_sensor.problem_label'] = e(
+        'binary_sensor',
+        'problem_label',
+        'on',
+      );
+      mockHass.states['binary_sensor.problem_device_class'] = e(
+        'binary_sensor',
+        'problem_device_class',
+        'on',
+        {
+          device_class: 'problem',
+        },
+      );
+      mockHass.states['binary_sensor.problem_both'] = e(
+        'binary_sensor',
+        'problem_both',
+        'on',
+        {
+          device_class: 'problem',
+        },
+      );
+      mockHass.states['binary_sensor.normal_sensor'] = e(
+        'binary_sensor',
+        'normal_sensor',
+        'off',
+      );
+      mockHass.states['binary_sensor.other_area_problem'] = e(
+        'binary_sensor',
+        'other_area_problem',
+        'on',
+        {
+          device_class: 'problem',
+        },
+      );
+
+      mockHass.entities['binary_sensor.problem_label'] = {
+        entity_id: 'binary_sensor.problem_label',
+        device_id: 'device_problem_label',
+        area_id: 'living_room',
+        labels: ['problem'],
+      };
+      mockHass.entities['binary_sensor.problem_device_class'] = {
+        entity_id: 'binary_sensor.problem_device_class',
+        device_id: 'device_problem_device_class',
+        area_id: 'living_room',
+        labels: [],
+      };
+      mockHass.entities['binary_sensor.problem_both'] = {
+        entity_id: 'binary_sensor.problem_both',
+        device_id: 'device_problem_both',
+        area_id: 'living_room',
+        labels: ['problem'],
+      };
+      mockHass.entities['binary_sensor.normal_sensor'] = {
+        entity_id: 'binary_sensor.normal_sensor',
+        device_id: 'device_normal',
+        area_id: 'living_room',
+        labels: [],
+      };
+      mockHass.entities['binary_sensor.other_area_problem'] = {
+        entity_id: 'binary_sensor.other_area_problem',
+        device_id: 'device_other_area',
+        area_id: 'kitchen', // Different area
+        labels: [],
+      };
+    });
+
+    it('should detect entities with "problem" label', () => {
+      const result = getSensors(mockHass, defaultConfig);
+
+      expect(result.problemSensors).to.be.an('array');
+      expect(result.problemSensors.map((s) => s.entity_id)).to.include(
+        'binary_sensor.problem_label',
+      );
+    });
+
+    it('should detect entities with device_class: problem', () => {
+      const result = getSensors(mockHass, defaultConfig);
+
+      expect(result.problemSensors).to.be.an('array');
+      expect(result.problemSensors.map((s) => s.entity_id)).to.include(
+        'binary_sensor.problem_device_class',
+      );
+    });
+
+    it('should detect entities that have both label and device_class', () => {
+      const result = getSensors(mockHass, defaultConfig);
+
+      expect(result.problemSensors).to.be.an('array');
+      expect(result.problemSensors.map((s) => s.entity_id)).to.include(
+        'binary_sensor.problem_both',
+      );
+    });
+
+    it('should not detect entities without label or device_class', () => {
+      const result = getSensors(mockHass, defaultConfig);
+
+      expect(result.problemSensors.map((s) => s.entity_id)).to.not.include(
+        'binary_sensor.normal_sensor',
+      );
+    });
+
+    it('should only include entities in the correct area', () => {
+      const result = getSensors(mockHass, defaultConfig);
+
+      expect(result.problemSensors.map((s) => s.entity_id)).to.not.include(
+        'binary_sensor.other_area_problem',
+      );
+    });
+
+    it('should include all problem entities from the area', () => {
+      const result = getSensors(mockHass, defaultConfig);
+
+      expect(result.problemSensors).to.have.lengthOf(3);
+      expect(result.problemSensors.map((s) => s.entity_id)).to.include.members([
+        'binary_sensor.problem_label',
+        'binary_sensor.problem_device_class',
+        'binary_sensor.problem_both',
+      ]);
+    });
+  });
 });

@@ -1,15 +1,24 @@
 ## Problem Entity Detection
 
-The card can automatically detect and monitor "problem" entities in your areas using Home Assistant labels.
+The card can automatically detect and monitor "problem" entities in your areas using two methods:
+
+- **Label-based detection**: Entities with the "problem" label
+- **Device class detection**: Entities with `device_class: problem`
 
 ### Setting Up Problem Detection
+
+You can use either method (or both) to mark entities as problems:
 
 1. **Label entities** with "problem" in Home Assistant:
    - Go to Settings → Areas & Labels
    - Create or edit labels
    - Add "problem" label to relevant entities
 
-2. **Area assignment**: Problem entities must be in the same area as the card, either:
+2. **Use device_class: problem**:
+   - Configure entities with `device_class: problem` in their entity configuration
+   - This is particularly useful for binary sensors that represent problem states
+
+3. **Area assignment**: Problem entities must be in the same area as the card, either:
    - Directly assigned to the area
    - Belong to a device assigned to the area
 
@@ -19,7 +28,7 @@ The card can automatically detect and monitor "problem" entities in your areas u
 
 The card automatically:
 
-- Finds entities with "problem" label in the specified area
+- Finds entities with "problem" label **or** `device_class: problem` in the specified area
 - Checks if any are currently active using `stateActive()` function
 - Displays a counter with the total number of problem entities
 - Shows green indicator if no problems are active
@@ -42,10 +51,11 @@ The mold indicator appears in the bottom left area near problem entities and pro
 
 ### Example Problem Entities
 
-Common entities to label as "problem":
+Common entities to mark as problems (using labels or device_class):
 
-- Smoke detectors (`binary_sensor.smoke_detector`)
-- Water leak sensors (`binary_sensor.water_leak`)
+- Smoke detectors (`binary_sensor.smoke_detector`) - can use `device_class: problem`
+- Water leak sensors (`binary_sensor.water_leak`) - can use `device_class: problem`
 - Door/window sensors (`binary_sensor.front_door`)
 - Low battery sensors (`sensor.device_battery`)
 - Offline device indicators
+- Any binary sensor with `device_class: problem` will be automatically detected
