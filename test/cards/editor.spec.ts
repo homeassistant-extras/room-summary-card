@@ -14,7 +14,6 @@ describe('editor.ts', () => {
   let hass: HomeAssistant;
   let dispatchStub: sinon.SinonStub;
   let fireEventStub: sinon.SinonStub;
-  let getMainSchemaStub: sinon.SinonStub;
   let getSensorsSchemaStub: sinon.SinonStub;
   let getOccupancySchemaStub: sinon.SinonStub;
   let areaEntitiesStub: sinon.SinonStub;
@@ -80,9 +79,6 @@ describe('editor.ts', () => {
     );
 
     // Stub schema functions
-    getMainSchemaStub = stub(editorSchemaModule, 'getMainSchema');
-    getMainSchemaStub.returns(mockSchema);
-
     getSensorsSchemaStub = stub(editorSchemaModule, 'getSensorsSchema');
     getSensorsSchemaStub.returns(mockSchema);
 
@@ -104,7 +100,6 @@ describe('editor.ts', () => {
   afterEach(() => {
     dispatchStub.restore();
     fireEventStub.restore();
-    getMainSchemaStub.restore();
     getSensorsSchemaStub.restore();
     getOccupancySchemaStub.restore();
     areaEntitiesStub.restore();
@@ -214,7 +209,6 @@ describe('editor.ts', () => {
         value: {
           area: 'area_1',
           entities: [],
-          problem_entities: [],
           features: [],
           sensor_classes: [],
           thresholds: {},

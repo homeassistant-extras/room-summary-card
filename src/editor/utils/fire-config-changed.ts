@@ -26,7 +26,6 @@ export function cleanAndFireConfigChanged(
   cleanEmptyArrays(config, 'features');
   cleanEmptyArrays(config, 'entities');
   cleanEmptyArrays(config, 'lights');
-  cleanEmptyArrays(config, 'problem_entities');
   cleanEmptyArrays(config, 'sensor_classes');
 
   // Clean empty strings from entity configs

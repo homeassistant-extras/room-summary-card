@@ -23,9 +23,18 @@ export const renderProblemIndicator = (
   const { problemSensors } = sensors;
 
   const problemExists = problemSensors.some((sensor) => stateActive(sensor));
+  const problemDisplay = config.problem?.display ?? 'always';
+
+  // Determine if we should show the problem indicator
+  let shouldShowIndicator = false;
+  if (problemDisplay === 'always') {
+    shouldShowIndicator = problemSensors.length > 0;
+  } else if (problemDisplay === 'active_only') {
+    shouldShowIndicator = problemSensors.length > 0 && problemExists;
+  }
 
   return html`<div class="problems">
-    ${problemSensors.length > 0
+    ${shouldShowIndicator
       ? html`<span class="status-entities" ?has-problems=${problemExists}
           >${problemSensors.length}</span
         >`

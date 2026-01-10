@@ -74,7 +74,6 @@ describe('fire-config-changed.ts', () => {
         features: [],
         entities: [],
         lights: [],
-        problem_entities: [],
         sensor_classes: [],
       };
 
@@ -85,7 +84,6 @@ describe('fire-config-changed.ts', () => {
       expect(firedConfig.features).to.be.undefined;
       expect(firedConfig.entities).to.be.undefined;
       expect(firedConfig.lights).to.be.undefined;
-      expect(firedConfig.problem_entities).to.be.undefined;
       expect(firedConfig.sensor_classes).to.be.undefined;
     });
 

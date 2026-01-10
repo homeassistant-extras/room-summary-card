@@ -400,42 +400,6 @@ export const getSensorsSchemaRest = (
   ];
 };
 
-export const getMainSchema = (
-  hass: HomeAssistant,
-  entities: string[],
-): HaFormSchema[] => [
-  {
-    name: 'area',
-    label: 'editor.area.area',
-    required: true,
-    selector: { area: {} },
-  },
-  {
-    name: 'entity',
-    label: 'editor.area.room_entity',
-    required: false,
-    selector: { entity: { multiple: false, include_entities: entities } },
-  },
-  {
-    name: 'content',
-    label: 'editor.layout.content',
-    type: 'expandable',
-    flatten: true,
-    icon: 'mdi:text-short',
-    schema: [
-      {
-        name: 'area_name',
-        label: 'editor.area.area_name',
-        required: false,
-        selector: { text: {} },
-      },
-    ],
-  },
-  INTERACTIONS,
-  schemeStyles(hass, entities),
-  featuresSchema(hass),
-];
-
 /**
  * Returns schema for the area field only
  */
@@ -456,10 +420,54 @@ export const getMainSchemaRest = (
   entities: string[],
 ): HaFormSchema[] => [
   {
-    name: 'area_name',
-    label: 'editor.area.area_name',
-    required: false,
-    selector: { text: {} },
+    name: 'content',
+    label: 'editor.layout.content',
+    type: 'expandable',
+    flatten: true,
+    icon: 'mdi:text-short',
+    schema: [
+      {
+        name: 'area_name',
+        label: 'editor.area.area_name',
+        required: false,
+        selector: { text: {} },
+      },
+    ],
+  },
+  {
+    name: 'problem',
+    label: 'editor.problem.problem',
+    type: 'expandable',
+    icon: 'mdi:alert-circle',
+    schema: [
+      {
+        name: 'display',
+        label: 'editor.problem.problem_display',
+        required: false,
+        selector: {
+          select: {
+            mode: 'dropdown' as const,
+            options: [
+              {
+                label: localize(hass, 'editor.problem.problem_display_always'),
+                value: 'always',
+              },
+              {
+                label: localize(
+                  hass,
+                  'editor.problem.problem_display_active_only',
+                ),
+                value: 'active_only',
+              },
+              {
+                label: localize(hass, 'editor.problem.problem_display_never'),
+                value: 'never',
+              },
+            ],
+          },
+        },
+      },
+    ],
   },
   INTERACTIONS,
   schemeStyles(hass, entities),

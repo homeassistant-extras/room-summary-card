@@ -337,7 +337,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Theme support for iOS theme`**: for opening issue on themes - thanks @yasalmasri
 - [x] **`UI Minimalist theme integration`**: add UI minimalist theme - thanks @tardis89
 - [x] **`iOS themes support`**: ios themes - thanks @avatar25pl
-- [x] **`Problem entities counter`**: add problem entities counter - thanks to multiple users
+- [x] **`Problem entities counter`**: add problem entities counter - thanks to multiple users, @eTron
 - [x] **`Card RGB coloring`**: RGB lights color the card - thanks @ChristopherLMiller
 - [x] **`Custom names`**: **⭐ First contributor ⭐** added `area_name` - thanks @Aulos
 - [x] **`Disable card styling`**: bug fixes and new skip_entity_styles feature - thanks @benjycov

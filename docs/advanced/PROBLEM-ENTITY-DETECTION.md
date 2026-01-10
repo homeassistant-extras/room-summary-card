@@ -37,6 +37,55 @@ The card automatically:
 
 ![Problem Indicator](../../assets/problems.png)
 
+### Problem Indicator Display Options
+
+You can control how the problem indicator is displayed using the `problem.display` configuration option:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+problem:
+  display: always # Options: always, active_only, never
+```
+
+**Display Modes:**
+
+- **`always`** (default): Shows the indicator at all times
+  - Green circle when no problems are active
+  - Red pulsing circle when problems are active
+  - This is the default behavior
+
+- **`active_only`**: Only shows the indicator when problems are active
+  - Hides the green circle when no problems are active
+  - Shows red pulsing circle only when problems exist
+  - Useful if you only want to see the indicator when there's an actual issue
+
+- **`never`**: Completely hides the problem indicator
+  - The indicator will not be displayed regardless of problem status
+  - Note: The mold indicator will still display if configured and threshold is exceeded
+
+**Example Configurations:**
+
+```yaml
+# Show indicator only when problems are active
+type: custom:room-summary-card
+area: living_room
+problem:
+  display: active_only
+
+# Hide the indicator completely
+type: custom:room-summary-card
+area: living_room
+problem:
+  display: never
+
+# Always show (default behavior)
+type: custom:room-summary-card
+area: living_room
+problem:
+  display: always
+```
+
 ### Mold Indicator
 
 The mold indicator appears in the bottom left area near problem entities and provides:

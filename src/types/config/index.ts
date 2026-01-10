@@ -27,8 +27,11 @@ export interface Config {
   /** Navigation path for the entity */
   navigate?: string;
 
-  /** List of entity IDs that are experiencing issues */
-  problem_entities?: string[];
+  /** Problem indicator configuration */
+  problem?: {
+    /** Display mode for problem indicator */
+    display?: 'always' | 'active_only' | 'never';
+  };
 
   /** Array of sensor entity IDs or sensor configurations to display in the label area */
   sensors?: (string | SensorConfig)[];

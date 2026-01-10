@@ -61,6 +61,7 @@ See [default entities](#default-entities)
 | thresholds          | object           | `80° / 60%`                            | Climate thresholds for temperature, humidity, and mold          |
 | slider_style        | string           | `minimalist`                           | Visual style of the slider track when slider feature is enabled |
 | icon_opacity_preset | string           | `default`                              | Icon opacity preset: `default`, `medium`, or `high_visibility`  |
+| problem             | object           | See below                              | Problem indicator configuration                                 |
 | styles              | object           | `{}`                                   | Custom CSS styles for card areas                                |
 
 ### Default Entities
@@ -205,6 +206,25 @@ icon_opacity_preset: high_visibility
 **Note:** Active icons always use full opacity (1.0) regardless of preset. The preset only affects inactive icon states.
 
 This feature can be configured via the editor dropdown in the Styles section, or directly in YAML configuration.
+
+## Problem Indicator Configuration
+
+Control how the problem indicator (green/red circle) is displayed:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+problem:
+  display: active_only # Options: always, active_only, never
+```
+
+**Display Modes:**
+
+- `always` (default) - Shows indicator at all times (green when no problems, red when problems active)
+- `active_only` - Only shows indicator when problems are active (hides green circle)
+- `never` - Completely hides the problem indicator (mold indicator still shows if configured)
+
+See [Problem Entity Detection](advanced/PROBLEM-ENTITY-DETECTION.md) for more details.
 
 ## Alarm Detection (Occupancy, Smoke, Gas & Water)
 

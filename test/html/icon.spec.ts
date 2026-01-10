@@ -253,6 +253,158 @@ describe('icon.ts', () => {
       expect(el).to.exist;
       expect(el.querySelector('ha-state-icon')).to.not.exist;
     });
+
+    describe('problem.display configuration', () => {
+      it('should show indicator in always mode when problem entities exist but are not active', async () => {
+        const configAlways: Config = {
+          area: 'test',
+          problem: { display: 'always' },
+        };
+        const result = renderProblemIndicator(mockHass, configAlways, {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1', 'off')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        });
+        const el = await fixture(result as TemplateResult);
+
+        expect(el).to.exist;
+        const indicator = el.querySelector('.status-entities');
+        expect(indicator).to.exist;
+        expect(indicator?.textContent).to.equal('1');
+      });
+
+      it('should show indicator in always mode when problem entities are active', async () => {
+        const configAlways: Config = {
+          area: 'test',
+          problem: { display: 'always' },
+        };
+        const result = renderProblemIndicator(mockHass, configAlways, {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1', 'on')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        });
+        const el = await fixture(result as TemplateResult);
+
+        expect(el).to.exist;
+        const indicator = el.querySelector('.status-entities');
+        expect(indicator).to.exist;
+        expect(indicator?.textContent).to.equal('1');
+        expect((indicator as any).hasAttribute('has-problems')).to.be.true;
+      });
+
+      it('should hide indicator in active_only mode when no problems are active', async () => {
+        const configActiveOnly: Config = {
+          area: 'test',
+          problem: { display: 'active_only' },
+        };
+        const result = renderProblemIndicator(mockHass, configActiveOnly, {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1', 'off')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        });
+        const el = await fixture(result as TemplateResult);
+
+        expect(el).to.exist;
+        const indicator = el.querySelector('.status-entities');
+        expect(indicator).to.not.exist;
+      });
+
+      it('should show indicator in active_only mode when problems are active', async () => {
+        const configActiveOnly: Config = {
+          area: 'test',
+          problem: { display: 'active_only' },
+        };
+        const result = renderProblemIndicator(mockHass, configActiveOnly, {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1', 'on')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        });
+        const el = await fixture(result as TemplateResult);
+
+        expect(el).to.exist;
+        const indicator = el.querySelector('.status-entities');
+        expect(indicator).to.exist;
+        expect(indicator?.textContent).to.equal('1');
+        expect((indicator as any).hasAttribute('has-problems')).to.be.true;
+      });
+
+      it('should hide indicator in never mode even when problems exist', async () => {
+        const configNever: Config = {
+          area: 'test',
+          problem: { display: 'never' },
+        };
+        const result = renderProblemIndicator(mockHass, configNever, {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1', 'on')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        });
+        const el = await fixture(result as TemplateResult);
+
+        expect(el).to.exist;
+        const indicator = el.querySelector('.status-entities');
+        expect(indicator).to.not.exist;
+      });
+
+      it('should still show mold indicator when problem.display is never', async () => {
+        const moldSensor = createEntityState('sensor.mold', '75');
+        const configNever: Config = {
+          area: 'test',
+          problem: { display: 'never' },
+          thresholds: { mold: 50 },
+        };
+        const sensorData = {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1', 'on')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          mold: moldSensor,
+          thresholdSensors: [],
+        };
+        const result = renderProblemIndicator(mockHass, configNever, sensorData);
+        const el = await fixture(result as TemplateResult);
+
+        expect(el).to.exist;
+        const indicator = el.querySelector('.status-entities');
+        expect(indicator).to.not.exist;
+        expect(el.querySelector('ha-state-icon')).to.exist;
+      });
+
+      it('should default to always mode when problem.display is not specified', async () => {
+        const configDefault: Config = {
+          area: 'test',
+        };
+        const result = renderProblemIndicator(mockHass, configDefault, {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1', 'off')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        });
+        const el = await fixture(result as TemplateResult);
+
+        expect(el).to.exist;
+        const indicator = el.querySelector('.status-entities');
+        expect(indicator).to.exist;
+        expect(indicator?.textContent).to.equal('1');
+      });
+    });
   });
 
   describe('renderRoomIcon', () => {

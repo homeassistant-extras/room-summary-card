@@ -1134,9 +1134,6 @@ sensors:
   - sensor.workshop_temperature
   - sensor.workshop_humidity
   - sensor.workshop_dust_level
-problem_entities:
-  - binary_sensor.workshop_smoke_detector
-  - binary_sensor.workshop_motion
 sensor_layout: default
 features:
   - hide_area_stats

@@ -135,6 +135,13 @@
       "water_sensors": "Water Sensors",
       "alarm_options": "Options"
     },
+    "problem": {
+      "problem": "Problem Indicator",
+      "problem_display": "Display",
+      "problem_display_always": "Always",
+      "problem_display_active_only": "Active Problems Only",
+      "problem_display_never": "Never"
+    },
     "styles": {
       "styles": "Styles",
       "css_styles": "Your CSS Styles",
