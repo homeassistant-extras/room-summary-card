@@ -234,6 +234,10 @@ describe('editor-schema.ts', () => {
                 label: 'editor.slider.outlined',
                 value: 'outlined',
               },
+              {
+                label: 'editor.slider.bar',
+                value: 'bar',
+              },
             ],
           },
         },

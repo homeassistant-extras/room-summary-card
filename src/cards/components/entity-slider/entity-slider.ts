@@ -2,14 +2,16 @@ import { renderRoomIcon } from '@/html/icon';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { setBrightness } from '@delegates/actions/brightness-control';
 import { getIconEntities } from '@delegates/entities/icon-entities';
+import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
+import { getThemeColorOverride } from '@theme/custom-theme';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { styles } from './styles';
+import { styles } from './styles/index';
 const equal = require('fast-deep-equal');
 
 /**
@@ -55,7 +57,8 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
     | 'grid'
     | 'glow'
     | 'shadow-trail'
-    | 'outlined' = 'minimalist';
+    | 'outlined'
+    | 'bar' = 'minimalist';
 
   /**
    * Single entity state to display (first entity from the collection)
@@ -121,7 +124,8 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
       this._entity = firstEntity;
 
       // Update position based on brightness attribute
-      const brightness = firstEntity?.state?.attributes?.brightness;
+      const state = firstEntity?.state;
+      const brightness = state?.attributes?.brightness;
       if (brightness !== undefined && brightness !== null) {
         // Convert brightness (0-255) to position (100-0%)
         // Higher brightness = higher position (lower percentage, towards top)
@@ -129,6 +133,24 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
         this._yPosition = 100 - (brightnessNum / 255) * 100;
       } else {
         this._yPosition = 100;
+      }
+
+      // For bar style, get the entity color and set it as a CSS variable
+      if (this.sliderStyle === 'bar' && state) {
+        const isActive = stateActive(state);
+        const entityColor = getThemeColorOverride(
+          hass,
+          firstEntity,
+          undefined,
+          isActive,
+        );
+        // Set color as CSS variable, defaulting to a fallback if no color found
+        if (entityColor) {
+          this.style.setProperty('--slider-bar-color', entityColor);
+        } else {
+          // Use a default color if no entity color is found
+          this.style.setProperty('--slider-bar-color', 'var(--primary-color)');
+        }
       }
     }
 
@@ -237,20 +259,25 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
       return nothing;
     }
 
-    const stateIcon = renderRoomIcon(this._hass, this._entity, this.config);
-
-    // Set CSS custom property for slider position (used by filled and shadow-trail styles)
+    // Set CSS custom property for slider position (used by filled, shadow-trail, and bar styles)
     this.style.setProperty('--slider-position', `${this._yPosition}%`);
+
+    const isBarStyle = this.sliderStyle === 'bar';
+    const draggingClass = this._isDragging ? 'dragging' : '';
+    const containerClass = `${isBarStyle ? 'bar' : 'icon'}-container ${draggingClass}`;
+    const containerStyle = isBarStyle ? nothing : `top: ${this._yPosition}%`;
 
     return html`
       ${stylesToHostCss(this.config.styles?.entities)}
       <div
-        class="icon-container ${this._isDragging ? 'dragging' : ''}"
-        style="top: ${this._yPosition}%"
+        class=${containerClass}
+        style=${containerStyle}
         @mousedown=${this._handleDragStart}
         @touchstart=${this._handleTouchStart}
       >
-        ${stateIcon}
+        ${isBarStyle
+          ? nothing
+          : renderRoomIcon(this._hass, this._entity, this.config)}
       </div>
     `;
   }

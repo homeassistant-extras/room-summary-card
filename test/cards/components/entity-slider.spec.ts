@@ -2,15 +2,18 @@ import { EntitySlider } from '@cards/components/entity-slider/entity-slider';
 import { styles } from '@cards/components/entity-slider/styles';
 import * as brightnessControlModule from '@delegates/actions/brightness-control';
 import * as iconEntitiesModule from '@delegates/entities/icon-entities';
+import * as stateActiveModule from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import * as iconModule from '@html/icon';
 import { fixture } from '@open-wc/testing-helpers';
+import * as customThemeModule from '@theme/custom-theme';
 import * as styleConverterModule from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
 import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
+import * as sinon from 'sinon';
 import { stub } from 'sinon';
 
 describe('entity-slider.ts', () => {
@@ -20,6 +23,8 @@ describe('entity-slider.ts', () => {
   let renderRoomIconStub: sinon.SinonStub;
   let stylesToHostCssStub: sinon.SinonStub;
   let setBrightnessStub: sinon.SinonStub;
+  let stateActiveStub: sinon.SinonStub;
+  let getThemeColorOverrideStub: sinon.SinonStub;
 
   const mockEntityState: EntityState = {
     entity_id: 'light.living_room',
@@ -63,6 +68,11 @@ describe('entity-slider.ts', () => {
       brightnessControlModule,
       'setBrightness',
     ).resolves();
+    stateActiveStub = stub(stateActiveModule, 'stateActive').returns(true);
+    getThemeColorOverrideStub = stub(
+      customThemeModule,
+      'getThemeColorOverride',
+    ).returns('rgb(255, 200, 100)');
 
     mockHass = {
       states: {
@@ -83,6 +93,8 @@ describe('entity-slider.ts', () => {
     renderRoomIconStub.restore();
     stylesToHostCssStub.restore();
     setBrightnessStub.restore();
+    stateActiveStub.restore();
+    getThemeColorOverrideStub.restore();
   });
 
   describe('hass property setter', () => {
@@ -168,6 +180,76 @@ describe('entity-slider.ts', () => {
       expect(entity?.config?.hold_action?.action).to.equal('none');
       expect(entity?.config?.double_tap_action?.action).to.equal('none');
     });
+
+    it('should set bar color CSS variable when slider style is bar', () => {
+      const setPropertySpy = stub();
+      Object.defineProperty(element, 'style', {
+        value: {
+          setProperty: setPropertySpy,
+          getPropertyValue: stub().returns(''),
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      element.config = {
+        ...element.config,
+        slider_style: 'bar',
+      } as Config;
+
+      element.hass = mockHass;
+
+      expect(
+        setPropertySpy.calledWith('--slider-bar-color', 'rgb(255, 200, 100)'),
+      ).to.be.true;
+      expect(stateActiveStub.called).to.be.true;
+      expect(getThemeColorOverrideStub.called).to.be.true;
+    });
+
+    it('should use default color when entity color is not found for bar style', () => {
+      getThemeColorOverrideStub.returns(undefined);
+      const setPropertySpy = stub();
+      Object.defineProperty(element, 'style', {
+        value: {
+          setProperty: setPropertySpy,
+          getPropertyValue: stub().returns(''),
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      element.config = {
+        ...element.config,
+        slider_style: 'bar',
+      } as Config;
+
+      element.hass = mockHass;
+
+      expect(
+        setPropertySpy.calledWith('--slider-bar-color', 'var(--primary-color)'),
+      ).to.be.true;
+    });
+
+    it('should update slider style to bar', () => {
+      // Mock style for bar style color setting
+      Object.defineProperty(element, 'style', {
+        value: {
+          setProperty: stub(),
+          getPropertyValue: stub().returns(''),
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      element.config = {
+        ...element.config,
+        slider_style: 'bar',
+      } as Config;
+
+      element.hass = mockHass;
+
+      expect(element.sliderStyle).to.equal('bar');
+    });
   });
 
   describe('render', () => {
@@ -211,15 +293,67 @@ describe('entity-slider.ts', () => {
       element['_isDragging'] = false;
       const result = element.render() as TemplateResult;
 
-      // Verify the template does not include the dragging class
-      const templateString = result.strings.join('');
-      // When not dragging, the class should be empty or just "icon-container"
-      expect(templateString).to.include('icon-container');
-      // Check that dragging is not in the class list (it should be empty string)
-      const classMatch = templateString.match(/class="([^"]*)"/);
-      if (classMatch) {
-        expect(classMatch[1]).to.not.include('dragging');
-      }
+      // Verify renderRoomIcon is called (indicating icon-container is used)
+      expect(renderRoomIconStub.called).to.be.true;
+      // Verify the template does not include the dragging class by checking values
+      const hasDragging = result.values.some(
+        (val) => typeof val === 'string' && val.includes('dragging'),
+      );
+      expect(hasDragging).to.be.false;
+    });
+
+    it('should render bar-container when slider style is bar', async () => {
+      element.config = {
+        ...element.config,
+        slider_style: 'bar',
+      } as Config;
+      element.hass = mockHass;
+      element['_isDragging'] = false;
+
+      const result = element.render() as TemplateResult;
+
+      // Check that bar-container class is in the values
+      const hasBarContainer = result.values.some(
+        (val) => typeof val === 'string' && val.includes('bar-container'),
+      );
+      expect(hasBarContainer).to.be.true;
+      // Icon should not be rendered for bar style
+      expect(renderRoomIconStub.called).to.be.false;
+    });
+
+    it('should set slider position CSS variable in render', async () => {
+      const setPropertySpy = stub();
+      Object.defineProperty(element, 'style', {
+        value: {
+          setProperty: setPropertySpy,
+          getPropertyValue: stub().returns(''),
+        },
+        writable: true,
+      });
+
+      element.hass = mockHass;
+      element.render();
+
+      expect(setPropertySpy.calledWith('--slider-position', sinon.match.string))
+        .to.be.true;
+    });
+
+    it('should render icon-container when slider style is not bar', async () => {
+      element.config = {
+        ...element.config,
+        slider_style: 'filled',
+      } as Config;
+      element.hass = mockHass;
+      element['_isDragging'] = false;
+
+      const result = element.render() as TemplateResult;
+
+      // Check that icon-container class is in the values
+      const hasIconContainer = result.values.some(
+        (val) => typeof val === 'string' && val.includes('icon-container'),
+      );
+      expect(hasIconContainer).to.be.true;
+      expect(renderRoomIconStub.called).to.be.true;
     });
 
     it('should call stylesToHostCss with config styles', async () => {

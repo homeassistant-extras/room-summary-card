@@ -362,6 +362,7 @@ See the [Theming Guide](docs/THEMING.md) for detailed color configuration and cu
 - [x] **`Full Card Actions`**: make entire card clickable with larger touch targets for mobile-friendly navigation - thanks @devkaiwang
 - [x] **`Frosted Glass Theme Support`**: automatic detection and styling for Frosted Glass themes with transparent blurred card effects - thanks @devkaiwang
 - [x] **`Sensor Improvements`**: feature requests to make sensors awesome - thanks @MelleD
+- [x] **`Brightness Slider`**: entity transforms into slider - thanks @tmaihoff, @hfalk
 
 ## Contributing
 

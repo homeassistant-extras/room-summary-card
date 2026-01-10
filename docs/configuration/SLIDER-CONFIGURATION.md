@@ -19,11 +19,12 @@ entity: light.living_room_main
 
 ## Features
 
-- **Drag to Control**: Drag the entity icon vertically to adjust brightness (0-255)
-- **Visual Feedback**: Icon position reflects current brightness level
+- **Drag to Control**: Drag the entity icon (or bar) vertically to adjust brightness (0-255)
+- **Visual Feedback**: Icon position or bar fill reflects current brightness level
 - **Touch Support**: Works with both mouse and touch interactions
-- **Multiple Styles**: Choose from 12 different track visual styles
+- **Multiple Styles**: Choose from 13 different track visual styles
 - **Automatic Entity Selection**: Uses the first entity from your entity list
+- **Color-Aware Bar Style**: Bar style automatically uses the light's color for visual feedback
 
 ## How It Works
 
@@ -139,6 +140,16 @@ Outlined track border with transparent fill:
 slider_style: outlined
 ```
 
+### `bar`
+
+Outlined bar filled with the light's color based on brightness level. The icon is hidden, and the entire bar is draggable. The fill color automatically matches the light's current color (RGB color, on_color, or theme color):
+
+```yaml
+slider_style: bar
+```
+
+The bar fills from bottom to top as brightness increases, using the entity's color for visual feedback.
+
 ## Configuration Options
 
 | Option         | Type    | Default      | Description                                 |
@@ -185,6 +196,21 @@ features:
 slider_style: glow
 entity: light.office_desk
 ```
+
+### Slider with Bar Style (No Icon)
+
+Bar style with color fill - perfect for a clean, modern look:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - slider
+slider_style: bar
+entity: light.living_room_main
+```
+
+The bar automatically uses the light's color (RGB color, on_color, or theme color) for the fill.
 
 ### Slider with Custom Entity Configuration
 

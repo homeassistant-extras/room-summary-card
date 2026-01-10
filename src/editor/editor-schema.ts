@@ -259,6 +259,10 @@ export const getEntitiesStylesSchema = (
               label: localize(hass, 'editor.slider.outlined'),
               value: 'outlined',
             },
+            {
+              label: localize(hass, 'editor.slider.bar'),
+              value: 'bar',
+            },
           ],
         },
       },

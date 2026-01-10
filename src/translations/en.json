@@ -181,7 +181,8 @@
       "grid": "Grid",
       "glow": "Glow",
       "shadow_trail": "Shadow Trail",
-      "outlined": "Outlined Track"
+      "outlined": "Outlined Track",
+      "bar": "Bar (No Icon)"
     },
     "features": {
       "features": "Features",
