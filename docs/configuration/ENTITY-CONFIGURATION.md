@@ -88,7 +88,7 @@ For `tap_action`, `hold_action`, and `double_tap_action` configuration options, 
 
 By default, entities will display their `entity_picture` attribute (if available) instead of an icon. This is particularly useful for media players that have service-specific icons (Netflix, Hulu, Spotify, etc.).
 
-![Entity Styles](../../assets/entity-picture-attributes.png)
+![Entity Styles](../assets/entity-picture-attributes.png)
 
 📖 **See [Entity Picture Attributes](../advanced/README-EXAMPLES.md#entity-picture-attributes) for configuration details.**
 
@@ -126,7 +126,7 @@ entities:
       - show_state
 ```
 
-![Entity States](../../assets/state-display.png)
+![Entity States](../assets/state-display.png)
 
 See [Custom Styles Configuration](CUSTOM-STYLES.md#styling-entity-state-display) for all available CSS variables.
 
@@ -346,9 +346,9 @@ entities:
 
 For theme color names and advanced customization, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md).
 
-![States](../../assets/states.gif)
+![States](../assets/states.gif)
 
-![Entity Styles](../../assets/entity-styles.gif)
+![Entity Styles](../assets/entity-styles.gif)
 
 📖 **See [State based CSS styling for entities](../advanced/README-EXAMPLES.md#state-based-css-styling-for-entities) for configuration details.**
 

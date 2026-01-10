@@ -1,4 +1,4 @@
-## Installation Issues
+# Installation Issues
 
 ### Card Not Loading
 

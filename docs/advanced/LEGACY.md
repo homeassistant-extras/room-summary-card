@@ -1,4 +1,4 @@
-## Legacy Configuration Support
+# Legacy Configuration Support
 
 The card maintains backward compatibility with older configuration formats:
 

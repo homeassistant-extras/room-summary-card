@@ -1,4 +1,4 @@
-## Entity Attributes Configuration
+# Entity Attributes Configuration
 
 You can add custom attributes to entities to control their appearance and behavior in the card.
 

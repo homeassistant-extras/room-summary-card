@@ -1,4 +1,4 @@
-## Action Configuration
+# Action Configuration
 
 Available actions for `tap_action`, `hold_action`, and `double_tap_action`:
 

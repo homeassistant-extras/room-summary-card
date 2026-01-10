@@ -1,4 +1,4 @@
-## Climate Entity Styling
+# Climate Entity Styling
 
 Climate entities receive special treatment with automatic icon and color changes based on their state and action.
 
@@ -35,7 +35,7 @@ The card shows colored borders based on sensor thresholds:
 - **Blue border** (default): Humidity above threshold
 - **Custom colors**: You can customize border colors for each threshold entry
 
-![Climate Borders](../../assets/climate.png)
+![Climate Borders](../assets/climate.png)
 
 ### Requirements for Climate Styling
 

@@ -4,7 +4,7 @@ Example YAML configurations to replicate each screenshot shown below. See my per
 
 ## Entity Icons
 
-![Entity Icons](../../assets/icons.png)
+![Entity Icons](../assets/icons.png)
 
 ```yaml
 # Most entities are not configured since it's pulling default entities and sensors by convention.
@@ -50,7 +50,7 @@ Example YAML configurations to replicate each screenshot shown below. See my per
 
 ## Problem Detection
 
-![Problem Detection](../../assets/problems.png)
+![Problem Detection](../assets/problems.png)
 
 ```yaml
 #################
@@ -71,7 +71,7 @@ area: dining_room
 
 ## Occupancy Detection
 
-![Occupancy](../../assets/occupancy.png)
+![Occupancy](../assets/occupancy.png)
 
 ```yaml
 type: custom:room-summary-card
@@ -84,7 +84,7 @@ occupancy:
 
 ## Sensor Layouts
 
-![Sensor Layouts](../../assets/sensors-styles.png)
+![Sensor Layouts](../assets/sensors-styles.png)
 
 ### Default Layout
 
@@ -132,7 +132,7 @@ occupancy:
 
 ### Area Picture (Automatic)
 
-![Area Picture](../../assets/area-picture.png)
+![Area Picture](../assets/area-picture.png)
 
 ```yaml
 type: custom:room-summary-card
@@ -142,7 +142,7 @@ area: living_room
 
 ### Entity Picture
 
-![Entity Picture](../../assets/entity-picture.png)
+![Entity Picture](../assets/entity-picture.png)
 
 ```yaml
 type: custom:room-summary-card
@@ -154,7 +154,7 @@ background:
 
 ### Custom Background
 
-![Background Image](../../assets/background-image.png)
+![Background Image](../assets/background-image.png)
 
 ```yaml
 type: custom:room-summary-card
@@ -166,7 +166,7 @@ background:
 
 ## RGB Color Support
 
-![RGB Light Colors](../../assets/light-rgb.png)
+![RGB Light Colors](../assets/light-rgb.png)
 
 ```yaml
 type: custom:room-summary-card
@@ -180,7 +180,7 @@ entities:
 
 ## Custom Icon Colors
 
-![Custom Icon Colors](../../assets/icon-color.png)
+![Custom Icon Colors](../assets/icon-color.png)
 
 ```yaml
 # In customize.yaml
@@ -203,7 +203,7 @@ entities:
 
 ## Multi-Light Background
 
-![Multi-Light](../../assets/multi-light.gif)
+![Multi-Light](../assets/multi-light.gif)
 
 The above demonstration shows three different multi-light configurations:
 
@@ -243,7 +243,7 @@ The above demonstration shows three different multi-light configurations:
 
 ## Custom Styling
 
-![Custom Styles](../../assets/custom-styles.png)
+![Custom Styles](../assets/custom-styles.png)
 
 ```yaml
 - type: heading
@@ -313,7 +313,7 @@ The above demonstration shows three different multi-light configurations:
 
 ## State based CSS styling for entities
 
-![Entity Styles](../../assets/entity-styles.gif)
+![Entity Styles](../assets/entity-styles.gif)
 
 ```yaml
 type: custom:room-summary-card
@@ -360,7 +360,7 @@ entities:
 
 ## Entity Picture Attributes
 
-![Entity Styles](../../assets/entity-picture-attributes.png)
+![Entity Styles](../assets/entity-picture-attributes.png)
 
 ```yaml
 type: grid

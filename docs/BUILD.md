@@ -1,4 +1,4 @@
-## Code Quality
+# Build & Code Quality
 
 Forgive me and my badges..
 

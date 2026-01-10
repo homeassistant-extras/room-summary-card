@@ -1,0 +1,60 @@
+site_name: Room Summary Card
+site_description: Room Data at Your Fingertips - A custom card for Home Assistant
+site_url: https://homeassistant-extras.github.io/room-summary-card/
+repo_name: homeassistant-extras/room-summary-card
+repo_url: https://github.com/homeassistant-extras/room-summary-card
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: blue
+      accent: light-blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: blue
+      accent: light-blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/room-cards.png
+  favicon: assets/room-cards.png
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/homeassistant-extras/room-summary-card
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/NpH4Pt8Jmr

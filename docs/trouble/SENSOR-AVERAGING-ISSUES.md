@@ -1,4 +1,4 @@
-## Sensor Averaging Issues
+# Sensor Averaging Issues
 
 ### Averaged Sensors Not Showing
 

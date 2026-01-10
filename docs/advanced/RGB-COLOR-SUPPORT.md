@@ -1,4 +1,4 @@
-## RGB Color Support
+# RGB Color Support
 
 The card automatically uses RGB values from entities with `rgb_color` attributes for accurate color representation.
 
@@ -16,7 +16,7 @@ The card will use this RGB value for:
 - Background effects
 - Theme overrides
 
-![RGB Light](../../assets/light-rgb.png)
+![RGB Light](../assets/light-rgb.png)
 
 ### RGB Priority Rules
 

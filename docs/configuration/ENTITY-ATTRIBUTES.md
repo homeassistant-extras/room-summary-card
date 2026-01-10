@@ -1,4 +1,4 @@
-## Entity Attributes
+# Entity Attributes
 
 > [!CAUTION]
 > The UI editor has issues displaying advanced entities. It's recommended to configure these completely via `yaml`.
@@ -47,4 +47,4 @@ sensor:
       off_color: grey
 ```
 
-See [Advanced Docs](ADVANCED.md) for more examples on attributes.
+See [Advanced Docs](../ADVANCED.md) for more examples on attributes.

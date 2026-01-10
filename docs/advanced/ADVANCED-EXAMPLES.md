@@ -1,4 +1,4 @@
-## Advanced Examples
+# Advanced Examples
 
 ### Complete Room with Background
 
@@ -943,7 +943,7 @@ background:
   opacity: 25
 ```
 
-![Sensor Layouts](../../assets/sensors-styles.png)
+![Sensor Layouts](../assets/sensors-styles.png)
 
 ### Skip Styling Features
 
@@ -981,7 +981,7 @@ styles:
     font-size: 24px # Larger icons
 ```
 
-![Sensor Icons](../../assets/sensor-icons.png)
+![Sensor Icons](../assets/sensor-icons.png)
 
 ### Custom Thresholds
 

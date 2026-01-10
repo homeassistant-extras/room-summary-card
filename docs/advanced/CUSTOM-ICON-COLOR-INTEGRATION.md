@@ -1,4 +1,4 @@
-## Custom Icon Color Integration
+# Custom Icon Color Integration
 
 The card supports the [custom-icon-color integration](https://github.com/Mariusthvdb/custom-icon-color) which allows setting custom colors via the `icon_color` attribute.
 
@@ -24,7 +24,7 @@ customize:
     icon: mdi:plex
 ```
 
-![Custom Icon Color](../../assets/icon-color.png)
+![Custom Icon Color](../assets/icon-color.png)
 
 ### Available Color Names
 

@@ -20,6 +20,8 @@
 !LICENSE
 !sonar-project.properties
 !yarn.lock
+!docs/**
+!mkdocs.yml
 
 # Ignore folders.
 node_modules

@@ -1,4 +1,4 @@
-## Entity Issues
+# Entity Issues
 
 ### Entity States Not Updating
 

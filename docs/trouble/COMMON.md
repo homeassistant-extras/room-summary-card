@@ -1,4 +1,4 @@
-## Common Error Messages
+# Common Error Messages
 
 ### "Custom element doesn't exist: room-summary-card"
 

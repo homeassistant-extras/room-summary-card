@@ -2,7 +2,7 @@
 
 The Room Summary Card now supports custom CSS styles for different areas of the card, allowing you to completely customize the appearance to match your theme or personal preferences.
 
-![styles](../../assets/custom-styles.png)
+![styles](../assets/custom-styles.png)
 
 ## Overview
 
@@ -51,7 +51,7 @@ styles:
 
 #### Customizing Grid Layout
 
-![compact](../../assets/compact.png)
+![compact](../assets/compact.png)
 
 You can customize the main grid layout using CSS variables:
 
@@ -181,7 +181,7 @@ styles:
 
 When using icon backgrounds with images, you can customize or remove the default gradient overlay:
 
-![Gradient](../../assets/gradient.png)
+![Gradient](../assets/gradient.png)
 
 **Remove the gradient overlay:**
 
@@ -433,7 +433,7 @@ styles:
     '--user-entity-state-color': '#4ecdc4' # Color for all entity states
 ```
 
-![Entity States](../../assets/state-display.png)
+![Entity States](../assets/state-display.png)
 
 ### Hiding Individual Entity Labels
 

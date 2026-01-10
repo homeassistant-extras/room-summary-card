@@ -1,4 +1,4 @@
-## Performance Issues
+# Performance Issues
 
 ### Card Loading Slowly
 

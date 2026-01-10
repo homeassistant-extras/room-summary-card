@@ -1,4 +1,4 @@
-## Problem Entity Detection
+# Problem Entity Detection
 
 The card can automatically detect and monitor "problem" entities in your areas using two methods:
 
@@ -22,7 +22,7 @@ You can use either method (or both) to mark entities as problems:
    - Directly assigned to the area
    - Belong to a device assigned to the area
 
-![Problem Label Setup](../../assets/problem-label.png)
+![Problem Label Setup](../assets/problem-label.png)
 
 ### How It Works
 
@@ -35,7 +35,7 @@ The card automatically:
 - Shows red indicator if any problems are active
 - **Mold Detection**: Displays an animated mold indicator when mold levels exceed configured thresholds
 
-![Problem Indicator](../../assets/problems.png)
+![Problem Indicator](../assets/problems.png)
 
 ### Problem Indicator Display Options
 
@@ -96,7 +96,7 @@ The mold indicator appears in the bottom left area near problem entities and pro
 - **Hover Effects**: Scales up and intensifies animations on hover
 - **Dark Theme Support**: Automatically adjusts colors for dark themes
 
-![Moldy](../../assets/moldy.png)
+![Moldy](../assets/moldy.png)
 
 ### Example Problem Entities
 

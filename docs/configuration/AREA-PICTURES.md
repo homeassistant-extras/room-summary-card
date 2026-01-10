@@ -1,4 +1,4 @@
-## Setting Up Area Pictures
+# Setting Up Area Pictures
 
 To use automatic background images from areas:
 

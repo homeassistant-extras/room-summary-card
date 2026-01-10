@@ -1,4 +1,4 @@
-## Theme Issues
+# Theme Issues
 
 ### Colors Not Applying
 

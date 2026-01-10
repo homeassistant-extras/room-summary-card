@@ -1,4 +1,4 @@
-## Configuration Issues
+# Configuration Issues
 
 ### "Area is required" Error
 

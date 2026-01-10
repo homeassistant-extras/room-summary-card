@@ -1,4 +1,4 @@
-## Display Issues
+# Display Issues
 
 ### Card Appears Blank
 

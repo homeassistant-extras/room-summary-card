@@ -2,7 +2,7 @@
 
 The Room Summary Card supports alarm detection to provide visual feedback when rooms are occupied, when smoke is detected, when gas is detected, or when water is detected. This feature uses motion, occupancy, presence, smoke, gas, or moisture sensors to dynamically change the card's appearance based on room status.
 
-![Occupancy](../../assets/occupancy.png)
+![Occupancy](../assets/occupancy.png)
 
 ## Overview
 

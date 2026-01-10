@@ -1,4 +1,4 @@
-## Background Image Issues
+# Background Image Issues
 
 ### Background Images Not Showing
 

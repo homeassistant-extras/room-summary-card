@@ -2,7 +2,7 @@
 
 The multi-light background feature allows the card background to light up when any light entity in the room is on, instead of only when the main room entity is on. This is particularly useful for rooms with multiple lights where you want the background to reflect the actual lighting state of the room.
 
-![Multi-Light](../../assets/multi-light.gif)
+![Multi-Light](../assets/multi-light.gif)
 
 📖 **See [Multi-Light Background Example](../advanced/README-EXAMPLES.md#multi-light-background) for configuration details.**
 
@@ -55,7 +55,7 @@ lights:
 
 Ambient lights are a special type of light that only affect the card background, not the main icon or title. This is useful when you have RGB LED strips or accent lighting that should color the background while a main ceiling light colors the icon.
 
-![Ambient-Light](../../assets/ambient.gif)
+![Ambient-Light](../assets/ambient.gif)
 
 ### Ambient Light Configuration
 

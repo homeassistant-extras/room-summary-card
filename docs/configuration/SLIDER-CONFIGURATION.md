@@ -2,7 +2,7 @@
 
 The slider feature displays the first entity as a draggable vertical slider, allowing you to control brightness by dragging the entity icon up and down. This is particularly useful for light entities where you want quick brightness adjustment without opening a more-info dialog.
 
-![slider](../../assets/slider.gif)
+![slider](../assets/slider.gif)
 
 ## Basic Setup
 

@@ -1,4 +1,4 @@
-## Getting Help
+# Getting Help
 
 ### Before Asking for Help
 
@@ -9,7 +9,7 @@
 
 ### Where to Get Help
 
-- **📖 Documentation**: Check our [docs folder](../docs/) for guides
+- **📖 Documentation**: Check our [docs folder](../index.md) for guides
 - **💬 GitHub Discussions**: [Ask questions](https://github.com/homeassistant-extras/room-summary-card/discussions)
 - **🐛 GitHub Issues**: [Report bugs](https://github.com/homeassistant-extras/room-summary-card/issues)
 - **💬 Discord**: [Join our Discord](https://discord.gg/NpH4Pt8Jmr)
