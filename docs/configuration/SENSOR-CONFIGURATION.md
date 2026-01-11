@@ -36,7 +36,7 @@ sensors:
     icon: mdi:thermometer
 ```
 
-The configured icon takes priority over state-based icons and the default entity icon.
+State-based icons take priority over the configured icon, which serves as a fallback/default.
 
 #### Object Format with State-Based Styling and Labels
 
@@ -229,11 +229,11 @@ sensors:
 
 Icons are determined in the following priority order:
 
-1. **Configured icon** (`icon` property) - highest priority
-2. **State-based icon** (from `states` configuration when state matches)
+1. **State-based icon** (from `states` configuration when state matches) - highest priority
+2. **Configured icon** (`icon` property) - fallback/default
 3. **Default entity icon** (from Home Assistant)
 
-This allows you to set a default icon for a sensor while still allowing state-based icons to override it when specific conditions are met.
+This allows you to set a default icon for a sensor while state-based icons will override it when specific conditions are met.
 
 #### Mixed Format
 

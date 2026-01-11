@@ -32,7 +32,7 @@ describe('loot-box-icon.ts', () => {
       expect(icon).to.be.undefined;
     });
 
-    it('should return configured icon as priority 1', () => {
+    it('should return configured icon when no threshold icon', () => {
       const entity: EntityInformation = {
         config: {
           entity_id: 'light.test',
@@ -59,7 +59,7 @@ describe('loot-box-icon.ts', () => {
       expect(icon).to.equal('mdi:threshold-icon');
     });
 
-    it('should prioritize configured icon over threshold icon', () => {
+    it('should prioritize threshold/state icon over configured icon', () => {
       const entity: EntityInformation = {
         config: {
           entity_id: 'light.test',
@@ -72,6 +72,24 @@ describe('loot-box-icon.ts', () => {
         thresholdResult: { icon: 'mdi:threshold-icon' },
       });
 
+      // Threshold/state icon should override configured icon
+      expect(icon).to.equal('mdi:threshold-icon');
+    });
+
+    it('should use configured icon as fallback when no threshold icon', () => {
+      const entity: EntityInformation = {
+        config: {
+          entity_id: 'light.test',
+          icon: 'mdi:config-icon',
+        },
+        state: createStateEntity('light', 'light.test', 'on'),
+      };
+
+      const icon = computeEntityIcon(entity, mockConfig, {
+        thresholdResult: undefined,
+      });
+
+      // Should use configured icon when no threshold icon is present
       expect(icon).to.equal('mdi:config-icon');
     });
 

@@ -19,8 +19,8 @@ export interface IconComputationOptions {
 
 /**
  * Computes the icon to display for an entity based on priority:
- * 1. Configured icon (entity.config.icon)
- * 2. Threshold icon (if configured)
+ * 1. Threshold/state icon (if configured and matches current state)
+ * 2. Configured icon (entity.config.icon) - fallback/default
  * 3. Climate icon (if entity is climate and skip_climate_styles is not enabled)
  * 4. undefined (let ha-state-icon use default)
  *
@@ -41,14 +41,15 @@ export const computeEntityIcon = (
     return undefined;
   }
 
-  // Priority 1: Configured icon
-  if (entity.config.icon) {
-    return entity.config.icon;
-  }
-
-  // Priority 2: Threshold icon (if configured)
+  // Priority 1: Threshold/state icon (if configured and matches current state)
+  // This allows dynamic state-based icons to override static configured icons
   if (thresholdResult?.icon) {
     return thresholdResult.icon;
+  }
+
+  // Priority 2: Configured icon (fallback/default)
+  if (entity.config.icon) {
+    return entity.config.icon;
   }
 
   // Priority 3: Climate icon (if applicable)

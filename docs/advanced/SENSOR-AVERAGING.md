@@ -1,4 +1,4 @@
-## Sensor Averaging
+# Sensor Averaging
 
 The card can automatically calculate and display averaged sensor readings by device class, using the same logic as Home Assistant's area card.
 

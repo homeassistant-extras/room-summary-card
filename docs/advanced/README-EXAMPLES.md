@@ -1,4 +1,4 @@
-# README Examples
+# Documentation Screenshot Yaml
 
 Example YAML configurations to replicate each screenshot shown below. See my personal configuration to see how I use this card: [my dashboard yaml](https://github.com/warmfire540/home-assistant-config-public/blob/home/ui_lovelace_minimalist/dashboard/views/01-home.yaml#L78)
 

@@ -155,8 +155,9 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
     // Get label (priority: state/threshold label > config label)
     const label = getEntityLabel(info, result);
 
-    // Icon priority: configured icon > state/threshold icon > default
-    const icon = sensorConfig?.icon || result?.icon;
+    // Icon priority: state/threshold icon > configured icon > default
+    // State-based icons override configured icons for dynamic behavior
+    const icon = result?.icon || sensorConfig?.icon;
 
     return html`
       <div
