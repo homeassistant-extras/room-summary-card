@@ -1338,10 +1338,10 @@
     picocolors "1.1.1"
     pretty-format "^27.0.2"
 
-"@trivago/prettier-plugin-sort-imports@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@trivago/prettier-plugin-sort-imports/-/prettier-plugin-sort-imports-6.0.1.tgz#b71c020c4069c0b7a75953227ad6c803cea3f568"
-  integrity sha512-6B13DCWDfAfh4AEJ43gRgeCSAQmlKG5LHqHzHc0lbUwgBy0rX7o41US+46Fd4XiXBx+JDGEz3NBadCbUls0dUQ==
+"@trivago/prettier-plugin-sort-imports@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@trivago/prettier-plugin-sort-imports/-/prettier-plugin-sort-imports-6.0.2.tgz#b30948c4d22a84f00ae9133bcabd0603de3c0261"
+  integrity sha512-3DgfkukFyC/sE/VuYjaUUWoFfuVjPK55vOFDsxD56XXynFMCZDYFogH2l/hDfOsQAm1myoU/1xByJ3tWqtulXA==
   dependencies:
     "@babel/generator" "^7.28.0"
     "@babel/parser" "^7.28.0"
