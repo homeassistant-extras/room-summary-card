@@ -115,6 +115,20 @@ In this example, the card will trigger the hot border if either the averaged tem
 
 📖 **See [Entity Icons Example](advanced/README-EXAMPLES.md#entity-icons) for configuration details.**
 
+### Entity Badges
+
+Small overlay icons that appear on entity icons to provide additional visual information:
+
+- **Multiple Badges**: Up to 4 badges per entity, positioned at any corner
+- **Display Modes**: Always visible, Home Assistant style, or state-based matching
+- **Flexible Configuration**: Show entity state icons or custom icons based on conditions
+- **Related Entities**: Badges can display information from different entities
+- **State Matching**: Supports attribute-based matching for advanced use cases
+
+![Entity Badges](assets/badges.png)
+
+📖 **See [Badge Configuration](configuration/BADGE-CONFIGURATION.md) for complete documentation.**
+
 ### Problem Detection
 
 - Automatically detects entities labeled as "problem" in the area
@@ -363,6 +377,7 @@ See the [Theming Guide](THEMING.md) for detailed color configuration and custom 
 - [x] **`Frosted Glass Theme Support`**: automatic detection and styling for Frosted Glass themes with transparent blurred card effects - thanks @devkaiwang
 - [x] **`Sensor Improvements`**: feature requests to make sensors awesome - thanks @MelleD
 - [x] **`Brightness Slider`**: entity transforms into slider - thanks @tmaihoff, @hfalk
+- [x] **`Entity Badges`**: dynamic badge overlays- thanks @ojm88
 
 ## Contributing
 

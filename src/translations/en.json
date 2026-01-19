@@ -50,7 +50,25 @@
         "attribute": "Attribute",
         "styles": "Styles",
         "operator": "Operator"
-      }
+      },
+      "badges": "Badges",
+      "add_badge": "Add Badge"
+    },
+    "badge": {
+      "position": {
+        "top_right": "Top Right",
+        "top_left": "Top Left",
+        "bottom_right": "Bottom Right",
+        "bottom_left": "Bottom Left"
+      },
+      "position_label": "Position",
+      "mode": {
+        "show_always": "Show Always",
+        "if_match": "If Match",
+        "homeassistant": "Home Assistant"
+      },
+      "mode_label": "Mode",
+      "max_badges": "Maximum 4 badges allowed"
     },
     "entities": {
       "entities_info": "These options are for setting up the right side entities."

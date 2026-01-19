@@ -7,6 +7,7 @@ import {
 import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
 import { attributeDisplay } from '@html/attribute-display';
+import { renderBadgeElements } from '@html/badge-squad';
 import { stateDisplay } from '@html/state-display';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { computeEntityIcon } from '@theme/render/loot-box-icon';
@@ -223,6 +224,13 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       thresholdResult,
     });
 
+    // Render badges (max 4)
+    const badgeElements = renderBadgeElements(
+      this.entity.config.badges,
+      this.entity,
+      this._hass,
+    );
+
     return html`
       ${stylesToHostCss(iconStyles)}
       <div
@@ -238,6 +246,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
               .stateObj=${state}
               .icon=${icon}
             ></ha-state-icon>`}
+        ${badgeElements}
         ${label ? html`<div class="entity-label">${label}</div>` : nothing}
         ${showState
           ? html`<div class="entity-state">

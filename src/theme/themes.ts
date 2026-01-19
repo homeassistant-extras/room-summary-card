@@ -105,7 +105,7 @@ export const colorsLight = css`
   --opacity-background-inactive: 1;
 
   --opacity-icon-fill-active: 0.2;
-  --opacity-icon-fill-inactive: 0.1;
+  --opacity-icon-fill-inactive: 0.2;
 `;
 
 export const colorsDark = css`

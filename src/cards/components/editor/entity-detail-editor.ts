@@ -15,6 +15,7 @@ import {
 } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import memoizeOne from 'memoize-one';
+import './badge-row-editor';
 import './states-row-editor';
 
 export class RoomSummaryEntityDetailEditor extends LitElement {
@@ -263,7 +264,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       schema = this._lightsSchema(this._config.entity_id, this.hass);
     }
 
-    // Only access states/thresholds for entity/sensor types, not for lights
+    // Only access states/thresholds/badges for entity/sensor types, not for lights
     const states =
       this.type !== 'light' &&
       Array.isArray((this._config as EntityConfig).states)
@@ -273,6 +274,11 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       this.type !== 'light' &&
       Array.isArray((this._config as EntityConfig).thresholds)
         ? (this._config as EntityConfig).thresholds
+        : undefined;
+    const badges =
+      this.type !== 'light' &&
+      Array.isArray((this._config as EntityConfig).badges)
+        ? (this._config as EntityConfig).badges
         : undefined;
 
     const thresholdsEditor =
@@ -288,6 +294,19 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
               label=${localize(this.hass, 'editor.entity.thresholds')}
               @thresholds-value-changed=${this._thresholdsValueChanged}
             ></room-summary-states-row-editor>
+          `
+        : nothing;
+
+    const badgesEditor =
+      this.type === 'entity' || this.type === 'sensor'
+        ? html`
+            <room-summary-badge-row-editor
+              .hass=${this.hass}
+              .badges=${badges}
+              .entityId=${this._config.entity_id}
+              label=${localize(this.hass, 'editor.entity.badges')}
+              @badges-value-changed=${this._badgesValueChanged}
+            ></room-summary-badge-row-editor>
           `
         : nothing;
 
@@ -311,7 +330,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
               label=${localize(this.hass, 'editor.entity.states')}
               @states-value-changed=${this._statesValueChanged}
             ></room-summary-states-row-editor>
-            ${thresholdsEditor}
+            ${thresholdsEditor} ${badgesEditor}
           `
         : nothing}
     `;
@@ -397,6 +416,36 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     // If thresholds array is empty, ensure we remove the property
     if (cleanedThresholds.length === 0 && 'thresholds' in newConfig) {
       delete newConfig.thresholds;
+    }
+
+    // @ts-ignore
+    fireEvent(this, 'config-changed', { config: newConfig });
+  }
+
+  private _badgesValueChanged(ev: CustomEvent): void {
+    if (!this._config) return;
+    const badgesValue = ev.detail.value;
+
+    // Ensure badges is always an array, never an object
+    if (!Array.isArray(badgesValue)) {
+      console.warn('Badges value is not an array:', badgesValue);
+      return;
+    }
+
+    // Clean empty strings from each badge config
+    const cleanedBadges = badgesValue.map((badge) =>
+      this._cleanEmptyStrings(badge),
+    );
+
+    const newConfig = {
+      ...this._config,
+      // Only set badges if array has items, otherwise remove the property
+      ...(cleanedBadges.length > 0 ? { badges: cleanedBadges } : {}),
+    };
+
+    // If badges array is empty, ensure we remove the property
+    if (cleanedBadges.length === 0 && 'badges' in newConfig) {
+      delete newConfig.badges;
     }
 
     // @ts-ignore

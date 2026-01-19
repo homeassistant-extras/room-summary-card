@@ -389,7 +389,7 @@ describe('entity-detail-editor.ts', () => {
       expect(statesRowEditors.length).to.equal(2);
       // Find the thresholds editor
       const thresholdsEditor = Array.from(statesRowEditors).find(
-        (editor) => (editor as RoomSummaryStatesRowEditor).mode === 'thresholds',
+        (editor) => editor.mode === 'thresholds',
       ) as RoomSummaryStatesRowEditor;
       expect(thresholdsEditor).to.exist;
       expect(thresholdsEditor.mode).to.equal('thresholds');
@@ -426,10 +426,12 @@ describe('entity-detail-editor.ts', () => {
       );
       // Find the thresholds editor
       const thresholdsEditor = Array.from(statesRowEditors).find(
-        (editor) => (editor as RoomSummaryStatesRowEditor).mode === 'thresholds',
+        (editor) => editor.mode === 'thresholds',
       ) as RoomSummaryStatesRowEditor;
       expect(thresholdsEditor).to.exist;
-      expect(thresholdsEditor.thresholds).to.deep.equal(sensorConfig.thresholds);
+      expect(thresholdsEditor.thresholds).to.deep.equal(
+        sensorConfig.thresholds,
+      );
     });
 
     it('should not render states row editor when type is light', async () => {

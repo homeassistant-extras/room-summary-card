@@ -218,6 +218,88 @@ entities:
 - Reduces mistakes when entities appear/disappear or change availability
 - Entities with unavailable state will still display in their configured position
 
+### Entity Badges
+
+Badges are small overlay icons that appear on entity icons to provide additional visual information. Each entity can have up to 4 badges configured.
+
+![Entity Badges](../assets/badges.png)
+
+#### Basic Badge Examples
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+entities:
+  # Climate entity with HVAC action badge
+  - entity_id: climate.living_room
+    badges:
+      - position: top_right
+        states:
+          - state: heating
+            attribute: hvac_action
+            icon: mdi:radiator
+            icon_color: red
+          - state: cooling
+            attribute: hvac_action
+            icon: mdi:snowflake
+            icon_color: blue
+
+  # Light with always-visible state badge
+  - entity_id: light.living_room
+    badges:
+      - position: top_right
+        mode: show_always
+
+  # Switch with active-only badge
+  - entity_id: switch.living_room_fan
+    badges:
+      - position: top_right
+        mode: if_active
+
+  # Climate entity with Home Assistant native badge
+  - entity_id: climate.living_room
+    badges:
+      - position: top_right
+        mode: homeassistant
+
+  # Person entity with Home Assistant native badge
+  - entity_id: person.john
+    badges:
+      - position: top_right
+        mode: homeassistant
+```
+
+#### Multiple Badges Example
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+entities:
+  - entity_id: light.living_room
+    badges:
+      # Always show entity state
+      - position: top_right
+        mode: show_always
+      # Show brightness indicator when active
+      - position: top_left
+        mode: if_active
+        states:
+          - state: '255'
+            attribute: brightness
+            icon: mdi:brightness-7
+            icon_color: yellow
+          - state: '128'
+            attribute: brightness
+            icon: mdi:brightness-4
+            icon_color: orange
+      # Show related temperature sensor
+      - position: bottom_right
+        entity_id: sensor.living_room_temperature
+        mode: show_always
+```
+
+📖 **See [Badge Configuration](BADGE-CONFIGURATION.md) for complete badge documentation.**
+
 ### Occupancy Detection
 
 ```yaml

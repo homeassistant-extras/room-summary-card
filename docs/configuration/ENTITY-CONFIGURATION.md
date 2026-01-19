@@ -40,6 +40,7 @@ entities:
 | off_color         | string | theme off color         | Color when entity is inactive                                                                         |
 | thresholds        | array  | none                    | Dynamic colors/icons based on sensor values                                                           |
 | states            | array  | none                    | Colors/icons based on exact entity states                                                             |
+| badges            | array  | none                    | Badge overlays for additional visual information (up to 4 badges per entity)                          |
 | styles            | object | none                    | Custom CSS styles to apply to the entity                                                              |
 | features          | array  | none                    | Feature flags for this entity                                                                         |
 | tap_action        | object | `{action: "toggle"}`    | Action on single tap                                                                                  |
@@ -70,6 +71,30 @@ entities:
 | label       | string | none         | Custom label to display when this state matches (overrides entity-level label) |
 | attribute   | string | none         | Optional attribute name to match instead of entity state                       |
 | styles      | object | none         | Custom CSS styles to apply to entity icon                                      |
+
+### Badge Configuration
+
+Badges are small overlay icons that appear on entity icons to provide additional visual information. Each entity can have up to 4 badges configured.
+
+![Entity Badges](../assets/badges.png)
+
+📖 **See [Badge Configuration](BADGE-CONFIGURATION.md) for complete badge documentation.**
+
+Quick example:
+
+```yaml
+entities:
+  - entity_id: climate.living_room
+    badges:
+      - position: top_right
+        mode: homeassistant
+      - position: top_left
+        states:
+          - state: heating
+            attribute: hvac_action
+            icon: mdi:radiator
+            icon_color: red
+```
 
 ### Entity Features
 

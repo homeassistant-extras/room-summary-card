@@ -47,6 +47,8 @@ export type TranslationKey =
   | 'editor.entity.add_state'
   | 'editor.entity.thresholds'
   | 'editor.entity.add_threshold'
+  | 'editor.entity.badges'
+  | 'editor.entity.add_badge'
   | 'editor.entity.state.state'
   | 'editor.entity.state.icon_color'
   | 'editor.entity.state.title_color'
@@ -166,7 +168,17 @@ export type TranslationKey =
   | 'editor.layout.bottom'
   | 'editor.styles.card_styles'
   | 'editor.light.type'
-  | 'editor.light.ambient';
+  | 'editor.light.ambient'
+  | 'editor.badge.position.top_right'
+  | 'editor.badge.position.top_left'
+  | 'editor.badge.position.bottom_right'
+  | 'editor.badge.position.bottom_left'
+  | 'editor.badge.position_label'
+  | 'editor.badge.mode.show_always'
+  | 'editor.badge.mode.if_match'
+  | 'editor.badge.mode.homeassistant'
+  | 'editor.badge.mode_label'
+  | 'editor.badge.max_badges';
 
 export interface Translation {
   /** The translation key */

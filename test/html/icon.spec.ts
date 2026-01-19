@@ -376,7 +376,11 @@ describe('icon.ts', () => {
           mold: moldSensor,
           thresholdSensors: [],
         };
-        const result = renderProblemIndicator(mockHass, configNever, sensorData);
+        const result = renderProblemIndicator(
+          mockHass,
+          configNever,
+          sensorData,
+        );
         const el = await fixture(result as TemplateResult);
 
         expect(el).to.exist;

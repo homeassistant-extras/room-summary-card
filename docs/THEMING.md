@@ -293,7 +293,7 @@ This automatic feature works seamlessly with all themes and requires no configur
 --opacity-background-active: 0.1;
 --opacity-background-inactive: 1;
 --opacity-icon-fill-active: 0.2;
---opacity-icon-fill-inactive: 0.1;
+--opacity-icon-fill-inactive: 0.2;
 
 /* Dark mode */
 --opacity-background-active: 0.1;

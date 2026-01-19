@@ -9,6 +9,7 @@ import type {
 } from '@hass/data/lovelace/config/action';
 import type { HomeAssistant } from '@hass/types';
 import * as attributeDisplayModule from '@html/attribute-display';
+import * as badgeSquadModule from '@html/badge-squad';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
@@ -39,6 +40,7 @@ describe('room-state-icon.ts', () => {
   let hasEntityFeatureStub: sinon.SinonStub;
   let stateDisplayStub: sinon.SinonStub;
   let computeEntityIconStub: sinon.SinonStub;
+  let renderBadgeElementsStub: sinon.SinonStub;
 
   const mockEntityState: EntityState = createStateEntity(
     'light',
@@ -117,6 +119,10 @@ describe('room-state-icon.ts', () => {
       lootBoxIconModule,
       'computeEntityIcon',
     ).returns(undefined);
+    renderBadgeElementsStub = stub(
+      badgeSquadModule,
+      'renderBadgeElements',
+    ).returns([]);
 
     mockHass = {
       states: {
@@ -144,6 +150,7 @@ describe('room-state-icon.ts', () => {
     hasEntityFeatureStub.restore();
     stateDisplayStub.restore();
     computeEntityIconStub.restore();
+    renderBadgeElementsStub.restore();
   });
 
   describe('properties', () => {
@@ -292,6 +299,19 @@ describe('room-state-icon.ts', () => {
         computeEntityIconStub.calledWith(mockEntity, mockConfig, {
           thresholdResult,
         }),
+      ).to.be.true;
+    });
+
+    it('should call renderBadgeElements during render', () => {
+      element.render();
+
+      expect(renderBadgeElementsStub.called).to.be.true;
+      expect(
+        renderBadgeElementsStub.calledWith(
+          mockEntity.config.badges,
+          mockEntity,
+          mockHass,
+        ),
       ).to.be.true;
     });
 

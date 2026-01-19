@@ -11,6 +11,7 @@ Some of these go to their own documents - so use this ToC as a guide.
 - [Feature Flags](#feature-flags)
 - [Background Configuration](configuration/BACKGROUND-CONFIGURATION.md)
 - [Entity Configuration](configuration/ENTITY-CONFIGURATION.md)
+- [Badge Configuration](configuration/BADGE-CONFIGURATION.md)
 - [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md)
 - [Sensor Configuration](configuration/SENSOR-CONFIGURATION.md)
 - [Threshold Configuration](configuration/THRESHOLD-CONFIGURATION.md)

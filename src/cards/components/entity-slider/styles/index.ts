@@ -1,17 +1,17 @@
 import { css } from 'lit';
-import { baseStyles } from './base';
-import { trackStyle } from './track';
-import { lineStyle } from './line';
-import { filledStyle } from './filled';
-import { gradientStyle } from './gradient';
-import { dualRailStyle } from './dual-rail';
-import { dotsStyle } from './dots';
-import { notchedStyle } from './notched';
-import { gridStyle } from './grid';
-import { glowStyle } from './glow';
-import { shadowTrailStyle } from './shadow-trail';
-import { outlinedStyle } from './outlined';
 import { barStyle } from './bar';
+import { baseStyles } from './base';
+import { dotsStyle } from './dots';
+import { dualRailStyle } from './dual-rail';
+import { filledStyle } from './filled';
+import { glowStyle } from './glow';
+import { gradientStyle } from './gradient';
+import { gridStyle } from './grid';
+import { lineStyle } from './line';
+import { notchedStyle } from './notched';
+import { outlinedStyle } from './outlined';
+import { shadowTrailStyle } from './shadow-trail';
+import { trackStyle } from './track';
 
 /**
  * Combined styles for the entity slider component

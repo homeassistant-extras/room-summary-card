@@ -7,6 +7,8 @@
  */
 
 import { RoomSummaryCard } from '@cards/card';
+import { Badge } from '@cards/components/badge/badge';
+import { RoomSummaryBadgeRowEditor } from '@cards/components/editor/badge-row-editor';
 import { RoomSummaryEntitiesRowEditor } from '@cards/components/editor/entities-row-editor';
 import { RoomSummaryEntityDetailEditor } from '@cards/components/editor/entity-detail-editor';
 import { RoomSummaryStatesRowEditor } from '@cards/components/editor/states-row-editor';
@@ -26,6 +28,7 @@ customElements.define('sensor-collection', SensorCollection);
 customElements.define('entity-collection', EntityCollection);
 customElements.define('entity-slider', EntitySlider);
 customElements.define('room-state-icon', RoomStateIcon);
+customElements.define('room-badge', Badge);
 customElements.define(
   'room-summary-entity-detail-editor',
   RoomSummaryEntityDetailEditor,
@@ -41,6 +44,10 @@ customElements.define(
 customElements.define(
   'room-summary-thresholds-row-editor',
   RoomSummaryThresholdsRowEditor,
+);
+customElements.define(
+  'room-summary-badge-row-editor',
+  RoomSummaryBadgeRowEditor,
 );
 customElements.define(
   'room-summary-sub-element-editor',

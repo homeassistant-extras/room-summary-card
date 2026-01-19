@@ -26,6 +26,9 @@ export interface EntityConfig extends BaseEntityConfig {
 
   /** CSS properties to apply to the entity */
   styles?: Record<string, string>;
+
+  /** Badge configurations for displaying overlay icons */
+  badges?: BadgeConfig[];
 }
 
 /** Features to enable or disable for the entity */
@@ -38,7 +41,7 @@ export interface IconStyleProperties {
   /** Color to use when this condition is met */
   icon_color?: string;
 
-  /** Color to use for the title when this condition is met */
+  /** Color to use for the title when this condition is met if applicable */
   title_color?: string;
 
   /** Icon to use when this condition is met */
@@ -47,7 +50,7 @@ export interface IconStyleProperties {
   /** Optional attribute name to match instead of entity state */
   attribute?: string;
 
-  /** Custom label to display when this state matches */
+  /** Custom label to display when this state matches if applicable */
   label?: string;
 
   /** CSS properties to apply to the entity */
@@ -71,4 +74,21 @@ export interface ThresholdConfig extends IconStyleProperties {
 export interface StateConfig extends IconStyleProperties {
   /** Entity state or attribute value to match exactly */
   state: string;
+}
+
+/**
+ * Configuration for entity badges
+ */
+export interface BadgeConfig {
+  /** Optional entity ID (defaults to parent entity) */
+  entity_id?: string;
+
+  /** Badge position: top_right, top_left, bottom_right, bottom_left */
+  position?: 'top_right' | 'top_left' | 'bottom_right' | 'bottom_left';
+
+  /** State-based badge configuration (reuses StateConfig type) */
+  states?: StateConfig[];
+
+  /** Badge display mode */
+  mode?: 'show_always' | 'if_match' | 'homeassistant';
 }
