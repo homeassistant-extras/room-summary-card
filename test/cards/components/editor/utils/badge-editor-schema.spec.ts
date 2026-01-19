@@ -1,11 +1,14 @@
-import { BadgeEditorSchema } from '@cards/components/editor/utils/badge-editor-schema';
+import {
+  getBadgeSchema,
+  computeLabelCallback,
+} from '@cards/components/editor/utils/badge-editor-schema';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
 import * as localizeModule from '@localize/localize';
 import { expect } from 'chai';
 import { restore, stub } from 'sinon';
 
-describe('BadgeEditorSchema', () => {
+describe('badge-editor-schema', () => {
   let mockHass: HomeAssistant;
 
   beforeEach(() => {
@@ -24,7 +27,7 @@ describe('BadgeEditorSchema', () => {
 
   describe('getBadgeSchema', () => {
     it('should return the correct schema structure', () => {
-      const schema = BadgeEditorSchema.getBadgeSchema('sensor.test', mockHass);
+      const schema = getBadgeSchema('sensor.test', mockHass);
 
       expect(schema).to.be.an('array').with.lengthOf(3);
 
@@ -64,7 +67,7 @@ describe('BadgeEditorSchema', () => {
   describe('computeLabelCallback', () => {
     it('should return empty string when schema has no label', () => {
       const schema = { name: 'test' } as unknown as HaFormSchema;
-      const result = BadgeEditorSchema.computeLabelCallback(schema, mockHass);
+      const result = computeLabelCallback(schema, mockHass);
       expect(result).to.equal('');
     });
 
@@ -75,7 +78,7 @@ describe('BadgeEditorSchema', () => {
         required: false,
         selector: { entity: {} },
       };
-      const result = BadgeEditorSchema.computeLabelCallback(schema, mockHass);
+      const result = computeLabelCallback(schema, mockHass);
       expect(result).to.equal(
         'localized:editor.entity.entity_id (translated:ui.panel.lovelace.editor.card.config.optional)',
       );
@@ -88,7 +91,7 @@ describe('BadgeEditorSchema', () => {
         required: true,
         selector: { entity: {} },
       };
-      const result = BadgeEditorSchema.computeLabelCallback(schema, mockHass);
+      const result = computeLabelCallback(schema, mockHass);
       expect(result).to.equal(
         'localized:editor.entity.entity_id (translated:ui.panel.lovelace.editor.card.config.required)',
       );

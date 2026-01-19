@@ -1,9 +1,12 @@
 import type { BadgeConfig, StateConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import { stub } from 'sinon';
-import { BadgeEditorHandlers } from '../../../../../src/cards/components/editor/utils/badge-editor-handlers';
+import {
+  badgeValueChanged,
+  badgeStatesValueChanged,
+} from '../../../../../src/cards/components/editor/utils/badge-editor-handlers';
 
-describe('BadgeEditorHandlers', () => {
+describe('badge-editor-handlers', () => {
   describe('badgeValueChanged', () => {
     it('should update badge at specified index', () => {
       const badges: BadgeConfig[] = [
@@ -14,11 +17,7 @@ describe('BadgeEditorHandlers', () => {
         position: 'bottom_left',
         mode: 'homeassistant',
       };
-      const newBadges = BadgeEditorHandlers.badgeValueChanged(
-        badges,
-        0,
-        updatedBadge,
-      );
+      const newBadges = badgeValueChanged(badges, 0, updatedBadge);
       expect(newBadges[0]).to.deep.equal(updatedBadge);
       expect(newBadges[1]).to.deep.equal(badges[1]);
     });
@@ -32,11 +31,7 @@ describe('BadgeEditorHandlers', () => {
         position: 'bottom_right',
         mode: 'show_always',
       };
-      const newBadges = BadgeEditorHandlers.badgeValueChanged(
-        badges,
-        1,
-        updatedBadge,
-      );
+      const newBadges = badgeValueChanged(badges, 1, updatedBadge);
       expect(newBadges[0]).to.deep.equal(badges[0]);
       expect(newBadges[1]).to.deep.equal(updatedBadge);
     });
@@ -46,11 +41,7 @@ describe('BadgeEditorHandlers', () => {
         position: 'top_right',
         mode: 'show_always',
       };
-      const newBadges = BadgeEditorHandlers.badgeValueChanged(
-        undefined,
-        0,
-        updatedBadge,
-      );
+      const newBadges = badgeValueChanged(undefined, 0, updatedBadge);
       expect(newBadges).to.be.an('array');
       expect(newBadges[0]).to.deep.equal(updatedBadge);
     });
@@ -63,11 +54,7 @@ describe('BadgeEditorHandlers', () => {
         entity_id: 'light.test',
         empty: '',
       };
-      const newBadges = BadgeEditorHandlers.badgeValueChanged(
-        badges,
-        0,
-        updatedBadge,
-      );
+      const newBadges = badgeValueChanged(badges, 0, updatedBadge);
       expect(newBadges[0]).to.deep.equal({
         position: 'top_right',
         entity_id: 'light.test',
@@ -78,18 +65,14 @@ describe('BadgeEditorHandlers', () => {
 
     it('should not update when value is not an object', () => {
       const badges: BadgeConfig[] = [{ position: 'top_left' }];
-      const newBadges = BadgeEditorHandlers.badgeValueChanged(
-        badges,
-        0,
-        null as any,
-      );
+      const newBadges = badgeValueChanged(badges, 0, null as any);
       expect(newBadges).to.deep.equal(badges);
     });
 
     it('should not mutate original array', () => {
       const badges: BadgeConfig[] = [{ position: 'top_left' }];
       const updatedBadge: BadgeConfig = { position: 'top_right' };
-      BadgeEditorHandlers.badgeValueChanged(badges, 0, updatedBadge);
+      badgeValueChanged(badges, 0, updatedBadge);
       expect(badges[0]?.position).to.equal('top_left');
     });
 
@@ -103,11 +86,7 @@ describe('BadgeEditorHandlers', () => {
         },
         empty: '',
       };
-      const newBadges = BadgeEditorHandlers.badgeValueChanged(
-        badges,
-        0,
-        updatedBadge,
-      );
+      const newBadges = badgeValueChanged(badges, 0, updatedBadge);
       expect(newBadges[0]).to.deep.equal({
         position: 'top_right',
         nested: {
@@ -130,11 +109,7 @@ describe('BadgeEditorHandlers', () => {
         { state: 'off', icon_color: '#000000' },
         { state: 'standby', icon_color: '#888888' },
       ];
-      const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
-        badges,
-        0,
-        statesValue,
-      );
+      const newBadges = badgeStatesValueChanged(badges, 0, statesValue);
       expect(newBadges[0]?.states).to.deep.equal(statesValue);
       expect(newBadges[1]).to.deep.equal(badges[1]);
     });
@@ -147,11 +122,7 @@ describe('BadgeEditorHandlers', () => {
       const statesValue: StateConfig[] = [
         { state: 'on', icon_color: '#ff0000' },
       ];
-      const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
-        badges,
-        1,
-        statesValue,
-      );
+      const newBadges = badgeStatesValueChanged(badges, 1, statesValue);
       expect(newBadges[0]).to.deep.equal(badges[0]);
       expect(newBadges[1]?.states).to.deep.equal(statesValue);
     });
@@ -160,11 +131,7 @@ describe('BadgeEditorHandlers', () => {
       const statesValue: StateConfig[] = [
         { state: 'on', icon_color: '#ff0000' },
       ];
-      const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
-        undefined,
-        0,
-        statesValue,
-      );
+      const newBadges = badgeStatesValueChanged(undefined, 0, statesValue);
       expect(newBadges).to.be.an('array');
       expect(newBadges[0]?.states).to.deep.equal(statesValue);
     });
@@ -175,11 +142,7 @@ describe('BadgeEditorHandlers', () => {
         { state: 'on', icon_color: '#ff0000', empty: '' },
         { state: 'off', icon: '', empty: '' },
       ];
-      const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
-        badges,
-        0,
-        statesValue,
-      );
+      const newBadges = badgeStatesValueChanged(badges, 0, statesValue);
       expect(newBadges[0]?.states).to.deep.equal([
         { state: 'on', icon_color: '#ff0000' },
         { state: 'off' },
@@ -193,18 +156,14 @@ describe('BadgeEditorHandlers', () => {
           states: [{ state: 'on', icon_color: '#ff0000' }],
         },
       ];
-      const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
-        badges,
-        0,
-        [],
-      );
+      const newBadges = badgeStatesValueChanged(badges, 0, []);
       expect(newBadges[0]).to.not.have.property('states');
     });
 
     it('should warn and return original badges when statesValue is not an array', () => {
       const consoleWarnStub = stub(console, 'warn');
       const badges: BadgeConfig[] = [{ position: 'top_left' }];
-      const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
+      const newBadges = badgeStatesValueChanged(
         badges,
         0,
         'not an array' as any,
@@ -226,11 +185,7 @@ describe('BadgeEditorHandlers', () => {
       const statesValue: StateConfig[] = [
         { state: 'off', icon_color: '#000000' },
       ];
-      const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
-        badges,
-        0,
-        statesValue,
-      );
+      const newBadges = badgeStatesValueChanged(badges, 0, statesValue);
       expect(newBadges[0]?.position).to.equal('top_left');
       expect(newBadges[0]?.mode).to.equal('if_match');
       expect(newBadges[0]?.entity_id).to.equal('light.test');
@@ -250,11 +205,7 @@ describe('BadgeEditorHandlers', () => {
           empty: '',
         },
       ];
-      const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
-        badges,
-        0,
-        statesValue,
-      );
+      const newBadges = badgeStatesValueChanged(badges, 0, statesValue);
       expect(newBadges[0]?.states).to.deep.equal([
         {
           state: 'on',
@@ -276,7 +227,7 @@ describe('BadgeEditorHandlers', () => {
       const statesValue: StateConfig[] = [
         { state: 'off', icon_color: '#000000' },
       ];
-      BadgeEditorHandlers.badgeStatesValueChanged(badges, 0, statesValue);
+      badgeStatesValueChanged(badges, 0, statesValue);
       expect(badges[0]?.states?.[0]?.state).to.equal('on');
     });
 
@@ -290,11 +241,7 @@ describe('BadgeEditorHandlers', () => {
           ],
         },
       ];
-      const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
-        badges,
-        0,
-        [],
-      );
+      const newBadges = badgeStatesValueChanged(badges, 0, []);
       expect(newBadges[0]).to.not.have.property('states');
       expect(newBadges[0]?.position).to.equal('top_left');
     });
@@ -311,7 +258,7 @@ describe('BadgeEditorHandlers', () => {
         position: 'top_right',
         mode: 'if_match',
       };
-      badges = BadgeEditorHandlers.badgeValueChanged(badges, 0, updatedBadge);
+      badges = badgeValueChanged(badges, 0, updatedBadge);
       expect(badges[0]?.position).to.equal('top_right');
       expect(badges[0]?.mode).to.equal('if_match');
 
@@ -319,11 +266,7 @@ describe('BadgeEditorHandlers', () => {
       const statesValue: StateConfig[] = [
         { state: 'on', icon_color: '#ff0000' },
       ];
-      badges = BadgeEditorHandlers.badgeStatesValueChanged(
-        badges,
-        0,
-        statesValue,
-      );
+      badges = badgeStatesValueChanged(badges, 0, statesValue);
       expect(badges[0]?.states).to.deep.equal(statesValue);
     });
   });

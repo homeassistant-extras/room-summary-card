@@ -141,15 +141,12 @@ export class RoomSummaryCard extends LitElement {
       isActive,
       isIconActive,
       thresholds,
-      flags: { alarm, dark },
-    } = getRoomProperties(hass, this._config);
-
-    // Detect Frosted Glass themes (e.g. "Frosted Glass", "Frosted Glass Lite").
-    this.frostedGlass =
-      hass.themes?.theme?.startsWith('Frosted Glass') ?? false;
+      flags: { alarm, dark, frostedGlass },
+    } = getRoomProperties(hass, this._config, this);
 
     this.alarm = alarm;
     this.dark = dark;
+    this.frostedGlass = frostedGlass;
     this._isActive = isActive;
     this._isIconActive = isIconActive;
     this.iconOpacityPreset = this._config.icon_opacity_preset;

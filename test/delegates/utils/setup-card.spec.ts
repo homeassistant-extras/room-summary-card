@@ -121,6 +121,7 @@ describe('setup-card.ts', () => {
       expect(result.image).to.be.a('promise');
       expect(result.flags.dark).to.be.true;
       expect(result.flags.alarm).to.be.undefined;
+      expect(result.flags.frostedGlass).to.be.false;
     });
 
     it('should return image as a promise that resolves to the image URL', async () => {
@@ -444,6 +445,73 @@ describe('setup-card.ts', () => {
 
         const result = getRoomProperties(mockHass, config);
         expect(result.flags.alarm).to.equal('water');
+      });
+    });
+
+    describe('frostedGlass detection', () => {
+      it('should detect Frosted Glass theme', () => {
+        const config: Config = { area: 'living_room' };
+        mockHass.themes = { darkMode: true, theme: 'Frosted Glass' } as any;
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.frostedGlass).to.be.true;
+      });
+
+      it('should detect Frosted Glass Lite theme', () => {
+        const config: Config = { area: 'living_room' };
+        mockHass.themes = { darkMode: true, theme: 'Frosted Glass Lite' } as any;
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.frostedGlass).to.be.true;
+      });
+
+      it('should not detect non-Frosted Glass themes', () => {
+        const config: Config = { area: 'living_room' };
+        mockHass.themes = { darkMode: true, theme: 'default' } as any;
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.frostedGlass).to.be.false;
+      });
+
+      it('should return false when theme is undefined', () => {
+        const config: Config = { area: 'living_room' };
+        mockHass.themes = { darkMode: true } as any;
+
+        const result = getRoomProperties(mockHass, config);
+        expect(result.flags.frostedGlass).to.be.false;
+      });
+
+      it('should use view theme when element is provided', () => {
+        const config: Config = { area: 'living_room' };
+        mockHass.themes = { darkMode: true, theme: 'default' } as any;
+
+        const viewContainer = document.createElement('hui-view-container');
+        (viewContainer as any).theme = 'Frosted Glass';
+        document.body.appendChild(viewContainer);
+
+        const div = document.createElement('div');
+        viewContainer.appendChild(div);
+
+        const result = getRoomProperties(mockHass, config, div);
+        expect(result.flags.frostedGlass).to.be.true;
+
+        document.body.removeChild(viewContainer);
+      });
+
+      it('should fall back to global theme when view container has no theme', () => {
+        const config: Config = { area: 'living_room' };
+        mockHass.themes = { darkMode: true, theme: 'Frosted Glass' } as any;
+
+        const viewContainer = document.createElement('hui-view-container');
+        document.body.appendChild(viewContainer);
+
+        const div = document.createElement('div');
+        viewContainer.appendChild(div);
+
+        const result = getRoomProperties(mockHass, config, div);
+        expect(result.flags.frostedGlass).to.be.true;
+
+        document.body.removeChild(viewContainer);
       });
     });
   });

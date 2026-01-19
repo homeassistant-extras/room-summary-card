@@ -14,10 +14,20 @@ import {
 import { property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import './states-row-editor';
-import { BadgeEditorHandlers } from './utils/badge-editor-handlers';
-import { BadgeEditorManager } from './utils/badge-editor-manager';
-import { BadgeEditorSchema } from './utils/badge-editor-schema';
-import { BadgeEditorUtils } from './utils/badge-editor-utils';
+import {
+  badgeValueChanged,
+  badgeStatesValueChanged,
+} from './utils/badge-editor-handlers';
+import {
+  addBadge,
+  adjustExpandedIndicesAfterRemoval,
+  removeBadgeItem,
+} from './utils/badge-editor-manager';
+import {
+  getBadgeSchema,
+  computeLabelCallback,
+} from './utils/badge-editor-schema';
+import { getKey, getBadgeTitle } from './utils/badge-editor-utils';
 
 declare global {
   interface HASSDomEvents {
@@ -39,15 +49,15 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
   @state() private _expandedBadges = new Set<number>();
 
   private _addBadge(): void {
-    const newBadges = BadgeEditorManager.addBadge(this.badges);
+    const newBadges = addBadge(this.badges);
     const newIndex = newBadges.length - 1;
     this._expandedBadges = new Set([...this._expandedBadges, newIndex]);
     fireEvent(this, 'badges-value-changed', { value: newBadges });
   }
 
   private _removeBadgeItem(index: number): void {
-    const newBadges = BadgeEditorManager.removeBadgeItem(this.badges, index);
-    this._expandedBadges = BadgeEditorManager.adjustExpandedIndicesAfterRemoval(
+    const newBadges = removeBadgeItem(this.badges, index);
+    this._expandedBadges = adjustExpandedIndicesAfterRemoval(
       this._expandedBadges,
       index,
     );
@@ -55,7 +65,7 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
   }
 
   private _badgeValueChanged(index: number, ev: CustomEvent): void {
-    const newBadges = BadgeEditorHandlers.badgeValueChanged(
+    const newBadges = badgeValueChanged(
       this.badges,
       index,
       ev.detail.value,
@@ -64,7 +74,7 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
   }
 
   private _badgeStatesValueChanged(index: number, ev: CustomEvent): void {
-    const newBadges = BadgeEditorHandlers.badgeStatesValueChanged(
+    const newBadges = badgeStatesValueChanged(
       this.badges,
       index,
       ev.detail.value,
@@ -95,7 +105,7 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
       <div class="badges">
         ${repeat(
           badges,
-          (item, index) => BadgeEditorUtils.getKey(item, index),
+          (item, index) => getKey(item, index),
           (item, index) => {
             const isExpanded = this._expandedBadges.has(index);
             const badgeEntityId = item.entity_id || entityId;
@@ -117,7 +127,7 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
               >
                 <div slot="header" class="badge-header">
                   <div class="badge-title">
-                    ${BadgeEditorUtils.getBadgeTitle(item)}
+                    ${getBadgeTitle(item)}
                   </div>
                   <ha-icon-button
                     .label=${this.hass!.localize(
@@ -139,15 +149,9 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
                         <ha-form
                           .hass=${this.hass}
                           .data=${item}
-                          .schema=${BadgeEditorSchema.getBadgeSchema(
-                            entityId,
-                            this.hass,
-                          )}
+                          .schema=${getBadgeSchema(entityId, this.hass)}
                           .computeLabel=${(schema: HaFormSchema) =>
-                            BadgeEditorSchema.computeLabelCallback(
-                              schema,
-                              this.hass!,
-                            )}
+                            computeLabelCallback(schema, this.hass!)}
                           @value-changed=${(ev: CustomEvent) =>
                             this._badgeValueChanged(index, ev)}
                         ></ha-form>

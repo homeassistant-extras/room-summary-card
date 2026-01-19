@@ -1,55 +1,50 @@
 import type { BadgeConfig } from '@type/config/entity';
 
 /**
- * Badge management functions for badge row editor
+ * Creates a new badge configuration
  */
-export class BadgeEditorManager {
-  /**
-   * Creates a new badge configuration
-   */
-  static createNewBadge(): BadgeConfig {
-    return {
-      position: 'top_right',
-    };
-  }
+export function createNewBadge(): BadgeConfig {
+  return {
+    position: 'top_right',
+  };
+}
 
-  /**
-   * Adds a new badge to the badges array
-   */
-  static addBadge(badges: BadgeConfig[] | undefined): BadgeConfig[] {
-    return [...(badges || []), BadgeEditorManager.createNewBadge()];
-  }
+/**
+ * Adds a new badge to the badges array
+ */
+export function addBadge(badges: BadgeConfig[] | undefined): BadgeConfig[] {
+  return [...(badges || []), createNewBadge()];
+}
 
-  /**
-   * Adjusts expanded badge indices after removing a badge
-   */
-  static adjustExpandedIndicesAfterRemoval(
-    expandedBadges: Set<number>,
-    removedIndex: number,
-  ): Set<number> {
-    const newExpanded = new Set(expandedBadges);
-    newExpanded.delete(removedIndex);
+/**
+ * Adjusts expanded badge indices after removing a badge
+ */
+export function adjustExpandedIndicesAfterRemoval(
+  expandedBadges: Set<number>,
+  removedIndex: number,
+): Set<number> {
+  const newExpanded = new Set(expandedBadges);
+  newExpanded.delete(removedIndex);
 
-    const adjustedExpanded = new Set<number>();
-    for (const idx of newExpanded) {
-      if (idx > removedIndex) {
-        adjustedExpanded.add(idx - 1);
-      } else {
-        adjustedExpanded.add(idx);
-      }
+  const adjustedExpanded = new Set<number>();
+  for (const idx of newExpanded) {
+    if (idx > removedIndex) {
+      adjustedExpanded.add(idx - 1);
+    } else {
+      adjustedExpanded.add(idx);
     }
-    return adjustedExpanded;
   }
+  return adjustedExpanded;
+}
 
-  /**
-   * Removes a badge at the specified index
-   */
-  static removeBadgeItem(
-    badges: BadgeConfig[] | undefined,
-    index: number,
-  ): BadgeConfig[] {
-    const newBadges = (badges || []).concat();
-    newBadges.splice(index, 1);
-    return newBadges.length > 0 ? newBadges : [];
-  }
+/**
+ * Removes a badge at the specified index
+ */
+export function removeBadgeItem(
+  badges: BadgeConfig[] | undefined,
+  index: number,
+): BadgeConfig[] {
+  const newBadges = (badges || []).concat();
+  newBadges.splice(index, 1);
+  return newBadges.length > 0 ? newBadges : [];
 }

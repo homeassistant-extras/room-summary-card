@@ -12,6 +12,7 @@ import { getArea } from '@delegates/retrievers/area';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import { getBackgroundImageUrl } from '@theme/image/get-pic';
+import { getViewTheme } from '@theme/util/get-view-theme';
 import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
@@ -30,6 +31,7 @@ export interface RoomProperties {
   flags: {
     alarm?: 'smoke' | 'gas' | 'water' | 'occupied';
     dark: boolean;
+    frostedGlass: boolean;
   };
 }
 
@@ -42,11 +44,13 @@ export interface RoomProperties {
  *
  * @param hass - The Home Assistant instance containing state and configuration data.
  * @param config - The configuration object specifying area, sensors, and other options for the room.
+ * @param element - Optional DOM element to use for detecting view theme. If provided, will check for view-specific theme before falling back to global theme.
  * @returns {RoomProperties} An object containing assembled room properties and related entities.
  */
 export const getRoomProperties = (
   hass: HomeAssistant,
   config: Config,
+  element?: Element | null,
 ): RoomProperties => {
   const roomInfo: RoomInformation = {
     area_name:
@@ -92,6 +96,12 @@ export const getRoomProperties = (
     alarm = 'occupied';
   }
 
+  // Get the view theme (falls back to global theme if not set)
+  const viewTheme = getViewTheme(element, hass);
+  
+  // Detect Frosted Glass themes (e.g. "Frosted Glass", "Frosted Glass Lite").
+  const frostedGlass = viewTheme?.startsWith('Frosted Glass') ?? false;
+
   return {
     roomInfo,
     roomEntity,
@@ -103,6 +113,7 @@ export const getRoomProperties = (
     flags: {
       alarm,
       dark: hass.themes.darkMode,
+      frostedGlass,
     },
   };
 };

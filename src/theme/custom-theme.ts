@@ -1,5 +1,6 @@
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/room';
+import { getViewTheme } from './util/get-view-theme';
 import { processHomeAssistantColors, processMinimalistColors } from './colors';
 import { getRgbColor } from './get-rgb';
 import { type ThresholdResult } from './threshold-color';
@@ -51,7 +52,8 @@ export const getThemeColorOverride = (
   }
 
   // Try minimalist colors first if minimalist theme
-  if (hass.themes.theme?.startsWith('minimalist-')) {
+  const theme = getViewTheme(null, hass);
+  if (theme?.startsWith('minimalist-')) {
     const minimalistResult = processMinimalistColors(
       iconColor,
       onColor,

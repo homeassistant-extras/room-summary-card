@@ -51,6 +51,7 @@ describe('card.ts', () => {
       flags: {
         alarm: 'occupied',
         dark: true,
+        frostedGlass: false,
       },
     });
     card = new RoomSummaryCard();
@@ -150,8 +151,9 @@ describe('card.ts', () => {
           humidColor: undefined,
         },
         flags: {
-          occupied: false,
+          alarm: undefined,
           dark: false,
+          frostedGlass: false,
         },
       });
 
@@ -187,8 +189,9 @@ describe('card.ts', () => {
           humidColor: undefined,
         },
         flags: {
-          occupied: true,
+          alarm: 'occupied',
           dark: true,
+          frostedGlass: false,
         },
       });
 
@@ -235,8 +238,9 @@ describe('card.ts', () => {
           humidColor: undefined,
         },
         flags: {
-          occupied: true,
+          alarm: 'occupied',
           dark: true,
+          frostedGlass: false,
         },
       });
 
@@ -283,8 +287,9 @@ describe('card.ts', () => {
           humidColor: undefined,
         },
         flags: {
-          occupied: true,
+          alarm: 'occupied',
           dark: true,
+          frostedGlass: false,
         },
       });
 
@@ -296,64 +301,10 @@ describe('card.ts', () => {
       expect(card['iconBackground']).to.be.false;
     });
 
-    it('should detect Frosted Glass theme and set frostedGlass property', () => {
-      const frostedHass = {
-        ...mockHass,
-        themes: { darkMode: false, theme: 'Frosted Glass' },
-      } as any as HomeAssistant;
-
-      card.hass = frostedHass;
-      expect(card['frostedGlass']).to.be.true;
-    });
-
-    it('should detect Frosted Glass Lite theme and set frostedGlass property', () => {
-      const frostedLiteHass = {
-        ...mockHass,
-        themes: { darkMode: false, theme: 'Frosted Glass Lite' },
-      } as any as HomeAssistant;
-
-      card.hass = frostedLiteHass;
-      expect(card['frostedGlass']).to.be.true;
-    });
-
-    it('should not set frostedGlass property for non-Frosted Glass themes', () => {
-      const defaultHass = {
-        ...mockHass,
-        themes: { darkMode: false, theme: 'default' },
-      } as any as HomeAssistant;
-
-      card.hass = defaultHass;
-      expect(card['frostedGlass']).to.be.false;
-    });
-
-    it('should not set frostedGlass property when theme is undefined', () => {
-      const undefinedThemeHass = {
-        ...mockHass,
-        themes: { darkMode: false, theme: undefined },
-      } as any as HomeAssistant;
-
-      card.hass = undefinedThemeHass;
-      expect(card['frostedGlass']).to.be.false;
-    });
-
-    it('should update frostedGlass property when theme changes', () => {
-      // Start with default theme
-      const defaultHass = {
-        ...mockHass,
-        themes: { darkMode: false, theme: 'default' },
-      } as any as HomeAssistant;
-
-      card.hass = defaultHass;
-      expect(card['frostedGlass']).to.be.false;
-
-      // Switch to Frosted Glass theme
-      const frostedHass = {
-        ...mockHass,
-        themes: { darkMode: false, theme: 'Frosted Glass' },
-      } as any as HomeAssistant;
-
-      card.hass = frostedHass;
-      expect(card['frostedGlass']).to.be.true;
+    it('should set frostedGlass property from getRoomProperties flags', () => {
+      expect(card['frostedGlass']).to.equal(
+        getRoomPropertiesStub.returnValues[0].flags.frostedGlass,
+      );
     });
 
     it('should set iconOpacityPreset property from config', () => {

@@ -1,19 +1,23 @@
 import type { BadgeConfig } from '@type/config/entity';
 import { expect } from 'chai';
-import { BadgeEditorUtils } from '../../../../../src/cards/components/editor/utils/badge-editor-utils';
+import {
+  getKey,
+  cleanEmptyStrings,
+  getBadgeTitle,
+} from '../../../../../src/cards/components/editor/utils/badge-editor-utils';
 
-describe('BadgeEditorUtils', () => {
+describe('badge-editor-utils', () => {
   describe('getKey', () => {
     it('should generate key using index', () => {
       const badge: BadgeConfig = { position: 'top_right' };
-      const key = BadgeEditorUtils.getKey(badge, 0);
+      const key = getKey(badge, 0);
       expect(key).to.equal('badge-0');
     });
 
     it('should generate different keys for different indices', () => {
       const badge: BadgeConfig = { position: 'top_right' };
-      const key1 = BadgeEditorUtils.getKey(badge, 0);
-      const key2 = BadgeEditorUtils.getKey(badge, 1);
+      const key1 = getKey(badge, 0);
+      const key2 = getKey(badge, 1);
       expect(key1).to.not.equal(key2);
       expect(key1).to.equal('badge-0');
       expect(key2).to.equal('badge-1');
@@ -22,8 +26,8 @@ describe('BadgeEditorUtils', () => {
     it('should generate stable keys for same index', () => {
       const badge1: BadgeConfig = { position: 'top_right' };
       const badge2: BadgeConfig = { position: 'bottom_left' };
-      const key1 = BadgeEditorUtils.getKey(badge1, 0);
-      const key2 = BadgeEditorUtils.getKey(badge2, 0);
+      const key1 = getKey(badge1, 0);
+      const key2 = getKey(badge2, 0);
       expect(key1).to.equal(key2);
       expect(key1).to.equal('badge-0');
     });
@@ -31,11 +35,11 @@ describe('BadgeEditorUtils', () => {
 
   describe('cleanEmptyStrings', () => {
     it('should return non-object values unchanged', () => {
-      expect(BadgeEditorUtils.cleanEmptyStrings(null)).to.be.null;
-      expect(BadgeEditorUtils.cleanEmptyStrings(undefined)).to.be.undefined;
-      expect(BadgeEditorUtils.cleanEmptyStrings(42)).to.equal(42);
-      expect(BadgeEditorUtils.cleanEmptyStrings('test')).to.equal('test');
-      expect(BadgeEditorUtils.cleanEmptyStrings(true)).to.be.true;
+      expect(cleanEmptyStrings(null)).to.be.null;
+      expect(cleanEmptyStrings(undefined)).to.be.undefined;
+      expect(cleanEmptyStrings(42)).to.equal(42);
+      expect(cleanEmptyStrings('test')).to.equal('test');
+      expect(cleanEmptyStrings(true)).to.be.true;
     });
 
     it('should remove empty string values', () => {
@@ -44,7 +48,7 @@ describe('BadgeEditorUtils', () => {
         empty: '',
         value: 42,
       };
-      const cleaned = BadgeEditorUtils.cleanEmptyStrings(obj);
+      const cleaned = cleanEmptyStrings(obj);
       expect(cleaned).to.deep.equal({
         name: 'test',
         value: 42,
@@ -63,7 +67,7 @@ describe('BadgeEditorUtils', () => {
         },
         empty: '',
       };
-      const cleaned = BadgeEditorUtils.cleanEmptyStrings(obj);
+      const cleaned = cleanEmptyStrings(obj);
       expect(cleaned).to.deep.equal({
         level1: {
           level2: {
@@ -80,7 +84,7 @@ describe('BadgeEditorUtils', () => {
         },
         value: 'test',
       };
-      const cleaned = BadgeEditorUtils.cleanEmptyStrings(obj);
+      const cleaned = cleanEmptyStrings(obj);
       expect(cleaned).to.deep.equal({
         value: 'test',
       });
@@ -94,7 +98,7 @@ describe('BadgeEditorUtils', () => {
           { name: 'test2', empty: '' },
         ],
       };
-      const cleaned = BadgeEditorUtils.cleanEmptyStrings(obj);
+      const cleaned = cleanEmptyStrings(obj);
       expect(cleaned).to.deep.equal({
         items: [{ name: 'test' }, { name: 'test2' }],
       });
@@ -104,7 +108,7 @@ describe('BadgeEditorUtils', () => {
       const obj = {
         items: ['test', '', 'test2'],
       };
-      const cleaned = BadgeEditorUtils.cleanEmptyStrings(obj);
+      const cleaned = cleanEmptyStrings(obj);
       expect(cleaned).to.deep.equal({
         items: ['test', 'test2'],
       });
@@ -116,7 +120,7 @@ describe('BadgeEditorUtils', () => {
         description: 'description',
         value: '',
       };
-      const cleaned = BadgeEditorUtils.cleanEmptyStrings(obj);
+      const cleaned = cleanEmptyStrings(obj);
       expect(cleaned).to.deep.equal({
         name: 'test',
         description: 'description',
@@ -135,7 +139,7 @@ describe('BadgeEditorUtils', () => {
         },
         empty: '',
       };
-      const cleaned = BadgeEditorUtils.cleanEmptyStrings(obj);
+      const cleaned = cleanEmptyStrings(obj);
       expect(cleaned).to.deep.equal({
         badge: {
           position: 'top_right',
@@ -151,7 +155,7 @@ describe('BadgeEditorUtils', () => {
         mode: 'show_always',
         position: 'top_right',
       };
-      const title = BadgeEditorUtils.getBadgeTitle(badge);
+      const title = getBadgeTitle(badge);
       expect(title).to.equal('Show Always (top_right)');
     });
 
@@ -160,7 +164,7 @@ describe('BadgeEditorUtils', () => {
         mode: 'if_match',
         position: 'bottom_left',
       };
-      const title = BadgeEditorUtils.getBadgeTitle(badge);
+      const title = getBadgeTitle(badge);
       expect(title).to.equal('If Match (bottom_left)');
     });
 
@@ -169,7 +173,7 @@ describe('BadgeEditorUtils', () => {
         mode: 'homeassistant',
         position: 'top_left',
       };
-      const title = BadgeEditorUtils.getBadgeTitle(badge);
+      const title = getBadgeTitle(badge);
       expect(title).to.equal('Home Assistant (top_left)');
     });
 
@@ -181,7 +185,7 @@ describe('BadgeEditorUtils', () => {
           { state: 'off', icon_color: '#000000' },
         ],
       };
-      const title = BadgeEditorUtils.getBadgeTitle(badge);
+      const title = getBadgeTitle(badge);
       expect(title).to.equal('States (2) - top_right');
     });
 
@@ -189,7 +193,7 @@ describe('BadgeEditorUtils', () => {
       const badge: BadgeConfig = {
         position: 'bottom_right',
       };
-      const title = BadgeEditorUtils.getBadgeTitle(badge);
+      const title = getBadgeTitle(badge);
       expect(title).to.equal('Badge bottom_right');
     });
 
@@ -197,7 +201,7 @@ describe('BadgeEditorUtils', () => {
       const badge: BadgeConfig = {
         mode: 'show_always',
       };
-      const title = BadgeEditorUtils.getBadgeTitle(badge);
+      const title = getBadgeTitle(badge);
       expect(title).to.equal('Show Always (top_right)');
     });
 
@@ -207,7 +211,7 @@ describe('BadgeEditorUtils', () => {
         position: 'top_right',
         states: [{ state: 'on', icon_color: '#ff0000' }],
       };
-      const title = BadgeEditorUtils.getBadgeTitle(badge);
+      const title = getBadgeTitle(badge);
       expect(title).to.equal('Show Always (top_right)');
     });
 
@@ -216,7 +220,7 @@ describe('BadgeEditorUtils', () => {
         position: 'top_right',
         states: [],
       };
-      const title = BadgeEditorUtils.getBadgeTitle(badge);
+      const title = getBadgeTitle(badge);
       expect(title).to.equal('Badge top_right');
     });
   });
