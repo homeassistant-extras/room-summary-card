@@ -3,7 +3,7 @@
  */
 
 import type { LocalizeFunc } from './common/translations/localize';
-import type { AreaRegistryEntry } from './data/area_registry';
+import type { AreaRegistryEntry } from './data/area/area_registry';
 import type { DeviceRegistryEntry } from './data/device_registry';
 import type { EntityRegistryDisplayEntry } from './data/entity_registry';
 import type { Themes } from './data/ws-themes';

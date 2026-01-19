@@ -1,4 +1,4 @@
-import type { AreaRegistryEntry } from '@hass/data/area_registry';
+import type { AreaRegistryEntry } from '@hass/data/area/area_registry';
 import memoizeOne from 'memoize-one';
 
 /**

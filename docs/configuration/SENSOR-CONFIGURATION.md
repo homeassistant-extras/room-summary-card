@@ -279,6 +279,8 @@ The card automatically:
 3. Calculates averages for each group
 4. Displays the averaged values
 
+**Note**: If an area has default temperature or humidity sensors configured in Home Assistant's area settings, the card will use those specific sensors instead of collecting all sensors of that device class. This prevents duplicate sensors and ensures consistency with Home Assistant's area configuration.
+
 ### Default Behavior
 
 ```yaml

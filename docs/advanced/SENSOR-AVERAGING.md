@@ -16,6 +16,32 @@ By default these sensor classes will be averaged.
 4. **Calculation**: Calculates simple average for each group
 5. **Display**: Shows averaged value with appropriate formatting
 
+### Area Default Sensors
+
+When an area has default temperature or humidity sensors configured (via Home Assistant's area settings), the card will:
+
+- **Use the area's default sensors** instead of automatically collecting all sensors of that device class
+- **Prevent duplicates** by skipping other temperature/humidity sensors when defaults are set
+- **Display the default sensor** as part of the averaged sensors (or as a single sensor if it's the only one)
+
+This ensures that when you've configured specific sensors as defaults for an area in Home Assistant, the card respects that choice and uses those sensors rather than averaging all sensors of that type.
+
+**Example:**
+
+```yaml
+# Area "shed" has configured:
+# temperature_entity_id: sensor.shed_climate_air_temperature
+# humidity_entity_id: sensor.shed_climate_humidity
+
+sensor_classes:
+  - temperature
+  - humidity
+# Card will use sensor.shed_climate_air_temperature and sensor.shed_climate_humidity
+# Other temperature/humidity sensors in the area will be ignored
+```
+
+![Area Sensors](../assets/area-sensors.png)
+
 ### Averaging Examples
 
 #### Temperature Sensors
