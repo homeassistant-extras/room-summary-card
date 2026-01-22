@@ -263,6 +263,10 @@ export const getEntitiesStylesSchema = (
               label: localize(hass, 'editor.slider.bar'),
               value: 'bar',
             },
+            {
+              label: localize(hass, 'editor.slider.bar_filled'),
+              value: 'bar-filled',
+            },
           ],
         },
       },

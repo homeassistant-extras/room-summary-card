@@ -153,6 +153,7 @@ export type TranslationKey =
   | 'editor.slider.shadow_trail'
   | 'editor.slider.outlined'
   | 'editor.slider.bar'
+  | 'editor.slider.bar_filled'
   | 'editor.styles.skip_climate_styles'
   | 'editor.styles.stats_styles'
   | 'editor.styles.styles'

@@ -1,5 +1,6 @@
 import { css } from 'lit';
 import { barStyle } from './bar';
+import { barFilledStyle } from './bar-filled';
 import { baseStyles } from './base';
 import { dotsStyle } from './dots';
 import { dualRailStyle } from './dual-rail';
@@ -31,4 +32,5 @@ export const styles = css`
   ${shadowTrailStyle}
   ${outlinedStyle}
   ${barStyle}
+  ${barFilledStyle}
 `;

@@ -56,7 +56,8 @@ export interface Config {
     | 'glow'
     | 'shadow-trail'
     | 'outlined'
-    | 'bar';
+    | 'bar'
+    | 'bar-filled';
 
   /** Occupancy detection configuration */
   occupancy?: AlarmConfig;

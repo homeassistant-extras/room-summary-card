@@ -22,7 +22,7 @@ entity: light.living_room_main
 - **Drag to Control**: Drag the entity icon (or bar) vertically to adjust brightness (0-255)
 - **Visual Feedback**: Icon position or bar fill reflects current brightness level
 - **Touch Support**: Works with both mouse and touch interactions
-- **Multiple Styles**: Choose from 13 different track visual styles
+- **Multiple Styles**: Choose from 14 different track visual styles
 - **Automatic Entity Selection**: Uses the first entity from your entity list
 - **Color-Aware Bar Style**: Bar style automatically uses the light's color for visual feedback
 
@@ -150,6 +150,16 @@ slider_style: bar
 
 The bar fills from bottom to top as brightness increases, using the entity's color for visual feedback.
 
+### `bar-filled`
+
+Outlined bar with proportional fill based on brightness level. Similar to `bar`, but the fill grows proportionally from bottom to top (0-100%) based on the brightness level, rather than always being fully filled. The icon is hidden, and the entire bar is draggable. The fill color automatically matches the light's current color (RGB color, on_color, or theme color):
+
+```yaml
+slider_style: bar-filled
+```
+
+The bar fill grows from bottom to top proportionally as brightness increases, using the entity's color for visual feedback. Unlike the `bar` style which always shows a full fill with a black line indicator, `bar-filled` uses the fill itself to indicate the brightness level.
+
 ## Configuration Options
 
 | Option         | Type    | Default      | Description                                 |
@@ -211,6 +221,21 @@ entity: light.living_room_main
 ```
 
 The bar automatically uses the light's color (RGB color, on_color, or theme color) for the fill.
+
+### Slider with Bar-Filled Style (Proportional Fill)
+
+Bar-filled style with proportional color fill based on brightness level:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - slider
+slider_style: bar-filled
+entity: light.living_room_main
+```
+
+The bar fill grows proportionally from bottom to top based on brightness, automatically using the light's color (RGB color, on_color, or theme color).
 
 ### Slider with Custom Entity Configuration
 

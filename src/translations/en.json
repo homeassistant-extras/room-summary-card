@@ -200,7 +200,8 @@
       "glow": "Glow",
       "shadow_trail": "Shadow Trail",
       "outlined": "Outlined Track",
-      "bar": "Bar (No Icon)"
+      "bar": "Bar (No Icon)",
+      "bar_filled": "Bar Filled (Proportional)"
     },
     "features": {
       "features": "Features",

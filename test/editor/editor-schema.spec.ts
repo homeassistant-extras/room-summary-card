@@ -238,6 +238,10 @@ describe('editor-schema.ts', () => {
                 label: 'editor.slider.bar',
                 value: 'bar',
               },
+              {
+                label: 'editor.slider.bar_filled',
+                value: 'bar-filled',
+              },
             ],
           },
         },

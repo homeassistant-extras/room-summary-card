@@ -230,6 +230,55 @@ describe('entity-slider.ts', () => {
       ).to.be.true;
     });
 
+    it('should set bar color CSS variable when slider style is bar-filled', () => {
+      const setPropertySpy = stub();
+      Object.defineProperty(element, 'style', {
+        value: {
+          setProperty: setPropertySpy,
+          getPropertyValue: stub().returns(''),
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      element.config = {
+        ...element.config,
+        slider_style: 'bar-filled',
+      } as Config;
+
+      element.hass = mockHass;
+
+      expect(
+        setPropertySpy.calledWith('--slider-bar-color', 'rgb(255, 200, 100)'),
+      ).to.be.true;
+      expect(stateActiveStub.called).to.be.true;
+      expect(getThemeColorOverrideStub.called).to.be.true;
+    });
+
+    it('should use default color when entity color is not found for bar-filled style', () => {
+      getThemeColorOverrideStub.returns(undefined);
+      const setPropertySpy = stub();
+      Object.defineProperty(element, 'style', {
+        value: {
+          setProperty: setPropertySpy,
+          getPropertyValue: stub().returns(''),
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      element.config = {
+        ...element.config,
+        slider_style: 'bar-filled',
+      } as Config;
+
+      element.hass = mockHass;
+
+      expect(
+        setPropertySpy.calledWith('--slider-bar-color', 'var(--primary-color)'),
+      ).to.be.true;
+    });
+
     it('should update slider style to bar', () => {
       // Mock style for bar style color setting
       Object.defineProperty(element, 'style', {
@@ -249,6 +298,27 @@ describe('entity-slider.ts', () => {
       element.hass = mockHass;
 
       expect(element.sliderStyle).to.equal('bar');
+    });
+
+    it('should update slider style to bar-filled', () => {
+      // Mock style for bar-filled style color setting
+      Object.defineProperty(element, 'style', {
+        value: {
+          setProperty: stub(),
+          getPropertyValue: stub().returns(''),
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      element.config = {
+        ...element.config,
+        slider_style: 'bar-filled',
+      } as Config;
+
+      element.hass = mockHass;
+
+      expect(element.sliderStyle).to.equal('bar-filled');
     });
   });
 
@@ -321,6 +391,25 @@ describe('entity-slider.ts', () => {
       expect(renderRoomIconStub.called).to.be.false;
     });
 
+    it('should render bar-container when slider style is bar-filled', async () => {
+      element.config = {
+        ...element.config,
+        slider_style: 'bar-filled',
+      } as Config;
+      element.hass = mockHass;
+      element['_isDragging'] = false;
+
+      const result = element.render() as TemplateResult;
+
+      // Check that bar-container class is in the values
+      const hasBarContainer = result.values.some(
+        (val) => typeof val === 'string' && val.includes('bar-container'),
+      );
+      expect(hasBarContainer).to.be.true;
+      // Icon should not be rendered for bar-filled style
+      expect(renderRoomIconStub.called).to.be.false;
+    });
+
     it('should set slider position CSS variable in render', async () => {
       const setPropertySpy = stub();
       Object.defineProperty(element, 'style', {
@@ -338,7 +427,7 @@ describe('entity-slider.ts', () => {
         .to.be.true;
     });
 
-    it('should render icon-container when slider style is not bar', async () => {
+    it('should render icon-container when slider style is not bar or bar-filled', async () => {
       element.config = {
         ...element.config,
         slider_style: 'filled',

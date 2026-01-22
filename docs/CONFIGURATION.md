@@ -327,6 +327,8 @@ The `slider_style` option controls the visual appearance of the track:
 - `glow` - Glowing line effect
 - `shadow-trail` - Shadow that follows the icon
 - `outlined` - Outlined track border
+- `bar` - Bar filled with light color (no icon)
+- `bar-filled` - Bar with proportional fill based on brightness level
 
 See [Slider Configuration](configuration/SLIDER-CONFIGURATION.md) for complete documentation and examples.
 
