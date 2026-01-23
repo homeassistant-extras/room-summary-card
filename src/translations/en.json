@@ -1,4 +1,14 @@
 {
+  "card": {
+    "component": {
+      "problem": {
+        "dialog_title": "Problem Entities",
+        "no_problems": "No problem entities found",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    }
+  },
   "editor": {
     "area": {
       "area": "Area",

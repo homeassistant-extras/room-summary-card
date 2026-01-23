@@ -34,8 +34,13 @@ The card automatically:
 - Shows green indicator if no problems are active
 - Shows red indicator if any problems are active
 - **Mold Detection**: Displays an animated mold indicator when mold levels exceed configured thresholds
+- **Clickable Indicator**: Click the problem indicator (numbered badge) to open a dialog showing all problem entities with their names, states, and active/inactive status. Each entity in the dialog can be clicked to open its more-info dialog for detailed information.
 
 ![Problem Indicator](../assets/problems.png)
+
+![Problem Dialog](assets/problem-dialog.gif)
+
+![Problem Dialog Mobile](assets/problem-dialog-mobile.gif)
 
 ### Problem Indicator Display Options
 

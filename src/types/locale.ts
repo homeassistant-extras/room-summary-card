@@ -2,6 +2,10 @@
  * Translation keys for the application.
  */
 export type TranslationKey =
+  | 'card.component.problem.dialog_title'
+  | 'card.component.problem.no_problems'
+  | 'card.component.problem.active'
+  | 'card.component.problem.inactive'
   | 'editor.area.area'
   | 'editor.area.area_name'
   | 'editor.area.area_side_entities'

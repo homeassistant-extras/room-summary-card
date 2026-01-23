@@ -243,6 +243,20 @@ const statusEntityStyles = css`
     position: relative;
     z-index: 1;
     font-weight: 600;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease-in-out,
+      filter 0.2s ease-in-out;
+  }
+
+  .status-entities:hover {
+    transform: scale(1.15);
+    filter: brightness(1.1);
+  }
+
+  .status-entities:hover::before {
+    opacity: 0.9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
   .status-entities::before {

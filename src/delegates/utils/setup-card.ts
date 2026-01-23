@@ -98,7 +98,7 @@ export const getRoomProperties = (
 
   // Get the view theme (falls back to global theme if not set)
   const viewTheme = getViewTheme(element, hass);
-  
+
   // Detect Frosted Glass themes (e.g. "Frosted Glass", "Frosted Glass Lite").
   const frostedGlass = viewTheme?.startsWith('Frosted Glass') ?? false;
 

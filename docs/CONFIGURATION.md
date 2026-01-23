@@ -225,6 +225,12 @@ problem:
 - `active_only` - Only shows indicator when problems are active (hides green circle)
 - `never` - Completely hides the problem indicator (mold indicator still shows if configured)
 
+**Interactive Features:**
+
+- **Click to View Details**: Click the problem indicator (numbered badge) to open a dialog showing all problem entities
+- **Entity Information**: The dialog displays each problem entity with its icon, name, current state, and active/inactive status
+- **Quick Access**: Click any entity in the dialog to open its more-info dialog for detailed information and controls
+
 See [Problem Entity Detection](advanced/PROBLEM-ENTITY-DETECTION.md) for more details.
 
 ## Alarm Detection (Occupancy, Smoke, Gas & Water)

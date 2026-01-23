@@ -32,9 +32,7 @@ export function badgeStatesValueChanged(
     return newBadges;
   }
 
-  const cleanedStates = statesValue.map((state) =>
-    cleanEmptyStrings(state),
-  );
+  const cleanedStates = statesValue.map((state) => cleanEmptyStrings(state));
 
   newBadges[index] = {
     ...newBadges[index],

@@ -1,9 +1,9 @@
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/room';
-import { getViewTheme } from './util/get-view-theme';
 import { processHomeAssistantColors, processMinimalistColors } from './colors';
 import { getRgbColor } from './get-rgb';
 import { type ThresholdResult } from './threshold-color';
+import { getViewTheme } from './util/get-view-theme';
 
 /**
  * Determines the appropriate theme color override for a given entity based on its state,

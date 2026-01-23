@@ -137,7 +137,10 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
       }
 
       // For bar and bar-filled styles, get the entity color and set it as a CSS variable
-      if ((this.sliderStyle === 'bar' || this.sliderStyle === 'bar-filled') && state) {
+      if (
+        (this.sliderStyle === 'bar' || this.sliderStyle === 'bar-filled') &&
+        state
+      ) {
         const isActive = stateActive(state);
         const entityColor = getThemeColorOverride(
           hass,
@@ -263,7 +266,8 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
     // Set CSS custom property for slider position (used by filled, shadow-trail, bar, and bar-filled styles)
     this.style.setProperty('--slider-position', `${this._yPosition}%`);
 
-    const isBarStyle = this.sliderStyle === 'bar' || this.sliderStyle === 'bar-filled';
+    const isBarStyle =
+      this.sliderStyle === 'bar' || this.sliderStyle === 'bar-filled';
     const draggingClass = this._isDragging ? 'dragging' : '';
     const containerClass = `${isBarStyle ? 'bar' : 'icon'}-container ${draggingClass}`;
     const containerStyle = isBarStyle ? nothing : `top: ${this._yPosition}%`;

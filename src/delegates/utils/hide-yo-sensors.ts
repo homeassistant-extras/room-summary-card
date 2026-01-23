@@ -133,11 +133,7 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     entityId: string,
     isInArea: boolean,
   ): void => {
-    if (
-      !config.lights?.length &&
-      isInArea &&
-      entityId.startsWith('light.')
-    ) {
+    if (!config.lights?.length && isInArea && entityId.startsWith('light.')) {
       lightEntities.push(state);
     }
   };

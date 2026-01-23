@@ -20,6 +20,7 @@ const createEntityState = (
 
 describe('icon.ts', () => {
   let mockHass: HomeAssistant;
+  let mockElement: HTMLElement;
 
   beforeEach(() => {
     mockHass = {
@@ -31,20 +32,26 @@ describe('icon.ts', () => {
         theme: 'minimalist-foo',
       },
     } as any as HomeAssistant;
+    mockElement = document.createElement('div');
   });
 
   describe('renderProblemIndicator', () => {
     const mockConfig: Config = { area: 'test' };
 
     it('should return empty problems div when problemSensors array is empty', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, {
-        individual: [],
-        averaged: [],
-        problemSensors: [],
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      });
+      const result = renderProblemIndicator(
+        mockHass,
+        mockConfig,
+        {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+        mockElement,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -53,14 +60,19 @@ describe('icon.ts', () => {
     });
 
     it('should render text with correct number when one problem entity exists', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, {
-        individual: [],
-        averaged: [],
-        problemSensors: [createEntityState('entity1')],
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      });
+      const result = renderProblemIndicator(
+        mockHass,
+        mockConfig,
+        {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+        mockElement,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -71,18 +83,23 @@ describe('icon.ts', () => {
     });
 
     it('should render text with correct number for multiple problem entities', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, {
-        individual: [],
-        averaged: [],
-        problemSensors: [
-          createEntityState('entity1'),
-          createEntityState('entity2'),
-          createEntityState('entity3'),
-        ],
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      });
+      const result = renderProblemIndicator(
+        mockHass,
+        mockConfig,
+        {
+          individual: [],
+          averaged: [],
+          problemSensors: [
+            createEntityState('entity1'),
+            createEntityState('entity2'),
+            createEntityState('entity3'),
+          ],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+        mockElement,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -92,14 +109,19 @@ describe('icon.ts', () => {
     });
 
     it('should not have has-problems attribute when no problem entities are active', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, {
-        individual: [],
-        averaged: [],
-        problemSensors: [createEntityState('entity1', 'off')],
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      });
+      const result = renderProblemIndicator(
+        mockHass,
+        mockConfig,
+        {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1', 'off')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+        mockElement,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -109,14 +131,19 @@ describe('icon.ts', () => {
     });
 
     it('should have has-problems attribute when problem entities are active', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, {
-        individual: [],
-        averaged: [],
-        problemSensors: [createEntityState('entity1', 'on')],
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      });
+      const result = renderProblemIndicator(
+        mockHass,
+        mockConfig,
+        {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1', 'on')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+        mockElement,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -130,14 +157,19 @@ describe('icon.ts', () => {
       const manyEntities = Array(10)
         .fill(null)
         .map((_, i) => createEntityState(`entity${i}`));
-      const result = renderProblemIndicator(mockHass, mockConfig, {
-        individual: [],
-        averaged: [],
-        problemSensors: manyEntities,
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      });
+      const result = renderProblemIndicator(
+        mockHass,
+        mockConfig,
+        {
+          individual: [],
+          averaged: [],
+          problemSensors: manyEntities,
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+        mockElement,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -150,14 +182,19 @@ describe('icon.ts', () => {
       const manyEntities = Array(34)
         .fill(null)
         .map((_, i) => createEntityState(`entity${i}`));
-      const result = renderProblemIndicator(mockHass, mockConfig, {
-        individual: [],
-        averaged: [],
-        problemSensors: manyEntities,
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      });
+      const result = renderProblemIndicator(
+        mockHass,
+        mockConfig,
+        {
+          individual: [],
+          averaged: [],
+          problemSensors: manyEntities,
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+        mockElement,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -167,17 +204,22 @@ describe('icon.ts', () => {
     });
 
     it('should handle entities with special characters', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, {
-        individual: [],
-        averaged: [],
-        problemSensors: [
-          createEntityState('entity/with/slashes'),
-          createEntityState('entity.with.dots'),
-        ],
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      });
+      const result = renderProblemIndicator(
+        mockHass,
+        mockConfig,
+        {
+          individual: [],
+          averaged: [],
+          problemSensors: [
+            createEntityState('entity/with/slashes'),
+            createEntityState('entity.with.dots'),
+          ],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+        mockElement,
+      );
       const el = await fixture(result as TemplateResult);
 
       expect(el).to.exist;
@@ -187,14 +229,19 @@ describe('icon.ts', () => {
     });
 
     it('should properly combine multiple CSS classes', async () => {
-      const result = renderProblemIndicator(mockHass, mockConfig, {
-        individual: [],
-        averaged: [],
-        problemSensors: [createEntityState('entity1')],
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      });
+      const result = renderProblemIndicator(
+        mockHass,
+        mockConfig,
+        {
+          individual: [],
+          averaged: [],
+          problemSensors: [createEntityState('entity1')],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+        mockElement,
+      );
       const el = await fixture(result as TemplateResult);
 
       const indicator = el.querySelector('.status-entities');
@@ -221,6 +268,7 @@ describe('icon.ts', () => {
         mockHass,
         configWithThreshold,
         sensorData,
+        mockElement,
       );
       const el = await fixture(result as TemplateResult);
 
@@ -247,6 +295,7 @@ describe('icon.ts', () => {
         mockHass,
         configWithThreshold,
         sensorData,
+        mockElement,
       );
       const el = await fixture(result as TemplateResult);
 
@@ -260,14 +309,19 @@ describe('icon.ts', () => {
           area: 'test',
           problem: { display: 'always' },
         };
-        const result = renderProblemIndicator(mockHass, configAlways, {
-          individual: [],
-          averaged: [],
-          problemSensors: [createEntityState('entity1', 'off')],
-          lightEntities: [],
-          ambientLightEntities: [],
-          thresholdSensors: [],
-        });
+        const result = renderProblemIndicator(
+          mockHass,
+          configAlways,
+          {
+            individual: [],
+            averaged: [],
+            problemSensors: [createEntityState('entity1', 'off')],
+            lightEntities: [],
+            ambientLightEntities: [],
+            thresholdSensors: [],
+          },
+          mockElement,
+        );
         const el = await fixture(result as TemplateResult);
 
         expect(el).to.exist;
@@ -281,14 +335,19 @@ describe('icon.ts', () => {
           area: 'test',
           problem: { display: 'always' },
         };
-        const result = renderProblemIndicator(mockHass, configAlways, {
-          individual: [],
-          averaged: [],
-          problemSensors: [createEntityState('entity1', 'on')],
-          lightEntities: [],
-          ambientLightEntities: [],
-          thresholdSensors: [],
-        });
+        const result = renderProblemIndicator(
+          mockHass,
+          configAlways,
+          {
+            individual: [],
+            averaged: [],
+            problemSensors: [createEntityState('entity1', 'on')],
+            lightEntities: [],
+            ambientLightEntities: [],
+            thresholdSensors: [],
+          },
+          mockElement,
+        );
         const el = await fixture(result as TemplateResult);
 
         expect(el).to.exist;
@@ -303,14 +362,19 @@ describe('icon.ts', () => {
           area: 'test',
           problem: { display: 'active_only' },
         };
-        const result = renderProblemIndicator(mockHass, configActiveOnly, {
-          individual: [],
-          averaged: [],
-          problemSensors: [createEntityState('entity1', 'off')],
-          lightEntities: [],
-          ambientLightEntities: [],
-          thresholdSensors: [],
-        });
+        const result = renderProblemIndicator(
+          mockHass,
+          configActiveOnly,
+          {
+            individual: [],
+            averaged: [],
+            problemSensors: [createEntityState('entity1', 'off')],
+            lightEntities: [],
+            ambientLightEntities: [],
+            thresholdSensors: [],
+          },
+          mockElement,
+        );
         const el = await fixture(result as TemplateResult);
 
         expect(el).to.exist;
@@ -323,14 +387,19 @@ describe('icon.ts', () => {
           area: 'test',
           problem: { display: 'active_only' },
         };
-        const result = renderProblemIndicator(mockHass, configActiveOnly, {
-          individual: [],
-          averaged: [],
-          problemSensors: [createEntityState('entity1', 'on')],
-          lightEntities: [],
-          ambientLightEntities: [],
-          thresholdSensors: [],
-        });
+        const result = renderProblemIndicator(
+          mockHass,
+          configActiveOnly,
+          {
+            individual: [],
+            averaged: [],
+            problemSensors: [createEntityState('entity1', 'on')],
+            lightEntities: [],
+            ambientLightEntities: [],
+            thresholdSensors: [],
+          },
+          mockElement,
+        );
         const el = await fixture(result as TemplateResult);
 
         expect(el).to.exist;
@@ -345,14 +414,19 @@ describe('icon.ts', () => {
           area: 'test',
           problem: { display: 'never' },
         };
-        const result = renderProblemIndicator(mockHass, configNever, {
-          individual: [],
-          averaged: [],
-          problemSensors: [createEntityState('entity1', 'on')],
-          lightEntities: [],
-          ambientLightEntities: [],
-          thresholdSensors: [],
-        });
+        const result = renderProblemIndicator(
+          mockHass,
+          configNever,
+          {
+            individual: [],
+            averaged: [],
+            problemSensors: [createEntityState('entity1', 'on')],
+            lightEntities: [],
+            ambientLightEntities: [],
+            thresholdSensors: [],
+          },
+          mockElement,
+        );
         const el = await fixture(result as TemplateResult);
 
         expect(el).to.exist;
@@ -380,6 +454,7 @@ describe('icon.ts', () => {
           mockHass,
           configNever,
           sensorData,
+          mockElement,
         );
         const el = await fixture(result as TemplateResult);
 
@@ -393,14 +468,19 @@ describe('icon.ts', () => {
         const configDefault: Config = {
           area: 'test',
         };
-        const result = renderProblemIndicator(mockHass, configDefault, {
-          individual: [],
-          averaged: [],
-          problemSensors: [createEntityState('entity1', 'off')],
-          lightEntities: [],
-          ambientLightEntities: [],
-          thresholdSensors: [],
-        });
+        const result = renderProblemIndicator(
+          mockHass,
+          configDefault,
+          {
+            individual: [],
+            averaged: [],
+            problemSensors: [createEntityState('entity1', 'off')],
+            lightEntities: [],
+            ambientLightEntities: [],
+            thresholdSensors: [],
+          },
+          mockElement,
+        );
         const el = await fixture(result as TemplateResult);
 
         expect(el).to.exist;

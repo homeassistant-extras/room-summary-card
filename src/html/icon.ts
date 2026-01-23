@@ -1,3 +1,4 @@
+import { showProblemDialog } from '@cards/components/problem/dialog/show-dialog-problem';
 import { shouldShowMoldIndicator } from '@delegates/checks/moldy';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
@@ -13,12 +14,14 @@ import { stateDisplay } from './state-display';
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {SensorData} sensors - The sensor data
  * @param {Config} config - The configuration object
+ * @param {HTMLElement} element - The element to fire events from
  * @returns {TemplateResult | typeof nothing} The rendered problem indicator or nothing if no problem entities exist
  */
 export const renderProblemIndicator = (
   hass: HomeAssistant,
   config: Config,
   sensors: SensorData,
+  element: HTMLElement,
 ): TemplateResult | typeof nothing => {
   const { problemSensors } = sensors;
 
@@ -35,7 +38,11 @@ export const renderProblemIndicator = (
 
   return html`<div class="problems">
     ${shouldShowIndicator
-      ? html`<span class="status-entities" ?has-problems=${problemExists}
+      ? html`<span
+          class="status-entities"
+          ?has-problems=${problemExists}
+          @click=${() =>
+            showProblemDialog(element, { entities: problemSensors })}
           >${problemSensors.length}</span
         >`
       : nothing}

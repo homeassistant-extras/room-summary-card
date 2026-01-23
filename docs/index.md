@@ -134,9 +134,15 @@ Small overlay icons that appear on entity icons to provide additional visual inf
 - Automatically detects entities labeled as "problem" in the area
 - Shows count of problem entities with color-coded indicators
 - Red for active problems, green for no active problems
+- **Clickable Indicator**: Click the problem indicator to view a detailed dialog listing all problem entities with their names, states, and active/inactive status
+- **Entity Details**: Click any entity in the dialog to open its more-info dialog for detailed information
 - **Mold Indicator**: Animated warning appears in the bottom left area when mold levels exceed thresholds
 
 ![Problem Detection](assets/problems.png)
+
+![Problem Dialog](assets/problem-dialog.gif)
+
+![Problem Dialog Mobile](assets/problem-dialog-mobile.gif)
 
 📖 **See [Problem Detection Example](advanced/README-EXAMPLES.md#problem-detection) for configuration details.**
 
@@ -352,6 +358,7 @@ See the [Theming Guide](THEMING.md) for detailed color configuration and custom 
 - [x] **`UI Minimalist theme integration`**: add UI minimalist theme - thanks @tardis89
 - [x] **`iOS themes support`**: ios themes - thanks @avatar25pl
 - [x] **`Problem entities counter`**: add problem entities counter - thanks to multiple users, @eTron
+- [x] **`Clickable Problem Entities`**: click problem indicator to view details dialog - thanks @MelleD
 - [x] **`Card RGB coloring`**: RGB lights color the card - thanks @ChristopherLMiller
 - [x] **`Custom names`**: **⭐ First contributor ⭐** added `area_name` - thanks @Aulos
 - [x] **`Disable card styling`**: bug fixes and new skip_entity_styles feature - thanks @benjycov

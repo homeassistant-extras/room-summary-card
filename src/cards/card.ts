@@ -266,6 +266,7 @@ export class RoomSummaryCard extends LitElement {
       this._hass,
       this._config,
       this._sensors,
+      this,
     );
 
     return html`

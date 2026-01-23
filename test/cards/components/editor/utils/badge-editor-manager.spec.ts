@@ -1,9 +1,9 @@
 import type { BadgeConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import {
-  createNewBadge,
   addBadge,
   adjustExpandedIndicesAfterRemoval,
+  createNewBadge,
   removeBadgeItem,
 } from '../../../../../src/cards/components/editor/utils/badge-editor-manager';
 

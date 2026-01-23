@@ -15,8 +15,8 @@ import { property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import './states-row-editor';
 import {
-  badgeValueChanged,
   badgeStatesValueChanged,
+  badgeValueChanged,
 } from './utils/badge-editor-handlers';
 import {
   addBadge,
@@ -24,10 +24,10 @@ import {
   removeBadgeItem,
 } from './utils/badge-editor-manager';
 import {
-  getBadgeSchema,
   computeLabelCallback,
+  getBadgeSchema,
 } from './utils/badge-editor-schema';
-import { getKey, getBadgeTitle } from './utils/badge-editor-utils';
+import { getBadgeTitle, getKey } from './utils/badge-editor-utils';
 
 declare global {
   interface HASSDomEvents {
@@ -65,11 +65,7 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
   }
 
   private _badgeValueChanged(index: number, ev: CustomEvent): void {
-    const newBadges = badgeValueChanged(
-      this.badges,
-      index,
-      ev.detail.value,
-    );
+    const newBadges = badgeValueChanged(this.badges, index, ev.detail.value);
     fireEvent(this, 'badges-value-changed', { value: newBadges });
   }
 
@@ -126,9 +122,7 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
                 }}
               >
                 <div slot="header" class="badge-header">
-                  <div class="badge-title">
-                    ${getBadgeTitle(item)}
-                  </div>
+                  <div class="badge-title">${getBadgeTitle(item)}</div>
                   <ha-icon-button
                     .label=${this.hass!.localize(
                       'ui.components.entity.entity-picker.clear',

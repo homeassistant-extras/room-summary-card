@@ -2,8 +2,8 @@ import type { BadgeConfig, StateConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 import {
-  badgeValueChanged,
   badgeStatesValueChanged,
+  badgeValueChanged,
 } from '../../../../../src/cards/components/editor/utils/badge-editor-handlers';
 
 describe('badge-editor-handlers', () => {

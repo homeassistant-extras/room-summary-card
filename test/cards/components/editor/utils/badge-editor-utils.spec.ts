@@ -1,9 +1,9 @@
 import type { BadgeConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import {
-  getKey,
   cleanEmptyStrings,
   getBadgeTitle,
+  getKey,
 } from '../../../../../src/cards/components/editor/utils/badge-editor-utils';
 
 describe('badge-editor-utils', () => {

@@ -1,6 +1,6 @@
 import {
-  getBadgeSchema,
   computeLabelCallback,
+  getBadgeSchema,
 } from '@cards/components/editor/utils/badge-editor-schema';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';

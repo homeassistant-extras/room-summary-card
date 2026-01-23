@@ -52,6 +52,8 @@ Example YAML configurations to replicate each screenshot shown below. See my per
 
 ![Problem Detection](../assets/problems.png)
 
+**Interactive Feature**: Click the problem indicator (numbered badge) to open a dialog showing all problem entities with their details. Each entity can be clicked to open its more-info dialog.
+
 ```yaml
 #################
 # LIVING ROOM

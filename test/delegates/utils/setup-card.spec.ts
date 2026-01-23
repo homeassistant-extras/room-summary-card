@@ -459,7 +459,10 @@ describe('setup-card.ts', () => {
 
       it('should detect Frosted Glass Lite theme', () => {
         const config: Config = { area: 'living_room' };
-        mockHass.themes = { darkMode: true, theme: 'Frosted Glass Lite' } as any;
+        mockHass.themes = {
+          darkMode: true,
+          theme: 'Frosted Glass Lite',
+        } as any;
 
         const result = getRoomProperties(mockHass, config);
         expect(result.flags.frostedGlass).to.be.true;

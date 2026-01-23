@@ -75,6 +75,8 @@
        state: 'on'
    ```
 
+**Note**: If the problem indicator appears but clicking it doesn't open the dialog, ensure you're clicking directly on the numbered badge (not just the area around it). The indicator should show a pointer cursor on hover and enlarge.
+
 ### Climate Borders Not Showing
 
 **Symptoms**: Expected temperature/humidity borders missing
