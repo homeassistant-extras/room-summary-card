@@ -3,6 +3,7 @@
     /* Base Options: */
     "skipLibCheck": true,
     "target": "es2015",
+    "lib": ["es2021"],
     "moduleResolution": "node",
     "isolatedModules": true,
     "experimentalDecorators": true,

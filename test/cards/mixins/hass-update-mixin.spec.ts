@@ -49,7 +49,7 @@ describe('HassUpdateMixin', () => {
   });
 
   it('should add event listener when connected to DOM', () => {
-    const addEventListenerSpy = stub(window, 'addEventListener');
+    const addEventListenerSpy = stub(globalThis, 'addEventListener');
 
     // Call connectedCallback directly (it will be called automatically when appended)
     element.connectedCallback();
@@ -60,7 +60,7 @@ describe('HassUpdateMixin', () => {
   });
 
   it('should remove event listener when disconnected from DOM', () => {
-    const removeEventListenerSpy = stub(window, 'removeEventListener');
+    const removeEventListenerSpy = stub(globalThis, 'removeEventListener');
 
     // Set up: connect first
     element.connectedCallback();
@@ -83,7 +83,7 @@ describe('HassUpdateMixin', () => {
     }>;
     updateEvent.initEvent('hass-update', false, false);
     (updateEvent as any).detail = { hass };
-    window.dispatchEvent(updateEvent);
+    globalThis.dispatchEvent(updateEvent);
 
     expect(element.hass).to.deep.equal(hass);
   });

@@ -13,7 +13,7 @@ import type { HASSDomEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { Task } from '@lit/task';
 import type { Config } from '@type/config';
-import { CSSResult, html, LitElement, nothing } from 'lit';
+import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 import type { Ref } from 'lit/directives/ref.js';
 import { createRef } from 'lit/directives/ref.js';
@@ -138,7 +138,7 @@ export class RoomSummaryCardEditor extends LitElement {
     }
   }
 
-  private _renderTabContent() {
+  private _renderTabContent(): TemplateResult | typeof nothing {
     // Main tab (tab 0)
     if (this._currentTab === 0) {
       return this._getEntitiesTask.render({
@@ -155,7 +155,7 @@ export class RoomSummaryCardEditor extends LitElement {
           });
         },
         error: (error) => html`${error}`,
-      });
+      }) as TemplateResult | typeof nothing;
     }
     // Entities tab (tab 1)
     if (this._currentTab === 1) {
@@ -173,7 +173,7 @@ export class RoomSummaryCardEditor extends LitElement {
           });
         },
         error: (error) => html`${error}`,
-      });
+      }) as TemplateResult | typeof nothing;
     }
     // Lights tab (tab 2)
     if (this._currentTab === 2) {
@@ -191,7 +191,7 @@ export class RoomSummaryCardEditor extends LitElement {
           });
         },
         error: (error) => html`${error}`,
-      });
+      }) as TemplateResult | typeof nothing;
     }
     // Sensors tab (tab 3)
     if (this._currentTab === 3) {
@@ -210,7 +210,7 @@ export class RoomSummaryCardEditor extends LitElement {
           });
         },
         error: (error) => html`${error}`,
-      });
+      }) as TemplateResult | typeof nothing;
     }
     // Occupancy tab (tab 4)
     if (this._currentTab === 4) {
@@ -226,7 +226,7 @@ export class RoomSummaryCardEditor extends LitElement {
           });
         },
         error: (error) => html`${error}`,
-      });
+      }) as TemplateResult | typeof nothing;
     }
 
     return nothing;

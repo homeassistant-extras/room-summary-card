@@ -14,7 +14,7 @@ describe('index.ts', () => {
 
     // Create a stub for window.customCards
     customCardsStub = [];
-    Object.defineProperty(window, 'customCards', {
+    Object.defineProperty(globalThis, 'customCards', {
       get: () => customCardsStub,
       set: (value) => {
         customCardsStub = value;
@@ -66,14 +66,14 @@ describe('index.ts', () => {
     customCardsStub = undefined;
     require('@/index.ts');
 
-    expect(window.customCards).to.be.an('array');
+    expect(globalThis.customCards).to.be.an('array');
   });
 
   it('should add card configuration with all fields to window.customCards', () => {
     require('@/index.ts');
 
-    expect(window.customCards).to.have.lengthOf(1);
-    expect(window.customCards[0]).to.deep.equal({
+    expect(globalThis.customCards).to.have.lengthOf(1);
+    expect(globalThis.customCards[0]).to.deep.equal({
       type: 'room-summary-card',
       name: 'Room Summary',
       description:
@@ -86,19 +86,25 @@ describe('index.ts', () => {
 
   it('should preserve existing cards when adding new card', () => {
     // Add an existing card
-    window.customCards = [
+    globalThis.customCards = [
       {
         type: 'existing-card',
         name: 'Existing Card',
+        description: 'Existing Card Description',
+        preview: true,
+        documentationURL: 'https://github.com/homeassistant-extras/room-summary-card',
       },
     ];
 
     require('@/index.ts');
 
-    expect(window.customCards).to.have.lengthOf(2);
-    expect(window.customCards[0]).to.deep.equal({
+    expect(globalThis.customCards).to.have.lengthOf(2);
+    expect(globalThis.customCards[0]).to.deep.equal({
       type: 'existing-card',
       name: 'Existing Card',
+      description: 'Existing Card Description',
+      preview: true,
+      documentationURL: 'https://github.com/homeassistant-extras/room-summary-card',
     });
   });
 
@@ -106,7 +112,7 @@ describe('index.ts', () => {
     require('@/index.ts');
     require('@/index.ts');
 
-    expect(window.customCards).to.have.lengthOf(1);
+    expect(globalThis.customCards).to.have.lengthOf(1);
     expect(customElementsStub.callCount).to.equal(13);
   });
 

@@ -24,12 +24,12 @@ export const HassUpdateMixin = <T extends Constructor<LitElement>>(
 
     override connectedCallback(): void {
       super.connectedCallback();
-      window.addEventListener('hass-update', this._boundHassUpdateHandler);
+      globalThis.addEventListener('hass-update', this._boundHassUpdateHandler);
     }
 
     override disconnectedCallback(): void {
       super.disconnectedCallback();
-      window.removeEventListener('hass-update', this._boundHassUpdateHandler);
+      globalThis.removeEventListener('hass-update', this._boundHassUpdateHandler);
     }
 
     private _handleHassUpdate(event: Event): void {

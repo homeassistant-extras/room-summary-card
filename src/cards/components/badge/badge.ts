@@ -72,7 +72,7 @@ export class Badge extends HassUpdateMixin(LitElement) {
 
     // Set position (convert underscores to hyphens for CSS)
     const position = this.config.position ?? 'top_right';
-    this.position = position.replace(/_/g, '-');
+    this.position = position.replaceAll('_', '-');
   }
 
   public override render(): TemplateResult | typeof nothing {

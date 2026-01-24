@@ -209,7 +209,7 @@ export class RoomSummaryCard extends LitElement {
 
     // Find the first area that has matching entities
     const matchingArea = areas.find(([areaId, area]) => {
-      const areaName = area.area_id.toLowerCase().replace(/\s+/g, '_');
+      const areaName = area.area_id.toLowerCase().replaceAll(/\s+/g, '_');
 
       // Check if either entity exists for this area
       const hasLight =

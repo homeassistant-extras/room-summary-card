@@ -9,7 +9,7 @@ export interface TabBarParams {
   tabContainerRef: Ref<HTMLDivElement>;
   onScroll: () => void;
   onTabClick: (index: number) => void;
-  tabContent: TemplateResult | typeof nothing | unknown;
+  tabContent: TemplateResult | typeof nothing;
 }
 
 /**

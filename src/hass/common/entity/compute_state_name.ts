@@ -14,7 +14,7 @@ export const computeStateNameFromEntityAttributes = (
   attributes: Record<string, any>,
 ): string =>
   attributes.friendly_name === undefined
-    ? computeObjectId(entityId).replace(/_/g, ' ')
+    ? computeObjectId(entityId).replaceAll('_', ' ')
     : (attributes.friendly_name ?? '').toString();
 
 export const computeStateName = (stateObj: HassEntity): string =>

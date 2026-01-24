@@ -21,6 +21,17 @@ import { SensorCollection } from '@cards/components/sensor-collection/sensor-col
 import { RoomSummaryCardEditor } from '@cards/editor';
 import { version } from '../package.json';
 
+declare global {
+  // eslint-disable-next-line no-var
+  var customCards: Array<{
+    type: string;
+    name: string;
+    description: string;
+    preview: boolean;
+    documentationURL: string;
+  }>;
+}
+
 // Register the custom element with the browser
 customElements.define('room-summary-card', RoomSummaryCard);
 customElements.define('room-summary-card-editor', RoomSummaryCardEditor);
@@ -55,10 +66,10 @@ customElements.define(
 );
 
 // Ensure the customCards array exists on the window object
-window.customCards = window.customCards || [];
+globalThis.customCards = globalThis.customCards || [];
 
 // Register the card with Home Assistant's custom card registry
-window.customCards.push({
+globalThis.customCards.push({
   // Unique identifier for the card type
   type: 'room-summary-card',
 
