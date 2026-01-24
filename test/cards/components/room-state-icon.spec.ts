@@ -10,6 +10,7 @@ import type {
 import type { HomeAssistant } from '@hass/types';
 import * as attributeDisplayModule from '@html/attribute-display';
 import * as badgeSquadModule from '@html/badge-squad';
+import * as renderStateDisplayModule from '@html/render-state-display';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
@@ -39,6 +40,7 @@ describe('room-state-icon.ts', () => {
   let attributeDisplayStub: sinon.SinonStub;
   let hasEntityFeatureStub: sinon.SinonStub;
   let stateDisplayStub: sinon.SinonStub;
+  let renderStateDisplayStub: sinon.SinonStub;
   let computeEntityIconStub: sinon.SinonStub;
   let renderBadgeElementsStub: sinon.SinonStub;
 
@@ -115,6 +117,10 @@ describe('room-state-icon.ts', () => {
     stateDisplayStub = stub(stateDisplayModule, 'stateDisplay').returns(
       html`<state-display></state-display>`,
     );
+    renderStateDisplayStub = stub(
+      renderStateDisplayModule,
+      'renderStateDisplay',
+    ).returns(html`<div class="entity-state">state display</div>`);
     computeEntityIconStub = stub(
       lootBoxIconModule,
       'computeEntityIcon',
@@ -149,6 +155,7 @@ describe('room-state-icon.ts', () => {
     attributeDisplayStub.restore();
     hasEntityFeatureStub.restore();
     stateDisplayStub.restore();
+    renderStateDisplayStub.restore();
     computeEntityIconStub.restore();
     renderBadgeElementsStub.restore();
   });
@@ -987,7 +994,7 @@ describe('room-state-icon.ts', () => {
       // Reset stubs
       hasFeatureStub.returns(true); // Enable show_entity_labels
       hasEntityFeatureStub.restore();
-      stateDisplayStub.restore();
+      renderStateDisplayStub.restore();
     });
 
     it('should render state display when show_state feature is enabled', async () => {
@@ -1000,10 +1007,11 @@ describe('room-state-icon.ts', () => {
         },
       );
 
-      stateDisplayStub.restore();
-      stateDisplayStub = stub(stateDisplayModule, 'stateDisplay').returns(
-        html`<state-display class="test-state-display"></state-display>`,
-      );
+      renderStateDisplayStub.restore();
+      renderStateDisplayStub = stub(
+        renderStateDisplayModule,
+        'renderStateDisplay',
+      ).returns(html`<div class="entity-state">test state</div>`);
 
       const entityWithShowState: EntityInformation = {
         ...mockEntity,
@@ -1026,15 +1034,21 @@ describe('room-state-icon.ts', () => {
       const stateDisplay = el.querySelector('.entity-state');
 
       expect(stateDisplay).to.exist;
-      expect(hasEntityFeatureStub.calledWith(entityWithShowState, 'show_state'))
-        .to.be.true;
-      expect(stateDisplayStub.calledWith(mockHass, mockEntityState)).to.be.true;
+      expect(
+        renderStateDisplayStub.calledWith(mockHass, entityWithShowState, false),
+      ).to.be.true;
     });
 
     it('should not render state display when show_state feature is disabled', async () => {
       hasEntityFeatureStub = stub(featureModule, 'hasEntityFeature').returns(
         false,
       );
+
+      renderStateDisplayStub.restore();
+      renderStateDisplayStub = stub(
+        renderStateDisplayModule,
+        'renderStateDisplay',
+      ).returns(nothing);
 
       const entityWithoutShowState = {
         ...mockEntity,
@@ -1057,7 +1071,13 @@ describe('room-state-icon.ts', () => {
       const stateDisplay = el.querySelector('.entity-state');
 
       expect(stateDisplay).to.not.exist;
-      expect(stateDisplayStub.called).to.be.false;
+      expect(
+        renderStateDisplayStub.calledWith(
+          mockHass,
+          entityWithoutShowState,
+          false,
+        ),
+      ).to.be.true;
     });
 
     it('should not render state display when icon content is hidden', async () => {
@@ -1068,6 +1088,12 @@ describe('room-state-icon.ts', () => {
           return false;
         },
       );
+
+      renderStateDisplayStub.restore();
+      renderStateDisplayStub = stub(
+        renderStateDisplayModule,
+        'renderStateDisplay',
+      ).returns(nothing);
 
       const entityWithPicture: EntityInformation = {
         ...mockEntity,
@@ -1098,7 +1124,9 @@ describe('room-state-icon.ts', () => {
       const stateDisplay = el.querySelector('.entity-state');
 
       expect(stateDisplay).to.not.exist;
-      expect(stateDisplayStub.called).to.be.false;
+      expect(
+        renderStateDisplayStub.calledWith(mockHass, entityWithPicture, true),
+      ).to.be.true;
     });
   });
 });

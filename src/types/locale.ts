@@ -46,6 +46,7 @@ export type TranslationKey =
   | 'editor.entity.entity_off_color'
   | 'editor.entity.use_entity_icon'
   | 'editor.entity.show_state'
+  | 'editor.entity.hide_zero_attribute_domains'
   | 'editor.entity.styles'
   | 'editor.entity.states'
   | 'editor.entity.add_state'

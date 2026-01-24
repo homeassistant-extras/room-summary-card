@@ -37,6 +37,7 @@
       "show_entity_labels": "Show Entity Labels",
       "use_entity_icon": "Use Entity Icon",
       "show_state": "Show State",
+      "hide_zero_attribute_domains": "Hide State for Zero Attribute Domains",
       "styles": "Styles",
       "states": "States",
       "add_state": "Add State",

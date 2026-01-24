@@ -118,6 +118,13 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
                   label: localize(hass, 'editor.entity.show_state'),
                   value: 'show_state',
                 },
+                {
+                  label: localize(
+                    hass,
+                    'editor.entity.hide_zero_attribute_domains',
+                  ),
+                  value: 'hide_zero_attribute_domains',
+                },
               ],
             },
           },

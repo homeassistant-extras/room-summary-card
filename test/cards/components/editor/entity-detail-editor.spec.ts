@@ -42,6 +42,15 @@ describe('entity-detail-editor.ts', () => {
         if (key === 'ui.panel.lovelace.editor.card.config.optional') {
           return 'optional';
         }
+        if (key === 'editor.entity.use_entity_icon') {
+          return 'Use Entity Icon';
+        }
+        if (key === 'editor.entity.show_state') {
+          return 'Show State';
+        }
+        if (key === 'editor.entity.hide_zero_attribute_domains') {
+          return 'Hide State for Zero Attribute Domains';
+        }
         return key;
       },
     } as any as HomeAssistant;
@@ -198,6 +207,10 @@ describe('entity-detail-editor.ts', () => {
                 {
                   label: 'Show State',
                   value: 'show_state',
+                },
+                {
+                  label: 'Hide State for Zero Attribute Domains',
+                  value: 'hide_zero_attribute_domains',
                 },
               ],
             },

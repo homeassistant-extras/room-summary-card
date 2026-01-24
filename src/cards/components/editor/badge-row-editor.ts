@@ -1,3 +1,4 @@
+import { ensureArray } from '@hass/common/array/ensure-array';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
@@ -84,7 +85,7 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
     }
 
     const entityId = this.entityId || '';
-    const badges = Array.isArray(this.badges) ? this.badges : [];
+    const badges = ensureArray(this.badges) ?? [];
     const maxBadges = 4;
     const canAddMore = badges.length < maxBadges;
 

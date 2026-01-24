@@ -64,8 +64,8 @@ export class ProblemDialog
     return html`
       <ha-dialog
         ?open=${this._opened}
-        .scrimClickAction=${"close"}
-        .escapeKeyAction=${"close"}
+        .scrimClickAction=${'close'}
+        .escapeKeyAction=${'close'}
         .heading=${createCloseHeading(this.hass)}
         @closed=${this._dialogClosed}
       >

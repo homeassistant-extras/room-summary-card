@@ -1,3 +1,4 @@
+import { ensureArray } from '@hass/common/array/ensure-array';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
@@ -400,7 +401,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
 
     const renderItems = () => {
       if (this.mode === 'states') {
-        const states = Array.isArray(this.states) ? this.states : [];
+        const states = ensureArray(this.states) ?? [];
         return repeat(
           states,
           (item, index) => this._getKey(item, index),
@@ -458,9 +459,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
           },
         );
       } else {
-        const thresholds = Array.isArray(this.thresholds)
-          ? this.thresholds
-          : [];
+        const thresholds = ensureArray(this.thresholds) ?? [];
         return repeat(
           thresholds,
           (item, index) => this._getKey(item, index),

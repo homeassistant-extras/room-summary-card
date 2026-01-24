@@ -1,3 +1,4 @@
+import { ensureArray } from '@hass/common/array/ensure-array';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
@@ -245,7 +246,7 @@ export class RoomSummaryThresholdsRowEditor extends LitElement {
         : this.hass.localize('editor.threshold.add_humidity_threshold') ||
           'Add Humidity Threshold';
 
-    const thresholds = Array.isArray(this.thresholds) ? this.thresholds : [];
+    const thresholds = ensureArray(this.thresholds) ?? [];
 
     return html`
       <label>

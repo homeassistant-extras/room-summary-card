@@ -100,10 +100,11 @@ entities:
 
 The `features` array allows you to enable specific behaviors for individual entities:
 
-| Feature         | Description                                                                         |
-| --------------- | ----------------------------------------------------------------------------------- |
-| use_entity_icon | Display entity icon instead of `entity_picture`                                     |
-| show_state      | Display entity state value below the entity label (e.g., brightness %, temperature) |
+| Feature                     | Description                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| use_entity_icon             | Display entity icon instead of `entity_picture`                                     |
+| show_state                  | Display entity state value below the entity label (e.g., brightness %, temperature) |
+| hide_zero_attribute_domains | Hide state display when entity is inactive (off/closed) and primary attribute is 0  |
 
 ### Action Configuration
 
@@ -154,6 +155,48 @@ entities:
 ![Entity States](../assets/state-display.png)
 
 See [Custom Styles Configuration](CUSTOM-STYLES.md#styling-entity-state-display) for all available CSS variables.
+
+### Hiding State Display When Inactive
+
+When using the `show_state` feature with lights, fans, covers, or valves, the state display may show redundant "off" or "closed" text when the entity is inactive and its primary attribute (brightness, percentage, current_position) is 0. Since the icon already visually indicates the state, you can use the `hide_zero_attribute_domains` feature to hide the state display in these cases:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+features:
+  - show_entity_labels
+entities:
+  # Show brightness when on, hide "off" text when off
+  - entity_id: light.living_room
+    features:
+      - show_state
+      - hide_zero_attribute_domains
+
+  # Show percentage when on, hide "off" text when off
+  - entity_id: fan.bedroom
+    features:
+      - show_state
+      - hide_zero_attribute_domains
+
+  # Show position when open, hide "closed" text when closed
+  - entity_id: cover.garage_door
+    features:
+      - show_state
+      - hide_zero_attribute_domains
+```
+
+**How it works:**
+
+- When the entity is active (on/open) or has a non-zero attribute value, the state display is shown normally
+- When the entity is inactive (off for lights/fans, closed for covers/valves) and the primary attribute is 0, the state display is hidden
+- This prevents redundant "off" or "closed" text from appearing when the icon already indicates the state (@Ltek is not a fan)
+
+**Supported domains:**
+
+- `light` - Hides when off and brightness is 0
+- `fan` - Hides when off and percentage is 0
+- `cover` - Hides when closed and current_position is 0
+- `valve` - Hides when closed and current_position is 0
 
 ## Color Priority
 
