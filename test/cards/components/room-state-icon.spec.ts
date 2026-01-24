@@ -785,6 +785,104 @@ describe('room-state-icon.ts', () => {
       expect(element['iconBackground']).to.be.true;
       expect(element['_hideIconContent']).to.be.true;
     });
+
+    it('should reset _hideIconContent when entity_picture is removed', () => {
+      // Create entity with entity_picture first
+      const entityWithPicture = {
+        ...mockEntity,
+        state: {
+          ...mockEntityState,
+          attributes: {
+            ...mockEntityState.attributes,
+            entity_picture: '/local/test-picture.jpg',
+          },
+        },
+        config: {
+          ...mockEntityConfig,
+          features: [], // No use_entity_icon feature
+        },
+      };
+      element.entity = entityWithPicture;
+      element.config = mockConfig;
+      element.hass = mockHass;
+
+      // Verify hideIconContent is set when image exists
+      expect(element['_hideIconContent']).to.be.true;
+      expect(element['image']).to.be.true;
+
+      // Remove entity_picture from entity state
+      const entityWithoutPicture = {
+        ...mockEntity,
+        state: {
+          ...mockEntityState,
+          attributes: {
+            ...mockEntityState.attributes,
+            // entity_picture removed
+          },
+        },
+        config: {
+          ...mockEntityConfig,
+          features: [],
+        },
+      };
+      element.entity = entityWithoutPicture;
+      element.hass = mockHass;
+
+      // Verify hideIconContent is reset when image is removed
+      expect(element['_hideIconContent']).to.be.false;
+      expect(element['image']).to.be.false;
+    });
+
+    it('should reset _hideIconContent to config value when entity_picture is removed for main room entity', () => {
+      // Create main room entity with entity_picture
+      const entityWithPicture = {
+        ...mockEntity,
+        state: {
+          ...mockEntityState,
+          attributes: {
+            ...mockEntityState.attributes,
+            entity_picture: '/local/test-picture.jpg',
+          },
+        },
+        config: {
+          ...mockEntityConfig,
+          features: [],
+        },
+      };
+      element.entity = entityWithPicture;
+      element.isMainRoomEntity = true;
+      element.config = {
+        ...mockConfig,
+        background: {
+          options: ['hide_icon_only'],
+        },
+      } as Config;
+      element.hass = mockHass;
+
+      // Verify hideIconContent is set when image exists
+      expect(element['_hideIconContent']).to.be.true;
+
+      // Remove entity_picture
+      const entityWithoutPicture = {
+        ...mockEntity,
+        state: {
+          ...mockEntityState,
+          attributes: {
+            ...mockEntityState.attributes,
+          },
+        },
+        config: {
+          ...mockEntityConfig,
+          features: [],
+        },
+      };
+      element.entity = entityWithoutPicture;
+      element.hass = mockHass;
+
+      // Verify hideIconContent is reset to config value (hide_icon_only is enabled)
+      expect(element['_hideIconContent']).to.be.true; // Should be true because config has hide_icon_only
+      expect(element['image']).to.be.false;
+    });
   });
 
   describe('config styles spreading', () => {

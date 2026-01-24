@@ -154,6 +154,13 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       this.image = true;
       this.iconBackground = true;
       this._hideIconContent = true;
+    } else {
+      // Reset hideIconContent when image goes away
+      // If it's a main room entity, use config value, otherwise false
+      this._hideIconContent = this.isMainRoomEntity
+        ? this._config?.background?.options?.includes('hide_icon_only') || false
+        : false;
+      this.image = false;
     }
 
     this._hass = hass;
