@@ -1,3 +1,4 @@
+import { meetsStateCondition } from '@util/comparison-utils';
 import type { BadgeConfig, StateConfig } from '@type/config/entity';
 import type { EntityInformation } from '@type/room';
 
@@ -24,7 +25,9 @@ export const getMatchingBadgeState = (
       ? String(state.attributes?.[stateConfig.attribute] ?? '')
       : state.state;
 
-    if (stateConfig.state === valueToMatch) {
+    const operator = stateConfig.operator || 'eq';
+
+    if (meetsStateCondition(valueToMatch, stateConfig.state, operator)) {
       return stateConfig;
     }
   }

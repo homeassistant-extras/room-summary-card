@@ -143,5 +143,47 @@ describe('badge-state.ts', () => {
       const result = getMatchingBadgeState(entity, badge);
       expect(result).to.be.undefined;
     });
+
+    describe('operator support', () => {
+      it('should work with ne operator and attribute-based matching', () => {
+        const states: StateConfig[] = [
+          {
+            state: 'ok',
+            attribute: 'status',
+            icon_color: 'red',
+            icon: 'mdi:alert',
+            operator: 'ne',
+          },
+        ];
+        const entity = createEntity('unknown', { status: 'error' });
+        const badge = createBadge(states);
+        const result = getMatchingBadgeState(entity, badge);
+        expect(result).to.deep.equal(states[0]);
+      });
+
+      it('should evaluate states in order - eq before ne', () => {
+        const states: StateConfig[] = [
+          { state: 'ok', icon_color: 'green', icon: 'mdi:check', operator: 'eq' },
+          { state: 'ok', icon_color: 'red', icon: 'mdi:alert', operator: 'ne' },
+        ];
+        const entity = createEntity('ok');
+        const badge = createBadge(states);
+        const result = getMatchingBadgeState(entity, badge);
+        // Should match the first eq condition, not the ne condition
+        expect(result).to.deep.equal(states[0]);
+      });
+
+      it('should evaluate states in order - ne matches when eq does not', () => {
+        const states: StateConfig[] = [
+          { state: 'ok', icon_color: 'green', icon: 'mdi:check', operator: 'eq' },
+          { state: 'ok', icon_color: 'red', icon: 'mdi:alert', operator: 'ne' },
+        ];
+        const entity = createEntity('error');
+        const badge = createBadge(states);
+        const result = getMatchingBadgeState(entity, badge);
+        // Should match the ne condition since eq doesn't match
+        expect(result).to.deep.equal(states[1]);
+      });
+    });
   });
 });

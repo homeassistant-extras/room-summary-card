@@ -1,5 +1,5 @@
-import type { ThresholdConfig } from '@type/config/entity';
 import type { EntityInformation } from '@type/room';
+import { meetsStateCondition, meetsThreshold } from '@util/comparison-utils';
 
 /**
  * Result of threshold/state evaluation containing both color and icon
@@ -96,7 +96,9 @@ export const getStateResult = (
       ? String(state.attributes?.[stateConfig.attribute] ?? '')
       : state.state;
 
-    if (stateConfig.state === valueToMatch) {
+    const operator = stateConfig.operator || 'eq';
+
+    if (meetsStateCondition(valueToMatch, stateConfig.state, operator)) {
       return {
         color: stateConfig.icon_color,
         titleColor: stateConfig.title_color,
@@ -118,32 +120,6 @@ export const getStateColor = (
   entity: EntityInformation,
 ): string | undefined => {
   return getStateResult(entity)?.color;
-};
-
-/**
- * Checks if a numeric value meets a threshold condition
- *
- * @param value - The numeric value to test
- * @param threshold - The threshold configuration
- * @returns true if the condition is met
- */
-const meetsThreshold = (value: number, threshold: ThresholdConfig): boolean => {
-  const operator = threshold.operator || 'gte';
-
-  switch (operator) {
-    case 'gt':
-      return value > threshold.threshold;
-    case 'gte':
-      return value >= threshold.threshold;
-    case 'lt':
-      return value < threshold.threshold;
-    case 'lte':
-      return value <= threshold.threshold;
-    case 'eq':
-      return value === threshold.threshold;
-    default:
-      return value >= threshold.threshold;
-  }
 };
 
 /**

@@ -67,6 +67,26 @@ export class RoomSummaryStatesRowEditor extends LitElement {
           selector: { text: {} },
         },
         {
+          name: 'operator',
+          required: false,
+          label: 'editor.entity.state.operator',
+          selector: {
+            select: {
+              mode: 'dropdown' as const,
+              options: [
+                {
+                  value: 'eq',
+                  label: localize(hass, 'editor.threshold.operator.equal'),
+                },
+                {
+                  value: 'ne',
+                  label: localize(hass, 'editor.threshold.operator.not_equal'),
+                },
+              ],
+            },
+          },
+        },
+        {
           name: 'icon_color',
           required: true,
           label: 'editor.entity.state.icon_color',

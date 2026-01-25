@@ -340,51 +340,6 @@ The card supports multiple themes out of the box:
 
 See the [Theming Guide](THEMING.md) for detailed color configuration and custom theme support.
 
-## Project Roadmap
-
-- [x] **`Initial design`**: create initial room card based on button-card template in UI minimialist theme.
-- [x] **`Temperature`**: use uom from the device. - thanks @LiquidPT
-- [x] **`Card Editor`**: ability to use the HA card editor. - thanks @elsilius
-- [x] **`Test on other themes`**: make sure it works elsewhere. - thanks @tardis89, @avatar25pl, @massaquah
-- [x] **`Flags`**: ability to disable features.
-- [x] **`Multiple sensors`**: support for displaying multiple sensors in the label area. - thanks @fctruter, @LE-tarantino, @zoic21
-- [x] **`Climate entity icon styling`**: climate entity will light up icon - thanks @murriano, @robex2005
-- [x] **`Climate Threshold tweaks & improvements`**: making this feature better and better - thanks @LE-tarantino, @ma-gu-16, @wmtech-1, @snotgun
-- [x] **`Area name display`**: use area name instead of area ID on card - thanks @LE-tarantino
-- [x] **`Navigation with room entity`**: navigate now works with room entity set - thanks @LE-tarantino
-- [x] **`Card container sizing`**: card respects container - thanks @frdve, @Erikkyw
-- [x] **`Border styling improvements`**: border to match HA styles better - thanks @frdve
-- [x] **`Theme support for iOS theme`**: for opening issue on themes - thanks @yasalmasri
-- [x] **`UI Minimalist theme integration`**: add UI minimalist theme - thanks @tardis89
-- [x] **`iOS themes support`**: ios themes - thanks @avatar25pl
-- [x] **`Problem entities counter`**: add problem entities counter - thanks to multiple users, @eTron, @MelleD
-- [x] **`Card RGB coloring`**: RGB lights color the card - thanks @ChristopherLMiller
-- [x] **`Custom names`**: **⭐ First contributor ⭐** added `area_name` - thanks @Aulos
-- [x] **`Disable card styling`**: bug fixes and new skip_entity_styles feature - thanks @benjycov
-- [x] **`Custom icon color integration`**: support [custom-icon-color](https://github.com/Mariusthvdb/custom-icon-color) - thanks @benjycov
-- [x] **`Sensor layout options`**: flexible sensor display layouts (default, stacked, bottom) - thanks @Ltek, @zoic21
-- [x] **`Sensor averaging by device class`**: automatic averaging like HA area card - thanks @Ltek
-- [x] **`Moving away from customize.yaml`**: allowing more configuration on the card - thanks @johntdyer
-- [x] **`Area, entity, and custom backgrounds`**: can setup backgrounds and customize - thanks @CalamarBicefalo, @X1pheR, @Ltek, @felippepuhle, @devkaiwang
-- [x] **`Custom Styles`**: apply custom CSS styles - thanks @marceloroloff, @ma-gu-16, @Ltek, @johannwilken, @Sturby, @viprapp, @CaptainSteubing, @devkaiwang
-- [x] **`Random bugs`**: pointing out issues to improve card - thanks @rickd1994, @avijavez10, @awfulwoman, @anandv85
-- [x] **`Occupancy Detection`**: visual indicators for room occupancy with motion/occupancy sensors - thanks @X1pheR
-- [x] **`Mold Indicator`**: animated warning indicator for mold detection with threshold-based display - thanks @ma-gu-16
-- [x] **`Entity Labels`**: display entity names under icons for better identification - thanks @Ltek
-- [x] **`Clickable Sensors`**: individual sensors in info section open more info dialog - thanks @enrico-semrau
-- [x] **`Threshold-Based Icon Coloring`**: dynamic icon colors based on sensor values with configurable thresholds and operators - thanks @fusionstream, @marcokreeft87, @a0365d9b
-- [x] **`State-Based Icon Coloring`**: exact state & attribute matching for sensors like washing machines, device trackers, and status indicators - thanks @marcokreeft87 and @zoic21!
-- [x] **`Multi-Light Background`**: card background lights up when any light entity in the room is on - thanks @joshkay, @ojm88, @fonix232
-- [x] **`Entity Picture Display`**: automatic display of entity pictures with optional override - thanks @Zipp0KMS, @pheitman
-- [x] **`Custom Labels`**: entity and sensor labels with state/threshold-based overrides - thanks @ojm88
-- [x] **`Smoke, Gas, Water Detection`**: visual indicators for alarm states - thanks @Arjan-21, @robex2005
-- [x] **`Entity-Based Threshold Values`**: **⭐ Contributor ⭐** dynamic threshold based on entity - thanks @Micky2149
-- [x] **`Full Card Actions`**: make entire card clickable with larger touch targets for mobile-friendly navigation - thanks @devkaiwang
-- [x] **`Frosted Glass Theme Support`**: automatic detection and styling for Frosted Glass themes with transparent blurred card effects - thanks @devkaiwang
-- [x] **`Sensor Improvements`**: feature requests to make sensors awesome - thanks @MelleD
-- [x] **`Brightness Slider`**: entity transforms into slider - thanks @tmaihoff, @hfalk
-- [x] **`Entity Badges`**: dynamic badge overlays- thanks @ojm88
-
 ## Contributing
 
 - **💬 [Join the Discussions](https://github.com/homeassistant-extras/room-summary-card/discussions)**: Share your insights, provide feedback, or ask questions.

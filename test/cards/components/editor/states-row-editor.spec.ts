@@ -34,12 +34,15 @@ describe('states-row-editor.ts', () => {
           'editor.entity.states': 'States',
           'editor.entity.add_state': 'Add State',
           'editor.entity.state.state': 'State',
+          'editor.entity.state.operator': 'Operator',
           'editor.entity.state.icon_color': 'Icon Color',
           'editor.entity.state.icon': 'Icon',
           'editor.entity.state.label': 'Label',
           'editor.entity.state.attribute': 'Attribute',
           'editor.entity.state.styles': 'Styles',
           'editor.entity.entity_label': 'Entity Label',
+          'editor.threshold.operator.equal': 'Equal (=)',
+          'editor.threshold.operator.not_equal': 'Not equal (≠)',
           'ui.panel.lovelace.editor.card.config.optional': 'optional',
           'ui.panel.lovelace.editor.card.config.required': 'required',
           'ui.components.entity.entity-picker.clear': 'Clear',
@@ -111,7 +114,7 @@ describe('states-row-editor.ts', () => {
   });
 
   describe('_getStateSchema', () => {
-    it('should create schema with correct structure', () => {
+    it('should create schema with correct structure for non-sensor, non-main entity', () => {
       element.entityId = 'light.living_room';
       const schema = element['_getStateSchema'](
         'light.living_room',
@@ -120,71 +123,238 @@ describe('states-row-editor.ts', () => {
         false,
       );
 
-      expect(schema).to.be.an('array');
-      expect(schema.length).to.be.greaterThan(0);
+      const expectedSchema = [
+        {
+          name: 'state',
+          required: true,
+          label: 'editor.entity.state.state',
+          selector: { text: {} },
+        },
+        {
+          name: 'operator',
+          required: false,
+          label: 'editor.entity.state.operator',
+          selector: {
+            select: {
+              mode: 'dropdown' as const,
+              options: [
+                {
+                  value: 'eq',
+                  label: 'Equal (=)',
+                },
+                {
+                  value: 'ne',
+                  label: 'Not equal (≠)',
+                },
+              ],
+            },
+          },
+        },
+        {
+          name: 'icon_color',
+          required: true,
+          label: 'editor.entity.state.icon_color',
+          selector: { ui_color: {} },
+        },
+        {
+          type: 'grid',
+          name: '',
+          label: 'editor.entity.entity_label',
+          schema: [
+            {
+              name: 'icon',
+              label: 'editor.entity.state.icon',
+              required: false,
+              selector: { icon: {} },
+            },
+            {
+              name: 'label',
+              label: 'editor.entity.state.label',
+              required: false,
+              selector: { text: {} },
+            },
+          ],
+        },
+        {
+          name: 'attribute',
+          label: 'editor.entity.state.attribute',
+          required: false,
+          selector: { attribute: { entity_id: 'light.living_room' } },
+        },
+        {
+          name: 'styles',
+          label: 'editor.entity.state.styles',
+          required: false,
+          selector: { object: {} },
+        },
+      ];
 
-      // Check required fields
-      const stateField = schema.find((s) => s.name === 'state') as any;
-      expect(stateField).to.exist;
-      expect(stateField?.required).to.be.true;
-      expect(stateField?.selector).to.deep.equal({ text: {} });
-
-      const iconColorField = schema.find((s) => s.name === 'icon_color') as any;
-      expect(iconColorField).to.exist;
-      expect(iconColorField?.required).to.be.true;
-      expect(iconColorField?.selector).to.deep.equal({ ui_color: {} });
+      expect(schema).to.deep.equal(expectedSchema);
     });
 
-    it('should include optional fields', () => {
+    it('should create schema with title_color for main entity', () => {
+      element.entityId = 'light.living_room';
+      const schema = element['_getStateSchema'](
+        'light.living_room',
+        mockHass,
+        false,
+        true,
+      );
+
+      const expectedSchema = [
+        {
+          name: 'state',
+          required: true,
+          label: 'editor.entity.state.state',
+          selector: { text: {} },
+        },
+        {
+          name: 'operator',
+          required: false,
+          label: 'editor.entity.state.operator',
+          selector: {
+            select: {
+              mode: 'dropdown' as const,
+              options: [
+                {
+                  value: 'eq',
+                  label: 'Equal (=)',
+                },
+                {
+                  value: 'ne',
+                  label: 'Not equal (≠)',
+                },
+              ],
+            },
+          },
+        },
+        {
+          name: 'icon_color',
+          required: true,
+          label: 'editor.entity.state.icon_color',
+          selector: { ui_color: {} },
+        },
+        {
+          name: 'title_color',
+          required: false,
+          label: 'editor.entity.state.title_color',
+          selector: { ui_color: {} },
+        },
+        {
+          type: 'grid',
+          name: '',
+          label: 'editor.entity.entity_label',
+          schema: [
+            {
+              name: 'icon',
+              label: 'editor.entity.state.icon',
+              required: false,
+              selector: { icon: {} },
+            },
+            {
+              name: 'label',
+              label: 'editor.entity.state.label',
+              required: false,
+              selector: { text: {} },
+            },
+          ],
+        },
+        {
+          name: 'attribute',
+          label: 'editor.entity.state.attribute',
+          required: false,
+          selector: { attribute: { entity_id: 'light.living_room' } },
+        },
+        {
+          name: 'styles',
+          label: 'editor.entity.state.styles',
+          required: false,
+          selector: { object: {} },
+        },
+      ];
+
+      expect(schema).to.deep.equal(expectedSchema);
+    });
+
+    it('should create schema without title_color for sensor', () => {
       element.entityId = 'sensor.temperature';
       const schema = element['_getStateSchema'](
         'sensor.temperature',
         mockHass,
-        false,
-        false,
-      );
-
-      const attributeField = schema.find((s) => s.name === 'attribute') as any;
-      expect(attributeField).to.exist;
-      expect(attributeField?.required).to.be.false;
-      expect(attributeField?.selector).to.deep.equal({
-        attribute: { entity_id: 'sensor.temperature' },
-      });
-
-      const stylesField = schema.find((s) => s.name === 'styles') as any;
-      expect(stylesField).to.exist;
-      expect(stylesField?.required).to.be.false;
-      expect(stylesField?.selector).to.deep.equal({ object: {} });
-    });
-
-    it('should include grid schema for icon and label', () => {
-      element.entityId = 'light.bedroom';
-      const schema = element['_getStateSchema'](
-        'light.bedroom',
-        mockHass,
-        false,
+        true,
         false,
       );
 
-      const gridSchema = schema.find((s) => s.type === 'grid') as any;
-      expect(gridSchema).to.exist;
-      expect(gridSchema?.schema).to.be.an('array');
-      expect(gridSchema?.schema?.length).to.equal(2);
+      const expectedSchema = [
+        {
+          name: 'state',
+          required: true,
+          label: 'editor.entity.state.state',
+          selector: { text: {} },
+        },
+        {
+          name: 'operator',
+          required: false,
+          label: 'editor.entity.state.operator',
+          selector: {
+            select: {
+              mode: 'dropdown' as const,
+              options: [
+                {
+                  value: 'eq',
+                  label: 'Equal (=)',
+                },
+                {
+                  value: 'ne',
+                  label: 'Not equal (≠)',
+                },
+              ],
+            },
+          },
+        },
+        {
+          name: 'icon_color',
+          required: true,
+          label: 'editor.entity.state.icon_color',
+          selector: { ui_color: {} },
+        },
+        {
+          type: 'grid',
+          name: '',
+          label: 'editor.entity.entity_label',
+          schema: [
+            {
+              name: 'icon',
+              label: 'editor.entity.state.icon',
+              required: false,
+              selector: { icon: {} },
+            },
+            {
+              name: 'label',
+              label: 'editor.entity.state.label',
+              required: false,
+              selector: { text: {} },
+            },
+          ],
+        },
+        {
+          name: 'attribute',
+          label: 'editor.entity.state.attribute',
+          required: false,
+          selector: { attribute: { entity_id: 'sensor.temperature' } },
+        },
+        {
+          name: 'styles',
+          label: 'editor.entity.state.styles',
+          required: false,
+          selector: { object: {} },
+        },
+      ];
 
-      const iconField = gridSchema?.schema?.find(
-        (s: any) => s.name === 'icon',
-      ) as any;
-      expect(iconField).to.exist;
-      expect(iconField?.selector).to.deep.equal({ icon: {} });
-
-      const labelField = gridSchema?.schema?.find(
-        (s: any) => s.name === 'label',
-      ) as any;
-      expect(labelField).to.exist;
-      expect(labelField?.selector).to.deep.equal({ text: {} });
+      expect(schema).to.deep.equal(expectedSchema);
     });
 
-    it('should memoize schema for same entity_id', () => {
+    it('should memoize schema for same parameters', () => {
       element.entityId = 'light.kitchen';
       const schema1 = element['_getStateSchema'](
         'light.kitchen',
@@ -217,65 +387,6 @@ describe('states-row-editor.ts', () => {
       );
 
       expect(schema1).to.not.equal(schema2);
-
-      const attr1 = schema1.find((s) => s.name === 'attribute') as any;
-      const attr2 = schema2.find((s) => s.name === 'attribute') as any;
-      expect(attr1?.selector).to.deep.equal({
-        attribute: { entity_id: 'light.living_room' },
-      });
-      expect(attr2?.selector).to.deep.equal({
-        attribute: { entity_id: 'sensor.temp' },
-      });
-    });
-
-    it('should exclude title_color when isSensor is true', () => {
-      const entitySchema = element['_getStateSchema'](
-        'light.living_room',
-        mockHass,
-        false,
-        false,
-      );
-      const sensorSchema = element['_getStateSchema'](
-        'sensor.temperature',
-        mockHass,
-        true,
-        false,
-      );
-
-      const entityTitleColor = entitySchema.find(
-        (s) => s.name === 'title_color',
-      );
-      const sensorTitleColor = sensorSchema.find(
-        (s) => s.name === 'title_color',
-      );
-
-      expect(entityTitleColor).to.not.exist;
-      expect(sensorTitleColor).to.not.exist;
-    });
-
-    it('should only include title_color for main entity', () => {
-      const mainEntitySchema = element['_getStateSchema'](
-        'light.living_room',
-        mockHass,
-        false,
-        true,
-      );
-      const entitiesListSchema = element['_getStateSchema'](
-        'light.living_room',
-        mockHass,
-        false,
-        false,
-      );
-
-      const mainEntityTitleColor = mainEntitySchema.find(
-        (s) => s.name === 'title_color',
-      );
-      const entitiesListTitleColor = entitiesListSchema.find(
-        (s) => s.name === 'title_color',
-      );
-
-      expect(mainEntityTitleColor).to.exist;
-      expect(entitiesListTitleColor).to.not.exist;
     });
   });
 

@@ -45,6 +45,7 @@
       "add_threshold": "Add Threshold",
       "state": {
         "state": "State",
+        "operator": "Operator",
         "icon_color": "Icon Color",
         "title_color": "Title Color",
         "icon": "Icon",
@@ -136,7 +137,8 @@
         "greater_than": "Greater than (>)",
         "greater_than_or_equal": "Greater than or equal (≥)",
         "less_than": "Less than (<)",
-        "less_than_or_equal": "Less than or equal (≤)"
+        "less_than_or_equal": "Less than or equal (≤)",
+        "not_equal": "Not equal (≠)"
       }
     },
     "interactions": {

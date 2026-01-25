@@ -58,6 +58,9 @@ export interface IconStyleProperties {
 
   /** CSS properties to apply to the entity */
   styles?: Record<string, string>;
+
+  /** Comparison operator (default: 'eq' for states, 'gte' for thresholds) */
+  operator?: ComparisonOperator;
 }
 
 /**
@@ -66,9 +69,6 @@ export interface IconStyleProperties {
 export interface ThresholdConfig extends IconStyleProperties {
   /** Threshold value to compare against entity state or attribute */
   threshold: number;
-
-  /** Comparison operator (default: 'gte' for greater than or equal) */
-  operator?: ComparisonOperator;
 }
 
 /**

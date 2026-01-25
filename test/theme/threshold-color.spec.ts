@@ -515,6 +515,56 @@ describe('threshold-color.ts', () => {
         styles: {},
       });
     });
+
+    describe('getStateResult - operator support', () => {
+      it('should work with ne operator and attribute-based matching', () => {
+        const states: StateConfig[] = [
+          {
+            state: 'ok',
+            attribute: 'status',
+            icon_color: 'red',
+            operator: 'ne',
+            styles: {},
+          },
+        ];
+        const entity: EntityInformation = {
+          config: {
+            entity_id: 'sensor.dock',
+            states,
+          },
+          state: {
+            entity_id: 'sensor.dock',
+            state: 'unknown',
+            domain: 'sensor',
+            attributes: { status: 'error' },
+          },
+        };
+        const result = getStateResult(entity);
+        expect(result?.color).to.equal('red');
+      });
+
+      it('should evaluate states in order - eq before ne', () => {
+        const states: StateConfig[] = [
+          { state: 'ok', icon_color: 'green', operator: 'eq', styles: {} },
+          { state: 'ok', icon_color: 'red', operator: 'ne', styles: {} },
+        ];
+        const entity = createEntity('ok', states);
+        const result = getStateResult(entity);
+        // Should match the first eq condition, not the ne condition
+        expect(result?.color).to.equal('green');
+      });
+
+      it('should evaluate states in order - ne matches when eq does not', () => {
+        const states: StateConfig[] = [
+          { state: 'ok', icon_color: 'green', operator: 'eq', styles: {} },
+          { state: 'ok', icon_color: 'red', operator: 'ne', styles: {} },
+        ];
+        const entity = createEntity('error', states);
+        const result = getStateResult(entity);
+        // Should match the ne condition since eq doesn't match
+        expect(result?.color).to.equal('red');
+      });
+    });
   });
 
   describe('getThresholdResult - attribute matching', () => {
@@ -751,204 +801,6 @@ describe('threshold-color.ts', () => {
     });
   });
 
-  describe('getThresholdResult - operator types', () => {
-    it('should handle gt (greater than) operator', () => {
-      const thresholds: ThresholdConfig[] = [
-        { threshold: 50, icon_color: 'red', operator: 'gt' },
-      ];
-      const entity: EntityInformation = {
-        config: {
-          entity_id: 'sensor.test',
-          thresholds,
-        },
-        state: {
-          entity_id: 'sensor.test',
-          state: '75',
-          domain: 'sensor',
-          attributes: {},
-        },
-      };
-      const result = getThresholdResult(entity);
-      expect(result).to.deep.equal({
-        color: 'red',
-        titleColor: undefined,
-        icon: undefined,
-        label: undefined,
-        styles: undefined,
-      });
-
-      // Should not match when equal
-      const entityEqual: EntityInformation = {
-        config: {
-          entity_id: 'sensor.test',
-          thresholds,
-        },
-        state: {
-          entity_id: 'sensor.test',
-          state: '50',
-          domain: 'sensor',
-          attributes: {},
-        },
-      };
-      expect(getThresholdResult(entityEqual)).to.be.undefined;
-    });
-
-    it('should handle lt (less than) operator', () => {
-      const thresholds: ThresholdConfig[] = [
-        { threshold: 50, icon_color: 'blue', operator: 'lt' },
-      ];
-      const entity: EntityInformation = {
-        config: {
-          entity_id: 'sensor.test',
-          thresholds,
-        },
-        state: {
-          entity_id: 'sensor.test',
-          state: '25',
-          domain: 'sensor',
-          attributes: {},
-        },
-      };
-      const result = getThresholdResult(entity);
-      expect(result).to.deep.equal({
-        color: 'blue',
-        titleColor: undefined,
-        icon: undefined,
-        label: undefined,
-        styles: undefined,
-      });
-
-      // Should not match when equal
-      const entityEqual: EntityInformation = {
-        config: {
-          entity_id: 'sensor.test',
-          thresholds,
-        },
-        state: {
-          entity_id: 'sensor.test',
-          state: '50',
-          domain: 'sensor',
-          attributes: {},
-        },
-      };
-      expect(getThresholdResult(entityEqual)).to.be.undefined;
-    });
-
-    it('should handle lte (less than or equal) operator', () => {
-      const thresholds: ThresholdConfig[] = [
-        { threshold: 50, icon_color: 'green', operator: 'lte' },
-      ];
-      // Should match when less than
-      const entityLess: EntityInformation = {
-        config: {
-          entity_id: 'sensor.test',
-          thresholds,
-        },
-        state: {
-          entity_id: 'sensor.test',
-          state: '25',
-          domain: 'sensor',
-          attributes: {},
-        },
-      };
-      expect(getThresholdResult(entityLess)).to.deep.equal({
-        color: 'green',
-        titleColor: undefined,
-        icon: undefined,
-        label: undefined,
-        styles: undefined,
-      });
-
-      // Should match when equal
-      const entityEqual: EntityInformation = {
-        config: {
-          entity_id: 'sensor.test',
-          thresholds,
-        },
-        state: {
-          entity_id: 'sensor.test',
-          state: '50',
-          domain: 'sensor',
-          attributes: {},
-        },
-      };
-      expect(getThresholdResult(entityEqual)).to.deep.equal({
-        color: 'green',
-        titleColor: undefined,
-        icon: undefined,
-        label: undefined,
-        styles: undefined,
-      });
-    });
-
-    it('should handle eq (equal) operator', () => {
-      const thresholds: ThresholdConfig[] = [
-        { threshold: 50, icon_color: 'purple', operator: 'eq' },
-      ];
-      // Should match when equal
-      const entityEqual: EntityInformation = {
-        config: {
-          entity_id: 'sensor.test',
-          thresholds,
-        },
-        state: {
-          entity_id: 'sensor.test',
-          state: '50',
-          domain: 'sensor',
-          attributes: {},
-        },
-      };
-      expect(getThresholdResult(entityEqual)).to.deep.equal({
-        color: 'purple',
-        titleColor: undefined,
-        icon: undefined,
-        label: undefined,
-        styles: undefined,
-      });
-
-      // Should not match when not equal
-      const entityNotEqual: EntityInformation = {
-        config: {
-          entity_id: 'sensor.test',
-          thresholds,
-        },
-        state: {
-          entity_id: 'sensor.test',
-          state: '51',
-          domain: 'sensor',
-          attributes: {},
-        },
-      };
-      expect(getThresholdResult(entityNotEqual)).to.be.undefined;
-    });
-
-    it('should default to gte when operator is invalid', () => {
-      const thresholds: ThresholdConfig[] = [
-        { threshold: 50, icon_color: 'yellow', operator: 'invalid' as any },
-      ];
-      const entity: EntityInformation = {
-        config: {
-          entity_id: 'sensor.test',
-          thresholds,
-        },
-        state: {
-          entity_id: 'sensor.test',
-          state: '75',
-          domain: 'sensor',
-          attributes: {},
-        },
-      };
-      // Should default to gte behavior
-      const result = getThresholdResult(entity);
-      expect(result).to.deep.equal({
-        color: 'yellow',
-        titleColor: undefined,
-        icon: undefined,
-        label: undefined,
-        styles: undefined,
-      });
-    });
-  });
 
   describe('getEntityLabel', () => {
     const createEntity = (

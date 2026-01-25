@@ -65,6 +65,7 @@ entities:
 | Name        | Type   | Default      | Description                                                                    |
 | ----------- | ------ | ------------ | ------------------------------------------------------------------------------ |
 | state       | string | **Required** | Entity state or attribute value to match exactly                               |
+| operator    | string | `eq`         | Comparison operator: `eq` (equal) or `ne` (not equal)                          |
 | icon_color  | string | **Required** | Color to use when this state is active                                         |
 | title_color | string | none         | Color to use for the card title when this state is active                      |
 | icon        | string | none         | Icon to use when this state is active                                          |
@@ -299,13 +300,46 @@ entities:
       - state: 'off'
         icon_color: red
         title_color: green
+
+  # Roborock dock with "not equal" operator - green when ok, red for all other states
+  - entity_id: sensor.roborock_dock
+    states:
+      - state: 'ok'
+        operator: eq
+        icon_color: green
+      - state: 'ok'
+        operator: ne
+        icon_color: red  # All other states show red
 ```
+
+## State Matching Operators
+
+State configurations support comparison operators to match states more flexibly:
+
+- **`eq`** (equal, default): Matches when the state exactly equals the configured value
+- **`ne`** (not equal): Matches when the state does not equal the configured value
+
+The `ne` operator is particularly useful for entities with enum states where you want to match "all states except X". For example, a Roborock dock sensor might have states like `ok`, `charging`, `error`, `cleaning`, etc. Instead of listing all non-ok states explicitly, you can use:
+
+```yaml
+entities:
+  - entity_id: sensor.roborock_dock
+    states:
+      - state: 'ok'
+        operator: eq
+        icon_color: green
+      - state: 'ok'
+        operator: ne
+        icon_color: red  # All states except 'ok' show red
+```
+
+**Note**: State configurations are evaluated in order, so more specific matches (like `eq`) should be placed before broader matches (like `ne`).
 
 ## Attribute-Based Matching
 
 Both `states` and `thresholds` support matching on entity attributes instead of entity state by using the `attribute` property. This is useful for entities where the important information is in attributes rather than the state itself.
 
-**Note**: Numeric attributes are compared as strings for state matching and as numbers for threshold matching. Most numeric attributes (like `current_position`, `brightness`, etc.) will need to be converted to strings when used in `states` configuration.
+**Note**: Numeric attributes are compared as strings for state matching and as numbers for threshold matching. Most numeric attributes (like `current_position`, `brightness`, etc.) will need to be converted to strings when used in `states` configuration. Operators work with attribute-based matching as well.
 
 ### Attribute Matching Examples
 

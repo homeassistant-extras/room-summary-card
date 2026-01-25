@@ -6,4 +6,4 @@
 /**
  * Comparison operators for threshold and condition evaluations
  */
-export type ComparisonOperator = 'gt' | 'gte' | 'lt' | 'lte' | 'eq';
+export type ComparisonOperator = 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'ne';

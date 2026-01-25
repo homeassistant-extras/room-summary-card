@@ -94,6 +94,24 @@ entities:
         icon_color: grey
 ```
 
+**State matching operators:**
+
+You can use comparison operators to match states more flexibly. The default operator is `eq` (equal), but you can also use `ne` (not equal) to match all states except a specific value:
+
+```yaml
+entities:
+  - entity_id: sensor.roborock_dock
+    states:
+      - state: 'ok'
+        operator: eq
+        icon_color: green
+      - state: 'ok'
+        operator: ne
+        icon_color: red  # All other states show red
+```
+
+This is particularly useful for entities with enum states where you want to match "all states except X" without listing every possible state explicitly.
+
 **State-based custom CSS styles:**
 
 ![Entity Styles](../assets/entity-styles.gif)
