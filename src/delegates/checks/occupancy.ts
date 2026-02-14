@@ -1,5 +1,6 @@
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
+import { processHomeAssistantColors } from '@theme/colors';
 import type { AlarmConfig } from '@type/config';
 
 /**
@@ -52,7 +53,8 @@ const getAlarmCssVars = (
   // Set card border variable (3px solid) unless disabled
   const isCardBorderDisabled = config.options?.includes('disabled_card_styles');
   if (!isCardBorderDisabled) {
-    const borderColor = config.card_border_color ?? defaultColor;
+    const borderColor =
+      processHomeAssistantColors(config.card_border_color) ?? defaultColor;
     vars[`--${prefix}-card-border`] = `3px solid ${borderColor}`;
     vars[`--${prefix}-card-border-color`] = borderColor;
 
@@ -69,7 +71,8 @@ const getAlarmCssVars = (
   // Icon color styling
   const isIconColorDisabled = config.options?.includes('disable_icon_styles');
   if (!isIconColorDisabled) {
-    const iconColor = config.icon_color ?? defaultColor;
+    const iconColor =
+      processHomeAssistantColors(config.icon_color) ?? defaultColor;
     vars[`--${prefix}-icon-color`] = iconColor;
 
     // Set animation unless disabled

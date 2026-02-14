@@ -27,12 +27,6 @@ describe('HassUpdateMixin', () => {
     } as HomeAssistant;
   });
 
-  afterEach(() => {
-    if (element.parentNode) {
-      element.parentNode.removeChild(element);
-    }
-  });
-
   it('should have hass property', () => {
     expect(element).to.have.property('hass');
     expect(element.hass).to.be.undefined;

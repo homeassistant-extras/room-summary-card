@@ -145,6 +145,23 @@ describe('occupancy.ts', () => {
       expect(result['--occupancy-icon-color']).to.equal('#00ff00');
     });
 
+    it('should resolve HA color names and ones with spaces to CSS variables', () => {
+      const config: AlarmConfig = {
+        entities: ['binary_sensor.motion_1'],
+        card_border_color: 'deep-purple',
+        icon_color: 'accent',
+      };
+      const result = getOccupancyCssVars(true, config);
+
+      expect(result['--occupancy-card-border']).to.equal(
+        '3px solid var(--deep-purple-color)',
+      );
+      expect(result['--occupancy-card-border-color']).to.equal(
+        'var(--deep-purple-color)',
+      );
+      expect(result['--occupancy-icon-color']).to.equal('var(--accent-color)');
+    });
+
     it('should disable card border styles when disabled_card_styles option is set', () => {
       const config: AlarmConfig = {
         entities: ['binary_sensor.motion_1'],

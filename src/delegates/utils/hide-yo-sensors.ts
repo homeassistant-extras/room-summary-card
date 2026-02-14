@@ -9,6 +9,7 @@ import type { SensorConfig } from '@type/config/sensor';
 import type { EntityState } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { calculateAverages } from './sensor-averages';
+import { probablyClassSensorUsersMadeThisComplex } from './sensor-sifter';
 
 /**
  * Helper function to extract entity_id from LightConfig
@@ -41,14 +42,11 @@ const isAmbientLight = (light: LightConfig): boolean => {
  * @returns SensorData object containing individual and averaged sensor information, plus light entities.
  */
 export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
-  const skipDefaultEntities = hasFeature(config, 'exclude_default_entities');
   const multiLightEnabled = hasFeature(config, 'multi_light_background');
   const hideHiddenEntities = hasFeature(config, 'hide_hidden_entities');
 
   // Get area information to check for configured temperature/humidity sensors
   const area = getArea(hass.areas, config.area);
-  const areaHasTemperatureSensor = !!area?.temperature_entity_id;
-  const areaHasHumiditySensor = !!area?.humidity_entity_id;
 
   // Default sensor classes if not specified
   const sensorClasses = config.sensor_classes || [
@@ -138,18 +136,6 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
     }
   };
 
-  // Helper function to check if entity is a class sensor
-  const isClassSensor = (
-    state: EntityState,
-    deviceClass: string | undefined,
-  ): boolean => {
-    return (
-      state.domain === 'sensor' &&
-      !!deviceClass &&
-      sensorClasses.includes(deviceClass)
-    );
-  };
-
   // Process all entities in the area
   Object.values(hass.entities).forEach((entity) => {
     // Skip hidden entities if the feature is enabled
@@ -214,39 +200,15 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
       return;
     }
 
-    // If we're skipping default entities, don't process further
-    if (skipDefaultEntities) return;
-
-    // Check if this is the area's default temperature/humidity sensor
-    const isAreaDefaultTemp =
-      areaHasTemperatureSensor &&
-      entity.entity_id === area.temperature_entity_id;
-    const isAreaDefaultHumidity =
-      areaHasHumiditySensor && entity.entity_id === area.humidity_entity_id;
-
-    // If this is an area default sensor, add it to classSensors (unless already configured)
+    // Check if this entity qualifies as a class-based sensor for averaging
     if (
-      (isAreaDefaultTemp || isAreaDefaultHumidity) &&
-      !isConfigSensor &&
-      !isThresholdEntity
+      probablyClassSensorUsersMadeThisComplex(
+        state,
+        config,
+        area,
+        sensorClasses,
+      )
     ) {
-      const deviceClass = state.attributes?.device_class;
-      if (isClassSensor(state, deviceClass)) {
-        classSensors.push(state);
-      }
-      return;
-    }
-
-    // Check if this is a sensor with a device class we care about
-    const deviceClass = state.attributes?.device_class;
-    if (isClassSensor(state, deviceClass)) {
-      // Skip temperature/humidity sensors if the area has configured defaults
-      if (
-        (deviceClass === 'temperature' && areaHasTemperatureSensor) ||
-        (deviceClass === 'humidity' && areaHasHumiditySensor)
-      ) {
-        return;
-      }
       classSensors.push(state);
     }
   });
