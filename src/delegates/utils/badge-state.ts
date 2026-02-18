@@ -1,20 +1,18 @@
-import { meetsStateCondition } from '@util/comparison-utils';
 import type { BadgeConfig, StateConfig } from '@type/config/entity';
-import type { EntityInformation } from '@type/room';
+import type { EntityState } from '@type/room';
+import { meetsStateCondition } from '@util/comparison-utils';
 
 /**
  * Gets the matching badge state configuration for a badge
  *
- * @param entity - The entity information containing state
+ * @param state - The entity state
  * @param badge - The badge configuration
  * @returns The matching StateConfig if found, undefined otherwise
  */
 export const getMatchingBadgeState = (
-  entity: EntityInformation,
+  state: EntityState,
   badge: BadgeConfig,
 ): StateConfig | undefined => {
-  const { state } = entity;
-
   if (!badge.states || !state) {
     return undefined;
   }

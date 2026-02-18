@@ -801,7 +801,6 @@ describe('threshold-color.ts', () => {
     });
   });
 
-
   describe('getEntityLabel', () => {
     const createEntity = (
       state: string,

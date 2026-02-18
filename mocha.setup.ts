@@ -17,8 +17,12 @@ global.window = dom.window as any;
 global.document = dom.window.document;
 global.requestAnimationFrame = (callback) => setTimeout(callback, 0);
 // Ensure globalThis also points to window for addEventListener support
-(globalThis as any).addEventListener = dom.window.addEventListener.bind(dom.window);
-(globalThis as any).removeEventListener = dom.window.removeEventListener.bind(dom.window);
+(globalThis as any).addEventListener = dom.window.addEventListener.bind(
+  dom.window,
+);
+(globalThis as any).removeEventListener = dom.window.removeEventListener.bind(
+  dom.window,
+);
 (globalThis as any).dispatchEvent = dom.window.dispatchEvent.bind(dom.window);
 
 // Add missing DOM features

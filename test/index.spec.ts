@@ -92,7 +92,8 @@ describe('index.ts', () => {
         name: 'Existing Card',
         description: 'Existing Card Description',
         preview: true,
-        documentationURL: 'https://github.com/homeassistant-extras/room-summary-card',
+        documentationURL:
+          'https://github.com/homeassistant-extras/room-summary-card',
       },
     ];
 
@@ -104,7 +105,8 @@ describe('index.ts', () => {
       name: 'Existing Card',
       description: 'Existing Card Description',
       preview: true,
-      documentationURL: 'https://github.com/homeassistant-extras/room-summary-card',
+      documentationURL:
+        'https://github.com/homeassistant-extras/room-summary-card',
     });
   });
 

@@ -13,6 +13,7 @@ import type { HASSDomEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { Task } from '@lit/task';
 import type { Config } from '@type/config';
+import { d } from '@util/debug';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 import type { Ref } from 'lit/directives/ref.js';
@@ -87,6 +88,7 @@ export class RoomSummaryCardEditor extends LitElement {
    * @returns The rendered HTML template
    */
   override render() {
+    d(this._config, 'room-summary-card-editor', 'render');
     if (!this.hass || !this._config) {
       return nothing;
     }
@@ -97,6 +99,7 @@ export class RoomSummaryCardEditor extends LitElement {
         <room-summary-sub-element-editor
           .hass=${this.hass}
           .config=${this._subElementEditorConfig}
+          .cardConfig=${this._config}
           @go-back=${this._goBack}
           @config-changed=${this._handleSubElementChanged}
         ></room-summary-sub-element-editor>

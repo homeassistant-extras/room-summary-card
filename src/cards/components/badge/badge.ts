@@ -1,15 +1,16 @@
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
-import { getState } from '@delegates/retrievers/state';
+import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
 import { getMatchingBadgeState } from '@delegates/utils/badge-state';
 import { renderTileBadge } from '@hass/panels/lovelace/cards/tile/badges/tile-badge';
-import type { HomeAssistant } from '@hass/types';
 import { stylesToHostCss } from '@theme/util/style-converter';
+import type { Config } from '@type/config';
 import type { BadgeConfig } from '@type/config/entity';
-import type { EntityInformation } from '@type/room';
+import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
-import { property, state } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { styles } from './styles';
+const equal = require('fast-deep-equal');
 
 /**
  * Badge Component
@@ -17,32 +18,24 @@ import { styles } from './styles';
  * A small Lit element that renders a badge overlay for an entity.
  * Badges can display entity state icons or custom icons based on configuration.
  */
-export class Badge extends HassUpdateMixin(LitElement) {
-  /**
-   * Home Assistant instance
-   */
-  private _hass!: HomeAssistant;
-
+export class Badge extends SubscribeEntityStateMixin(
+  HassUpdateMixin(LitElement),
+) {
   /**
    * Badge configuration
    */
-  @property({ type: Object })
-  config!: BadgeConfig;
+  private _config!: BadgeConfig;
 
   /**
-   * Parent entity information
+   * Card config for debug
    */
-  @property({ type: Object })
-  entity!: EntityInformation;
+  cardConfig?: Config;
 
   /**
    * Badge position (reflective attribute)
    */
   @property({ type: String, reflect: true, attribute: 'position' })
   position: string = 'top-right';
-
-  @state()
-  private _entity?: EntityInformation;
 
   /**
    * Returns the component's styles
@@ -52,43 +45,43 @@ export class Badge extends HassUpdateMixin(LitElement) {
   }
 
   /**
-   * Updates the component's state when Home Assistant state changes
-   * @param {HomeAssistant} hass - The Home Assistant instance
+   * Badge configuration
    */
-  // @ts-ignore
-  override set hass(hass: HomeAssistant) {
-    this._hass = hass;
-
-    // Determine which entity to use for the badge (defaults to parent entity)
-    const badgeEntityState = this.config.entity_id
-      ? getState(this._hass.states, this.config.entity_id)
-      : this.entity.state;
-
-    // Create badge entity information
-    this._entity = {
-      config: this.entity.config,
-      state: badgeEntityState,
-    };
+  set config(config: BadgeConfig) {
+    d(this.cardConfig, 'badge', 'set config');
+    if (equal(config, this._config)) return;
 
     // Set position (convert underscores to hyphens for CSS)
-    const position = this.config.position ?? 'top_right';
+    const position = config.position ?? 'top_right';
     this.position = position.replaceAll('_', '-');
+
+    this.entityId = config.entity_id;
+    this._config = config;
   }
 
+  /**
+   * Render the badge
+   */
   public override render(): TemplateResult | typeof nothing {
-    if (!this._hass || !this._entity?.state) {
+    d(this.cardConfig, 'badge', 'render');
+
+    // entity_id is always set (by renderBadgeElements from user config or parent)
+    const state = this._subscribedEntityState;
+    const hass = this.hass;
+    if (!hass || !state) {
       return nothing;
     }
 
     // For homeassistant mode, use renderTileBadge (HA's native badge helper)
-    if (this.config.mode === 'homeassistant') {
-      return renderTileBadge(this._entity.state, this._hass);
+    const config = this._config;
+    if (config.mode === 'homeassistant') {
+      return renderTileBadge(state, hass);
     }
 
-    const matchingState = getMatchingBadgeState(this._entity, this.config);
+    const matchingState = getMatchingBadgeState(state, config);
 
     // For if_match mode, only render if a state match is found
-    if (this.config.mode === 'if_match' && !matchingState) {
+    if (config.mode === 'if_match' && !matchingState) {
       return nothing;
     }
 
@@ -100,9 +93,9 @@ export class Badge extends HassUpdateMixin(LitElement) {
         })}
       >
         <ha-state-icon
-          .hass=${this._hass}
-          .stateObj=${this._entity.state}
-          .icon=${matchingState?.icon ?? this.entity.config.icon}
+          .hass=${hass}
+          .stateObj=${state}
+          .icon=${matchingState?.icon}
         ></ha-state-icon>
       </ha-tile-badge>
     `;

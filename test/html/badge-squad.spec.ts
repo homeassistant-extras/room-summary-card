@@ -1,7 +1,6 @@
 import type { HomeAssistant } from '@hass/types';
 import { renderBadgeElements } from '@html/badge-squad';
 import { createStateEntity } from '@test/test-helpers';
-import type { BadgeConfig } from '@type/config/entity';
 import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
 
@@ -26,32 +25,20 @@ describe('badge-squad.ts', () => {
   });
 
   describe('renderBadgeElements', () => {
-    it('should return empty array when badges is undefined', () => {
-      const result = renderBadgeElements(undefined, mockEntity, mockHass);
-      expect(result).to.be.an('array');
-      expect(result).to.have.length(0);
+    it('should return undefined when entity.config.badges is undefined', () => {
+      const result = renderBadgeElements(mockEntity, mockHass);
+      expect(result).to.be.undefined;
     });
 
-    it('should return empty array when badges is empty', () => {
-      const result = renderBadgeElements([], mockEntity, mockHass);
+    it('should return empty array when entity.config.badges is empty', () => {
+      mockEntity.config.badges = [];
+      const result = renderBadgeElements(mockEntity, mockHass);
       expect(result).to.be.an('array');
       expect(result).to.have.length(0);
-    });
-
-    it('should render single badge', () => {
-      const badges: BadgeConfig[] = [
-        {
-          position: 'top_right',
-          mode: 'show_always',
-        },
-      ];
-      const result = renderBadgeElements(badges, mockEntity, mockHass);
-      expect(result).to.have.length(1);
-      expect(result[0]).to.be.instanceOf(Object);
     });
 
     it('should limit badges to maximum of 4', () => {
-      const badges: BadgeConfig[] = [
+      mockEntity.config.badges = [
         { position: 'top_right' },
         { position: 'top_left' },
         { position: 'bottom_right' },
@@ -59,34 +46,37 @@ describe('badge-squad.ts', () => {
         { position: 'top_right' }, // 5th badge should be ignored
         { position: 'top_left' }, // 6th badge should be ignored
       ];
-      const result = renderBadgeElements(badges, mockEntity, mockHass);
+      const result = renderBadgeElements(mockEntity, mockHass);
       expect(result).to.have.length(4);
     });
 
-    it('should render all badges when count is exactly 4', () => {
-      const badges: BadgeConfig[] = [
-        { position: 'top_right' },
-        { position: 'top_left' },
-        { position: 'bottom_right' },
-        { position: 'bottom_left' },
+    it('should fall back to entity.config.entity_id when badge has no entity_id', () => {
+      mockEntity.config.badges = [
+        {
+          position: 'top_right',
+          mode: 'show_always',
+        },
       ];
-      const result = renderBadgeElements(badges, mockEntity, mockHass);
-      expect(result).to.have.length(4);
+      const result = renderBadgeElements(mockEntity, mockHass);
+      expect(result).to.have.length(1);
+      const badgeConfig = result?.[0]?.values?.[1] as { entity_id?: string };
+      expect(badgeConfig?.entity_id).to.equal('light.test');
     });
 
-    it('should render badges with correct properties', () => {
-      const badges: BadgeConfig[] = [
+    it('should render badges with correct template structure', () => {
+      mockEntity.config.badges = [
         {
           position: 'top_right',
           mode: 'show_always',
           entity_id: 'sensor.test',
         },
       ];
-      const result = renderBadgeElements(badges, mockEntity, mockHass);
+      const result = renderBadgeElements(mockEntity, mockHass);
       expect(result).to.have.length(1);
-      // Verify it's a template result (has strings and values)
-      expect(result[0]).to.have.property('strings');
-      expect(result[0]).to.have.property('values');
+      expect(result![0]).to.have.property('strings');
+      expect(result![0]).to.have.property('values');
+      const badgeConfig = result?.[0]?.values?.[1] as { entity_id?: string };
+      expect(badgeConfig?.entity_id).to.equal('sensor.test');
     });
   });
 });

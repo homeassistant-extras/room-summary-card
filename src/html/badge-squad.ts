@@ -1,26 +1,32 @@
 import type { HomeAssistant } from '@hass/types';
-import type { BadgeConfig } from '@type/config/entity';
+import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { html, type TemplateResult } from 'lit';
 
 /**
  * Renders badge elements for an entity.
  * Limits badges to a maximum of 4.
+ * Ensures each badge has entity_id (from user config or parent entity).
  *
- * @param badges - Array of badge configurations (will be limited to first 4)
- * @param entity - The entity information
+ * @param entity - The entity information (used for entity_id and entityConfig)
  * @param hass - Home Assistant instance
+ * @param config - Card config for debug (optional)
  * @returns Array of badge template results
  */
 export const renderBadgeElements = (
-  badges: BadgeConfig[] | undefined,
   entity: EntityInformation,
   hass: HomeAssistant,
-): TemplateResult[] => {
-  const badgeConfigs = badges?.slice(0, 4) ?? [];
-  return badgeConfigs.map(
-    (badge) => html`
-      <room-badge .config=${badge} .entity=${entity} .hass=${hass}></room-badge>
-    `,
-  );
-};
+  config?: Config,
+): TemplateResult[] | undefined =>
+  entity.config.badges?.slice(0, 4)?.map((badge) => {
+    return html`
+      <room-badge
+        .cardConfig=${config}
+        .config=${{
+          ...badge,
+          entity_id: badge.entity_id ?? entity.config.entity_id,
+        }}
+        .hass=${hass}
+      ></room-badge>
+    `;
+  });

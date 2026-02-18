@@ -1,6 +1,5 @@
 import type { HomeAssistant } from '@hass/types';
 import type { LitElement } from 'lit';
-import { property } from 'lit/decorators.js';
 
 export interface HassUpdateEvent {
   hass: HomeAssistant;
@@ -16,8 +15,15 @@ export const HassUpdateMixin = <T extends Constructor<LitElement>>(
   superClass: T,
 ) => {
   class HassUpdateClass extends superClass implements HassUpdateElement {
-    @property({ attribute: false })
-    public hass?: HomeAssistant;
+    private __hassValue?: HomeAssistant;
+
+    get hass(): HomeAssistant | undefined {
+      return this.__hassValue;
+    }
+
+    set hass(value: HomeAssistant | undefined) {
+      this.__hassValue = value;
+    }
 
     private readonly _boundHassUpdateHandler =
       this._handleHassUpdate.bind(this);
@@ -29,7 +35,10 @@ export const HassUpdateMixin = <T extends Constructor<LitElement>>(
 
     override disconnectedCallback(): void {
       super.disconnectedCallback();
-      globalThis.removeEventListener('hass-update', this._boundHassUpdateHandler);
+      globalThis.removeEventListener(
+        'hass-update',
+        this._boundHassUpdateHandler,
+      );
     }
 
     private _handleHassUpdate(event: Event): void {

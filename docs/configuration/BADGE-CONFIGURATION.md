@@ -159,7 +159,7 @@ When using state-based badges (no `mode` specified), the `states` array uses the
 | Name       | Type   | Default      | Description                                              |
 | ---------- | ------ | ------------ | -------------------------------------------------------- |
 | state      | string | **Required** | Entity state or attribute value to match exactly         |
-| operator   | string | `eq`         | Comparison operator: `eq` (equal) or `ne` (not equal)   |
+| operator   | string | `eq`         | Comparison operator: `eq` (equal) or `ne` (not equal)    |
 | icon_color | string | **Required** | Color to use when this state is active                   |
 | icon       | string | none         | Icon to use when this state is active                    |
 | attribute  | string | none         | Optional attribute name to match instead of entity state |
@@ -292,7 +292,7 @@ entities:
           - state: 'ok'
             operator: ne
             icon: mdi:alert-circle
-            icon_color: red  # Badge appears for all states except 'ok'
+            icon_color: red # Badge appears for all states except 'ok'
 ```
 
 ## Badge Styling

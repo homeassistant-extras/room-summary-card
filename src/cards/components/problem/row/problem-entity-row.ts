@@ -6,7 +6,9 @@ import { stateActive } from '@hass/common/entity/state_active';
 import '@hass/state/more-info-mixin';
 import { stateDisplay } from '@html/state-display';
 import { localize } from '@localize/localize';
+import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
+import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { styles } from './styles';
@@ -19,6 +21,11 @@ import { styles } from './styles';
  */
 @customElement('problem-entity-row')
 export class ProblemEntityRow extends HassUpdateMixin(LitElement) {
+  /**
+   * Card config for debug (optional)
+   */
+  config?: Config;
+
   /**
    * The problem entity state
    */
@@ -38,6 +45,7 @@ export class ProblemEntityRow extends HassUpdateMixin(LitElement) {
    * Renders the component
    */
   override render(): TemplateResult | typeof nothing {
+    d(this.config, 'problem-entity-row', 'render');
     if (!this.entity || !this.hass) {
       return nothing;
     }

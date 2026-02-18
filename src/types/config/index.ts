@@ -135,11 +135,19 @@ export interface Config {
 
   /** Options to enable or disable features **/
   features?: Features[];
+
+  /** Debug configuration. When present, enables scoped debug logging to console. */
+  debug?: {
+    /** Only log for these components (e.g. ['room-summary-card']). Omit = all components */
+    scope?: string[];
+
+    /** Only log these categories (e.g. ['render']). Omit = all categories */
+    categories?: string[];
+  };
 }
 
 /** Features to enable or disable functionality */
 export type Features =
-  | 'debug'
   | 'hide_area_stats'
   | 'hide_climate_label'
   | 'hide_room_icon'

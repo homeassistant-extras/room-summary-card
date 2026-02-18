@@ -42,7 +42,10 @@ export const renderProblemIndicator = (
           class="status-entities"
           ?has-problems=${problemExists}
           @click=${() =>
-            showProblemDialog(element, { entities: problemSensors })}
+            showProblemDialog(element, {
+              entities: problemSensors,
+              config,
+            })}
           >${problemSensors.length}</span
         >`
       : nothing}

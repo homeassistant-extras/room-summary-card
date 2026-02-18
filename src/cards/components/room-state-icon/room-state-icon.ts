@@ -145,12 +145,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
    */
   // @ts-ignore
   override set hass(hass: HomeAssistant) {
+    d(this._config, 'room-state-icon', 'set hass');
     this._image = hasEntityFeature(this.entity, 'use_entity_icon')
       ? undefined
       : this.entity?.state?.attributes?.entity_picture;
 
     if (this._image) {
-      d(this._config, 'room-state-icon - image', this._image);
       this.image = true;
       this.iconBackground = true;
       this._hideIconContent = true;
@@ -167,6 +167,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
   }
 
   public override render(): TemplateResult | typeof nothing {
+    d(this._config, 'room-state-icon', 'render');
     const { state } = this.entity;
     if (!state) return nothing;
 
@@ -188,8 +189,6 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       this.isMainRoomEntity,
       this._config,
     );
-
-    d(this._config, 'room-state-icon - iconStyle', iconStyle);
 
     const iconStyles = {
       ...this._config?.styles?.entity_icon,
@@ -229,9 +228,9 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
 
     // Render badges (max 4)
     const badgeElements = renderBadgeElements(
-      this.entity.config.badges,
       this.entity,
       this._hass,
+      this._config,
     );
 
     return html`

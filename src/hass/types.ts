@@ -8,6 +8,7 @@ import type { DeviceRegistryEntry } from './data/device_registry';
 import type { EntityRegistryDisplayEntry } from './data/entity_registry';
 import type { Themes } from './data/ws-themes';
 import type {
+  Connection,
   HassEntities,
   HassEntity,
   HassServiceTarget,
@@ -33,6 +34,7 @@ export interface ServiceCallRequest {
 }
 
 export interface HomeAssistant {
+  connection: Connection;
   states: HassEntities;
   entities: Record<string, EntityRegistryDisplayEntry>;
   devices: Record<string, DeviceRegistryEntry>;

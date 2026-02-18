@@ -313,13 +313,8 @@ describe('room-state-icon.ts', () => {
       element.render();
 
       expect(renderBadgeElementsStub.called).to.be.true;
-      expect(
-        renderBadgeElementsStub.calledWith(
-          mockEntity.config.badges,
-          mockEntity,
-          mockHass,
-        ),
-      ).to.be.true;
+      expect(renderBadgeElementsStub.calledWith(mockEntity, mockHass)).to.be
+        .true;
     });
 
     it('should show entity label when show_entity_labels feature is enabled', async () => {

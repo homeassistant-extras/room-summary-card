@@ -309,7 +309,7 @@ entities:
         icon_color: green
       - state: 'ok'
         operator: ne
-        icon_color: red  # All other states show red
+        icon_color: red # All other states show red
 ```
 
 ## State Matching Operators
@@ -330,7 +330,7 @@ entities:
         icon_color: green
       - state: 'ok'
         operator: ne
-        icon_color: red  # All states except 'ok' show red
+        icon_color: red # All states except 'ok' show red
 ```
 
 **Note**: State configurations are evaluated in order, so more specific matches (like `eq`) should be placed before broader matches (like `ne`).

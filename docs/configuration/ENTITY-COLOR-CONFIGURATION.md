@@ -107,7 +107,7 @@ entities:
         icon_color: green
       - state: 'ok'
         operator: ne
-        icon_color: red  # All other states show red
+        icon_color: red # All other states show red
 ```
 
 This is particularly useful for entities with enum states where you want to match "all states except X" without listing every possible state explicitly.

@@ -1,5 +1,5 @@
-import { meetsStateCondition, meetsThreshold } from '@util/comparison-utils';
 import type { ThresholdConfig } from '@type/config/entity';
+import { meetsStateCondition, meetsThreshold } from '@util/comparison-utils';
 import { expect } from 'chai';
 
 describe('comparison-utils.ts', () => {

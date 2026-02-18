@@ -2,7 +2,9 @@
 import '@cards/components/problem/row/problem-entity-row';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { localize } from '@localize/localize';
+import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
+import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
@@ -17,6 +19,11 @@ import { styles } from './styles';
 @customElement('problem-entity-list')
 export class ProblemEntityList extends HassUpdateMixin(LitElement) {
   /**
+   * Card config for debug (optional)
+   */
+  config?: Config;
+
+  /**
    * Array of problem entity states
    */
   @property({ type: Array })
@@ -26,6 +33,7 @@ export class ProblemEntityList extends HassUpdateMixin(LitElement) {
    * Renders the component
    */
   override render(): TemplateResult | typeof nothing {
+    d(this.config, 'problem-entity-list', 'render');
     if (!this.hass) {
       return nothing;
     }
@@ -47,6 +55,7 @@ export class ProblemEntityList extends HassUpdateMixin(LitElement) {
             <problem-entity-row
               .entity=${entity}
               .hass=${this.hass}
+              .config=${this.config}
             ></problem-entity-row>
           `,
         )}

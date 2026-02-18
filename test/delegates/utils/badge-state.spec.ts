@@ -1,19 +1,14 @@
 import { getMatchingBadgeState } from '@delegates/utils/badge-state';
 import { createStateEntity } from '@test/test-helpers';
 import type { BadgeConfig, StateConfig } from '@type/config/entity';
-import type { EntityInformation } from '@type/room';
+import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 
 describe('badge-state.ts', () => {
   const createEntity = (
     state: string,
     attributes: Record<string, any> = {},
-  ): EntityInformation => ({
-    config: {
-      entity_id: 'light.test',
-    },
-    state: createStateEntity('light', 'test', state, attributes),
-  });
+  ): EntityState => createStateEntity('light', 'test', state, attributes);
 
   const createBadge = (states?: StateConfig[]): BadgeConfig => ({
     states,
@@ -28,14 +23,13 @@ describe('badge-state.ts', () => {
     });
 
     it('should return undefined when entity state is undefined', () => {
-      const entity: EntityInformation = {
-        config: { entity_id: 'light.test' },
-        state: undefined,
-      };
       const badge = createBadge([
         { state: 'on', icon_color: 'yellow', icon: 'mdi:light-on' },
       ]);
-      const result = getMatchingBadgeState(entity, badge);
+      const result = getMatchingBadgeState(
+        undefined as unknown as EntityState,
+        badge,
+      );
       expect(result).to.be.undefined;
     });
 
@@ -163,7 +157,12 @@ describe('badge-state.ts', () => {
 
       it('should evaluate states in order - eq before ne', () => {
         const states: StateConfig[] = [
-          { state: 'ok', icon_color: 'green', icon: 'mdi:check', operator: 'eq' },
+          {
+            state: 'ok',
+            icon_color: 'green',
+            icon: 'mdi:check',
+            operator: 'eq',
+          },
           { state: 'ok', icon_color: 'red', icon: 'mdi:alert', operator: 'ne' },
         ];
         const entity = createEntity('ok');
@@ -175,7 +174,12 @@ describe('badge-state.ts', () => {
 
       it('should evaluate states in order - ne matches when eq does not', () => {
         const states: StateConfig[] = [
-          { state: 'ok', icon_color: 'green', icon: 'mdi:check', operator: 'eq' },
+          {
+            state: 'ok',
+            icon_color: 'green',
+            icon: 'mdi:check',
+            operator: 'eq',
+          },
           { state: 'ok', icon_color: 'red', icon: 'mdi:alert', operator: 'ne' },
         ];
         const entity = createEntity('error');
