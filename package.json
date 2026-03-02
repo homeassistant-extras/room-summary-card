@@ -27,7 +27,7 @@
     "@testing-library/dom": "^10.4.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/chai": "^5.2.3",
-    "@types/jsdom": "^27.0.0",
+    "@types/jsdom": "^28.0.0",
     "@types/mocha": "^10.0.10",
     "@types/sinon": "^21.0.0",
     "chai": "^6.2.2",
