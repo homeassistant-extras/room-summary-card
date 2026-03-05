@@ -2,12 +2,18 @@
  * https://github.com/home-assistant/home-assistant-js-websocket/blob/master/lib/types.ts
  */
 
-export type SubscriptionUnsubscribe = () => Promise<void>;
+export type SubscriptionUnsubscribe = () => void;
 
 export type MessageBase = {
   id?: number;
   type: string;
   [key: string]: any;
+};
+
+export type Context = {
+  id: string;
+  user_id: string | null;
+  parent_id: string | null;
 };
 
 export type HassEntityBase = {
