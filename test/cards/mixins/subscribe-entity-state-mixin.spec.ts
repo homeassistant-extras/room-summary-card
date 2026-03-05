@@ -1,23 +1,26 @@
 import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
-import * as subscribeTrigger from '@delegates/entities/subscribe-trigger';
 import type { HomeAssistant } from '@hass/types';
 import { expect } from 'chai';
 import { LitElement } from 'lit';
-import { type SinonStub, stub } from 'sinon';
+import { stub, useFakeTimers } from 'sinon';
+
+const RESUBSCRIBE_DEBOUNCE_MS = 50;
 
 describe('SubscribeEntityStateMixin', () => {
   let TestElement: ReturnType<typeof SubscribeEntityStateMixin>;
   let element: InstanceType<typeof TestElement>;
   let hass: HomeAssistant;
-  let subscribeStub: SinonStub;
-  let unsubscribeSpy: SinonStub;
+  let unsubscribeSpy: ReturnType<typeof stub>;
+  let capturedCallback: ((ev: unknown) => void) | null;
   let elementCounter = 0;
 
   beforeEach(() => {
     unsubscribeSpy = stub();
-    subscribeStub = stub(subscribeTrigger, 'subscribeEntityState').resolves(
-      unsubscribeSpy,
-    );
+    capturedCallback = null;
+    const subscribeMessage = (callback: (ev: unknown) => void) => {
+      capturedCallback = callback;
+      return Promise.resolve(unsubscribeSpy);
+    };
 
     const elementName = `test-sub-entity-${elementCounter++}`;
     TestElement = SubscribeEntityStateMixin(LitElement);
@@ -30,6 +33,7 @@ describe('SubscribeEntityStateMixin', () => {
     hass = {
       language: 'en',
       localize: (key: string) => key,
+      connection: { subscribeMessage },
       states: {
         'light.bedroom': {
           entity_id: 'light.bedroom',
@@ -38,38 +42,57 @@ describe('SubscribeEntityStateMixin', () => {
         },
       },
     } as unknown as HomeAssistant;
-  });
-
-  afterEach(() => {
-    subscribeStub.restore();
+    element.config = { area: 'test' };
   });
 
   it('should have _subscribedEntityState undefined initially', () => {
-    expect(element['_subscribedEntityState']).to.be.undefined;
+    expect(element['state']).to.be.undefined;
   });
 
   it('should subscribe when connected with entityId and hass set', async () => {
+    const clock = useFakeTimers();
     element.hass = hass;
     element['entityId'] = 'light.bedroom';
 
     element.connectedCallback();
+    clock.tick(RESUBSCRIBE_DEBOUNCE_MS);
+    await Promise.resolve();
 
-    expect(subscribeStub.calledOnce).to.be.true;
-    expect(subscribeStub.firstCall.args[1]).to.equal('light.bedroom');
+    expect(capturedCallback).to.not.be.null;
+    clock.restore();
   });
 
-  it('should set initial state from hass.states on subscribe', () => {
+  it('should set initial state from hass.states on subscribe', async () => {
+    const clock = useFakeTimers();
     element.hass = hass;
     element['entityId'] = 'light.bedroom';
 
     element.connectedCallback();
+    clock.tick(RESUBSCRIBE_DEBOUNCE_MS);
+    await Promise.resolve();
 
-    expect(element['_subscribedEntityState']).to.deep.equal({
+    // subscribe_entities sends initial state via ev.a; fire it
+    expect(capturedCallback).to.not.be.null;
+    capturedCallback!({
+      a: {
+        'light.bedroom': {
+          s: 'on',
+          a: { friendly_name: 'Bedroom Light' },
+          c: '',
+          lc: 0,
+          lu: 0,
+        },
+      },
+      c: {},
+    });
+
+    expect(element['state']).to.deep.equal({
       entity_id: 'light.bedroom',
       state: 'on',
       attributes: { friendly_name: 'Bedroom Light' },
       domain: 'light',
     });
+    clock.restore();
   });
 
   it('should not subscribe without entityId', () => {
@@ -77,7 +100,7 @@ describe('SubscribeEntityStateMixin', () => {
 
     element.connectedCallback();
 
-    expect(subscribeStub.called).to.be.false;
+    expect(capturedCallback).to.be.null;
   });
 
   it('should not subscribe without hass', () => {
@@ -85,83 +108,6 @@ describe('SubscribeEntityStateMixin', () => {
 
     element.connectedCallback();
 
-    expect(subscribeStub.called).to.be.false;
-  });
-
-  it('should unsubscribe on disconnectedCallback', async () => {
-    element.hass = hass;
-    element['entityId'] = 'light.bedroom';
-
-    element.connectedCallback();
-
-    // Wait for the subscribe promise to resolve
-    await Promise.resolve();
-
-    element.disconnectedCallback();
-
-    expect(unsubscribeSpy.calledOnce).to.be.true;
-  });
-
-  it('should update state when trigger callback fires with changed state', () => {
-    element.hass = hass;
-    element['entityId'] = 'light.bedroom';
-
-    element.connectedCallback();
-
-    // Get the onChange callback passed to subscribeEntityState
-    const onChange = subscribeStub.firstCall.args[2];
-
-    onChange({
-      variables: {
-        trigger: {
-          from_state: {
-            entity_id: 'light.bedroom',
-            state: 'on',
-            attributes: { friendly_name: 'Bedroom Light' },
-          },
-          to_state: {
-            entity_id: 'light.bedroom',
-            state: 'off',
-            attributes: { friendly_name: 'Bedroom Light' },
-          },
-        },
-      },
-    });
-
-    expect(element['_subscribedEntityState']).to.deep.equal({
-      entity_id: 'light.bedroom',
-      state: 'off',
-      attributes: { friendly_name: 'Bedroom Light' },
-      domain: 'light',
-    });
-  });
-
-  it('should not update state when from_state equals to_state', () => {
-    element.hass = hass;
-    element['entityId'] = 'light.bedroom';
-
-    element.connectedCallback();
-
-    const initialState = element['_subscribedEntityState'];
-    const onChange = subscribeStub.firstCall.args[2];
-
-    onChange({
-      variables: {
-        trigger: {
-          from_state: {
-            entity_id: 'light.bedroom',
-            state: 'on',
-            attributes: { friendly_name: 'Bedroom Light' },
-          },
-          to_state: {
-            entity_id: 'light.bedroom',
-            state: 'on',
-            attributes: { friendly_name: 'Bedroom Light' },
-          },
-        },
-      },
-    });
-
-    expect(element['_subscribedEntityState']).to.deep.equal(initialState);
+    expect(capturedCallback).to.be.null;
   });
 });

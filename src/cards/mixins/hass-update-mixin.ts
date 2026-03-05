@@ -2,10 +2,16 @@ import type { HomeAssistant } from '@hass/types';
 import type { LitElement } from 'lit';
 
 export interface HassUpdateEvent {
+  /**
+   * The Home Assistant instance.
+   */
   hass: HomeAssistant;
 }
 
 export interface HassUpdateElement {
+  /**
+   * The Home Assistant instance.
+   */
   hass?: HomeAssistant;
 }
 
@@ -17,11 +23,11 @@ export const HassUpdateMixin = <T extends Constructor<LitElement>>(
   class HassUpdateClass extends superClass implements HassUpdateElement {
     private __hassValue?: HomeAssistant;
 
-    get hass(): HomeAssistant | undefined {
-      return this.__hassValue;
+    get hass(): HomeAssistant {
+      return this.__hassValue!;
     }
 
-    set hass(value: HomeAssistant | undefined) {
+    set hass(value: HomeAssistant) {
       this.__hassValue = value;
     }
 

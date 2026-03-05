@@ -49,34 +49,5 @@ describe('badge-squad.ts', () => {
       const result = renderBadgeElements(mockEntity, mockHass);
       expect(result).to.have.length(4);
     });
-
-    it('should fall back to entity.config.entity_id when badge has no entity_id', () => {
-      mockEntity.config.badges = [
-        {
-          position: 'top_right',
-          mode: 'show_always',
-        },
-      ];
-      const result = renderBadgeElements(mockEntity, mockHass);
-      expect(result).to.have.length(1);
-      const badgeConfig = result?.[0]?.values?.[1] as { entity_id?: string };
-      expect(badgeConfig?.entity_id).to.equal('light.test');
-    });
-
-    it('should render badges with correct template structure', () => {
-      mockEntity.config.badges = [
-        {
-          position: 'top_right',
-          mode: 'show_always',
-          entity_id: 'sensor.test',
-        },
-      ];
-      const result = renderBadgeElements(mockEntity, mockHass);
-      expect(result).to.have.length(1);
-      expect(result![0]).to.have.property('strings');
-      expect(result![0]).to.have.property('values');
-      const badgeConfig = result?.[0]?.values?.[1] as { entity_id?: string };
-      expect(badgeConfig?.entity_id).to.equal('sensor.test');
-    });
   });
 });

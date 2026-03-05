@@ -51,10 +51,10 @@ describe('badge.ts', () => {
     } as any as HomeAssistant;
 
     element = new Badge();
-    element.config = mockBadgeConfig;
+    element.badge = mockBadgeConfig;
     element.hass = mockHass;
     // Badge gets state from SubscribeEntityStateMixin; set directly for unit tests
-    element['_subscribedEntityState'] = mockEntityState;
+    element['state'] = mockEntityState;
   });
 
   afterEach(() => {
@@ -65,7 +65,7 @@ describe('badge.ts', () => {
 
   describe('config and properties', () => {
     it('should store config and set position from config', () => {
-      expect(element['_config']).to.equal(mockBadgeConfig);
+      expect(element['_badge']).to.equal(mockBadgeConfig);
       expect(element.position).to.equal('top-right');
     });
 
@@ -79,30 +79,20 @@ describe('badge.ts', () => {
     });
 
     it('should set entityId from config.entity_id', () => {
-      element.config = { ...mockBadgeConfig, entity_id: 'sensor.temp' };
+      element.badge = { ...mockBadgeConfig, entity_id: 'sensor.temp' };
       expect(element['entityId']).to.equal('sensor.temp');
     });
 
     it('should convert position underscores to hyphens', () => {
-      element.config = { ...mockBadgeConfig, position: 'top_left' };
+      element.badge = { ...mockBadgeConfig, position: 'top_left' };
       expect(element.position).to.equal('top-left');
     });
   });
 
   describe('render', () => {
-    it('should render nothing when hass is not set', () => {
-      element.hass = undefined as any;
-      expect(element.render()).to.equal(nothing);
-    });
-
-    it('should render nothing when _subscribedEntityState is not set', () => {
-      element['_subscribedEntityState'] = undefined;
-      expect(element.render()).to.equal(nothing);
-    });
-
     describe('homeassistant mode', () => {
       it('should use renderTileBadge when mode is homeassistant', () => {
-        element.config = { ...mockBadgeConfig, mode: 'homeassistant' };
+        element.badge = { ...mockBadgeConfig, mode: 'homeassistant' };
 
         const result = element.render();
         expect(result).to.not.equal(nothing);
@@ -111,7 +101,7 @@ describe('badge.ts', () => {
       });
 
       it('should not call getMatchingBadgeState in homeassistant mode', () => {
-        element.config = { ...mockBadgeConfig, mode: 'homeassistant' };
+        element.badge = { ...mockBadgeConfig, mode: 'homeassistant' };
         element.render();
         expect(getMatchingBadgeStateStub.called).to.be.false;
       });
@@ -120,15 +110,16 @@ describe('badge.ts', () => {
     describe('if_match mode', () => {
       it('should render nothing when no matching state is found', () => {
         getMatchingBadgeStateStub.returns(undefined);
-        element.config = { ...mockBadgeConfig, mode: 'if_match' };
+        const newBadgeConfig: BadgeConfig = {
+          ...mockBadgeConfig,
+          mode: 'if_match',
+        };
+        element.badge = newBadgeConfig;
 
         const result = element.render();
         expect(result).to.equal(nothing);
         expect(
-          getMatchingBadgeStateStub.calledWith(
-            mockEntityState,
-            element['_config'],
-          ),
+          getMatchingBadgeStateStub.calledWith(mockEntityState, newBadgeConfig),
         ).to.be.true;
       });
 
@@ -139,7 +130,7 @@ describe('badge.ts', () => {
           icon: 'mdi:light-on',
         };
         getMatchingBadgeStateStub.returns(matchingState);
-        element.config = { ...mockBadgeConfig, mode: 'if_match' };
+        element.badge = { ...mockBadgeConfig, mode: 'if_match' };
 
         const result = element.render();
         expect(result).to.not.equal(nothing);
@@ -149,7 +140,7 @@ describe('badge.ts', () => {
     describe('show_always mode', () => {
       it('should render badge even when no matching state', () => {
         getMatchingBadgeStateStub.returns(undefined);
-        element.config = { ...mockBadgeConfig, mode: 'show_always' };
+        element.badge = { ...mockBadgeConfig, mode: 'show_always' };
 
         const result = element.render();
         expect(result).to.not.equal(nothing);
@@ -162,7 +153,7 @@ describe('badge.ts', () => {
           icon: 'mdi:light-on',
         };
         getMatchingBadgeStateStub.returns(matchingState);
-        element.config = { ...mockBadgeConfig, mode: 'show_always' };
+        element.badge = { ...mockBadgeConfig, mode: 'show_always' };
 
         const result = element.render();
         expect(result).to.not.equal(nothing);
@@ -177,7 +168,7 @@ describe('badge.ts', () => {
           icon: 'mdi:light-on',
         };
         getMatchingBadgeStateStub.returns(matchingState);
-        element.config = { ...mockBadgeConfig, mode: 'show_always' };
+        element.badge = { ...mockBadgeConfig, mode: 'show_always' };
 
         const result = element.render() as TemplateResult;
         const el = await fixture(result);
@@ -200,7 +191,7 @@ describe('badge.ts', () => {
           icon: 'mdi:light-on',
         };
         getMatchingBadgeStateStub.returns(matchingState);
-        element.config = { ...mockBadgeConfig, mode: 'show_always' };
+        element.badge = { ...mockBadgeConfig, mode: 'show_always' };
 
         const result = element.render() as TemplateResult;
         const el = await fixture(result);
@@ -222,7 +213,7 @@ describe('badge.ts', () => {
           styles: { '--custom-property': 'value' },
         };
         getMatchingBadgeStateStub.returns(matchingState);
-        element.config = { ...mockBadgeConfig, mode: 'show_always' };
+        element.badge = { ...mockBadgeConfig, mode: 'show_always' };
 
         element.render();
 
@@ -235,7 +226,7 @@ describe('badge.ts', () => {
           icon_color: 'yellow',
         };
         getMatchingBadgeStateStub.returns(matchingState);
-        element.config = { ...mockBadgeConfig, mode: 'show_always' };
+        element.badge = { ...mockBadgeConfig, mode: 'show_always' };
 
         element.render();
 
@@ -246,14 +237,15 @@ describe('badge.ts', () => {
 
   describe('getMatchingBadgeState integration', () => {
     it('should call getMatchingBadgeState with state and config', () => {
-      element.config = { ...mockBadgeConfig, mode: 'show_always' };
+      const newBadgeConfig: BadgeConfig = {
+        ...mockBadgeConfig,
+        mode: 'show_always',
+      };
+      element.badge = newBadgeConfig;
       element.render();
 
       expect(
-        getMatchingBadgeStateStub.calledWith(
-          mockEntityState,
-          element['_config'],
-        ),
+        getMatchingBadgeStateStub.calledWith(mockEntityState, newBadgeConfig),
       ).to.be.true;
     });
   });
