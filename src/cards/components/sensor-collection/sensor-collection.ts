@@ -14,6 +14,7 @@ import {
 import type { HomeAssistant } from '@hass/types';
 import { attributeDisplay } from '@html/attribute-display';
 import { stateDisplay } from '@html/state-display';
+import { processHomeAssistantColors } from '@theme/colors';
 import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
@@ -163,7 +164,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
       <div
         class="sensor"
         style=${styleMap({
-          '--sensor-icon-color': result?.color,
+          '--sensor-icon-color': processHomeAssistantColors(result?.color),
           ...result?.styles,
         })}
         @action=${handleClickAction(this, info)}

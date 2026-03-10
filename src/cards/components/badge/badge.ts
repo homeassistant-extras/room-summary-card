@@ -2,6 +2,7 @@ import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
 import { getMatchingBadgeState } from '@delegates/utils/badge-state';
 import { renderTileBadge } from '@hass/panels/lovelace/cards/tile/badges/tile-badge';
+import { processHomeAssistantColors } from '@theme/colors';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { BadgeConfig } from '@type/config/entity';
 import { d } from '@util/debug';
@@ -94,7 +95,9 @@ export class Badge extends SubscribeEntityStateMixin(
       ${matchingState?.styles ? stylesToHostCss(matchingState.styles) : nothing}
       <ha-tile-badge
         style=${styleMap({
-          '--tile-badge-background-color': matchingState?.icon_color,
+          '--tile-badge-background-color': processHomeAssistantColors(
+            matchingState?.icon_color,
+          ),
         })}
       >
         <ha-state-icon

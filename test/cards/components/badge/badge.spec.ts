@@ -181,7 +181,29 @@ describe('badge.ts', () => {
         expect(tileBadge).to.exist;
         expect(
           tileBadge?.style.getPropertyValue('--tile-badge-background-color'),
-        ).to.equal('yellow');
+        ).to.equal('var(--yellow-color)');
+      });
+
+      it('should resolve HA color names with spaces (e.g. deep-orange) to CSS variables', async () => {
+        const matchingState: StateConfig = {
+          state: 'off',
+          icon_color: 'deep-orange',
+          icon: 'mdi:power',
+        };
+        getMatchingBadgeStateStub.returns(matchingState);
+        element.badge = { ...mockBadgeConfig, mode: 'show_always' };
+
+        const result = element.render() as TemplateResult;
+        const el = await fixture(result);
+
+        const tileBadge = (
+          el.tagName.toLowerCase() === 'ha-tile-badge'
+            ? el
+            : el.querySelector('ha-tile-badge')
+        ) as HTMLElement;
+        expect(tileBadge?.style.getPropertyValue('--tile-badge-background-color')).to.equal(
+          'var(--deep-orange-color)',
+        );
       });
 
       it('should render ha-state-icon with correct properties', async () => {
