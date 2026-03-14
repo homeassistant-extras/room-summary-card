@@ -21,12 +21,12 @@ export const renderBadgeElements = (
   entity.config.badges?.slice(0, 4)?.map((badge) => {
     return html`
       <room-badge
-        .cardConfig=${config}
-        .config=${{
+        .hass=${hass}
+        .config=${config}
+        .badge=${{
           ...badge,
           entity_id: badge.entity_id ?? entity.config.entity_id,
         }}
-        .hass=${hass}
       ></room-badge>
     `;
   });

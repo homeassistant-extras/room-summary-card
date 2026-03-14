@@ -64,7 +64,7 @@ describe('fire-event.ts', () => {
       config: { area: 'test-area' },
     };
 
-    const event = fireEvent(element, 'config-changed', configDetail) as Event;
+    const event = fireEvent(element, 'config-changed', configDetail);
 
     // Ensure the stub was called once
     expect(dispatchStub.calledOnce).to.be.true;

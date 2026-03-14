@@ -872,12 +872,50 @@ describe('sensor-collection.ts', () => {
         element['renderSingleSensor'](sensor as EntityState),
       );
 
-      // Check that the color is applied via CSS variable
-      // el itself is the sensor div
+      // Check that the color is applied via CSS variable (HA color names resolve to var(--*-color))
       expect(el.classList.contains('sensor')).to.be.true;
       const sensorDiv = el as HTMLElement;
       expect(sensorDiv.style.getPropertyValue('--sensor-icon-color')).to.equal(
-        'red',
+        'var(--red-color)',
+      );
+    });
+
+    it('should resolve HA color names with spaces (e.g. deep-purple) to CSS variables', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'binary_sensor.example',
+            states: [{ state: 'off', icon_color: 'deep-purple' }],
+          },
+        ],
+      } as any as Config;
+
+      element.sensors = {
+        individual: [
+          { entity_id: 'binary_sensor.example', state: 'off' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      getThresholdResultStub.returns({
+        color: 'deep-purple',
+        icon: undefined,
+        label: undefined,
+        styles: undefined,
+      });
+
+      const sensor = element.sensors.individual[0]!;
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
+
+      const sensorDiv = el as HTMLElement;
+      expect(sensorDiv.style.getPropertyValue('--sensor-icon-color')).to.equal(
+        'var(--deep-purple-color)',
       );
     });
 

@@ -1,21 +1,30 @@
-import { subscribeEntityState } from '@delegates/entities/subscribe-trigger';
-import { getState } from '@delegates/retrievers/state';
+import { getEntitySubscriptionManager } from '@delegates/entities/subscriptions';
 import type { HomeAssistant } from '@hass/types';
 import type { SubscriptionUnsubscribe } from '@hass/ws/types';
+import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
+import { d } from '@util/debug';
 import type { LitElement } from 'lit';
 import { state } from 'lit/decorators.js';
-const equal = require('fast-deep-equal');
 
 export type Constructor<T = {}> = new (...args: any[]) => T;
 
 export interface SubscribeEntityStateElement {
+  /**
+   * The Home Assistant instance.
+   */
   hass?: HomeAssistant;
+
+  /**
+   * The card config.
+   */
+  config?: Config;
 }
 
 /**
- * Mixin that subscribes to entity state changes via subscribe_trigger.
- * Set entityIdToSubscribe to specify which entity to watch.
+ * Mixin that subscribes to entity state changes via subscribe_entities.
+ * Only notifies on meaningful changes (state/attributes), not context/last_updated.
+ * Set entityId to specify which entity to watch.
  * Read _subscribedEntityState for the current state (undefined when not subscribed).
  */
 export const SubscribeEntityStateMixin = <
@@ -44,7 +53,7 @@ export const SubscribeEntityStateMixin = <
      * Updates cause re-render of the component.
      */
     @state()
-    protected _subscribedEntityState?: EntityState;
+    protected state: EntityState | undefined;
 
     /**
      * Setup the entity subscription.
@@ -66,11 +75,15 @@ export const SubscribeEntityStateMixin = <
      * Teardown the entity subscription.
      */
     private _teardownEntitySubscription(): void {
-      if (this._unsubscribe) {
-        this._unsubscribe();
-        this._unsubscribe = undefined;
-        this._subscribedEntityId = undefined;
+      if (!this._unsubscribe) {
+        return;
       }
+
+      d(this.config, 'subscribe-entity-state-mixin', 'unsubscribe');
+
+      this._unsubscribe();
+      this._unsubscribe = undefined;
+      this._subscribedEntityId = undefined;
     }
 
     /**
@@ -79,38 +92,43 @@ export const SubscribeEntityStateMixin = <
     private _setupEntitySubscription(): void {
       const id = this.entityId;
       const hass = this.hass;
+      const config = this.config;
 
-      if (!id || !hass) {
+      d(config, 'subscribe-entity-state-mixin', 'setupEntitySubscription', id);
+
+      if (!id || !hass || !config) {
+        d(
+          config,
+          'subscribe-entity-state-mixin',
+          'setupEntitySubscription',
+          'missing stuff',
+        );
         this._teardownEntitySubscription();
-        this._subscribedEntityState = undefined;
+        this.state = undefined;
         return;
       }
 
       if (this._subscribedEntityId === id) {
+        d(
+          config,
+          'subscribe-entity-state-mixin',
+          'setupEntitySubscription',
+          'already subscribed.. 😕',
+        );
         return;
       }
 
       this._teardownEntitySubscription();
       this._subscribedEntityId = id;
 
-      const initialState = getState(hass.states, id);
-      this._subscribedEntityState = initialState;
-
-      subscribeEntityState(
-        hass,
+      const manager = getEntitySubscriptionManager(hass, config);
+      this._unsubscribe = manager.subscribe(
         id,
-        ({ variables: { trigger: { from_state, to_state } = {} } = {} }) => {
-          // use getState since it cuts out extra properties like timestamps
-          const fromState = getState({ [id]: from_state }, id);
-          const toState = getState({ [id]: to_state }, id);
-          if (equal(fromState, toState)) return;
-
-          // Update the state if it has changed.
-          this._subscribedEntityState = toState;
+        (state) => {
+          this.state = state;
         },
-      ).then((unsubscribe) => {
-        this._unsubscribe = unsubscribe;
-      });
+        config,
+      );
     }
   }
 
