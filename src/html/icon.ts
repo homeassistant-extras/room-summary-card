@@ -24,6 +24,7 @@ export const renderProblemIndicator = (
   element: HTMLElement,
 ): TemplateResult | typeof nothing => {
   const { problemSensors } = sensors;
+  const ids = problemSensors.map((sensor) => sensor.entity_id);
 
   const problemExists = problemSensors.some((sensor) => stateActive(sensor));
   const problemDisplay = config.problem?.display ?? 'always';
@@ -43,7 +44,7 @@ export const renderProblemIndicator = (
           ?has-problems=${problemExists}
           @click=${() =>
             showProblemDialog(element, {
-              entities: problemSensors,
+              entities: ids,
               config,
             })}
           >${problemSensors.length}</span

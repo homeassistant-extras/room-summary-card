@@ -52,7 +52,7 @@ describe('SubscribeEntityStateMixin', () => {
   it('should subscribe when connected with entityId and hass set', async () => {
     const clock = useFakeTimers();
     element.hass = hass;
-    element['entityId'] = 'light.bedroom';
+    element['entity'] = 'light.bedroom';
 
     element.connectedCallback();
     clock.tick(RESUBSCRIBE_DEBOUNCE_MS);
@@ -65,7 +65,7 @@ describe('SubscribeEntityStateMixin', () => {
   it('should set initial state from hass.states on subscribe', async () => {
     const clock = useFakeTimers();
     element.hass = hass;
-    element['entityId'] = 'light.bedroom';
+    element['entity'] = 'light.bedroom';
 
     element.connectedCallback();
     clock.tick(RESUBSCRIBE_DEBOUNCE_MS);
@@ -104,7 +104,7 @@ describe('SubscribeEntityStateMixin', () => {
   });
 
   it('should not subscribe without hass', () => {
-    element['entityId'] = 'light.bedroom';
+    element['entity'] = 'light.bedroom';
 
     element.connectedCallback();
 

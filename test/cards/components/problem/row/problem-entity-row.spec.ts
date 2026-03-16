@@ -3,7 +3,6 @@ import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
-import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 import { nothing } from 'lit';
 import { stub, type SinonStub } from 'sinon';
@@ -13,13 +12,13 @@ describe('problem-entity-row.ts', () => {
   let mockHass: HomeAssistant;
   let fireEventStub: SinonStub;
 
-  const mockActiveEntity: EntityState = createStateEntity(
+  const mockActiveEntity = createStateEntity(
     'binary_sensor',
     'problem1',
     'on',
     {},
   );
-  const mockInactiveEntity: EntityState = createStateEntity(
+  const mockInactiveEntity = createStateEntity(
     'binary_sensor',
     'problem2',
     'off',
@@ -60,9 +59,9 @@ describe('problem-entity-row.ts', () => {
   });
 
   describe('render', () => {
-    it('should return nothing when entity is not set', () => {
+    it('should return nothing when state is not set', () => {
       element.hass = mockHass;
-      element.entity = undefined as any;
+      // state is not set — mixin has not delivered a subscription update yet
 
       const result = element.render();
       expect(result).to.equal(nothing);
@@ -70,7 +69,7 @@ describe('problem-entity-row.ts', () => {
 
     it('should return nothing when hass is not set', () => {
       element.hass = undefined as any;
-      element.entity = mockActiveEntity;
+      element['state'] = mockActiveEntity;
 
       const result = element.render();
       expect(result).to.equal(nothing);
@@ -78,7 +77,7 @@ describe('problem-entity-row.ts', () => {
 
     it('should render with active class when entity is active', async () => {
       element.hass = mockHass;
-      element.entity = mockActiveEntity;
+      element['state'] = mockActiveEntity;
 
       const result = element.render();
       const el = await fixture(result as any);
@@ -89,7 +88,7 @@ describe('problem-entity-row.ts', () => {
 
     it('should render with inactive class when entity is inactive', async () => {
       element.hass = mockHass;
-      element.entity = mockInactiveEntity;
+      element['state'] = mockInactiveEntity;
 
       const result = element.render();
       const el = await fixture(result as any);
@@ -102,7 +101,8 @@ describe('problem-entity-row.ts', () => {
   describe('_handleClick', () => {
     it('should fire hass-more-info event with entity id', () => {
       element.hass = mockHass;
-      element.entity = mockActiveEntity;
+      element['entity'] = 'binary_sensor.problem1';
+      element['state'] = mockActiveEntity;
       element['_handleClick']();
 
       expect(fireEventStub.calledOnce).to.be.true;

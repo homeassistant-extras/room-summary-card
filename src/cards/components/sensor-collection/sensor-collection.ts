@@ -17,7 +17,6 @@ import { stateDisplay } from '@html/state-display';
 import { processHomeAssistantColors } from '@theme/colors';
 import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
-import type { Config } from '@type/config';
 import type { SensorConfig } from '@type/config/sensor';
 import type { EntityInformation, EntityState } from '@type/room';
 import type { AveragedSensor, SensorData } from '@type/sensor';
@@ -48,11 +47,6 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
    * Home Assistant instance
    */
   private _hass!: HomeAssistant;
-
-  /**
-   * Card configuration object containing feature flags and sensor settings
-   */
-  @property({ type: Object }) config!: Config;
 
   /**
    * Sensor data containing both individual sensors and averaged sensor groups

@@ -120,7 +120,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
    * Sets up the card configuration
    * @param {Config} config - The card configuration
    */
-  set config(config: Config) {
+  override set config(config: Config) {
     if (!equal(config, this._config)) {
       this.iconBackground =
         config.background?.options?.includes('icon_background') ?? false;
@@ -135,6 +135,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
           config.background?.options?.includes('hide_icon_only') || false;
       }
 
+      // todo super.config?
       this._config = config;
     }
   }

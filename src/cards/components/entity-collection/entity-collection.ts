@@ -3,11 +3,10 @@ import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { getIconEntities } from '@delegates/entities/icon-entities';
 import type { HomeAssistant } from '@hass/types';
 import { stylesToHostCss } from '@theme/util/style-converter';
-import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
-import { property, state } from 'lit/decorators.js';
+import { state } from 'lit/decorators.js';
 import { styles } from './styles';
 const equal = require('fast-deep-equal');
 /**
@@ -31,11 +30,6 @@ export class EntityCollection extends HassUpdateMixin(LitElement) {
    * Home Assistant instance
    */
   private _hass!: HomeAssistant;
-
-  /**
-   * Card configuration object containing feature flags and entity settings
-   */
-  @property({ type: Object }) config!: Config;
 
   /**
    * Array of entity states to display in the collection

@@ -1,4 +1,5 @@
 import type { HomeAssistant } from '@hass/types';
+import type { Config } from '@type/config';
 import type { LitElement } from 'lit';
 
 export interface HassUpdateEvent {
@@ -13,6 +14,11 @@ export interface HassUpdateElement {
    * The Home Assistant instance.
    */
   hass?: HomeAssistant;
+
+  /**
+   * The card config.
+   */
+  config?: Config;
 }
 
 export type Constructor<T = {}> = new (...args: any[]) => T;
@@ -22,6 +28,7 @@ export const HassUpdateMixin = <T extends Constructor<LitElement>>(
 ) => {
   class HassUpdateClass extends superClass implements HassUpdateElement {
     private __hassValue?: HomeAssistant;
+    private __configValue?: Config;
 
     get hass(): HomeAssistant {
       return this.__hassValue!;
@@ -29,6 +36,14 @@ export const HassUpdateMixin = <T extends Constructor<LitElement>>(
 
     set hass(value: HomeAssistant) {
       this.__hassValue = value;
+    }
+
+    get config(): Config {
+      return this.__configValue!;
+    }
+
+    set config(value: Config) {
+      this.__configValue = value;
     }
 
     private readonly _boundHassUpdateHandler =

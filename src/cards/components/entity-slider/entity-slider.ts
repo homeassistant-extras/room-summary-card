@@ -6,7 +6,6 @@ import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import { getThemeColorOverride } from '@theme/custom-theme';
 import { stylesToHostCss } from '@theme/util/style-converter';
-import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
@@ -35,11 +34,6 @@ export class EntitySlider extends HassUpdateMixin(LitElement) {
    * Home Assistant instance
    */
   private _hass!: HomeAssistant;
-
-  /**
-   * Card configuration object containing feature flags and entity settings
-   */
-  @property({ type: Object }) config!: Config;
 
   /**
    * Slider style - reflected to DOM as data-slider-style attribute

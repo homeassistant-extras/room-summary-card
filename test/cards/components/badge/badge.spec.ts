@@ -80,7 +80,7 @@ describe('badge.ts', () => {
 
     it('should set entityId from config.entity_id', () => {
       element.badge = { ...mockBadgeConfig, entity_id: 'sensor.temp' };
-      expect(element['entityId']).to.equal('sensor.temp');
+      expect(element['entity']).to.equal('sensor.temp');
     });
 
     it('should convert position underscores to hyphens', () => {

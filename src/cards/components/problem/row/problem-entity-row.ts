@@ -1,4 +1,5 @@
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
+import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
 import { fireEvent } from '@hass/common/dom/fire_event';
 // more-info-mixin is now compiled
 import { computeEntityName } from '@hass/common/entity/compute_entity_name';
@@ -6,11 +7,9 @@ import { stateActive } from '@hass/common/entity/state_active';
 import '@hass/state/more-info-mixin';
 import { stateDisplay } from '@html/state-display';
 import { localize } from '@localize/localize';
-import type { Config } from '@type/config';
-import type { EntityState } from '@type/room';
 import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import { styles } from './styles';
 
 /**
@@ -18,26 +17,18 @@ import { styles } from './styles';
  *
  * Renders a single problem entity row in the problem dialog.
  * Shows entity icon, name, state, and active/inactive indicator.
+ * Uses SubscribeEntityStateMixin for live updates when entity state changes.
  */
 @customElement('problem-entity-row')
-export class ProblemEntityRow extends HassUpdateMixin(LitElement) {
-  /**
-   * Card config for debug (optional)
-   */
-  config?: Config;
-
-  /**
-   * The problem entity state
-   */
-  @property({ type: Object })
-  entity!: EntityState;
-
+export class ProblemEntityRow extends SubscribeEntityStateMixin(
+  HassUpdateMixin(LitElement),
+) {
   /**
    * Handles click on entity row to open more-info dialog
    */
   private _handleClick(): void {
     fireEvent(this, 'hass-more-info', {
-      entityId: this.entity.entity_id,
+      entityId: this.entity!,
     });
   }
 
@@ -46,28 +37,23 @@ export class ProblemEntityRow extends HassUpdateMixin(LitElement) {
    */
   override render(): TemplateResult | typeof nothing {
     d(this.config, 'problem-entity-row', 'render');
-    if (!this.entity || !this.hass) {
+    if (!this.hass || !this.state) {
       return nothing;
     }
 
-    const isActive = stateActive(this.entity);
-    const displayName =
-      computeEntityName(this.entity, this.hass) || this.entity.entity_id;
+    const s = this.state;
+    const isActive = stateActive(s);
+    const displayName = computeEntityName(s, this.hass) || s.entity_id;
 
     return html`
       <div
         class="problem-entity-row ${isActive ? 'active' : 'inactive'}"
         @click=${this._handleClick}
       >
-        <ha-state-icon
-          .hass=${this.hass}
-          .stateObj=${this.entity}
-        ></ha-state-icon>
+        <ha-state-icon .hass=${this.hass} .stateObj=${s}></ha-state-icon>
         <div class="entity-info">
           <div class="entity-name">${displayName}</div>
-          <div class="entity-state">
-            ${stateDisplay(this.hass, this.entity)}
-          </div>
+          <div class="entity-state">${stateDisplay(this.hass, s)}</div>
         </div>
         <div class="status-indicator">
           ${isActive

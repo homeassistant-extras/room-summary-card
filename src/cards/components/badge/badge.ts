@@ -56,7 +56,7 @@ export class Badge extends SubscribeEntityStateMixin(
     const position = badge.position ?? 'top_right';
     this.position = position.replaceAll('_', '-');
 
-    this.entityId = badge.entity_id;
+    this.entity = badge.entity_id;
     this._badge = badge;
   }
 
@@ -74,7 +74,7 @@ export class Badge extends SubscribeEntityStateMixin(
     const config = this.config;
     const hass = this.hass;
     const state = this.state!;
-    const id = this.entityId;
+    const id = this.entity;
 
     d(config, 'badge', 'render', id);
 

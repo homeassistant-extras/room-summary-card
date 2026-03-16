@@ -46,7 +46,7 @@ export const SubscribeEntityStateMixin = <
     /**
      * The entity_id to subscribe to. Set this property to specify which entity to watch.
      */
-    protected entityId?: string;
+    protected entity?: string;
 
     /**
      * The current state of the subscribed entity.
@@ -90,18 +90,18 @@ export const SubscribeEntityStateMixin = <
      * Setup the entity subscription.
      */
     private _setupEntitySubscription(): void {
-      const id = this.entityId;
+      const id = this.entity;
       const hass = this.hass;
       const config = this.config;
 
       d(config, 'subscribe-entity-state-mixin', 'setupEntitySubscription', id);
 
-      if (!id || !hass || !config) {
+      if (!id || !hass) {
         d(
           config,
           'subscribe-entity-state-mixin',
           'setupEntitySubscription',
-          'missing stuff',
+          'missing id or hass',
         );
         this._teardownEntitySubscription();
         this.state = undefined;

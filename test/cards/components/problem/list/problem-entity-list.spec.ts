@@ -1,8 +1,6 @@
 import { ProblemEntityList } from '@cards/components/problem/list/problem-entity-list';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
-import { createStateEntity } from '@test/test-helpers';
-import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 import { nothing } from 'lit';
 
@@ -10,9 +8,9 @@ describe('problem-entity-list.ts', () => {
   let element: ProblemEntityList;
   let mockHass: HomeAssistant;
 
-  const mockProblemEntities: EntityState[] = [
-    createStateEntity('binary_sensor', 'problem1', 'on', {}),
-    createStateEntity('binary_sensor', 'problem2', 'on', {}),
+  const mockProblemEntities: string[] = [
+    'binary_sensor.problem1',
+    'binary_sensor.problem2',
   ];
 
   beforeEach(() => {

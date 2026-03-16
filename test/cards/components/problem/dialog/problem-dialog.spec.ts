@@ -2,8 +2,6 @@ import { ProblemDialog } from '@cards/components/problem/dialog/problem-dialog';
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
-import { createStateEntity } from '@test/test-helpers';
-import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 import { nothing } from 'lit';
 import { restore, stub, type SinonStub } from 'sinon';
@@ -13,9 +11,9 @@ describe('problem-dialog.ts', () => {
   let mockHass: HomeAssistant;
   let fireEventStub: SinonStub;
 
-  const mockProblemEntities: EntityState[] = [
-    createStateEntity('binary_sensor', 'problem1', 'on', {}),
-    createStateEntity('binary_sensor', 'problem2', 'on', {}),
+  const mockProblemEntities: string[] = [
+    'binary_sensor.problem1',
+    'binary_sensor.problem2',
   ];
 
   beforeEach(() => {
@@ -36,7 +34,7 @@ describe('problem-dialog.ts', () => {
 
   describe('showDialog', () => {
     it('should set problemEntities and open dialog', () => {
-      element.showDialog({ entities: mockProblemEntities });
+      element.showDialog({ entities: mockProblemEntities, config: {} as any });
 
       expect(element.problemEntities).to.deep.equal(mockProblemEntities);
       expect(element['_opened']).to.be.true;

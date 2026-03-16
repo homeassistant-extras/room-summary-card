@@ -1,6 +1,5 @@
 import { showProblemDialog } from '@cards/components/problem/dialog/show-dialog-problem';
 import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 import { restore, stub, type SinonStub } from 'sinon';
 
@@ -18,22 +17,12 @@ describe('show-dialog-problem.ts', () => {
   });
 
   it('should fire show-dialog event with correct parameters when entities are provided', () => {
-    const entities: EntityState[] = [
-      {
-        entity_id: 'binary_sensor.problem1',
-        state: 'on',
-        attributes: {},
-        domain: 'binary_sensor',
-      },
-      {
-        entity_id: 'binary_sensor.problem2',
-        state: 'on',
-        attributes: {},
-        domain: 'binary_sensor',
-      },
+    const entities: string[] = [
+      'binary_sensor.problem1',
+      'binary_sensor.problem2',
     ];
 
-    showProblemDialog(element, { entities });
+    showProblemDialog(element, { entities, config: {} as any });
 
     expect(fireEventStub.calledOnce).to.be.true;
     expect(fireEventStub.firstCall.args[0]).to.equal(element);
@@ -42,13 +31,14 @@ describe('show-dialog-problem.ts', () => {
       'problem-dialog',
     );
     expect(fireEventStub.firstCall.args[2].dialogParams).to.deep.equal({
+      config: {},
       entities,
     });
     expect(fireEventStub.firstCall.args[2].dialogImport).to.be.a('function');
   });
 
   it('should not fire event when entities array is empty', () => {
-    showProblemDialog(element, { entities: [] });
+    showProblemDialog(element, { entities: [], config: {} as any });
 
     expect(fireEventStub.called).to.be.false;
   });

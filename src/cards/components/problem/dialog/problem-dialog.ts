@@ -3,13 +3,12 @@ import '@cards/components/problem/list/problem-entity-list';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HassDialog } from '@hass/dialogs/make-dialog-manager';
-import type { Config } from '@type/config';
-import type { EntityState } from '@type/room';
 import { d } from '@util/debug';
 import { LitElement, html, nothing, type TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { createCloseHeading } from './create-close-heading';
 import type { ProblemDialogParams } from './show-dialog-problem';
+
 /**
  * Problem Dialog Component
  *
@@ -22,15 +21,10 @@ export class ProblemDialog
   implements HassDialog<ProblemDialogParams>
 {
   /**
-   * Card config for debug (optional)
-   */
-  private _config?: Config;
-
-  /**
    * Array of problem entity states
    */
   @property({ type: Array })
-  problemEntities: EntityState[] = [];
+  problemEntities: string[] = [];
 
   /**
    * Whether the dialog is open
@@ -43,7 +37,7 @@ export class ProblemDialog
    */
   showDialog(params: ProblemDialogParams): void {
     this.problemEntities = params.entities;
-    this._config = params.config;
+    this.config = params.config;
     this._opened = true;
   }
 
@@ -65,7 +59,7 @@ export class ProblemDialog
    * Renders the component
    */
   override render(): TemplateResult | typeof nothing {
-    d(this._config, 'problem-dialog', 'render');
+    d(this.config, 'problem-dialog', 'render');
     if (!this.hass || this.problemEntities.length === 0) {
       return nothing;
     }
@@ -81,7 +75,7 @@ export class ProblemDialog
         <problem-entity-list
           .entities=${this.problemEntities}
           .hass=${this.hass}
-          .config=${this._config}
+          .config=${this.config}
         ></problem-entity-list>
       </ha-dialog>
     `;
