@@ -220,6 +220,45 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
             },
           ],
         },
+        {
+          name: 'interactions',
+          label: 'editor.interactions.interactions',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:gesture-tap',
+          schema: [
+            {
+              name: 'tap_action',
+              label: 'editor.interactions.tap_action',
+              required: false,
+              selector: {
+                ui_action: {
+                  default_action: 'more-info' as UiAction,
+                },
+              },
+            },
+            {
+              name: 'double_tap_action',
+              label: 'editor.interactions.double_tap_action',
+              required: false,
+              selector: {
+                ui_action: {
+                  default_action: 'none' as UiAction,
+                },
+              },
+            },
+            {
+              name: 'hold_action',
+              label: 'editor.interactions.hold_action',
+              required: false,
+              selector: {
+                ui_action: {
+                  default_action: 'none' as UiAction,
+                },
+              },
+            },
+          ],
+        },
       ];
     },
   );

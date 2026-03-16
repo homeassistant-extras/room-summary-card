@@ -1,13 +1,16 @@
 # Action Configuration
 
-Available actions for `tap_action`, `hold_action`, and `double_tap_action`:
+Actions follow the standard [Home Assistant configuration](https://www.home-assistant.io/dashboards/actions/). Available actions for `tap_action`, `hold_action`, and `double_tap_action`:
 
-| Action    | Parameters      | Description                  |
-| --------- | --------------- | ---------------------------- |
-| toggle    | none            | Toggle entity state          |
-| more-info | none            | Show more info dialog        |
-| navigate  | navigation_path | Navigate to a different view |
-| none      | none            | Disable the action           |
+| Action         | Parameters                   | Description                         |
+| -------------- | ---------------------------- | ----------------------------------- |
+| none           | none                         | No action (default for hold/double) |
+| more-info      | none                         | Show more info dialog               |
+| toggle         | none                         | Toggle entity state                 |
+| navigate       | navigation_path              | Navigate to a different view        |
+| url            | url_path                     | Open a URL                          |
+| perform-action | perform_action, data, target | Call a service                      |
+| assist         | pipeline_id, start_listening | Open voice assistant                |
 
 ### Action Examples
 
@@ -21,6 +24,24 @@ hold_action:
 
 double_tap_action:
   action: none
+```
+
+```yaml
+# Open a URL
+tap_action:
+  action: url
+  url_path: https://example.com
+
+# Call a service
+tap_action:
+  action: perform-action
+  perform_action: light.turn_on
+  target:
+    entity_id: light.living_room
+
+# Open voice assistant
+tap_action:
+  action: assist
 ```
 
 ## Full Card Actions

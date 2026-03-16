@@ -129,17 +129,14 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
     // Look up sensor config from config.sensors
     const sensorConfig = this.getSensorConfig(state.entity_id);
 
-    // Create EntityInformation with sensor config for state-based styling
+    // Create EntityInformation with sensor config for state-based styling and actions
     const info: EntityInformation = {
       config: {
+        tap_action: { action: 'more-info' },
+        hold_action: { action: 'none' },
+        double_tap_action: { action: 'none' },
+        ...sensorConfig,
         entity_id: state.entity_id,
-        tap_action: {
-          action: 'more-info',
-        },
-        label: sensorConfig?.label,
-        icon: sensorConfig?.icon,
-        states: sensorConfig?.states,
-        thresholds: sensorConfig?.thresholds,
       },
       state: state,
     };

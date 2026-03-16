@@ -370,6 +370,33 @@ describe('sensor-collection.ts', () => {
       expect(entityInfo.config.tap_action.action).to.equal('more-info');
       expect(entityInfo.state).to.equal(sensor);
     });
+
+    it('should use configurable tap_action from sensor config', async () => {
+      element.config = {
+        sensors: [
+          {
+            entity_id: 'sensor.light_status',
+            tap_action: { action: 'toggle' },
+          },
+        ],
+      } as any as Config;
+      element.sensors = {
+        individual: [
+          { entity_id: 'sensor.light_status', state: 'on' } as EntityState,
+        ],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      const sensor = element.sensors.individual[0]!;
+      await fixture(element['renderSensor'](sensor, false));
+
+      const entityInfo = actionHandlerStub.firstCall.args[0];
+      expect(entityInfo.config.tap_action.action).to.equal('toggle');
+    });
   });
 
   describe('state-based sensor styling', () => {

@@ -328,19 +328,35 @@ Sensors are displayed in this order:
 
 ### Interactive Sensors
 
-Sensors in the info section now support interactive behavior:
+Sensors in the info section support interactive behavior:
 
-#### Clickable Individual Sensors
+#### Configurable Tap Actions for Individual Sensors
 
-Individual sensors (configured via `sensors`) are clickable and will open the Home Assistant "more info" dialog when tapped:
+Individual sensors (configured via `sensors`) support configurable tap, hold, and double-tap actions. By default, tapping opens the "more info" dialog. You can customize this to toggle entities, navigate, or disable the action:
 
 ```yaml
 sensors:
-  - sensor.living_room_temperature # Clickable - opens more info dialog
-  - sensor.living_room_humidity # Clickable - opens more info dialog
+  # Default: tap opens more info dialog
+  - sensor.living_room_temperature
+
+  # Toggle a light when tapping a sensor that represents it
+  - entity_id: sensor.living_room_light_status
+    tap_action:
+      action: toggle
+
+  # Navigate to a room view on tap
+  - entity_id: sensor.door_sensor
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace/living-room
+
+  # Disable tap action
+  - entity_id: sensor.read_only_sensor
+    tap_action:
+      action: none
 ```
 
-This allows you to quickly access detailed sensor information, history, and controls directly from the card.
+See [Action Configuration](./ACTION-CONFIGURATION.md) for details.
 
 #### Non-Interactive Averaged Sensors
 

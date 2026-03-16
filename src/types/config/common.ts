@@ -3,10 +3,11 @@
  * @description TypeScript type definitions for entity configuration.
  */
 
+import type { ActionConfig } from '@hass/data/lovelace/config/action';
 import type { StateConfig, ThresholdConfig } from './entity';
 
 /**
- * Configuration for an individual sensor.
+ * Base configuration for entities and sensors
  */
 export interface BaseEntityConfig {
   /** Unique identifier for the sensor entity */
@@ -26,4 +27,13 @@ export interface BaseEntityConfig {
 
   /** Threshold-based color configuration */
   thresholds?: ThresholdConfig[];
+
+  /** Action to perform on tap */
+  tap_action?: ActionConfig;
+
+  /** Action to perform on hold */
+  hold_action?: ActionConfig;
+
+  /** Action to perform on double tap */
+  double_tap_action?: ActionConfig;
 }

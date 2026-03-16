@@ -125,6 +125,6 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Entity-Based Threshold Values`**: **⭐ Contributor ⭐** dynamic threshold based on entity - thanks @Micky2149
 - [x] **`Full Card Actions`**: make entire card clickable with larger touch targets for mobile-friendly navigation - thanks @devkaiwang
 - [x] **`Frosted Glass Theme Support`**: automatic detection and styling for Frosted Glass themes with transparent blurred card effects - thanks @devkaiwang
-- [x] **`Sensor Improvements`**: feature requests to make sensors awesome - thanks @MelleD
+- [x] **`Sensor Improvements`**: feature requests to make sensors awesome - thanks @MelleD, @bobo-cher
 - [x] **`Brightness Slider`**: entity transforms into slider - thanks @tmaihoff, @hfalk
 - [x] **`Entity Badges`**: dynamic badge overlays- thanks @ojm88

@@ -167,7 +167,8 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       // icon_background should only affect the main room entity - fixes #404
       this.image =
         this.isMainRoomEntity &&
-        (this._config?.background?.options?.includes('icon_background') ?? false);
+        (this._config?.background?.options?.includes('icon_background') ??
+          false);
     }
 
     this._hass = hass;

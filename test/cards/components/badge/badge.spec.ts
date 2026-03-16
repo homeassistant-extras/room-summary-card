@@ -201,9 +201,9 @@ describe('badge.ts', () => {
             ? el
             : el.querySelector('ha-tile-badge')
         ) as HTMLElement;
-        expect(tileBadge?.style.getPropertyValue('--tile-badge-background-color')).to.equal(
-          'var(--deep-orange-color)',
-        );
+        expect(
+          tileBadge?.style.getPropertyValue('--tile-badge-background-color'),
+        ).to.equal('var(--deep-orange-color)');
       });
 
       it('should render ha-state-icon with correct properties', async () => {

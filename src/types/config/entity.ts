@@ -1,4 +1,3 @@
-import type { ActionConfig } from '@hass/data/lovelace/config/action';
 import type { ComparisonOperator } from '@type/comparison';
 import type { BaseEntityConfig } from './common';
 
@@ -11,15 +10,6 @@ export interface EntityConfig extends BaseEntityConfig {
 
   /** Custom color for the off state */
   off_color?: string;
-
-  /** Action to perform on tap */
-  tap_action?: ActionConfig;
-
-  /** Action to perform on hold */
-  hold_action?: ActionConfig;
-
-  /** Action to perform on double tap */
-  double_tap_action?: ActionConfig;
 
   /** Features to enable or disable for the entity */
   features?: EntityFeatures[];
