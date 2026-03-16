@@ -692,6 +692,36 @@ describe('room-state-icon.ts', () => {
 
       expect(element['iconBackground']).to.be.false;
     });
+
+    it('should not set image for non-main-room entities when icon_background is in config', () => {
+      element.isMainRoomEntity = false;
+      element.config = {
+        area: 'guest_bedroom',
+        background: {
+          options: ['icon_background'],
+          image_entity: 'person.gina',
+        },
+      } as Config;
+      element.entity = mockEntity;
+      element.hass = mockHass;
+
+      expect(element['image']).to.be.false;
+    });
+
+    it('should set image for main room entity when icon_background is in config', () => {
+      element.isMainRoomEntity = true;
+      element.config = {
+        area: 'guest_bedroom',
+        background: {
+          options: ['icon_background'],
+          image_entity: 'person.gina',
+        },
+      } as Config;
+      element.entity = mockEntity;
+      element.hass = mockHass;
+
+      expect(element['image']).to.be.true;
+    });
   });
 
   describe('hide icon behavior', () => {

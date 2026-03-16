@@ -164,8 +164,10 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
 
       // regression fix for #383 - in future handle the image logic internally
       // but this resets the image to false when the entity_picture is removed for #333 still
+      // icon_background should only affect the main room entity - fixes #404
       this.image =
-        this._config?.background?.options?.includes('icon_background') ?? false;
+        this.isMainRoomEntity &&
+        (this._config?.background?.options?.includes('icon_background') ?? false);
     }
 
     this._hass = hass;
