@@ -162,6 +162,7 @@ export type TranslationKey =
   | 'editor.slider.bar'
   | 'editor.slider.bar_filled'
   | 'editor.styles.skip_climate_styles'
+  | 'editor.styles.skip_mold_styles'
   | 'editor.styles.stats_styles'
   | 'editor.styles.styles'
   | 'editor.threshold.temperature_entity'

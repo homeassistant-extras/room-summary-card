@@ -131,6 +131,19 @@ export const moldStyles = css`
     animation: mold-glow 1s ease-in-out infinite;
   }
 
+  /* Skip mold styles (disables animations for performance) */
+  :host([skip-mold-styles]) .mold-indicator,
+  :host([skip-mold-styles]) .mold-indicator ha-state-icon,
+  :host([skip-mold-styles]) .mold-indicator .mold-text,
+  :host([skip-mold-styles]) .mold-indicator::before,
+  :host([skip-mold-styles]) .mold-indicator::after {
+    animation: none !important;
+  }
+  :host([skip-mold-styles]) .mold-indicator:hover,
+  :host([skip-mold-styles]) .mold-indicator:hover::before {
+    animation: none !important;
+  }
+
   /* Dark theme adjustments */
   :host([dark]) .mold-indicator {
     background: linear-gradient(135deg, #d32f2f, #c62828);

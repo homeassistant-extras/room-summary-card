@@ -157,6 +157,7 @@ export type Features =
   | 'exclude_default_entities'
   | 'skip_climate_styles'
   | 'skip_entity_styles'
+  | 'skip_mold_styles'
   | 'show_entity_labels'
   | 'multi_light_background'
   | 'sticky_entities'

@@ -91,6 +91,7 @@ features:
   - exclude_default_entities
   - skip_climate_styles
   - skip_entity_styles
+  - skip_mold_styles
   - multi_light_background
   - ignore_entity
   - sticky_entities
@@ -109,6 +110,7 @@ features:
 | exclude_default_entities | Don't include default light/fan entities                                                       |
 | skip_climate_styles      | Disable climate-based color coding & borders                                                   |
 | skip_entity_styles       | Disable card background styling based on main entity                                           |
+| skip_mold_styles         | Disable mold indicator animations (reduces CPU usage on low-power devices)                      |
 | show_entity_labels       | Show entity labels under each entity icon                                                      |
 | multi_light_background   | Enable background lighting when any light in the room is on                                    |
 | ignore_entity            | Ignore the custom entity configuration and use default room entity (useful with auto-entities) |

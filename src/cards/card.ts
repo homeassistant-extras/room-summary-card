@@ -88,6 +88,8 @@ export class RoomSummaryCard extends LitElement {
   private alarm?: 'smoke' | 'gas' | 'water' | 'occupied';
   @property({ type: Boolean, reflect: true, attribute: 'icon-bg' })
   private iconBackground!: boolean;
+  @property({ type: Boolean, reflect: true, attribute: 'skip-mold-styles' })
+  private skipMoldStyles!: boolean;
 
   /**
    * Whether to render the card with a frosted-glass overlay.
@@ -122,6 +124,7 @@ export class RoomSummaryCard extends LitElement {
     if (!equal(config, this._config)) {
       this.iconBackground =
         config.background?.options?.includes('icon_background') ?? false;
+      this.skipMoldStyles = hasFeature(config, 'skip_mold_styles');
 
       this._config = config;
     }

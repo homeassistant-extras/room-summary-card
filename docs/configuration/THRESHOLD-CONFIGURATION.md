@@ -93,6 +93,8 @@ The mold indicator provides a prominent visual warning when mold levels exceed y
 - **Warning Symbol**: Displays a flashing warning bug mold symbol for additional emphasis
 - **Hover Effects**: Scales up and intensifies animations on hover
 
+To reduce CPU usage on low-power devices (e.g. when many cards show mold warnings), add `skip_mold_styles` to your card's features. The indicator will still appear but without animations.
+
 ![Moldy](../assets/moldy.png)
 
 **Mold Sensor Requirements**:
