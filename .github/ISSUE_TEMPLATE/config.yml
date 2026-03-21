@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Home Assistant community
+    url: https://community.home-assistant.io/
+    about: General Home Assistant help, automations, and integrations (not specific to this repository).
+  - name: Home Assistant documentation
+    url: https://www.home-assistant.io/docs/
+    about: Official docs for dashboards, Lovelace, and core concepts.

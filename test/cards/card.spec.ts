@@ -98,7 +98,6 @@ describe('card.ts', () => {
       card.setConfig(config);
       expect(card['_config']).to.deep.equal(config);
     });
-
   });
 
   describe('hass property setter', () => {
