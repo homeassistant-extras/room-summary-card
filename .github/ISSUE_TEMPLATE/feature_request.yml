@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest an improvement or new capability for this custom card
+title: '[Feature] '
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share the **problem or goal** first; concrete UI ideas are welcome but optional.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What are you trying to achieve on your dashboard? What is awkward or missing today?
+      placeholder: e.g. I want to show … without maintaining a long entity list by hand.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How could this card support that? Configuration shape, UI behavior, or integration with Home Assistant (areas, entities, etc.) — whatever helps.
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: Other cards, templates, automations, or workarounds — helps scope the request.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: HA version if relevant, theme, mobile vs desktop, links to HA docs or related discussions.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues for similar requests
+          required: true

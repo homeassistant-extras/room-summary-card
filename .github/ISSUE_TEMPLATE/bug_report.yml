@@ -1,0 +1,108 @@
+name: Bug report
+description: Report unexpected behavior, errors, or visual problems with this custom card
+title: '[Bug] '
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Minimal YAML** and **version info** help a lot for Lovelace cards.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What went wrong in one or two sentences?
+      placeholder: e.g. The card shows "Unknown" for entities that exist in Developer Tools.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: What should happen instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can someone else see the same issue? Include dashboard/editor steps if relevant.
+      placeholder: |
+        1. Add the card with …
+        2. Open the dashboard on …
+        3. …
+    validations:
+      required: true
+
+  - type: textarea
+    id: yaml-config
+    attributes:
+      label: Card YAML (minimal)
+      description: Paste the smallest configuration that still reproduces the issue. Redact tokens, passwords, and private hostnames.
+      render: yaml
+    validations:
+      required: true
+
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version
+      description: e.g. 2029.3.1 — find in **Settings → About**.
+      placeholder: '2029.3.1'
+    validations:
+      required: true
+
+  - type: input
+    id: card-version
+    attributes:
+      label: Card / release version
+      description: Version from HACS, GitHub Releases, or your build (e.g. tag or `package.json`).
+      placeholder: e.g. 1.2.3 or commit SHA
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install-source
+    attributes:
+      label: How is the card installed?
+      options:
+        - HACS
+        - Manual (GitHub release asset)
+        - Manual (built from source)
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: input
+    id: browsers
+    attributes:
+      label: Browser(s) and version(s)
+      description: e.g. Safari 17, Chrome 122 — or **Home Assistant Companion app** (note OS version).
+      placeholder: Chrome 131 on macOS
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Browser console / logs (optional)
+      description: Errors from **Developer Tools → Console** when the issue occurs. For the mobile app, note if only reproducible in browser.
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or screen recording (optional)
+      description: Drag images into this field or describe what you see.
+
+  - type: checkboxes
+    id: duplicates
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues (open and closed) for duplicates
+          required: true

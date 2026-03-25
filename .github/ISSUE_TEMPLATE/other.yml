@@ -1,0 +1,38 @@
+name: Other
+description: Questions, documentation, releases, or anything that is not clearly a bug or feature
+title: '[Question] '
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for **general questions**, **documentation**, **installation**, or **meta** topics. For **defects**, use **Bug report**; for **new behavior**, use **Feature request**.
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - Question / how-to
+        - Documentation
+        - Installation or HACS
+        - Release or versioning
+        - Contributing / development
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What do you need? Include Home Assistant version and how you installed the card if it helps.
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Links or references (optional)
+      description: URLs to docs, forum threads, or screenshots.
