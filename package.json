@@ -41,7 +41,7 @@
     "sinon": "^21.0.3",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "dependencies": {
     "@lit/task": "^1.0.3",
