@@ -164,6 +164,51 @@ styles:
     grid-template-columns: 1fr 1fr !important; # 2 columns
 ```
 
+#### Entity column wrapping
+
+The entity area uses a **column-first** grid: icons fill **down** the first column, then continue in the next column to the right when there are more entities than fit. That keeps icons on the card when the column is short instead of clipping off the bottom.
+
+By default, up to **four** icons stack in a column before the next column starts. Override **`--user-entities-wrap`** (under `styles.entities`) to set how many **rows** each column uses before wrapping. For example, `3` means three rows per column—six entities appear as two columns of three.
+
+![wrap](../assets/wrap.png)
+
+**Automatic wrapping** (default row count per column is 4):
+
+```yaml
+type: custom:room-summary-card
+area: dining_room
+entities:
+  - light.kitchen_bulb_1
+  - light.kitchen_bulb_2
+  - light.kitchen_bulb_3
+  - light.kitchen_bulb_4
+  - light.kitchen_bulb_5
+  - light.kitchen_bulb_6
+  - light.kitchen_bulb_7
+  - light.kitchen_bulb_8
+features:
+  - exclude_default_entities
+```
+
+**Force rows per column** (e.g. 3 rows, then the next column):
+
+```yaml
+type: custom:room-summary-card
+area: dining_room
+entities:
+  - light.kitchen_bulb_1
+  - light.kitchen_bulb_2
+  - light.kitchen_bulb_3
+  - light.kitchen_bulb_4
+  - light.kitchen_bulb_5
+  - light.kitchen_bulb_6
+features:
+  - exclude_default_entities
+styles:
+  entities:
+    '--user-entities-wrap': 3
+```
+
 ### Entity Icon Styles
 
 Control individual entity icons globally:

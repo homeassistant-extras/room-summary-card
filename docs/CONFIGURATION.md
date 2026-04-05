@@ -188,6 +188,7 @@ styles:
 ```
 
 - See [Custom Styles Configuration](configuration/CUSTOM-STYLES.md) for style information.
+- **Entity column layout**: the entity grid wraps into extra columns when needed. Set `styles.entities['--user-entities-wrap']` to the number of **rows** per column (default `4`). See [Entity column wrapping](configuration/CUSTOM-STYLES.md#entity-column-wrapping).
 - See [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md) for complete color options.
 
 ## Icon Opacity Preset
