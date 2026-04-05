@@ -255,7 +255,10 @@ The above demonstration shows three different multi-light configurations:
 - type: custom:room-summary-card
   area: server_closet_poat_hole
   area_name: Weee
-  navigate: /foo-bar
+  actions:
+    tap_action:
+      action: navigate
+      navigation_path: /foo-bar
   grid_options:
     columns: 9
     rows: 4
@@ -284,7 +287,10 @@ The above demonstration shows three different multi-light configurations:
 - type: custom:room-summary-card
   area: server_closet_poat_seedbox
   area_name: Retro
-  navigate: /foo-bar
+  actions:
+    tap_action:
+      action: navigate
+      navigation_path: /foo-bar
   grid_options:
     columns: 9
     rows: 4

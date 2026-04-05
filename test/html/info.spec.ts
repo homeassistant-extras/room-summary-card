@@ -1,3 +1,4 @@
+import * as actionDelegate from '@delegates/action-handler-delegate';
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import * as actionHandlerDirective from '@hass/panels/lovelace/common/directives/action-handler-directive';
 import type { HomeAssistant } from '@hass/types';
@@ -107,7 +108,7 @@ describe('info.ts', () => {
 
       const nameElement = el.querySelector('.name.text');
       expect(nameElement).to.exist;
-      expect(nameElement!.textContent!.trim()).to.equal('Living Room');
+      expect(nameElement!.textContent.trim()).to.equal('Living Room');
 
       const sensorCollection = el.querySelector('sensor-collection');
       expect(sensorCollection).to.exist;
@@ -242,7 +243,7 @@ describe('info.ts', () => {
 
       const el = await fixture(result as TemplateResult);
       const nameElement = el.querySelector('.name.text');
-      expect(nameElement!.textContent!.trim()).to.equal(
+      expect(nameElement!.textContent.trim()).to.equal(
         'Master Bedroom & En-Suite',
       );
     });
@@ -286,6 +287,66 @@ describe('info.ts', () => {
       expect(statsElement!.textContent!.trim()).to.equal(
         '2 devices 3 entities',
       );
+    });
+
+    it('merges config.actions over the room entity config for the info section handlers', () => {
+      const actionHandlerStub = stub(actionDelegate, 'actionHandler').returns(
+        html`<div class="action-handler-stub"></div>`,
+      );
+      const handleClickStub = stub(actionDelegate, 'handleClickAction').returns(
+        {
+          handleEvent: () => {},
+        },
+      );
+
+      mockConfig.actions = {
+        tap_action: {
+          action: 'navigate',
+          navigation_path: '/dashboard/office',
+        },
+        hold_action: { action: 'more-info' },
+      };
+
+      const sensors: SensorData = {
+        individual: [],
+        averaged: [],
+        problemSensors: [],
+        lightEntities: [],
+        ambientLightEntities: [],
+        thresholdSensors: [],
+      };
+
+      try {
+        info(
+          mockElement,
+          mockHass,
+          mockRoomInformation,
+          mockRoomEntity,
+          mockConfig,
+          sensors,
+        );
+
+        expect(actionHandlerStub.calledOnce).to.be.true;
+        const mergedEntity = actionHandlerStub.firstCall.args[0];
+        expect(mergedEntity.config.entity_id).to.equal('light.living_room');
+        expect(mergedEntity.config.tap_action).to.deep.equal({
+          action: 'navigate',
+          navigation_path: '/dashboard/office',
+        });
+        expect(mergedEntity.config.hold_action).to.deep.equal({
+          action: 'more-info',
+        });
+        expect(mergedEntity.config.double_tap_action).to.deep.equal({
+          action: 'none',
+        });
+
+        expect(handleClickStub.calledOnce).to.be.true;
+        expect(handleClickStub.firstCall.args[0]).to.equal(mockElement);
+        expect(handleClickStub.firstCall.args[1]).to.deep.equal(mergedEntity);
+      } finally {
+        actionHandlerStub.restore();
+        handleClickStub.restore();
+      }
     });
   });
 });

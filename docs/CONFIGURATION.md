@@ -53,7 +53,7 @@ See [default entities](#default-entities)
 | entities            | array            | See below                              | Additional entities to display                                  |
 | sensors             | array            | See below                              | Array of sensor entities to display in the card label area      |
 | lights              | array            | auto-discovered                        | Array of light entities for multi-light background              |
-| navigate            | string           | area name (dash-separated)             | Custom navigation path when clicking the room name / icon       |
+| actions             | object           | none                                   | Tap/hold/double-tap for the **info** area                       |
 | background          | object           | See below                              | Background image configuration                                  |
 | occupancy           | object           | See below                              | Occupancy detection configuration                               |
 | features            | list             | See below                              | Optional flags to toggle different features                     |

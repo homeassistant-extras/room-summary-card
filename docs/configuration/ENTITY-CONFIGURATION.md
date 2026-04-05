@@ -111,6 +111,8 @@ The `features` array allows you to enable specific behaviors for individual enti
 
 For `tap_action`, `hold_action`, and `double_tap_action` configuration options, see the [Home Assistant Actions Documentation](https://www.home-assistant.io/dashboards/actions/).
 
+**Card vs entity:** Actions on **`entity`** control the main room icon. To use **different** actions for the room **name and statistics** (info area), for example navigate on the title and toggle on the icon, set the root-level **`actions`** object on the card. See [Action Configuration: card-level actions and split tap](ACTION-CONFIGURATION.md#card-level-actions-and-split-tap).
+
 ## Entity Picture Display
 
 By default, entities will display their `entity_picture` attribute (if available) instead of an icon. This is particularly useful for media players that have service-specific icons (Netflix, Hulu, Spotify, etc.).

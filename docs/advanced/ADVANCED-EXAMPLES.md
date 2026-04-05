@@ -35,7 +35,10 @@ thresholds:
   humidity:
     - entity_id: sensor.humidity
       value: 55
-navigate: /lovelace/living-room
+actions:
+  tap_action:
+    action: navigate
+    navigation_path: /lovelace/living-room
 features:
   - hide_area_stats
 ```

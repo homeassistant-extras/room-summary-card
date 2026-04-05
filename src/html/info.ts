@@ -34,8 +34,16 @@ export const info = (
   const textStyle = renderTextStyles(hass, config, roomEntity, isActive);
   const stats = renderAreaStatistics(hass, config);
 
-  const handler = actionHandler(roomEntity);
-  const action = handleClickAction(element, roomEntity);
+  // Override the room entity config with the user's actions config
+  const actionEntity = {
+    ...roomEntity,
+    config: {
+      ...roomEntity.config,
+      ...config.actions,
+    },
+  };
+  const handler = actionHandler(actionEntity);
+  const action = handleClickAction(element, actionEntity);
 
   return html`<div class="info">
     <div class="text" @action=${action} .actionHandler=${handler}>

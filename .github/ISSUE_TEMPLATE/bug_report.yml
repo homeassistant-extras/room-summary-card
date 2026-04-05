@@ -1,6 +1,7 @@
 name: Bug report
 description: Report unexpected behavior, errors, or visual problems with this custom card
 title: '[Bug] '
+type: bug
 labels:
   - bug
 body:

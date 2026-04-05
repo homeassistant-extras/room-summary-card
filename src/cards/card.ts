@@ -29,7 +29,6 @@ import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { d } from '@util/debug';
 const equal = require('fast-deep-equal');
-
 export class RoomSummaryCard extends LitElement {
   /**
    * Card configuration object
@@ -272,6 +271,14 @@ export class RoomSummaryCard extends LitElement {
       this,
     );
 
+    const actions = {
+      ...this._roomEntity,
+      config: {
+        ...this._roomEntity.config,
+        ...this._config.actions,
+      },
+    };
+
     return html`
       <ha-card style="${cardStyle}">
         <div class="grid">
@@ -279,7 +286,7 @@ export class RoomSummaryCard extends LitElement {
             this,
             this._hass,
             this._roomInformation,
-            this._roomEntity,
+            actions,
             this._config,
             this._sensors,
             this._isIconActive,
@@ -312,8 +319,8 @@ export class RoomSummaryCard extends LitElement {
           ? html`
               <div
                 class="card-overlay"
-                @action=${handleClickAction(this, this._roomEntity)}
-                .actionHandler=${actionHandler(this._roomEntity)}
+                @action=${handleClickAction(this, actions)}
+                .actionHandler=${actionHandler(actions)}
               ></div>
             `
           : nothing}

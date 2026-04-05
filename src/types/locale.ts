@@ -122,7 +122,6 @@ export type TranslationKey =
   | 'editor.threshold.operator.less_than_or_equal'
   | 'editor.threshold.mold_threshold'
   | 'editor.occupancy.motion_occupancy_presence_sensors'
-  | 'editor.interactions.navigate_path'
   | 'editor.occupancy.occupancy_info'
   | 'editor.occupancy.occupancy_options'
   | 'editor.occupancy.occupancy_presence_detection'

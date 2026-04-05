@@ -145,8 +145,7 @@
       "interactions": "Interactions",
       "tap_action": "Tap Action",
       "double_tap_action": "Double Tap Action",
-      "hold_action": "Hold Action",
-      "navigate_path": "Navigate path when card tapped"
+      "hold_action": "Hold Action"
     },
     "occupancy": {
       "occupancy_presence_detection": "Occupancy & Presence Detection",

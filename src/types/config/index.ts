@@ -3,6 +3,7 @@
  * @description Core type definitions for card configuration.
  */
 
+import type { ActionConfig } from '@hass/data/lovelace/config/action';
 import type { ComparisonOperator } from '../comparison';
 import type { EntityConfig } from './entity';
 import type { LightConfig } from './light';
@@ -24,8 +25,28 @@ export interface Config {
   /** Array of entity configurations or entity IDs */
   entities?: (EntityConfig | string)[];
 
-  /** Navigation path for the entity */
+  /**
+   * Shorthand navigation path for the main room entity’s default tap behavior.
+   *
+   * @deprecated Prefer `actions.tap_action` with `action: navigate` and `navigation_path` set to the same path. The visual editor no longer exposes `navigate`; existing YAML continues to work. This property may be removed in a future major version.
+   */
   navigate?: string;
+
+  /**
+   * Actions merged over the main room entity’s tap/hold/double-tap config for the **info** area
+   * (room name, area statistics) and for the **`full_card_actions`** overlay when that feature is on.
+   * The main room **icon** still uses `entity` actions only.
+   */
+  actions?: {
+    /** Action to perform on tap */
+    tap_action?: ActionConfig;
+
+    /** Action to perform on double tap */
+    double_tap_action?: ActionConfig;
+
+    /** Action to perform on hold */
+    hold_action?: ActionConfig;
+  };
 
   /** Problem indicator configuration */
   problem?: {

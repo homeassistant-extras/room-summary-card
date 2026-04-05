@@ -437,7 +437,10 @@ thresholds:
     - entity_id: sensor.specific_humidity_sensor # Check specific sensor
       value: 55
   mold: 50
-navigate: /lovelace/living-room
+actions:
+  tap_action:
+    action: navigate
+    navigation_path: /lovelace/living-room
 features:
   - hide_area_stats
   - hide_sensor_icons

@@ -107,7 +107,7 @@ In this example, the card will trigger the hot border if either the averaged tem
 ### Entity Status
 
 - Color-coded icons indicating entity states
-- Interactive icons with tap/hold actions
+- Interactive icons with tap/double tap/hold actions
 - Climate entity colors with automatic state detection
 - RGB color support for accurate light representation
 

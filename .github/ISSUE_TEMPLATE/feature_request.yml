@@ -1,6 +1,7 @@
 name: Feature request
 description: Suggest an improvement or new capability for this custom card
 title: '[Feature] '
+type: feature
 labels:
   - enhancement
 body:
