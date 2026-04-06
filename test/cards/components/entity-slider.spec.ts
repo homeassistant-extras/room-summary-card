@@ -6,6 +6,7 @@ import * as stateActiveModule from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import * as iconModule from '@html/icon';
 import { fixture } from '@open-wc/testing-helpers';
+import { createStateEntity as s } from '@test/test-helpers';
 import * as customThemeModule from '@theme/custom-theme';
 import * as styleConverterModule from '@theme/util/style-converter';
 import type { Config } from '@type/config';
@@ -26,15 +27,10 @@ describe('entity-slider.ts', () => {
   let stateActiveStub: sinon.SinonStub;
   let getThemeColorOverrideStub: sinon.SinonStub;
 
-  const mockEntityState: EntityState = {
-    entity_id: 'light.living_room',
-    state: 'on',
-    attributes: {
-      friendly_name: 'Living Room Light',
-      brightness: 128,
-    },
-    domain: 'light',
-  };
+  const mockEntityState: EntityState = s('light', 'living_room', 'on', {
+    friendly_name: 'Living Room Light',
+    brightness: 128,
+  });
 
   const mockEntityConfig: EntityConfig = {
     entity_id: 'light.living_room',

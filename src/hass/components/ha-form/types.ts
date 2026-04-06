@@ -13,6 +13,7 @@ export type HaFormSchema =
 export interface HaFormBaseSchema {
   name: string;
   required?: boolean;
+  context?: Record<string, string>;
   // custom field to ease some pain
   label: TranslationKey;
 }

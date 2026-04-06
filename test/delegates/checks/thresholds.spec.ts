@@ -1,5 +1,6 @@
 import * as featureModule from '@config/feature';
 import { climateThresholds } from '@delegates/checks/thresholds';
+import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import type { SensorData } from '@type/sensor';
 import { expect } from 'chai';
@@ -107,24 +108,14 @@ describe('climate-thresholds.ts', () => {
           humidity: [{ value: 'sensor.humidity_threshold' }],
         },
         thresholdSensors: [
-          {
-            entity_id: 'sensor.temperature_threshold',
-            state: '75',
-            domain: 'sensor',
-            attributes: {
-              device_class: 'temperature',
-              unit_of_measurement: '°F',
-            },
-          },
-          {
-            entity_id: 'sensor.humidity_threshold',
-            state: '50',
-            domain: 'sensor',
-            attributes: {
-              device_class: 'humidity',
-              unit_of_measurement: '%',
-            },
-          },
+          s('sensor.temperature_threshold', '75', {
+            device_class: 'temperature',
+            unit_of_measurement: '°F',
+          }),
+          s('sensor.humidity_threshold', '50', {
+            device_class: 'humidity',
+            unit_of_measurement: '%',
+          }),
         ],
       },
     ];
@@ -194,18 +185,8 @@ describe('climate-thresholds.ts', () => {
                 average: 70, // Below threshold, but specific entity is above
                 uom: '°F',
                 states: [
-                  {
-                    entity_id: 'sensor.temp1',
-                    state: '72',
-                    domain: 'sensor',
-                    attributes: {},
-                  },
-                  {
-                    entity_id: 'sensor.specific_temp',
-                    state: '78',
-                    domain: 'sensor',
-                    attributes: {},
-                  }, // Above 75
+                  s('sensor.temp1', '72', {}),
+                  s('sensor.specific_temp', '78', {}), // Above 75
                 ],
                 domain: 'sensor',
               },
@@ -214,18 +195,8 @@ describe('climate-thresholds.ts', () => {
                 average: 55, // Above threshold, but specific entity is below
                 uom: '%',
                 states: [
-                  {
-                    entity_id: 'sensor.humidity1',
-                    state: '60',
-                    domain: 'sensor',
-                    attributes: {},
-                  },
-                  {
-                    entity_id: 'sensor.specific_humidity',
-                    state: '45',
-                    domain: 'sensor',
-                    attributes: {},
-                  }, // Below 50
+                  s('sensor.humidity1', '60', {}),
+                  s('sensor.specific_humidity', '45', {}), // Below 50
                 ],
                 domain: 'sensor',
               },
@@ -262,24 +233,14 @@ describe('climate-thresholds.ts', () => {
           };
           const sensorData: SensorData = {
             individual: [
-              {
-                entity_id: 'sensor.individual_temp',
-                state: '78', // Above threshold
-                domain: 'sensor',
-                attributes: {
-                  device_class: 'temperature',
-                  unit_of_measurement: '°F',
-                },
-              },
-              {
-                entity_id: 'sensor.individual_humidity',
-                state: '45', // Below threshold
-                domain: 'sensor',
-                attributes: {
-                  device_class: 'humidity',
-                  unit_of_measurement: '%',
-                },
-              },
+              s('sensor.individual_temp', '78', {
+                device_class: 'temperature',
+                unit_of_measurement: '°F',
+              }), // Above threshold
+              s('sensor.individual_humidity', '45', {
+                device_class: 'humidity',
+                unit_of_measurement: '%',
+              }), // Below threshold
             ],
             averaged: [
               {
@@ -323,15 +284,10 @@ describe('climate-thresholds.ts', () => {
           };
           const sensorData: SensorData = {
             individual: [
-              {
-                entity_id: 'sensor.wrong_device_class',
-                state: '78', // Above threshold but wrong device class
-                domain: 'sensor',
-                attributes: {
-                  device_class: 'pressure', // Wrong device class
-                  unit_of_measurement: 'hPa',
-                },
-              },
+              s('sensor.wrong_device_class', '78', {
+                device_class: 'pressure', // Wrong device class
+                unit_of_measurement: 'hPa',
+              }), // Above threshold but wrong device class
             ],
             averaged: [
               {
@@ -363,15 +319,10 @@ describe('climate-thresholds.ts', () => {
           };
           const sensorData: SensorData = {
             individual: [
-              {
-                entity_id: 'sensor.individual_temp',
-                state: '78', // Above threshold but should be ignored
-                domain: 'sensor',
-                attributes: {
-                  device_class: 'temperature',
-                  unit_of_measurement: '°F',
-                },
-              },
+              s('sensor.individual_temp', '78', {
+                device_class: 'temperature',
+                unit_of_measurement: '°F',
+              }), // Above threshold but should be ignored
             ],
             averaged: [
               {
@@ -810,18 +761,8 @@ describe('climate-thresholds.ts', () => {
               average: 72, // Average not used when entity_id specified
               uom: '°F',
               states: [
-                {
-                  entity_id: 'sensor.temp1',
-                  state: '70',
-                  domain: 'sensor',
-                  attributes: {},
-                },
-                {
-                  entity_id: 'sensor.temp2',
-                  state: '75',
-                  domain: 'sensor',
-                  attributes: {},
-                },
+                s('sensor.temp1', '70', {}),
+                s('sensor.temp2', '75', {}),
               ],
               domain: 'sensor',
             },

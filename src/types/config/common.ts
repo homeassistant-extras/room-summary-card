@@ -16,8 +16,8 @@ export interface BaseEntityConfig {
   /** Custom label to display instead of default state display */
   label?: string;
 
-  /** Attribute to display instead of entity state */
-  attribute?: string;
+  /** Attribute or attributes to display instead of entity state (single key or list for multiple values) */
+  attribute?: string | string[];
 
   /** Custom icon to display for the entity */
   icon?: string;

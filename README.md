@@ -120,7 +120,7 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`State-Based Icon Coloring`**: exact state & attribute matching for sensors like washing machines, device trackers, and status indicators - thanks @marcokreeft87, @zoic21, and @sebashi!
 - [x] **`Multi-Light Background`**: card background lights up when any light entity in the room is on - thanks @joshkay, @ojm88, @fonix232
 - [x] **`Entity Picture Display`**: automatic display of entity pictures with optional override - thanks @Zipp0KMS, @pheitman
-- [x] **`Custom Labels`**: entity and sensor labels with state/threshold-based overrides - thanks @ojm88
+- [x] **`Custom Labels`**: entity and sensor labels with state/threshold-based overrides - thanks @ojm88, @bobo-cher
 - [x] **`Smoke, Gas, Water Detection`**: visual indicators for alarm states - thanks @Arjan-21, @robex2005
 - [x] **`Entity-Based Threshold Values`**: **⭐ Contributor ⭐** dynamic threshold based on entity - thanks @Micky2149
 - [x] **`Full Card Actions`**: make entire card clickable with larger touch targets for mobile-friendly navigation - thanks @devkaiwang, @jameshirka

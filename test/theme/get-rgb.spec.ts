@@ -1,23 +1,11 @@
+import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import { getRgbColor } from '@theme/get-rgb';
-import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 
 describe('rgb-color.ts', () => {
   describe('getRgbColor', () => {
-    // Helper to create entity state objects for testing
-    const createStateObj = (
-      entity_id: string = 'light.test',
-      state: string = 'on',
-      attributes: Record<string, any> = {},
-    ): EntityState => ({
-      entity_id,
-      state,
-      attributes,
-      domain: 'light',
-    });
-
     it('should return rgb string when rgb_color attribute is valid', () => {
-      const state = createStateObj('light.test', 'on', {
+      const state = s('light.test', 'on', {
         rgb_color: [255, 100, 50],
       });
 
@@ -26,14 +14,14 @@ describe('rgb-color.ts', () => {
     });
 
     it('should return undefined when rgb_color is missing', () => {
-      const state = createStateObj('light.test', 'on', {});
+      const state = s('light.test', 'on', {});
 
       const result = getRgbColor(state, '', '', true);
       expect(result).to.be.undefined;
     });
 
     it('should return undefined when rgb_color is not an array', () => {
-      const state = createStateObj('light.test', 'on', {
+      const state = s('light.test', 'on', {
         rgb_color: 'not an array',
       });
 
@@ -42,10 +30,10 @@ describe('rgb-color.ts', () => {
     });
 
     it('should return undefined when rgb_color array length is not 3', () => {
-      const stateTooFew = createStateObj('light.test', 'on', {
+      const stateTooFew = s('light.test', 'on', {
         rgb_color: [255, 100],
       });
-      const stateTooMany = createStateObj('light.test', 'on', {
+      const stateTooMany = s('light.test', 'on', {
         rgb_color: [255, 100, 50, 255],
       });
 
@@ -57,7 +45,7 @@ describe('rgb-color.ts', () => {
     });
 
     it('should return undefined when active and onColor are set', () => {
-      const state = createStateObj('light.test', 'on', {
+      const state = s('light.test', 'on', {
         rgb_color: [255, 100, 50],
       });
 
@@ -66,7 +54,7 @@ describe('rgb-color.ts', () => {
     });
 
     it('should return undefined when inactive and offColor are set', () => {
-      const state = createStateObj('light.test', 'off', {
+      const state = s('light.test', 'off', {
         rgb_color: [255, 100, 50],
       });
 
@@ -75,7 +63,7 @@ describe('rgb-color.ts', () => {
     });
 
     it('should return rgb string when active but onColor is not set', () => {
-      const state = createStateObj('light.test', 'on', {
+      const state = s('light.test', 'on', {
         rgb_color: [255, 100, 50],
       });
 
@@ -84,7 +72,7 @@ describe('rgb-color.ts', () => {
     });
 
     it('should return rgb string when inactive but offColor is not set', () => {
-      const state = createStateObj('light.test', 'off', {
+      const state = s('light.test', 'off', {
         rgb_color: [255, 100, 50],
       });
 
@@ -93,7 +81,7 @@ describe('rgb-color.ts', () => {
     });
 
     it('should handle edge cases with zeros in rgb values', () => {
-      const state = createStateObj('light.test', 'on', {
+      const state = s('light.test', 'on', {
         rgb_color: [0, 0, 0],
       });
 
@@ -102,10 +90,10 @@ describe('rgb-color.ts', () => {
     });
 
     it('should process both active and inactive states correctly', () => {
-      const activeState = createStateObj('light.test', 'on', {
+      const activeState = s('light.test', 'on', {
         rgb_color: [255, 100, 50],
       });
-      const inactiveState = createStateObj('light.test', 'off', {
+      const inactiveState = s('light.test', 'off', {
         rgb_color: [30, 30, 30],
       });
 

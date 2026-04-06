@@ -30,22 +30,22 @@ entities:
 
 ## Entity Configuration Options
 
-| Name              | Type   | Default                 | Description                                                                                           |
-| ----------------- | ------ | ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| entity_id         | string | **Required**            | Entity ID in Home Assistant                                                                           |
-| icon              | string | entity default          | Custom MDI icon                                                                                       |
-| label             | string | none                    | Custom label to display instead of entity name (when `show_entity_labels` is enabled) or sensor state |
-| attribute         | string | none                    | Attribute to display instead of entity state                                                          |
-| on_color          | string | domain default          | Color when entity is active                                                                           |
-| off_color         | string | theme off color         | Color when entity is inactive                                                                         |
-| thresholds        | array  | none                    | Dynamic colors/icons based on sensor values                                                           |
-| states            | array  | none                    | Colors/icons based on exact entity states                                                             |
-| badges            | array  | none                    | Badge overlays for additional visual information (up to 4 badges per entity)                          |
-| styles            | object | none                    | Custom CSS styles to apply to the entity                                                              |
-| features          | array  | none                    | Feature flags for this entity                                                                         |
-| tap_action        | object | `{action: "toggle"}`    | Action on single tap                                                                                  |
-| hold_action       | object | `{action: "more-info"}` | Action on hold                                                                                        |
-| double_tap_action | object | `{action: "none"}`      | Action on double tap                                                                                  |
+| Name              | Type                      | Default                 | Description                                                                                           |
+| ----------------- | ------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------- |
+| entity_id         | string                    | **Required**            | Entity ID in Home Assistant                                                                           |
+| icon              | string                    | entity default          | Custom MDI icon                                                                                       |
+| label             | string                    | none                    | Custom label to display instead of entity name (when `show_entity_labels` is enabled) or sensor state |
+| attribute         | string or list of strings | none                    | Attribute(s) to show instead of entity state                                                          |
+| on_color          | string                    | domain default          | Color when entity is active                                                                           |
+| off_color         | string                    | theme off color         | Color when entity is inactive                                                                         |
+| thresholds        | array                     | none                    | Dynamic colors/icons based on sensor values                                                           |
+| states            | array                     | none                    | Colors/icons based on exact entity states                                                             |
+| badges            | array                     | none                    | Badge overlays for additional visual information (up to 4 badges per entity)                          |
+| styles            | object                    | none                    | Custom CSS styles to apply to the entity                                                              |
+| features          | array                     | none                    | Feature flags for this entity                                                                         |
+| tap_action        | object                    | `{action: "toggle"}`    | Action on single tap                                                                                  |
+| hold_action       | object                    | `{action: "more-info"}` | Action on hold                                                                                        |
+| double_tap_action | object                    | `{action: "none"}`      | Action on double tap                                                                                  |
 
 ### Threshold Configuration Options
 
@@ -462,7 +462,7 @@ The `show_entity_labels` feature flag displays labels under each entity icon. La
 
 1. **State/threshold label** (highest priority) - Displayed when a matching state or threshold configuration has a `label` property
 2. **Entity-level label** - Displayed when the entity has a `label` property configured
-3. **Attribute value** - Displayed when an `attribute` property is configured (replaces entity name/label)
+3. **Attribute value(s)** - Displayed when an `attribute` property is configured (replaces entity name/label). Use a string for one attribute or a list for multiple.
 4. **Entity name** (fallback) - Displayed when no label or attribute is configured (uses Home Assistant's entity naming logic)
 
 ### Label Priority Examples
@@ -514,7 +514,7 @@ entities:
     attribute: condition # Displays weather condition attribute instead of entity name
 ```
 
-**Note**: When `show_entity_labels` is enabled, the `attribute` property allows you to display a formatted attribute value instead of the entity name or configured label. This is useful for entities where you want to show a specific attribute (like `battery_level`, `temperature`, `condition`, etc.) as the label.
+**Note**: When `show_entity_labels` is enabled, the `attribute` property allows you to display formatted attribute value(s) instead of the entity name or configured label. Set `attribute` to a **string** for one field, or a **list of strings** (e.g. `last_updated` and `state`) to show several. This is useful for entities where you want attributes like `battery_level`, `temperature`, `condition`, or built-in fields such as `last_changed`, as the label.
 
 ### Sensor Labels
 
@@ -546,6 +546,12 @@ sensors:
   # Sensor displaying an attribute instead of state
   - entity_id: sensor.weather_station
     attribute: temperature # Displays temperature attribute instead of state value
+
+  # Multiple attributes (list) in the state area
+  - entity_id: light.kitchen_bulb_1
+    attribute:
+      - last_changed
+      - state
 ```
 
-**Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified, it displays the formatted attribute value instead of the state. When labels are not configured, sensors display their normal state values (e.g., "75°F", "50%", "450 ppm").
+**Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified (string or list), it displays the formatted attribute value(s) instead of the state. When labels are not configured, sensors display their normal state values (e.g., "75°F", "50%", "450 ppm").

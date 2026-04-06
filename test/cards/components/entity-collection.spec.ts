@@ -4,6 +4,7 @@ import * as iconEntitiesModule from '@delegates/entities/icon-entities';
 import type { HomeAssistant } from '@hass/types';
 import * as iconModule from '@html/icon';
 import { fixture } from '@open-wc/testing-helpers';
+import { createStateEntity as s } from '@test/test-helpers';
 import * as styleConverterModule from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
@@ -20,24 +21,14 @@ describe('entity-collection.ts', () => {
   let stylesToHostCssStub: sinon.SinonStub;
 
   const mockEntityStates: EntityState[] = [
-    {
-      entity_id: 'light.living_room',
-      state: 'on',
-      attributes: { friendly_name: 'Living Room Light' },
-      domain: 'light',
-    },
-    {
-      entity_id: 'switch.living_room_fan',
-      state: 'off',
-      attributes: { friendly_name: 'Living Room Fan' },
-      domain: 'switch',
-    },
-    {
-      entity_id: 'sensor.temperature',
-      state: '72',
-      attributes: { friendly_name: 'Temperature', unit_of_measurement: '°F' },
-      domain: 'sensor',
-    },
+    s('light', 'living_room', 'on', { friendly_name: 'Living Room Light' }),
+    s('switch', 'living_room_fan', 'off', {
+      friendly_name: 'Living Room Fan',
+    }),
+    s('sensor', 'temperature', '72', {
+      friendly_name: 'Temperature',
+      unit_of_measurement: '°F',
+    }),
   ];
 
   const mockEntityConfigs: EntityConfig[] = [
@@ -132,12 +123,9 @@ describe('entity-collection.ts', () => {
       const newEntities: EntityInformation[] = [
         {
           config: { entity_id: 'light.bedroom' } as EntityConfig,
-          state: {
-            entity_id: 'light.bedroom',
-            state: 'off',
-            attributes: { friendly_name: 'Bedroom Light' },
-            domain: 'light',
-          },
+          state: s('light', 'bedroom', 'off', {
+            friendly_name: 'Bedroom Light',
+          }),
         },
       ];
 

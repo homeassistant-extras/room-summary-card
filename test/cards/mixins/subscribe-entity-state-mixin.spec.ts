@@ -91,6 +91,8 @@ describe('SubscribeEntityStateMixin', () => {
       state: 'on',
       attributes: { friendly_name: 'Bedroom Light' },
       domain: 'light',
+      last_changed: '1970-01-01T00:00:00.000Z',
+      last_updated: '1970-01-01T00:00:00.000Z',
     });
     clock.restore();
   });

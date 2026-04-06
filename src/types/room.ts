@@ -27,4 +27,10 @@ export interface EntityState {
 
   /** Returns the domain portion of the entity_id */
   domain: string;
+
+  /** Last changed timestamp */
+  last_changed: string;
+
+  /** Last updated timestamp */
+  last_updated: string;
 }

@@ -1,5 +1,6 @@
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
+import { createStateEntity as s } from '@test/test-helpers';
 import * as customThemeModule from '@theme/custom-theme';
 import { getStyleData } from '@theme/render/common-style';
 import * as thresholdColorModule from '@theme/threshold-color';
@@ -15,15 +16,10 @@ const createEntityInfo = (
   attributes = {},
 ): EntityInformation => ({
   config: { entity_id: `${domain}.${entityId}` },
-  state: {
-    entity_id: `${domain}.${entityId}`,
-    state,
-    attributes: {
-      friendly_name: entityId.replace(/_/g, ' '),
-      ...attributes,
-    },
-    domain,
-  },
+  state: s(domain, entityId, state, {
+    friendly_name: entityId.replace(/_/g, ' '),
+    ...attributes,
+  }),
 });
 
 describe('common-style.ts', () => {

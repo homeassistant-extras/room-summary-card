@@ -1,4 +1,5 @@
 import { calculateAverages } from '@delegates/utils/sensor-averages';
+import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 
@@ -8,15 +9,11 @@ const createSensorEntity = (
   state: string,
   deviceClass: string,
   uom?: string,
-): EntityState => ({
-  entity_id: entityId,
-  state,
-  attributes: {
+): EntityState =>
+  s(entityId, state, {
     device_class: deviceClass,
     unit_of_measurement: uom,
-  },
-  domain: 'sensor',
-});
+  });
 
 describe('calculate-averages.ts', () => {
   describe('calculateAverages', () => {

@@ -29,7 +29,7 @@ describe('stateDisplay.ts', () => {
     } as any as HomeAssistant;
   });
 
-  it('should render state-display with correct hass and stateObj properties', async () => {
+  it('should render state-display with correct hass, stateObj, and content properties', async () => {
     const result = stateDisplay(mockHass, mockEntity);
     const el = await fixture(result as TemplateResult);
 
@@ -39,32 +39,10 @@ describe('stateDisplay.ts', () => {
     // Check that properties were correctly passed
     expect((el as any).hass).to.equal(mockHass);
     expect((el as any).stateObj).to.equal(mockEntity);
-  });
+    expect((el as any).content).to.be.undefined;
 
-  it('should apply the provided className when specified', async () => {
-    const customClass = 'custom-state-display';
-    const result = stateDisplay(mockHass, mockEntity, customClass);
-    const el = await fixture(result as TemplateResult);
-
-    // Check that the class attribute was correctly set
-    expect(el.classList.contains(customClass)).to.be.true;
-  });
-
-  it('should not apply any class when className is not provided', async () => {
-    const result = stateDisplay(mockHass, mockEntity);
-    const el = await fixture(result as TemplateResult);
-
-    // Check that no class was applied (just the empty string)
-    expect(el.getAttribute('class')).to.equal('');
-  });
-
-  it('should handle multiple class names correctly', async () => {
-    const multipleClasses = 'first-class second-class';
-    const result = stateDisplay(mockHass, mockEntity, multipleClasses);
-    const el = await fixture(result as TemplateResult);
-
-    // Check that both classes were applied
-    expect(el.classList.contains('first-class')).to.be.true;
-    expect(el.classList.contains('second-class')).to.be.true;
+    const withContent = stateDisplay(mockHass, mockEntity, 'humidity');
+    const el2 = await fixture(withContent as TemplateResult);
+    expect((el2 as any).content).to.equal('humidity');
   });
 });

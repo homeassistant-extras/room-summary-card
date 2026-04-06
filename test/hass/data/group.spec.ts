@@ -1,4 +1,5 @@
 import { computeGroupDomain, type GroupEntity } from '@hass/data/group';
+import { createState as s } from '@test/test-helpers';
 import { expect } from 'chai';
 
 describe('group.ts', () => {
@@ -104,15 +105,13 @@ describe('group.ts', () => {
 
     it('should handle additional attributes in the state object', () => {
       const stateObj = {
-        entity_id: 'group.lights',
-        state: 'on',
-        attributes: {
+        ...s('group', 'lights', 'on', {
           entity_id: ['light.kitchen', 'light.living_room'],
           friendly_name: 'All Lights',
           order: 1,
           auto: true,
-        },
-      };
+        }),
+      } as GroupEntity;
 
       const result = computeGroupDomain(stateObj);
 

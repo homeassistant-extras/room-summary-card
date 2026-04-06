@@ -36,6 +36,8 @@ export const getState = memoizeOne(
       state: state.state,
       attributes: state.attributes,
       entity_id: state.entity_id,
+      last_changed: state.last_changed,
+      last_updated: state.last_updated,
       domain,
     };
   },

@@ -161,11 +161,6 @@ describe('entity-detail-editor.ts', () => {
               selector: { text: {} },
             },
             {
-              name: 'attribute',
-              label: 'editor.entity.entity_attribute',
-              selector: { attribute: { entity_id: 'light.living_room' } },
-            },
-            {
               name: 'icon',
               label: 'editor.entity.entity_icon',
               selector: {
@@ -173,6 +168,18 @@ describe('entity-detail-editor.ts', () => {
               },
             },
           ],
+        },
+        {
+          name: 'attribute',
+          label: 'editor.entity.entity_attribute',
+          selector: {
+            ui_state_content: {
+              allow_context: true,
+            },
+          },
+          context: {
+            filter_entity: 'entity_id',
+          },
         },
         {
           type: 'grid',
@@ -281,45 +288,6 @@ describe('entity-detail-editor.ts', () => {
       const schema2 = element['_entitiesSchema']('light.living_room', mockHass);
 
       expect(schema1).to.equal(schema2); // Same reference due to memoization
-    });
-
-    it('should have correct selector types in schema', () => {
-      element.hass = mockHass;
-      const schema = element['_entitiesSchema']('light.living_room', mockHass);
-      const firstGridSchema = (schema[1] as any).schema;
-      const secondGridSchema = (schema[2] as any).schema;
-
-      expect(firstGridSchema![0]).to.deep.include({
-        name: 'label',
-        label: 'editor.entity.entity_label',
-      });
-      expect(firstGridSchema![0]?.selector).to.deep.equal({ text: {} });
-
-      expect(firstGridSchema![1]).to.deep.include({
-        name: 'attribute',
-        label: 'editor.entity.entity_attribute',
-      });
-      expect(firstGridSchema![1]?.selector).to.deep.equal({
-        attribute: { entity_id: 'light.living_room' },
-      });
-
-      expect(firstGridSchema![2]).to.deep.include({
-        name: 'icon',
-        label: 'editor.entity.entity_icon',
-      });
-      expect(firstGridSchema![2]?.selector).to.deep.equal({ icon: {} });
-
-      expect(secondGridSchema![0]).to.deep.include({
-        name: 'on_color',
-        label: 'editor.entity.entity_on_color',
-      });
-      expect(secondGridSchema![0]?.selector).to.deep.equal({ ui_color: {} });
-
-      expect(secondGridSchema![1]).to.deep.include({
-        name: 'off_color',
-        label: 'editor.entity.entity_off_color',
-      });
-      expect(secondGridSchema![1]?.selector).to.deep.equal({ ui_color: {} });
     });
   });
 

@@ -1,16 +1,13 @@
 import { shouldShowMoldIndicator } from '@delegates/checks/moldy';
+import { createStateEntity as s } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 
 describe('mold-thresholds.ts', () => {
   describe('shouldShowMoldIndicator', () => {
-    const createMoldSensor = (state: string): EntityState => ({
-      entity_id: 'sensor.mold',
-      state,
-      attributes: {},
-      domain: 'sensor',
-    });
+    const createMoldSensor = (state: string): EntityState =>
+      s('sensor', 'mold', state, {});
 
     const createConfig = (moldThreshold?: number): Config => ({
       area: 'test',

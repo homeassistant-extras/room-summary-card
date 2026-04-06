@@ -19,11 +19,16 @@ export function compressedToEntityState(
   entityId: string,
   comp: HassEntityState,
 ): EntityState {
+  let last_changed = new Date(comp.lc * 1000).toISOString();
   return {
     entity_id: entityId,
     state: comp.s,
     attributes: comp.a ?? {},
     domain: computeDomain(entityId),
+    last_changed,
+    last_updated: comp.lu
+      ? new Date(comp.lu * 1000).toISOString()
+      : last_changed,
   };
 }
 
@@ -49,6 +54,13 @@ export function applyDiff(
 
   if (add) {
     if (add.s !== undefined) state = add.s;
+    if (add.lc) {
+      current.last_updated = current.last_changed = new Date(
+        add.lc * 1000,
+      ).toISOString();
+    } else if (add.lu) {
+      current.last_updated = new Date(add.lu * 1000).toISOString();
+    }
     if (add.a) Object.assign(attributes, add.a);
   }
   if (remove?.a) {
@@ -60,5 +72,7 @@ export function applyDiff(
     state,
     attributes,
     domain: computeDomain(entityId),
+    last_changed: current.last_changed,
+    last_updated: current.last_updated,
   };
 }

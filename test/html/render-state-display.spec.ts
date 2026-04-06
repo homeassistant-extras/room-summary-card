@@ -3,6 +3,7 @@ import type { HomeAssistant } from '@hass/types';
 import { renderStateDisplay } from '@html/render-state-display';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
+import { createStateEntity as s } from '@test/test-helpers';
 import type { EntityInformation, EntityState } from '@type/room';
 import * as shouldHideStateDisplayModule from '@util/should-hide-state-display';
 import { expect } from 'chai';
@@ -18,12 +19,7 @@ describe('render-state-display.ts', () => {
 
   beforeEach(() => {
     // Mock entity state
-    mockEntityState = {
-      entity_id: 'light.living_room',
-      domain: 'light',
-      state: 'on',
-      attributes: { brightness: 100 },
-    } as EntityState;
+    mockEntityState = s('light', 'living_room', 'on', { brightness: 100 });
 
     // Mock Home Assistant
     mockHass = {

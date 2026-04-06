@@ -1,22 +1,11 @@
 import type { HomeAssistant } from '@hass/types';
 import { renderProblemIndicator, renderRoomIcon } from '@html/icon';
 import { fixture } from '@open-wc/testing-helpers';
+import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
-
-// Helper to create EntityState objects for testing
-const createEntityState = (
-  entityId: string,
-  state = 'on',
-  attributes = {},
-): EntityState => ({
-  entity_id: entityId,
-  state,
-  attributes,
-  domain: entityId.split('.')[0] || 'unknown',
-});
 
 describe('icon.ts', () => {
   let mockHass: HomeAssistant;
@@ -66,7 +55,7 @@ describe('icon.ts', () => {
         {
           individual: [],
           averaged: [],
-          problemSensors: [createEntityState('entity1')],
+          problemSensors: [s('entity1', 'on')],
           lightEntities: [],
           ambientLightEntities: [],
           thresholdSensors: [],
@@ -90,9 +79,9 @@ describe('icon.ts', () => {
           individual: [],
           averaged: [],
           problemSensors: [
-            createEntityState('entity1'),
-            createEntityState('entity2'),
-            createEntityState('entity3'),
+            s('entity1', 'on'),
+            s('entity2', 'on'),
+            s('entity3', 'on'),
           ],
           lightEntities: [],
           ambientLightEntities: [],
@@ -115,7 +104,7 @@ describe('icon.ts', () => {
         {
           individual: [],
           averaged: [],
-          problemSensors: [createEntityState('entity1', 'off')],
+          problemSensors: [s('entity1', 'off')],
           lightEntities: [],
           ambientLightEntities: [],
           thresholdSensors: [],
@@ -137,7 +126,7 @@ describe('icon.ts', () => {
         {
           individual: [],
           averaged: [],
-          problemSensors: [createEntityState('entity1', 'on')],
+          problemSensors: [s('entity1', 'on')],
           lightEntities: [],
           ambientLightEntities: [],
           thresholdSensors: [],
@@ -156,7 +145,7 @@ describe('icon.ts', () => {
     it('should handle large numbers of entities correctly', async () => {
       const manyEntities = Array(10)
         .fill(null)
-        .map((_, i) => createEntityState(`entity${i}`));
+        .map((_, i) => s(`entity${i}`, 'on'));
       const result = renderProblemIndicator(
         mockHass,
         mockConfig,
@@ -181,7 +170,7 @@ describe('icon.ts', () => {
     it('should handle numbers greater than 10 correctly', async () => {
       const manyEntities = Array(34)
         .fill(null)
-        .map((_, i) => createEntityState(`entity${i}`));
+        .map((_, i) => s(`entity${i}`, 'on'));
       const result = renderProblemIndicator(
         mockHass,
         mockConfig,
@@ -211,8 +200,8 @@ describe('icon.ts', () => {
           individual: [],
           averaged: [],
           problemSensors: [
-            createEntityState('entity/with/slashes'),
-            createEntityState('entity.with.dots'),
+            s('entity/with/slashes', 'on'),
+            s('entity.with.dots', 'on'),
           ],
           lightEntities: [],
           ambientLightEntities: [],
@@ -235,7 +224,7 @@ describe('icon.ts', () => {
         {
           individual: [],
           averaged: [],
-          problemSensors: [createEntityState('entity1')],
+          problemSensors: [s('entity1', 'on')],
           lightEntities: [],
           ambientLightEntities: [],
           thresholdSensors: [],
@@ -250,7 +239,7 @@ describe('icon.ts', () => {
     });
 
     it('should show mold indicator when mold sensor exists and should be shown', async () => {
-      const moldSensor = createEntityState('sensor.mold', '75');
+      const moldSensor = s('sensor.mold', '75');
       const configWithThreshold: Config = {
         area: 'test',
         thresholds: { mold: 50 },
@@ -277,7 +266,7 @@ describe('icon.ts', () => {
     });
 
     it('should hide mold indicator when mold sensor should not be shown', async () => {
-      const moldSensor = createEntityState('sensor.mold', '25');
+      const moldSensor = s('sensor.mold', '25');
       const configWithThreshold: Config = {
         area: 'test',
         thresholds: { mold: 50 },
@@ -315,7 +304,7 @@ describe('icon.ts', () => {
           {
             individual: [],
             averaged: [],
-            problemSensors: [createEntityState('entity1', 'off')],
+            problemSensors: [s('entity1', 'off')],
             lightEntities: [],
             ambientLightEntities: [],
             thresholdSensors: [],
@@ -341,7 +330,7 @@ describe('icon.ts', () => {
           {
             individual: [],
             averaged: [],
-            problemSensors: [createEntityState('entity1', 'on')],
+            problemSensors: [s('entity1', 'on')],
             lightEntities: [],
             ambientLightEntities: [],
             thresholdSensors: [],
@@ -368,7 +357,7 @@ describe('icon.ts', () => {
           {
             individual: [],
             averaged: [],
-            problemSensors: [createEntityState('entity1', 'off')],
+            problemSensors: [s('entity1', 'off')],
             lightEntities: [],
             ambientLightEntities: [],
             thresholdSensors: [],
@@ -393,7 +382,7 @@ describe('icon.ts', () => {
           {
             individual: [],
             averaged: [],
-            problemSensors: [createEntityState('entity1', 'on')],
+            problemSensors: [s('entity1', 'on')],
             lightEntities: [],
             ambientLightEntities: [],
             thresholdSensors: [],
@@ -420,7 +409,7 @@ describe('icon.ts', () => {
           {
             individual: [],
             averaged: [],
-            problemSensors: [createEntityState('entity1', 'on')],
+            problemSensors: [s('entity1', 'on')],
             lightEntities: [],
             ambientLightEntities: [],
             thresholdSensors: [],
@@ -435,7 +424,7 @@ describe('icon.ts', () => {
       });
 
       it('should still show mold indicator when problem.display is never', async () => {
-        const moldSensor = createEntityState('sensor.mold', '75');
+        const moldSensor = s('sensor.mold', '75');
         const configNever: Config = {
           area: 'test',
           problem: { display: 'never' },
@@ -444,7 +433,7 @@ describe('icon.ts', () => {
         const sensorData = {
           individual: [],
           averaged: [],
-          problemSensors: [createEntityState('entity1', 'on')],
+          problemSensors: [s('entity1', 'on')],
           lightEntities: [],
           ambientLightEntities: [],
           mold: moldSensor,
@@ -474,7 +463,7 @@ describe('icon.ts', () => {
           {
             individual: [],
             averaged: [],
-            problemSensors: [createEntityState('entity1', 'off')],
+            problemSensors: [s('entity1', 'off')],
             lightEntities: [],
             ambientLightEntities: [],
             thresholdSensors: [],
@@ -499,14 +488,9 @@ describe('icon.ts', () => {
 
     beforeEach(() => {
       // Mock state object
-      mockState = {
-        entity_id: 'light.living_room',
-        state: 'on',
-        attributes: {
-          icon: 'mdi:light',
-        },
-        domain: 'light',
-      };
+      mockState = s('light.living_room', 'on', {
+        icon: 'mdi:light',
+      });
 
       // Mock entity information
       entity = {

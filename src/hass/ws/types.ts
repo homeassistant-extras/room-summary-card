@@ -19,6 +19,8 @@ export type Context = {
 export type HassEntityBase = {
   entity_id: string;
   state: string;
+  last_changed: string;
+  last_updated: string;
   attributes: HassEntityAttributeBase;
 };
 

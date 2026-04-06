@@ -71,11 +71,6 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
               selector: { text: {} },
             },
             {
-              name: 'attribute',
-              label: 'editor.entity.entity_attribute',
-              selector: { attribute: { entity_id } },
-            },
-            {
               name: 'icon',
               label: 'editor.entity.entity_icon',
               selector: {
@@ -83,6 +78,18 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
               },
             },
           ],
+        },
+        {
+          name: 'attribute',
+          label: 'editor.entity.entity_attribute',
+          selector: {
+            ui_state_content: {
+              allow_context: true,
+            },
+          },
+          context: {
+            filter_entity: 'entity_id',
+          },
         },
         {
           type: 'grid',
@@ -207,11 +214,6 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
               selector: { text: {} },
             },
             {
-              name: 'attribute',
-              label: 'editor.entity.entity_attribute',
-              selector: { attribute: { entity_id } },
-            },
-            {
               name: 'icon',
               label: 'editor.entity.entity_icon',
               selector: {
@@ -219,6 +221,18 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
               },
             },
           ],
+        },
+        {
+          name: 'attribute',
+          label: 'editor.entity.entity_attribute',
+          selector: {
+            ui_state_content: {
+              allow_context: true,
+            },
+          },
+          context: {
+            filter_entity: 'entity_id',
+          },
         },
         {
           name: 'interactions',

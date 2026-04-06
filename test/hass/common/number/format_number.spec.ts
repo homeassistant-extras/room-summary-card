@@ -2,24 +2,13 @@ import {
   isNumericFromAttributes,
   isNumericState,
 } from '@hass/common/number/format_number';
-import type { HassEntity } from '@hass/ws/types';
+import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import { expect } from 'chai';
 
 describe('format_number.ts', () => {
-  // Helper function to create state objects for testing
-  const createStateObj = (
-    entityId: string,
-    state: string,
-    attributes = {},
-  ): HassEntity => ({
-    entity_id: entityId,
-    state,
-    attributes,
-  });
-
   describe('isNumericState', () => {
     it('should return true for entity with unit_of_measurement', () => {
-      const stateObj = createStateObj('sensor.temperature', '72', {
+      const stateObj = s('sensor.temperature', '72', {
         unit_of_measurement: '°F',
       });
 
@@ -27,7 +16,7 @@ describe('format_number.ts', () => {
     });
 
     it('should return true for entity with state_class', () => {
-      const stateObj = createStateObj('sensor.energy', '100', {
+      const stateObj = s('sensor.energy', '100', {
         state_class: 'total_increasing',
       });
 
@@ -35,7 +24,7 @@ describe('format_number.ts', () => {
     });
 
     it('should return false for entity without numeric attributes', () => {
-      const stateObj = createStateObj('light.living_room', 'on', {
+      const stateObj = s('light.living_room', 'on', {
         friendly_name: 'Living Room Light',
       });
 
@@ -43,7 +32,7 @@ describe('format_number.ts', () => {
     });
 
     it('should return false for entity with empty attributes', () => {
-      const stateObj = createStateObj('switch.test', 'off', {});
+      const stateObj = s('switch.test', 'off', {});
 
       expect(isNumericState(stateObj)).to.be.false;
     });

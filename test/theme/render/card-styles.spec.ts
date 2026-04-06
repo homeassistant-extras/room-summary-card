@@ -7,6 +7,7 @@ import * as featureModule from '@config/feature';
 import * as occupancyModule from '@delegates/checks/occupancy';
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import * as stateColorModule from '@hass/common/entity/state_color';
+import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import * as backgroundBitsModule from '@theme/background/background-bits';
 import * as customThemeModule from '@theme/custom-theme';
 import * as getRgbColorModule from '@theme/get-rgb';
@@ -22,12 +23,7 @@ const createEntityInfo = (
   attributes = {},
 ): EntityInformation => ({
   config: { entity_id: entityId },
-  state: {
-    entity_id: entityId,
-    state,
-    attributes,
-    domain: entityId.split('.')[0] || 'unknown',
-  },
+  state: s(entityId, state, attributes),
 });
 
 describe('card-styles.ts', () => {
@@ -506,12 +502,7 @@ describe('card-styles.ts', () => {
         entityId: string,
         state = 'on',
         attributes = {},
-      ): EntityState => ({
-        entity_id: entityId,
-        state,
-        attributes,
-        domain: 'light',
-      });
+      ): EntityState => s(entityId, state, attributes);
 
       it('should use ambient light RGB color for theme override when active ambient light exists', () => {
         const entity = createEntityInfo('light.main');

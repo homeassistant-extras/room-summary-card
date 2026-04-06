@@ -6,9 +6,9 @@ import {
 } from '@delegates/action-handler-delegate';
 import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
-import { attributeDisplay } from '@html/attribute-display';
 import { renderBadgeElements } from '@html/badge-squad';
 import { renderStateDisplay } from '@html/render-state-display';
+import { stateDisplay } from '@html/state-display';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { computeEntityIcon } from '@theme/render/loot-box-icon';
 import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
@@ -219,11 +219,7 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
         label = this.entity.config.label;
       } else if (this.entity.config.attribute) {
         // Third priority: attribute value if attribute is configured
-        label = attributeDisplay(
-          this._hass,
-          state,
-          this.entity.config.attribute,
-        );
+        label = stateDisplay(this._hass, state, this.entity.config.attribute);
       } else {
         // Fallback: entity name
         label = computeEntityName(state, this._hass);

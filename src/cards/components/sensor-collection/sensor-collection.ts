@@ -12,7 +12,6 @@ import {
   type IconResources,
 } from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
-import { attributeDisplay } from '@html/attribute-display';
 import { stateDisplay } from '@html/state-display';
 import { processHomeAssistantColors } from '@theme/colors';
 import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
@@ -182,12 +181,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
     if (this._hideLabels) return nothing;
     if (label) return html`${label}`;
 
-    // If attribute is specified, display the attribute value instead of state
-    if (sensorConfig?.attribute) {
-      return attributeDisplay(this._hass, state, sensorConfig.attribute);
-    }
-
-    return stateDisplay(this._hass, state);
+    return stateDisplay(this._hass, state, sensorConfig?.attribute);
   }
 
   /**

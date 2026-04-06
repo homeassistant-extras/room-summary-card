@@ -17,7 +17,8 @@ export type Selector =
   | SelectSelector
   | StringSelector
   | UiActionSelector
-  | UiColorSelector;
+  | UiColorSelector
+  | UiStateContentSelector;
 
 export interface AreaSelector {
   area: {};
@@ -134,5 +135,13 @@ export interface UiColorSelector {
     default_color?: string;
     include_none?: boolean;
     include_state?: boolean;
+  } | null;
+}
+
+export interface UiStateContentSelector {
+  ui_state_content: {
+    entity_id?: string;
+    allow_name?: boolean;
+    allow_context?: boolean;
   } | null;
 }

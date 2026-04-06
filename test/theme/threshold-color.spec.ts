@@ -1,3 +1,4 @@
+import { createStateEntity as s } from '@test/test-helpers';
 import {
   getEntityLabel,
   getStateColor,
@@ -18,12 +19,7 @@ describe('threshold-color.ts', () => {
         entity_id: 'sensor.test',
         states,
       },
-      state: {
-        entity_id: 'sensor.test',
-        state,
-        domain: 'sensor',
-        attributes: {},
-      },
+      state: s('sensor', 'test', state),
     });
 
     it('should return undefined when no states configured', () => {
@@ -136,12 +132,7 @@ describe('threshold-color.ts', () => {
         thresholds,
         states,
       },
-      state: {
-        entity_id: 'sensor.test',
-        state,
-        domain: 'sensor',
-        attributes: {},
-      },
+      state: s('sensor', 'test', state),
     });
 
     it('should return undefined when no thresholds configured', () => {
@@ -259,12 +250,7 @@ describe('threshold-color.ts', () => {
         entity_id: 'sensor.test',
         states,
       },
-      state: {
-        entity_id: 'sensor.test',
-        state,
-        domain: 'sensor',
-        attributes: {},
-      },
+      state: s('sensor', 'test', state),
     });
 
     it('should return undefined when no states configured', () => {
@@ -364,12 +350,7 @@ describe('threshold-color.ts', () => {
           entity_id: 'cover.window',
           states,
         },
-        state: {
-          entity_id: 'cover.window',
-          state: 'open',
-          domain: 'cover',
-          attributes: { current_position: 50 },
-        },
+        state: s('cover', 'window', 'open', { current_position: 50 }),
       };
       const result = getStateResult(entity);
       expect(result).to.deep.equal({
@@ -395,12 +376,7 @@ describe('threshold-color.ts', () => {
           entity_id: 'cover.window',
           states,
         },
-        state: {
-          entity_id: 'cover.window',
-          state: 'open',
-          domain: 'cover',
-          attributes: { current_position: 50 },
-        },
+        state: s('cover', 'window', 'open', { current_position: 50 }),
       };
       const result = getStateResult(entity);
       expect(result).to.be.undefined;
@@ -415,12 +391,7 @@ describe('threshold-color.ts', () => {
           entity_id: 'cover.window',
           states,
         },
-        state: {
-          entity_id: 'cover.window',
-          state: 'open',
-          domain: 'cover',
-          attributes: { current_position: 50 },
-        },
+        state: s('cover', 'window', 'open', { current_position: 50 }),
       };
       const result = getStateResult(entity);
       expect(result).to.deep.equal({
@@ -441,12 +412,7 @@ describe('threshold-color.ts', () => {
           entity_id: 'light.test',
           states,
         },
-        state: {
-          entity_id: 'light.test',
-          state: 'on',
-          domain: 'light',
-          attributes: {},
-        },
+        state: s('light', 'test', 'on'),
       };
       // This should use state.state (not an attribute) - covering the else branch of line 93
       const result = getStateResult(entity);
@@ -473,12 +439,7 @@ describe('threshold-color.ts', () => {
           entity_id: 'light.test',
           states,
         },
-        state: {
-          entity_id: 'light.test',
-          state: 'on',
-          domain: 'light',
-          attributes: {},
-        },
+        state: s('light', 'test', 'on'),
       };
       const result = getStateResult(entity);
       expect(result).to.be.undefined;
@@ -499,9 +460,7 @@ describe('threshold-color.ts', () => {
           states,
         },
         state: {
-          entity_id: 'light.test',
-          state: 'on',
-          domain: 'light',
+          ...s('light', 'test', 'on'),
           attributes: undefined as any,
         },
       };
@@ -532,12 +491,7 @@ describe('threshold-color.ts', () => {
             entity_id: 'sensor.dock',
             states,
           },
-          state: {
-            entity_id: 'sensor.dock',
-            state: 'unknown',
-            domain: 'sensor',
-            attributes: { status: 'error' },
-          },
+          state: s('sensor', 'dock', 'unknown', { status: 'error' }),
         };
         const result = getStateResult(entity);
         expect(result?.color).to.equal('red');
@@ -583,12 +537,7 @@ describe('threshold-color.ts', () => {
           entity_id: 'cover.window',
           thresholds,
         },
-        state: {
-          entity_id: 'cover.window',
-          state: 'open',
-          domain: 'cover',
-          attributes: { current_position: 75 },
-        },
+        state: s('cover', 'window', 'open', { current_position: 75 }),
       };
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
@@ -614,12 +563,7 @@ describe('threshold-color.ts', () => {
           entity_id: 'cover.window',
           thresholds,
         },
-        state: {
-          entity_id: 'cover.window',
-          state: 'open',
-          domain: 'cover',
-          attributes: { current_position: 25 },
-        },
+        state: s('cover', 'window', 'open', { current_position: 25 }),
       };
       const result = getThresholdResult(entity);
       expect(result).to.be.undefined;
@@ -645,12 +589,10 @@ describe('threshold-color.ts', () => {
           entity_id: 'cover.window',
           thresholds,
         },
-        state: {
-          entity_id: 'cover.window',
-          state: 'open',
-          domain: 'cover',
-          attributes: { current_position: 75, brightness: 100 },
-        },
+        state: s('cover', 'window', 'open', {
+          current_position: 75,
+          brightness: 100,
+        }),
       };
       const result = getThresholdResult(entity);
       // Should match the second threshold since brightness is 100 (< 200)
@@ -672,12 +614,9 @@ describe('threshold-color.ts', () => {
           entity_id: 'sensor.temperature',
           thresholds,
         },
-        state: {
-          entity_id: 'sensor.temperature',
-          state: '25',
-          domain: 'sensor',
-          attributes: { unit_of_measurement: '°C' },
-        },
+        state: s('sensor', 'temperature', '25', {
+          unit_of_measurement: '°C',
+        }),
       };
       const result = getThresholdResult(entity);
       expect(result).to.deep.equal({
@@ -698,12 +637,7 @@ describe('threshold-color.ts', () => {
           entity_id: 'sensor.temperature',
           thresholds,
         },
-        state: {
-          entity_id: 'sensor.temperature',
-          state: '25',
-          domain: 'sensor',
-          attributes: {},
-        },
+        state: s('sensor', 'temperature', '25'),
       };
       // This should use state.state (not an attribute) - covering the else branch of line 52
       const result = getThresholdResult(entity);
@@ -731,12 +665,9 @@ describe('threshold-color.ts', () => {
           entity_id: 'sensor.test',
           thresholds,
         },
-        state: {
-          entity_id: 'sensor.test',
-          state: '15',
-          domain: 'sensor',
-          attributes: { invalid_attr: 'not_a_number' },
-        },
+        state: s('sensor', 'test', '15', {
+          invalid_attr: 'not_a_number',
+        }),
       };
       const result = getThresholdResult(entity);
       // Should skip first threshold and match second one
@@ -763,12 +694,7 @@ describe('threshold-color.ts', () => {
           entity_id: 'sensor.test',
           thresholds,
         },
-        state: {
-          entity_id: 'sensor.test',
-          state: '15',
-          domain: 'sensor',
-          attributes: {},
-        },
+        state: s('sensor', 'test', '15'),
       };
       const result = getThresholdResult(entity);
       expect(result).to.be.undefined;
@@ -789,9 +715,7 @@ describe('threshold-color.ts', () => {
           thresholds,
         },
         state: {
-          entity_id: 'sensor.test',
-          state: '15',
-          domain: 'sensor',
+          ...s('sensor', 'test', '15'),
           attributes: undefined as any,
         },
       };
@@ -814,12 +738,7 @@ describe('threshold-color.ts', () => {
         states,
         label,
       },
-      state: {
-        entity_id: 'sensor.test',
-        state,
-        domain: 'sensor',
-        attributes: {},
-      },
+      state: s('sensor', 'test', state),
     });
 
     it('should return label from state result when state matches with label', () => {

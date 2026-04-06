@@ -63,6 +63,8 @@ describe('state.ts', () => {
       const state = getState(mockHass.states, 'light.test');
       expect(state).to.exist;
       expect(state?.state).to.equal('on');
+      expect(state?.last_changed).to.equal('0');
+      expect(state?.last_updated).to.equal('0');
     });
 
     it('should create fake state when requested', () => {

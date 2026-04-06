@@ -8,7 +8,6 @@ import type {
   ToggleActionConfig,
 } from '@hass/data/lovelace/config/action';
 import type { HomeAssistant } from '@hass/types';
-import * as attributeDisplayModule from '@html/attribute-display';
 import * as badgeSquadModule from '@html/badge-squad';
 import * as renderStateDisplayModule from '@html/render-state-display';
 import * as stateDisplayModule from '@html/state-display';
@@ -37,7 +36,6 @@ describe('room-state-icon.ts', () => {
   let computeEntityNameStub: sinon.SinonStub;
   let getEntityLabelStub: sinon.SinonStub;
   let getThresholdResultStub: sinon.SinonStub;
-  let attributeDisplayStub: sinon.SinonStub;
   let hasEntityFeatureStub: sinon.SinonStub;
   let stateDisplayStub: sinon.SinonStub;
   let renderStateDisplayStub: sinon.SinonStub;
@@ -107,10 +105,6 @@ describe('room-state-icon.ts', () => {
       thresholdColorModule,
       'getThresholdResult',
     ).returns(undefined);
-    attributeDisplayStub = stub(
-      attributeDisplayModule,
-      'attributeDisplay',
-    ).returns(html`<span>attribute value</span>`);
     hasEntityFeatureStub = stub(featureModule, 'hasEntityFeature').returns(
       false,
     );
@@ -152,7 +146,6 @@ describe('room-state-icon.ts', () => {
     computeEntityNameStub.restore();
     getEntityLabelStub.restore();
     getThresholdResultStub.restore();
-    attributeDisplayStub.restore();
     hasEntityFeatureStub.restore();
     stateDisplayStub.restore();
     renderStateDisplayStub.restore();
@@ -423,7 +416,7 @@ describe('room-state-icon.ts', () => {
       expect(entityLabel?.textContent?.trim()).to.equal('Config Label');
     });
 
-    it('should use attribute display when attribute is configured and no label', async () => {
+    it('should use state display for attribute when attribute is configured and no label', async () => {
       const configWithLabels = {
         ...mockConfig,
         features: ['show_entity_labels'],
@@ -446,7 +439,7 @@ describe('room-state-icon.ts', () => {
         styles: {},
       });
       getEntityLabelStub.returns(undefined);
-      attributeDisplayStub.returns(html`<span>50%</span>`);
+      stateDisplayStub.returns(html`<span>50%</span>`);
 
       const result = element.render() as TemplateResult;
       const el = await fixture(result);
@@ -454,11 +447,7 @@ describe('room-state-icon.ts', () => {
       const entityLabel = el.querySelector('.entity-label');
       expect(entityLabel).to.exist;
       expect(
-        attributeDisplayStub.calledWith(
-          mockHass,
-          mockEntityState,
-          'brightness',
-        ),
+        stateDisplayStub.calledWith(mockHass, mockEntityState, 'brightness'),
       ).to.be.true;
     });
 

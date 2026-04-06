@@ -1,4 +1,5 @@
 import * as featureModule from '@config/feature';
+import { createStateEntity as s } from '@test/test-helpers';
 import * as commonStyleModule from '@theme/render/common-style';
 import { renderTextStyles } from '@theme/render/text-styles';
 import type { Config } from '@type/config';
@@ -16,15 +17,10 @@ const createEntityInfo = (
   attributes = {},
 ): EntityInformation => ({
   config: { entity_id: `${domain}.${entityId}` },
-  state: {
-    entity_id: `${domain}.${entityId}`,
-    state,
-    attributes: {
-      friendly_name: entityId.replace(/_/g, ' '),
-      ...attributes,
-    },
-    domain,
-  },
+  state: s(domain, entityId, state, {
+    friendly_name: entityId.replace(/_/g, ' '),
+    ...attributes,
+  }),
 });
 
 describe('text-styles.ts', () => {

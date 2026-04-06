@@ -150,7 +150,7 @@ When a threshold matches, the card will:
 
 #### Displaying Entity Attributes Instead of State
 
-You can configure sensors to display a specific attribute value instead of the entity state:
+You can configure sensors to display a specific attribute value instead of the entity state. Set `attribute` to a **string** for one attribute, or a **list of strings** to show multiple values (for example `last_changed` with `state`, or registry fields like `area_name`).
 
 ```yaml
 sensors:
@@ -166,9 +166,15 @@ sensors:
   - entity_id: sensor.weather
     label: 'Weather'
     attribute: condition # Shows weather condition attribute instead of state
+
+  # Multiple attributes (shown together)
+  - entity_id: light.dining_table
+    attribute:
+      - last_changed
+      - state
 ```
 
-When an `attribute` is specified, the sensor will display the formatted attribute value using Home Assistant's attribute display formatting. This is useful when you want to show a specific attribute (like `temperature`, `humidity`, `battery_level`, etc.) instead of the entity's primary state value.
+When an `attribute` is specified, the sensor will display the formatted attribute value(s) using Home Assistant's attribute display formatting. This is useful when you want to show specific attributes (like `temperature`, `humidity`, `battery_level`, built-in fields such as `last_changed` / `last_updated`, etc.) instead of the entity's primary state value.
 
 When the sensor state matches a configured state, the card will:
 
@@ -183,7 +189,7 @@ Sensors can have custom labels configured at multiple levels:
 
 1. **State label** (highest priority) - Displayed when a matching state configuration has a `label` property
 2. **Entity-level label** - Displayed when the sensor has a `label` property configured
-3. **Attribute value** - Displayed when an `attribute` property is configured (replaces state display)
+3. **Attribute value(s)** - Displayed when an `attribute` property is configured (replaces state display); use a string or list of strings
 4. **Sensor state value** (fallback) - Displayed when no label or attribute is configured (e.g., "75°F", "50%", "450 ppm")
 
 ```yaml
@@ -223,7 +229,7 @@ sensors:
     icon: phu:water-softener
 ```
 
-**Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified, it displays the formatted attribute value instead of the state. When labels are not configured, sensors display their normal state values.
+**Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified (string or list), it displays the formatted attribute value(s) instead of the state. When labels are not configured, sensors display their normal state values.
 
 #### Icon Priority
 

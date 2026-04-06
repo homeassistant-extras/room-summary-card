@@ -3,11 +3,11 @@ import * as actionHandlerModule from '@delegates/action-handler-delegate';
 import * as setupCardModule from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
+import { createStateEntity as e, createState as s } from '@test/test-helpers';
 import { styles } from '@theme/styles';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { createState as s } from '../test-helpers';
 
 describe('card.ts', () => {
   let card: RoomSummaryCard;
@@ -24,12 +24,7 @@ describe('card.ts', () => {
       roomInfo: { area_name: 'Living Room' },
       roomEntity: {
         config: { entity_id: 'light.test' },
-        state: {
-          entity_id: 'light.test',
-          state: 'on',
-          attributes: {},
-          domain: 'light',
-        },
+        state: e('light', 'test', 'on', {}),
       },
       sensors: {
         individual: [],
@@ -345,18 +340,8 @@ describe('card.ts', () => {
 
     it('should render problem entities correctly', async () => {
       card['_sensors'].problemSensors = [
-        {
-          entity_id: 'light.living_room',
-          state: 'on',
-          attributes: {},
-          domain: 'light',
-        },
-        {
-          entity_id: 'sensor.humidity',
-          state: '45',
-          attributes: {},
-          domain: 'sensor',
-        },
+        e('light', 'living_room', 'on', {}),
+        e('sensor', 'humidity', '45', {}),
       ];
       const el = await fixture(card.render() as TemplateResult);
       const problemIndicator = el.querySelector('.status-entities')!;

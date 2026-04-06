@@ -1,4 +1,5 @@
 import * as stateColorModule from '@hass/common/entity/state_color';
+import { createStateEntity as s } from '@test/test-helpers';
 import * as commonStyleModule from '@theme/render/common-style';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import type { EntityInformation } from '@type/room';
@@ -15,15 +16,10 @@ const createEntityInfo = (
   attributes = {},
 ): EntityInformation => ({
   config: { entity_id: `${domain}.${entityId}` },
-  state: {
-    entity_id: `${domain}.${entityId}`,
-    state,
-    attributes: {
-      friendly_name: entityId.replace(/_/g, ' '),
-      ...attributes,
-    },
-    domain,
-  },
+  state: s(domain, entityId, state, {
+    friendly_name: entityId.replace(/_/g, ' '),
+    ...attributes,
+  }),
 });
 
 describe('icon-styles.ts', () => {

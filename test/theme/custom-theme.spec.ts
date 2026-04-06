@@ -1,4 +1,5 @@
 import type { HomeAssistant } from '@hass/types';
+import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import * as colorsModule from '@theme/colors';
 import { getThemeColorOverride } from '@theme/custom-theme';
 import * as rgbColorModule from '@theme/get-rgb';
@@ -29,12 +30,7 @@ describe('custom-theme.ts', () => {
         entity_id: entityId,
         ...configColors,
       },
-      state: {
-        entity_id: entityId,
-        state: 'on',
-        domain: 'light',
-        attributes: stateAttributes,
-      },
+      state: s(entityId, 'on', stateAttributes),
     });
 
     beforeEach(() => {
@@ -176,9 +172,7 @@ describe('custom-theme.ts', () => {
       const entity = {
         config: { entity_id: 'light.test' },
         state: {
-          entity_id: 'light.test',
-          state: 'off',
-          domain: 'light',
+          ...s('light.test', 'off'),
           attributes: undefined as any,
         },
       };
