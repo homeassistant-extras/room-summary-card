@@ -328,6 +328,44 @@ describe('icon-styles.ts', () => {
       );
     });
 
+    it('should apply icon_background opacity when image URL is absent and light inactive (image_entity / no entity_picture)', () => {
+      getStyleDataStub.returns({
+        active: false,
+        cssColor: 'var(--disabled-color)',
+        themeOverride: 'var(--theme-override)',
+        activeClass: 'inactive',
+      });
+      const entity = createEntityInfo('light', 'test', 'off');
+      const config = {
+        area: 'test',
+        background: {
+          opacity: 30,
+          options: ['icon_background', 'hide_icon_only'],
+        },
+      } as any;
+
+      const result = renderEntityIconStyles(
+        mockHass,
+        entity,
+        true,
+        undefined,
+        true,
+        config,
+      );
+
+      expect(result).to.deep.equal(
+        styleMap({
+          '--icon-color': 'var(--disabled-color)',
+          '--icon-opacity': 'var(--opacity-icon-inactive)',
+          '--background-color-icon': 'var(--disabled-color)',
+          '--background-opacity-icon': 0.3,
+          '--state-color-icon-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--icon-filter': '',
+        }),
+      );
+    });
+
     it('should not apply opacity from config when icon_background is not set and isMainRoomEntity is false', () => {
       getStyleDataStub.returns({
         active: true,
