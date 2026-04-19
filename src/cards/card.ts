@@ -12,6 +12,7 @@ import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderRoomIcon } from '@/html/icon';
+import '@cards/components/horizontal-slider/horizontal-slider';
 import { hasFeature } from '@config/feature';
 import {
   actionHandler,
@@ -313,6 +314,11 @@ export class RoomSummaryCard extends LitElement {
           <!-- Problem Indicator -->
           ${problems}
         </div>
+
+        <horizontal-slider
+          .config=${this._config}
+          .hass=${this._hass}
+        ></horizontal-slider>
 
         <!-- Full Card Action Overlay -->
         ${hasFeature(this._config, 'full_card_actions')

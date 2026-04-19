@@ -100,4 +100,30 @@ describe('EntitySubscriptionManager', () => {
     });
     clock.restore();
   });
+
+  it('delivers current state immediately to every new listener (multi-card)', () => {
+    const subscribeMessage = () => Promise.resolve(() => {});
+    const hass = {
+      connection: { subscribeMessage },
+      states: {
+        'light.x': {
+          entity_id: 'light.x',
+          state: 'on',
+          attributes: {},
+          last_changed: '',
+          last_updated: '',
+        },
+      },
+    } as unknown as HomeAssistant;
+
+    const manager = getEntitySubscriptionManager(hass);
+    const statesA: string[] = [];
+    const statesB: string[] = [];
+
+    manager.subscribe('light.x', (s) => statesA.push(s?.state ?? 'undefined'));
+    manager.subscribe('light.x', (s) => statesB.push(s?.state ?? 'undefined'));
+
+    expect(statesA).to.deep.equal(['on']);
+    expect(statesB).to.deep.equal(['on']);
+  });
 });

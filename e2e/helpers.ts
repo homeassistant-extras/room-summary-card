@@ -1,4 +1,4 @@
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 export const dashboardPath =
   process.env.PLAYWRIGHT_HA_PATH ?? '/playwright-room-summary/';
@@ -6,49 +6,39 @@ export const dashboardPath =
 export const backgroundOpacityPath =
   process.env.PLAYWRIGHT_HA_BACKGROUND_PATH ?? dashboardPath;
 
-/** 0-based — see Background & Opacity fixture doc in background-opacity.spec.ts */
-export const BG_FULL_CARD_INDEX = 1;
-export const BG_ICON_CARD_INDEX = 2;
+/**
+ * CSS custom property set via `styles.card` on each card — must match your Lovelace YAML.
+ *
+ * ```yaml
+ * styles:
+ *   card:
+ *     --e2e-target: basic   # or opacity-full / opacity-icon
+ * ```
+ */
+export const E2E_CARD_MARKER_VAR = '--e2e-target';
+
+/** Values for `--e2e-target` in `styles.card` (pick one per card under test). */
+export const E2eCardTarget = {
+  basic: 'basic',
+  opacityFull: 'opacity-full',
+  opacityIcon: 'opacity-icon',
+  slider: 'slider',
+} as const;
+
+/**
+ * `room-summary-card` whose inner `ha-card` inline style includes the marker variable and value
+ * (merged from `styles.card` in config).
+ */
+export function roomSummaryCardByE2eTarget(page: Page, markerValue: string): Locator {
+  return page.locator(
+    `room-summary-card:has(ha-card[style*="${E2E_CARD_MARKER_VAR}"][style*="${markerValue}"])`,
+  );
+}
 
 /** Skip at collection time when no auth file (avoids launching Chromium). */
 export const describeHa = process.env.PLAYWRIGHT_HA_STORAGE_STATE
   ? test.describe
   : test.describe.skip;
-
-/**
- * Parse the markdown card that sits above a room-summary-card.
- * Expected markdown structure:
- *   # <Title>
- *   ```
- *   type: custom:room-summary-card
- *   area: <area_id>
- *
- *   <Display Title>
- *   <N> devices <M> entities
- *   <temp> °F <humidity> %
- *   ```
- */
-export function parseExpectedCard(text: string) {
-  const lines = text
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  const areaIdx = lines.findIndex((l) => l.startsWith('area:'));
-  const dataLines = lines.slice(areaIdx + 1);
-
-  const title = dataLines[0] ?? '';
-
-  const statsMatch = dataLines[1]?.match(/(\d+)\s+devices\s+(\d+)\s+entities/i);
-  const devices = statsMatch ? Number(statsMatch[1]) : NaN;
-  const entities = statsMatch ? Number(statsMatch[2]) : NaN;
-
-  const climateMatch = dataLines[2]?.match(/([\d.]+)\s*°[FC]\s+([\d.]+)\s*%/);
-  const temp = climateMatch ? climateMatch[1] : undefined;
-  const humidity = climateMatch ? climateMatch[2] : undefined;
-
-  return { title, devices, entities, temp, humidity };
-}
 
 /**
  * Asserts a `room-state-icon` shows `entity_picture` styling: reflected `image` + `icon-bg`,

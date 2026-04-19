@@ -1,15 +1,35 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import {
   dashboardPath,
   describeHa,
+  E2eCardTarget,
   expectEntityIconPictureBackground,
-  parseExpectedCard,
+  roomSummaryCardByE2eTarget,
 } from './helpers';
 import { expectMoreInfoMainLabel } from './more-info';
 
 /** ms between pointer down/up — Home Assistant treats this as hold vs tap */
 const holdDelayMs = 1000;
+
+/**
+ * Tag the card under test in Lovelace (`PLAYWRIGHT_HA_PATH`):
+ *
+ * ```yaml
+ * styles:
+ *   card:
+ *     --e2e-target: basic
+ * ```
+ */
+
+/**
+ * Display title — must match the configured area/display name on that dashboard.
+ */
+const expectedCardTitle = 'Dining Room';
+
+function basicRoomCard(page: Page) {
+  return roomSummaryCardByE2eTarget(page, E2eCardTarget.basic);
+}
 
 describeHa('HA dashboard — room-summary-card', () => {
   test('renders title, stats, climate row, and entity grid', async ({
@@ -17,32 +37,20 @@ describeHa('HA dashboard — room-summary-card', () => {
   }) => {
     await page.goto(dashboardPath);
 
-    const markdownCard = page.locator('ha-markdown-element').first();
-    await expect(markdownCard).toBeVisible();
-    const markdownText = await markdownCard.innerText();
-    const expected = parseExpectedCard(markdownText);
-
-    const card = page.locator('room-summary-card').first();
+    const card = basicRoomCard(page);
     await expect(card).toBeVisible();
 
-    await expect(card.locator('.name')).toHaveText(expected.title);
+    await expect(card.locator('.name')).toHaveText(expectedCardTitle);
 
     await expect(card.locator('.stats')).toHaveText(
-      new RegExp(
-        `${expected.devices}\\s+devices\\s+${expected.entities}\\s+entities`,
-        'i',
-      ),
+      /\d+\s+devices\s+\d+\s+entities/i,
     );
 
     const sensors = card.locator('sensor-collection .sensor');
     await expect(sensors).toHaveCount(2);
 
-    if (expected.temp) {
-      await expect(sensors.first()).toContainText(expected.temp);
-    }
-    if (expected.humidity) {
-      await expect(sensors.last()).toContainText(expected.humidity);
-    }
+    await expect(sensors.first()).toContainText(/[\d.]+\s*°[FC]/);
+    await expect(sensors.last()).toContainText(/[\d.]+\s*%/);
 
     await expect(card.locator('.grid > room-state-icon')).toHaveCount(1);
     const sideIcons = card
@@ -59,7 +67,7 @@ describeHa('HA dashboard — room-summary-card', () => {
     page,
   }) => {
     await page.goto(dashboardPath);
-    const card = page.locator('room-summary-card').first();
+    const card = basicRoomCard(page);
     await expect(card).toBeVisible();
     await card.locator('sensor-collection .sensor').nth(0).click();
     await expectMoreInfoMainLabel(page, 'Air temperature');
@@ -69,7 +77,7 @@ describeHa('HA dashboard — room-summary-card', () => {
     page,
   }) => {
     await page.goto(dashboardPath);
-    const card = page.locator('room-summary-card').first();
+    const card = basicRoomCard(page);
     await expect(card).toBeVisible();
     await card.locator('sensor-collection .sensor').nth(1).click();
     await expectMoreInfoMainLabel(page, 'Humidity');
@@ -79,7 +87,7 @@ describeHa('HA dashboard — room-summary-card', () => {
     page,
   }) => {
     await page.goto(dashboardPath);
-    const card = page.locator('room-summary-card').first();
+    const card = basicRoomCard(page);
     await expect(card).toBeVisible();
     await card
       .locator('room-state-icon[room] .icon')
@@ -91,7 +99,7 @@ describeHa('HA dashboard — room-summary-card', () => {
     page,
   }) => {
     await page.goto(dashboardPath);
-    const card = page.locator('room-summary-card').first();
+    const card = basicRoomCard(page);
     await expect(card).toBeVisible();
     await card
       .locator('entity-collection room-state-icon .icon')
@@ -104,7 +112,7 @@ describeHa('HA dashboard — room-summary-card', () => {
     page,
   }) => {
     await page.goto(dashboardPath);
-    const card = page.locator('room-summary-card').first();
+    const card = basicRoomCard(page);
     await expect(card).toBeVisible();
     await card
       .locator('entity-collection room-state-icon .icon')

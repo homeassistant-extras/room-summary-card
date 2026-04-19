@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 import {
-  BG_FULL_CARD_INDEX,
-  BG_ICON_CARD_INDEX,
   backgroundOpacityPath,
   describeHa,
+  E2eCardTarget,
+  roomSummaryCardByE2eTarget,
 } from './helpers';
 
 /**
@@ -16,11 +16,17 @@ import {
  * ```yaml
  * - type: custom:room-summary-card
  *   area: dining_room
+ *   styles:
+ *     card:
+ *       --e2e-target: opacity-full
  *   background:
  *     image_entity: person.gina
  *     opacity: 90
  * - type: custom:room-summary-card
  *   area: dining_room
+ *   styles:
+ *     card:
+ *       --e2e-target: opacity-icon
  *   background:
  *     image_entity: person.gina
  *     options:
@@ -35,13 +41,14 @@ describeHa('Background & Opacity', () => {
   }) => {
     await page.goto(backgroundOpacityPath);
 
-    await expect(
-      page.getByRole('heading', { name: 'Background & Opacity' }),
-    ).toBeVisible();
-
-    const allRoomCards = page.locator('room-summary-card');
-    const fullCardBg = allRoomCards.nth(BG_FULL_CARD_INDEX);
-    const iconBgCard = allRoomCards.nth(BG_ICON_CARD_INDEX);
+    const fullCardBg = roomSummaryCardByE2eTarget(
+      page,
+      E2eCardTarget.opacityFull,
+    );
+    const iconBgCard = roomSummaryCardByE2eTarget(
+      page,
+      E2eCardTarget.opacityIcon,
+    );
 
     await expect(fullCardBg).toBeVisible();
     await expect(iconBgCard).toBeVisible();
