@@ -266,6 +266,44 @@ describe('icon-entities.ts', () => {
       .exist;
   });
 
+  it('should filter out slider entities with hide_icon set', () => {
+    const config = {
+      area: 'test_room',
+      features: ['exclude_default_entities'],
+      entities: [
+        {
+          entity_id: 'light.test_room_light',
+          slider: { style: 'bar', hide_icon: true },
+        },
+        'switch.test_room_fan',
+      ],
+    } as any as Config;
+
+    const entities = getIconEntities(mockHass, config);
+    const entityIds = entities.map((e) => e.config.entity_id);
+
+    expect(entityIds).to.not.include('light.test_room_light');
+    expect(entityIds).to.include('switch.test_room_fan');
+    expect(entities).to.have.lengthOf(1);
+  });
+
+  it('should still render slider entity in icons when hide_icon is not set', () => {
+    const config = {
+      area: 'test_room',
+      features: ['exclude_default_entities'],
+      entities: [
+        {
+          entity_id: 'light.test_room_light',
+          slider: { style: 'bar' },
+        },
+      ],
+    } as any as Config;
+
+    const entities = getIconEntities(mockHass, config);
+    expect(entities).to.have.lengthOf(1);
+    expect(entities[0]!.config.entity_id).to.equal('light.test_room_light');
+  });
+
   it('should filter out hidden base entities when hide_hidden_entities feature is enabled', () => {
     // Mark base entity as hidden
     mockHass.entities['light.test_room_light'] = {

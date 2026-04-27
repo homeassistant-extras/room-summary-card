@@ -39,11 +39,16 @@ export const renderEntityIconStyles = (
 
   // Calculate opacity for image backgrounds
   // Apply opacity to icon only if icon_background option is set
-  const isIconBackground =
-    config?.background?.options?.includes('icon_background') ?? false;
+  const bg = config?.background;
+  const isIconBackground = bg?.options?.includes('icon_background') ?? false;
+  const rawOpacity = bg?.opacity;
+  const hasConfiguredOpacity =
+    rawOpacity !== undefined &&
+    rawOpacity !== null &&
+    !Number.isNaN(Number(rawOpacity));
   const userOpacity =
-    config?.background?.opacity && isIconBackground && isMainRoomEntity
-      ? config.background.opacity / 100
+    hasConfiguredOpacity && isIconBackground && isMainRoomEntity
+      ? Number(rawOpacity) / 100
       : undefined;
 
   const opacity =

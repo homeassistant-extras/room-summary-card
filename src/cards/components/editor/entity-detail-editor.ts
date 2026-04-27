@@ -190,6 +190,40 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
             },
           ],
         },
+        {
+          name: 'slider',
+          label: 'editor.entity.slider',
+          type: 'expandable',
+          icon: 'mdi:gauge',
+          schema: [
+            {
+              name: 'style',
+              label: 'editor.entity.slider_style',
+              required: false,
+              selector: {
+                select: {
+                  mode: 'dropdown' as const,
+                  options: [
+                    {
+                      label: localize(hass, 'editor.entity.slider_style_bar'),
+                      value: 'bar',
+                    },
+                    {
+                      label: localize(hass, 'editor.entity.slider_style_ha'),
+                      value: 'ha',
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              name: 'hide_icon',
+              label: 'editor.entity.slider_hide_icon',
+              required: false,
+              selector: { boolean: {} },
+            },
+          ],
+        },
       ];
     },
   );

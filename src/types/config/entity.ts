@@ -19,6 +19,9 @@ export interface EntityConfig extends BaseEntityConfig {
 
   /** Badge configurations for displaying overlay icons */
   badges?: BadgeConfig[];
+
+  /** Per-entity slider configuration. */
+  slider?: SliderConfig;
 }
 
 /** Features to enable or disable for the entity */
@@ -26,6 +29,27 @@ export type EntityFeatures =
   | 'use_entity_icon'
   | 'show_state'
   | 'hide_zero_attribute_domains';
+
+/** Visual style of the horizontal slider. */
+export type HorizontalSliderStyle = 'ha' | 'bar';
+
+/**
+ * Per-entity configuration for the horizontal slider. Reserved for
+ * options that are scoped to a single slider instance (currently just
+ * the visual style; future candidates: min/max overrides, color, etc.).
+ */
+export interface SliderConfig {
+  /** Visual variant of the rendered slider. Defaults to `'bar'`. */
+  style?: HorizontalSliderStyle;
+
+  /**
+   * When `true`, the entity that drives this slider is omitted from the
+   * regular icon grid. Handy when you already list the entity in
+   * `entities` (so its defaults apply, badges, etc.) but want it to be
+   * represented only by the bottom slider strip, not by a room-state-icon.
+   */
+  hide_icon?: boolean;
+}
 
 /**
  * Common icon properties for state and threshold configurations
