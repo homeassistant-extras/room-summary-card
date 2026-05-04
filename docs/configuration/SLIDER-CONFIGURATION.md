@@ -1,5 +1,156 @@
 # Slider Configuration
 
+> The card supports two independent slider concepts that will eventually
+> merge. They are documented in the same page for now:
+>
+> 1. [**Horizontal Slider** (per-entity, bottom strip)](#horizontal-slider)
+> 2. [**Brightness Slider** (vertical, replaces the entity icon)](#brightness-slider)
+
+---
+
+## Horizontal Slider
+
+A thin draggable strip that sits flush with the bottom edge of the
+card. Opt-in **at entity level** with a `slider` config block — handy for `input_number`, `number`, and any other domain that supports `set_value`.
+
+![horizontal-slider](../assets/horizontal-slider.png)
+
+### Basic setup
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+entities:
+  - entity_id: input_number.kitchen_brightness
+    slider: {}
+  - switch.kitchen_kettle
+  - switch.kitchen_coffee
+```
+
+The first entity (scanning `entity` then `entities`) with a `slider`
+block becomes the bound entity. Only one slider renders per card.
+
+### Supported domains
+
+| Domain         | Reads from                   | Writes via                                 |
+| -------------- | ---------------------------- | ------------------------------------------ |
+| `counter`      | `state` + min/max/step       | `counter.set_value`                        |
+| `input_number` | `state` + min/max/step       | `input_number.set_value`                   |
+| `number`       | `state` + min/max/step       | `number.set_value`                         |
+| `media_player` | `volume_level` (0–1 → 0–100) | `media_player.volume_set` (0–1)            |
+| `light`        | `brightness` attribute (0–255) | `light.turn_on` (`brightness`); `light.turn_off` at 0 |
+
+For `counter` / `input_number` / `number`, the slider's range and step
+are read straight from the entity's attributes. For `media_player`,
+the slider is fixed to 0–100 and converted to/from `volume_level`. For
+`light`, the slider is fixed to 0–255 and dragging to 0 turns the
+light off.
+
+Other domains (fans, covers, etc.) will be added as the two slider
+concepts merge.
+
+### Options
+
+The `slider` block lives on an entity:
+
+| Option      | Type             | Default | Description                                                                                 |
+| ----------- | ---------------- | ------- | ------------------------------------------------------------------------------------------- |
+| `style`     | `'bar'` / `'ha'` | `'bar'` | Visual variant. `bar` is a chunky full-width strip; `ha` is the standard HA slider.         |
+| `hide_icon` | boolean          | `false` | When `true`, the entity is omitted from the icon grid — useful when it lives in `entities`. |
+
+### Hide the icon
+
+When the slider entity is also in `entities`, set `hide_icon: true` so
+it doesn't take up an icon slot. This allows you to control 6 entities at once:
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+entity: switch.kitch_leds
+entities:
+  - entity_id: input_number.kitchen_brightness
+    slider:
+      style: bar
+      hide_icon: true
+  - switch.kitchen_kettle
+  - switch.kitchen_coffee
+  - switch.kitchen_under_cabinet
+  - switch.kitchen_pendant
+```
+
+### Light brightness
+
+Bind the slider to a light's `brightness`. The slider exposes 0–255
+and writes via `light.turn_on` (or `light.turn_off` when dragged to
+0):
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+entities:
+  - entity_id: light.bedroom_ceiling
+    slider:
+      style: bar
+      hide_icon: true
+  - switch.bedroom_fan
+  - switch.bedroom_lamp
+```
+
+### Media player volume
+
+Bind the slider to a `media_player`'s `volume_level`. The slider
+exposes 0–100 and writes back via `media_player.volume_set` for you:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+entity: light.living_room
+entities:
+  - entity_id: media_player.living_room_speaker
+    slider:
+      style: bar
+      hide_icon: true
+  - switch.living_room_lamp
+  - switch.living_room_fan
+```
+
+### Theming
+
+Three CSS variables let you tweak the look from `styles:` (or any
+ancestor / theme):
+
+| Variable                    | Controls                           | Default                       |
+| --------------------------- | ---------------------------------- | ----------------------------- |
+| `--user-slider-height`      | strip height                       | `25px` (`bar`), `3.5%` (`ha`) |
+| `--user-slider-track-color` | inactive track (use `transparent`) | `var(--disabled-color)`       |
+| `--user-slider-bar-color`   | active fill (the "bar")            | `var(--primary-color)`        |
+
+Example — orange bar on a transparent track:
+
+```yaml
+type: custom:room-summary-card
+area: kitchen
+entities:
+  - entity_id: input_number.kitchen_brightness
+    slider:
+      style: bar
+styles:
+  card:
+    --user-slider-track-color: transparent
+    --user-slider-bar-color: orange
+    --user-slider-height: 30px
+```
+
+### Editor
+
+The visual editor exposes the `slider` block as an expandable
+"Slider" section under each entity, with `style` and `hide_icon`
+fields.
+
+---
+
+## Brightness Slider
+
 The slider feature displays the first entity as a draggable vertical slider, allowing you to control brightness by dragging the entity icon up and down. This is particularly useful for light entities where you want quick brightness adjustment without opening a more-info dialog.
 
 ![slider](../assets/slider.gif)

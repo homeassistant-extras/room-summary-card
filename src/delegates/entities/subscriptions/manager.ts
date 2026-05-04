@@ -5,6 +5,7 @@
  * @see https://developers.home-assistant.io/docs/api/websocket#subscribe_entities
  */
 
+import { getState } from '@delegates/retrievers/state';
 import type { HomeAssistant } from '@hass/types';
 import type { StatesUpdates } from '@hass/ws/entities';
 import type { Config } from '@type/config';
@@ -75,6 +76,8 @@ export class EntitySubscriptionManager {
       set.size,
     );
 
+    this._deliverInitialState(entityId, onChange);
+
     return () => {
       const s = this._listeners.get(entityId);
       if (!s) return;
@@ -135,5 +138,22 @@ export class EntitySubscriptionManager {
 
   private _handleEvent(ev: StatesUpdates, config?: Config): void {
     this._eventHandler.handle(ev, config);
+  }
+
+  /**
+   * Push current known state to a listener immediately. Required when multiple
+   * components subscribe to the same entity: only the first subscription
+   * triggers subscribe_entities; later listeners would otherwise stay empty
+   * until the next websocket change.
+   */
+  private _deliverInitialState(entityId: string, onChange: Listener): void {
+    let state = this._state.get(entityId);
+    if (!state) {
+      state = getState(this._hass.states, entityId);
+      if (state) {
+        this._state.set(entityId, state);
+      }
+    }
+    onChange(state);
   }
 }

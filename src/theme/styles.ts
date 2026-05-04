@@ -232,6 +232,16 @@ const statusEntityStyles = css`
     align-items: center;
   }
 
+  /* scooty on upwards is slider */
+  :host:has(horizontal-slider[style='bar']) .problems {
+    margin-bottom: calc(10% + var(--horizontal-slider-height, 6%) + 20px);
+  }
+
+  /* scooty on upwards is slider */
+  :host:has(horizontal-slider[style='ha']) .problems {
+    margin-bottom: calc(10% + var(--horizontal-slider-height, 6%) + 10px);
+  }
+
   /* Status entities indicator */
   .status-entities {
     width: 26px;

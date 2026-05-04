@@ -49,6 +49,13 @@ export const getIconEntities = (
         return undefined;
       }
 
+      // Skip entities rendered as the horizontal slider with hide_icon set
+      // — they're represented by the bottom bar and shouldn't also occupy
+      // an icon slot.
+      if (entity.slider?.hide_icon) {
+        return undefined;
+      }
+
       const state = getState(hass.states, entity.entity_id);
       const isBaseEntity = (baseEntities as string[]).includes(
         entity.entity_id,

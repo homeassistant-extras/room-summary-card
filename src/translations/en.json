@@ -64,7 +64,12 @@
         "operator": "Operator"
       },
       "badges": "Badges",
-      "add_badge": "Add Badge"
+      "add_badge": "Add Badge",
+      "slider": "Slider",
+      "slider_style": "Slider Style",
+      "slider_style_bar": "Bar (full-width strip)",
+      "slider_style_ha": "Standard HA Slider",
+      "slider_hide_icon": "Hide Icon (entity is shown only as the slider)"
     },
     "badge": {
       "position": {

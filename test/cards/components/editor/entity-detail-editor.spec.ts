@@ -277,6 +277,40 @@ describe('entity-detail-editor.ts', () => {
             },
           ],
         },
+        {
+          name: 'slider',
+          label: 'editor.entity.slider',
+          type: 'expandable',
+          icon: 'mdi:gauge',
+          schema: [
+            {
+              name: 'style',
+              label: 'editor.entity.slider_style',
+              required: false,
+              selector: {
+                select: {
+                  mode: 'dropdown',
+                  options: [
+                    {
+                      label: 'Bar (full-width strip)',
+                      value: 'bar',
+                    },
+                    {
+                      label: 'Standard HA Slider',
+                      value: 'ha',
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              name: 'hide_icon',
+              label: 'editor.entity.slider_hide_icon',
+              required: false,
+              selector: { boolean: {} },
+            },
+          ],
+        },
       ];
 
       expect(schema).to.deep.equal(expectedSchema);

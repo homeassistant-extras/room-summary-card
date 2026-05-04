@@ -22,6 +22,10 @@
 !yarn.lock
 !docs/**
 !mkdocs.yml
+!e2e/
+!e2e/**
+!scripts/
+!scripts/**
 
 # Ignore folders.
 node_modules
@@ -30,3 +34,5 @@ coverage
 .vscode
 .DS_Store
 .nyc_output
+test-results
+playwright

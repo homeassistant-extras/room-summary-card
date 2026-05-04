@@ -12,6 +12,7 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "verbatimModuleSyntax": true,
+    "ignoreDeprecations": "6.0",
 
     /* Strictness */
     "strict": true,
