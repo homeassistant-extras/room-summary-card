@@ -23,7 +23,6 @@ import {
   collectRelevantEntityIds,
   getRoomProperties,
 } from '@delegates/utils/setup-card';
-import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntities } from '@hass/ws/types';
 import type { EntityRegistryDisplayEntry } from '@hass/data/entity_registry';
@@ -188,7 +187,7 @@ export class RoomSummaryCard extends LitElement {
           this._hass = hass;
         } else {
           // update children who are subscribed
-          fireEvent(this, 'hass-update', { hass });
+          this._dispatchHassUpdate(hass);
         }
         return;
       }
@@ -264,9 +263,25 @@ export class RoomSummaryCard extends LitElement {
       this._hass = hass;
     } else {
       // update children who are subscribed
-      fireEvent(this, 'hass-update', {
-        hass,
+      this._dispatchHassUpdate(hass);
+    }
+  }
+
+  /**
+   * Dispatches hass-update event to child components via the shadow root.
+   * This scopes the event so that only this card's children receive it,
+   * preventing cross-card event leakage when multiple room-summary-cards
+   * are on the same dashboard.
+   */
+  private _dispatchHassUpdate(hass: HomeAssistant): void {
+    const root = this.shadowRoot;
+    if (root) {
+      const event = new CustomEvent('hass-update', {
+        detail: { hass },
+        bubbles: false,
+        composed: false,
       });
+      root.dispatchEvent(event);
     }
   }
 
