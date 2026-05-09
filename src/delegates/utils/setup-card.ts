@@ -117,3 +117,94 @@ export const getRoomProperties = (
     },
   };
 };
+
+/**
+ * Collects all entity IDs that are relevant to this card's rendering.
+ * Used for early-exit optimization in the hass setter — if none of these
+ * entity states changed, we can skip the expensive getRoomProperties() call.
+ *
+ * @param config - The card configuration
+ * @param props - The computed room properties from getRoomProperties()
+ * @returns A Set of entity IDs that affect this card's output
+ */
+export const collectRelevantEntityIds = (
+  config: Config,
+  props: RoomProperties,
+): Set<string> => {
+  const ids = new Set<string>();
+
+  // Room entity
+  if (props.roomEntity.config.entity_id) {
+    ids.add(props.roomEntity.config.entity_id);
+  }
+
+  // Individual sensors
+  if (props.sensors.individual) {
+    for (const s of props.sensors.individual) {
+      ids.add(s.entity_id);
+    }
+  }
+
+  // Averaged sensors (all contributing states)
+  if (props.sensors.averaged) {
+    for (const avg of props.sensors.averaged) {
+      for (const s of avg.states) {
+        ids.add(s.entity_id);
+      }
+    }
+  }
+
+  // Problem sensors
+  if (props.sensors.problemSensors) {
+    for (const s of props.sensors.problemSensors) {
+      ids.add(s.entity_id);
+    }
+  }
+
+  // Light entities
+  if (props.sensors.lightEntities) {
+    for (const s of props.sensors.lightEntities) {
+      ids.add(s.entity_id);
+    }
+  }
+
+  // Ambient light entities
+  if (props.sensors.ambientLightEntities) {
+    for (const s of props.sensors.ambientLightEntities) {
+      ids.add(s.entity_id);
+    }
+  }
+
+  // Threshold sensors
+  if (props.sensors.thresholdSensors) {
+    for (const s of props.sensors.thresholdSensors) {
+      ids.add(s.entity_id);
+    }
+  }
+
+  // Mold sensor
+  if (props.sensors.mold) {
+    ids.add(props.sensors.mold.entity_id);
+  }
+
+  // Alarm entities (smoke, gas, water, occupancy)
+  for (const alarmConfig of [
+    config.smoke,
+    config.gas,
+    config.water,
+    config.occupancy,
+  ]) {
+    if (alarmConfig?.entities) {
+      for (const id of alarmConfig.entities) {
+        ids.add(id);
+      }
+    }
+  }
+
+  // Background image entity
+  if (config.background?.image_entity) {
+    ids.add(config.background.image_entity);
+  }
+
+  return ids;
+};
