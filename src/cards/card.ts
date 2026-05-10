@@ -19,9 +19,15 @@ import {
   handleClickAction,
 } from '@delegates/action-handler-delegate';
 import type { ClimateThresholds } from '@delegates/checks/thresholds';
-import { getRoomProperties } from '@delegates/utils/setup-card';
-import { fireEvent } from '@hass/common/dom/fire_event';
+import {
+  collectRelevantEntityIds,
+  getRoomProperties,
+} from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
+import type { HassEntities } from '@hass/ws/types';
+import type { EntityRegistryDisplayEntry } from '@hass/data/entity_registry';
+import type { DeviceRegistryEntry } from '@hass/data/device_registry';
+import type { AreaRegistryEntry } from '@hass/data/area/area_registry';
 import { info } from '@html/info';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { styles } from '@theme/styles';
@@ -110,6 +116,17 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
   private _hass!: HomeAssistant;
 
   /**
+   * Cached references for early-exit change detection.
+   * Avoids running expensive getRoomProperties() when no relevant state changed.
+   */
+  private _prevStates?: HassEntities;
+  private _prevEntities?: Record<string, EntityRegistryDisplayEntry>;
+  private _prevDevices?: Record<string, DeviceRegistryEntry>;
+  private _prevAreas?: Record<string, AreaRegistryEntry>;
+  private _relevantEntityIds?: Set<string>;
+  private _prevHass?: HomeAssistant;
+
+  /**
    * Returns the component's styles
    */
   static override get styles(): CSSResult {
@@ -151,6 +168,54 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
    */
   override set hass(hass: HomeAssistant) {
     d(this._config, 'room-summary-card', 'set hass');
+
+    // Early-exit: skip expensive getRoomProperties() if no relevant state changed.
+    // In HA, hass.states is a new object on every update, but individual entity
+    // state objects within it are only replaced when that specific entity changes.
+    // By checking only the entities relevant to this card, we avoid O(N) work
+    // on every unrelated state change.
+    const registriesChanged =
+      hass.entities !== this._prevEntities ||
+      hass.devices !== this._prevDevices ||
+      hass.areas !== this._prevAreas;
+
+    if (
+      !registriesChanged &&
+      this._relevantEntityIds &&
+      this._prevStates &&
+      this._hass &&
+      hass !== this._prevHass
+    ) {
+      let anyRelevantStateChanged = false;
+      for (const id of this._relevantEntityIds) {
+        if (hass.states[id] !== this._prevStates[id]) {
+          anyRelevantStateChanged = true;
+          break;
+        }
+      }
+
+      if (!anyRelevantStateChanged) {
+        this._prevStates = hass.states;
+        this._prevHass = hass;
+        // Still need to forward formatEntityState changes
+        if (hass.formatEntityState !== this._hass.formatEntityState) {
+          this._hass = hass;
+        } else {
+          // update children who are subscribed
+          this._dispatchHassUpdate(hass);
+        }
+        return;
+      }
+    }
+
+    // Cache registry references for next comparison
+    this._prevHass = hass;
+    this._prevStates = hass.states;
+    this._prevEntities = hass.entities;
+    this._prevDevices = hass.devices;
+    this._prevAreas = hass.areas;
+
+    const props = getRoomProperties(hass, this._config, this);
     const {
       roomInfo,
       roomEntity,
@@ -160,7 +225,10 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
       isIconActive,
       thresholds,
       flags: { alarm, dark, frostedGlass },
-    } = getRoomProperties(hass, this._config, this);
+    } = props;
+
+    // Update the set of entity IDs we care about for future early-exit checks
+    this._relevantEntityIds = collectRelevantEntityIds(this._config, props);
 
     this.alarm = alarm;
     this.dark = dark;
@@ -207,9 +275,25 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
       this._hass = hass;
     } else {
       // update children who are subscribed
-      fireEvent(this, 'hass-update', {
-        hass,
+      this._dispatchHassUpdate(hass);
+    }
+  }
+
+  /**
+   * Dispatches hass-update event to child components via the shadow root.
+   * This scopes the event so that only this card's children receive it,
+   * preventing cross-card event leakage when multiple room-summary-cards
+   * are on the same dashboard.
+   */
+  private _dispatchHassUpdate(hass: HomeAssistant): void {
+    const root = this.shadowRoot;
+    if (root) {
+      const event = new CustomEvent('hass-update', {
+        detail: { hass },
+        bubbles: false,
+        composed: false,
       });
+      root.dispatchEvent(event);
     }
   }
 

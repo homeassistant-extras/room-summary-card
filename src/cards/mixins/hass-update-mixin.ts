@@ -51,15 +51,46 @@ export const HassUpdateMixin = <T extends Constructor<LitElement>>(
 
     override connectedCallback(): void {
       super.connectedCallback();
-      globalThis.addEventListener('hass-update', this._boundHassUpdateHandler);
+
+      // Listen on the component's root node (shadow root of the parent card)
+      // instead of globalThis. This scopes events so that each card's
+      // hass-update only reaches its own children, not components in other
+      // cards on the same dashboard.
+      const root =
+        typeof this.getRootNode === 'function'
+          ? this.getRootNode()
+          : undefined;
+      if (root && root !== this) {
+        root.addEventListener(
+          'hass-update',
+          this._boundHassUpdateHandler as EventListener,
+        );
+      } else {
+        // Fallback for components not in a shadow root
+        globalThis.addEventListener(
+          'hass-update',
+          this._boundHassUpdateHandler,
+        );
+      }
     }
 
     override disconnectedCallback(): void {
       super.disconnectedCallback();
-      globalThis.removeEventListener(
-        'hass-update',
-        this._boundHassUpdateHandler,
-      );
+      const root =
+        typeof this.getRootNode === 'function'
+          ? this.getRootNode()
+          : undefined;
+      if (root && root !== this) {
+        root.removeEventListener(
+          'hass-update',
+          this._boundHassUpdateHandler as EventListener,
+        );
+      } else {
+        globalThis.removeEventListener(
+          'hass-update',
+          this._boundHassUpdateHandler,
+        );
+      }
     }
 
     private _handleHassUpdate(event: Event): void {

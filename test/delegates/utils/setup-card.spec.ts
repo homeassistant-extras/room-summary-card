@@ -518,4 +518,180 @@ describe('setup-card.ts', () => {
       });
     });
   });
+
+  describe('collectRelevantEntityIds', () => {
+    // Import the function under test
+    let collectRelevantEntityIds: typeof import('@delegates/utils/setup-card').collectRelevantEntityIds;
+
+    before(async () => {
+      const mod = await import('@delegates/utils/setup-card');
+      collectRelevantEntityIds = mod.collectRelevantEntityIds;
+    });
+
+    it('should include the room entity ID', () => {
+      const config: Config = { area: 'living_room' };
+      const props = {
+        roomEntity: { config: { entity_id: 'light.test' }, state: undefined },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+      } as any;
+
+      const ids = collectRelevantEntityIds(config, props);
+      expect(ids.has('light.test')).to.be.true;
+    });
+
+    it('should include individual sensor entity IDs', () => {
+      const config: Config = { area: 'living_room' };
+      const props = {
+        roomEntity: { config: { entity_id: 'light.test' }, state: undefined },
+        sensors: {
+          individual: [
+            { entity_id: 'sensor.temp_1' },
+            { entity_id: 'sensor.humidity_1' },
+          ],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+      } as any;
+
+      const ids = collectRelevantEntityIds(config, props);
+      expect(ids.has('sensor.temp_1')).to.be.true;
+      expect(ids.has('sensor.humidity_1')).to.be.true;
+    });
+
+    it('should include averaged sensor entity IDs', () => {
+      const config: Config = { area: 'living_room' };
+      const props = {
+        roomEntity: { config: { entity_id: 'light.test' }, state: undefined },
+        sensors: {
+          individual: [],
+          averaged: [
+            {
+              states: [
+                { entity_id: 'sensor.avg_1' },
+                { entity_id: 'sensor.avg_2' },
+              ],
+            },
+          ],
+          problemSensors: [],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+      } as any;
+
+      const ids = collectRelevantEntityIds(config, props);
+      expect(ids.has('sensor.avg_1')).to.be.true;
+      expect(ids.has('sensor.avg_2')).to.be.true;
+    });
+
+    it('should include alarm entity IDs from config', () => {
+      const config: Config = {
+        area: 'living_room',
+        smoke: { entities: ['binary_sensor.smoke_1'] },
+        occupancy: { entities: ['binary_sensor.motion_1', 'binary_sensor.motion_2'] },
+      };
+      const props = {
+        roomEntity: { config: { entity_id: 'light.test' }, state: undefined },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+      } as any;
+
+      const ids = collectRelevantEntityIds(config, props);
+      expect(ids.has('binary_sensor.smoke_1')).to.be.true;
+      expect(ids.has('binary_sensor.motion_1')).to.be.true;
+      expect(ids.has('binary_sensor.motion_2')).to.be.true;
+    });
+
+    it('should include background image entity from config', () => {
+      const config: Config = {
+        area: 'living_room',
+        background: { image_entity: 'camera.front_door' },
+      };
+      const props = {
+        roomEntity: { config: { entity_id: 'light.test' }, state: undefined },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+        },
+      } as any;
+
+      const ids = collectRelevantEntityIds(config, props);
+      expect(ids.has('camera.front_door')).to.be.true;
+    });
+
+    it('should include mold sensor entity ID', () => {
+      const config: Config = { area: 'living_room' };
+      const props = {
+        roomEntity: { config: { entity_id: 'light.test' }, state: undefined },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [],
+          ambientLightEntities: [],
+          thresholdSensors: [],
+          mold: { entity_id: 'sensor.mold_indicator' },
+        },
+      } as any;
+
+      const ids = collectRelevantEntityIds(config, props);
+      expect(ids.has('sensor.mold_indicator')).to.be.true;
+    });
+
+    it('should handle missing sensor arrays gracefully', () => {
+      const config: Config = { area: 'living_room' };
+      const props = {
+        roomEntity: { config: { entity_id: 'light.test' }, state: undefined },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+        },
+      } as any;
+
+      const ids = collectRelevantEntityIds(config, props);
+      expect(ids.has('light.test')).to.be.true;
+      expect(ids.size).to.equal(1);
+    });
+
+    it('should include light and ambient light entity IDs', () => {
+      const config: Config = { area: 'living_room' };
+      const props = {
+        roomEntity: { config: { entity_id: 'light.test' }, state: undefined },
+        sensors: {
+          individual: [],
+          averaged: [],
+          problemSensors: [],
+          lightEntities: [{ entity_id: 'light.main' }],
+          ambientLightEntities: [{ entity_id: 'light.ambient' }],
+          thresholdSensors: [{ entity_id: 'sensor.threshold_temp' }],
+        },
+      } as any;
+
+      const ids = collectRelevantEntityIds(config, props);
+      expect(ids.has('light.main')).to.be.true;
+      expect(ids.has('light.ambient')).to.be.true;
+      expect(ids.has('sensor.threshold_temp')).to.be.true;
+    });
+  });
 });
