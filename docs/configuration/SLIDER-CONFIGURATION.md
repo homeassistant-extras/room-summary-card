@@ -32,12 +32,12 @@ block becomes the bound entity. Only one slider renders per card.
 
 ### Supported domains
 
-| Domain         | Reads from                   | Writes via                                 |
-| -------------- | ---------------------------- | ------------------------------------------ |
-| `counter`      | `state` + min/max/step       | `counter.set_value`                        |
-| `input_number` | `state` + min/max/step       | `input_number.set_value`                   |
-| `number`       | `state` + min/max/step       | `number.set_value`                         |
-| `media_player` | `volume_level` (0–1 → 0–100) | `media_player.volume_set` (0–1)            |
+| Domain         | Reads from                     | Writes via                                            |
+| -------------- | ------------------------------ | ----------------------------------------------------- |
+| `counter`      | `state` + min/max/step         | `counter.set_value`                                   |
+| `input_number` | `state` + min/max/step         | `input_number.set_value`                              |
+| `number`       | `state` + min/max/step         | `number.set_value`                                    |
+| `media_player` | `volume_level` (0–1 → 0–100)   | `media_player.volume_set` (0–1)                       |
 | `light`        | `brightness` attribute (0–255) | `light.turn_on` (`brightness`); `light.turn_off` at 0 |
 
 For `counter` / `input_number` / `number`, the slider's range and step

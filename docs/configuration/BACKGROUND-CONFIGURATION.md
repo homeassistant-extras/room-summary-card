@@ -6,7 +6,7 @@ Customize the card's background appearance with images and effects:
 background:
   image: /local/images/living-room.jpg # Custom image path/URL
   image_entity: image.living_room_camera # Dynamic image from entity
-  opacity: 30 # Opacity percentage (0-100)
+  opacity: 30 # Static percentage (0-100), or an entity_id for live opacity (see below)
   options:
     - disable # Disable background images entirely
     - icon_background # Apply background to room icon only
@@ -17,12 +17,12 @@ background:
 
 ### Background Options
 
-| Name         | Type   | Default | Description                                                         |
-| ------------ | ------ | ------- | ------------------------------------------------------------------- |
-| image        | string | none    | URL or path to background image                                     |
-| image_entity | string | none    | Entity ID for dynamic background (image, person, camera)            |
-| opacity      | number | auto    | Background opacity percentage (0-100)                               |
-| options      | array  | none    | Array of options: 'disable', 'icon_background', or 'hide_icon_only' |
+| Name         | Type             | Default | Description                                                         |
+| ------------ | ---------------- | ------- | ------------------------------------------------------------------- |
+| image        | string           | none    | URL or path to background image                                     |
+| image_entity | string           | none    | Entity ID for dynamic background (image, person, camera)            |
+| opacity      | number or string | auto    | Static percentage **(0–100)**, or an **entity ID**                  |
+| options      | array            | none    | Array of options: 'disable', 'icon_background', or 'hide_icon_only' |
 
 ### Background Priority
 
@@ -237,6 +237,20 @@ background:
   image: /local/images/room.jpg
   opacity: 25 # Subtle background
 ```
+
+### Entity-driven opacity
+
+Instead of a fixed percentage, set `opacity` to an **entity ID**. The card subscribes to that entity and maps its numeric state into background opacity (values are treated as **0–1**, then clamped—ideal for occupancy probability, normalized light level, or similar sensors).
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+background:
+  image: /local/images/living-room.jpg
+  opacity: sensor.living_room_occupancy_probability
+```
+
+When `opacity` is an entity, static percentages in YAML no longer apply; the sensor drives `--user-opacity` until you switch back to a number.
 
 ### Automatic Opacity
 

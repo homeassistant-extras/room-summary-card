@@ -153,7 +153,6 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
 
     if (this._image) {
       this.image = true;
-      this.iconBackground = true;
       this._hideIconContent = true;
     } else {
       // Reset hideIconContent when image goes away
@@ -194,8 +193,6 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       this.entity,
       this.isActive,
       this._image,
-      this.isMainRoomEntity,
-      this._config,
     );
 
     const iconStyles = {

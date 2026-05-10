@@ -29,8 +29,10 @@ import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { d } from '@util/debug';
+import { SubscribeEntityStateMixin } from './mixins/subscribe-entity-state-mixin';
 const equal = require('fast-deep-equal');
-export class RoomSummaryCard extends LitElement {
+
+export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
   /**
    * Card configuration object
    */
@@ -86,8 +88,6 @@ export class RoomSummaryCard extends LitElement {
   private image!: boolean;
   @property({ type: String, reflect: true })
   private alarm?: 'smoke' | 'gas' | 'water' | 'occupied';
-  @property({ type: Boolean, reflect: true, attribute: 'icon-bg' })
-  private iconBackground!: boolean;
   @property({ type: Boolean, reflect: true, attribute: 'skip-mold-styles' })
   private skipMoldStyles!: boolean;
 
@@ -122,19 +122,34 @@ export class RoomSummaryCard extends LitElement {
    */
   setConfig(config: Config) {
     if (!equal(config, this._config)) {
-      this.iconBackground =
-        config.background?.options?.includes('icon_background') ?? false;
       this.skipMoldStyles = hasFeature(config, 'skip_mold_styles');
 
       this._config = config;
+
+      // When background.opacity is configured as an entity_id, ask the
+      // SubscribeEntityStateMixin to track it so changes re-render the card.
+      const opacity = config.background?.opacity;
+      this.entity = typeof opacity === 'string' ? opacity : undefined;
     }
+  }
+
+  /**
+   * Expose `_hass` / `_config` to mixins that read `this.hass` / `this.config`
+   * (e.g. SubscribeEntityStateMixin).
+   */
+  override get hass(): HomeAssistant {
+    return this._hass;
+  }
+
+  override get config(): Config {
+    return this._config;
   }
 
   /**
    * Updates the card's state when Home Assistant state changes
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
-  set hass(hass: HomeAssistant) {
+  override set hass(hass: HomeAssistant) {
     d(this._config, 'room-summary-card', 'set hass');
     const {
       roomInfo,
@@ -154,11 +169,8 @@ export class RoomSummaryCard extends LitElement {
     this._isIconActive = isIconActive;
     this.iconOpacityPreset = this._config.icon_opacity_preset;
 
-    // Handle async image resolution
     image.then((resolvedImage) => {
-      // Don't set image attribute on card if icon_background is set
-      // (background should only apply to icon, not card)
-      this.image = !this.iconBackground && !!resolvedImage;
+      this.image = !!resolvedImage;
       this._image = resolvedImage;
     });
 
@@ -263,6 +275,7 @@ export class RoomSummaryCard extends LitElement {
       this._isActive,
       this._thresholds,
       this._sensors?.ambientLightEntities,
+      this.state,
     );
 
     const problems = renderProblemIndicator(

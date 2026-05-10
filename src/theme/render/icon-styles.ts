@@ -7,7 +7,6 @@ import {
 import { stateColorBrightness } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';
 import type { HassEntity } from '@hass/ws/types';
-import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { nothing } from 'lit';
 import { getStyleData } from './common-style';
@@ -19,8 +18,6 @@ import { getStyleData } from './common-style';
  * @param entity - The entity information used to determine icon styling.
  * @param isActive - Whether the room is considered active (for styling).
  * @param image - The image to use for the icon background.
- * @param isMainRoomEntity - Whether the entity is the main room entity.
- * @param config - The configuration object (optional, used for opacity when image is present).
  * @returns A lit-html style map directive with CSS custom properties for icon color, opacity, and theme overrides.
  */
 export const renderEntityIconStyles = (
@@ -28,8 +25,6 @@ export const renderEntityIconStyles = (
   entity: EntityInformation,
   isActive?: boolean,
   image?: string | null,
-  isMainRoomEntity?: boolean,
-  config?: Config,
 ): DirectiveResult<typeof StyleMapDirective> | typeof nothing => {
   const { state } = entity as { state: HassEntity };
   const filter = stateColorBrightness(state);
@@ -37,25 +32,10 @@ export const renderEntityIconStyles = (
 
   if (!styleData) return nothing;
 
-  // Calculate opacity for image backgrounds
-  // Apply opacity to icon only if icon_background option is set
-  const bg = config?.background;
-  const isIconBackground = bg?.options?.includes('icon_background') ?? false;
-  const rawOpacity = bg?.opacity;
-  const hasConfiguredOpacity =
-    rawOpacity !== undefined &&
-    rawOpacity !== null &&
-    !Number.isNaN(Number(rawOpacity));
-  const userOpacity =
-    hasConfiguredOpacity && isIconBackground && isMainRoomEntity
-      ? Number(rawOpacity) / 100
-      : undefined;
-
   const opacity =
-    userOpacity ??
-    (image && styleData.active
+    image && styleData.active
       ? '1'
-      : `var(--opacity-icon-fill-${styleData.activeClass})`);
+      : `var(--opacity-icon-fill-${styleData.activeClass})`;
 
   return styleMap({
     '--icon-color': styleData.cssColor,

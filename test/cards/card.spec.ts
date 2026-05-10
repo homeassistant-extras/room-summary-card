@@ -4,18 +4,27 @@ import * as setupCardModule from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity as e, createState as s } from '@test/test-helpers';
+import * as cardStylesModule from '@theme/render/card-styles';
 import { styles } from '@theme/styles';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
+
+/** Capture before any sinon stub replaces the module export. */
+const renderCardStylesOriginal = cardStylesModule.renderCardStyles;
 
 describe('card.ts', () => {
   let card: RoomSummaryCard;
   let mockHass: HomeAssistant;
   let actionHandlerStub: sinon.SinonStub;
   let getRoomPropertiesStub: sinon.SinonStub;
+  let renderCardStylesStub: sinon.SinonStub;
 
   beforeEach(() => {
+    renderCardStylesStub = stub(cardStylesModule, 'renderCardStyles').callsFake(
+      (...args: Parameters<typeof renderCardStylesOriginal>) =>
+        renderCardStylesOriginal(...args),
+    );
     actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
       bind: () => {},
       handleAction: () => {},
@@ -83,6 +92,7 @@ describe('card.ts', () => {
   });
 
   afterEach(() => {
+    renderCardStylesStub.restore();
     actionHandlerStub.restore();
     getRoomPropertiesStub.restore();
   });
@@ -92,6 +102,29 @@ describe('card.ts', () => {
       const config = { area: 'living_room' };
       card.setConfig(config);
       expect(card['_config']).to.deep.equal(config);
+    });
+
+    it('should set entity when background.opacity is an entity id string', () => {
+      const opacityEntity = 'sensor.room_opacity';
+      card.setConfig({
+        area: 'living_room',
+        background: { opacity: opacityEntity },
+      });
+      expect(card['entity']).to.equal(opacityEntity);
+    });
+
+    it('should clear entity when background.opacity is not a string', () => {
+      card.setConfig({
+        area: 'living_room',
+        background: { opacity: 'sensor.was_entity' },
+      });
+      expect(card['entity']).to.equal('sensor.was_entity');
+
+      card.setConfig({
+        area: 'living_room',
+        background: { opacity: 0.5 },
+      });
+      expect(card['entity']).to.be.undefined;
     });
   });
 
@@ -197,7 +230,7 @@ describe('card.ts', () => {
       expect(card['image']).to.be.true;
     });
 
-    it('should not set image property when iconBackground is set', async () => {
+    it('should set image property even when icon_background option is set', async () => {
       card.setConfig({
         area: 'living_room',
         background: {
@@ -240,14 +273,13 @@ describe('card.ts', () => {
       });
 
       card.hass = mockHass;
-      // Wait for image promise to resolve
       await new Promise((resolve) => setTimeout(resolve, 0));
       expect(card['_image']).to.equal('/local/test.jpg');
-      expect(card['image']).to.be.false; // Should be false when iconBackground is set
-      expect(card['iconBackground']).to.be.true;
+      expect(card['image']).to.be.true;
+      expect(card.hasAttribute('icon-bg')).to.be.false;
     });
 
-    it('should set image property when iconBackground is not set', async () => {
+    it('should set image property when icon_background option is not set', async () => {
       card.setConfig({
         area: 'living_room',
         background: {
@@ -292,8 +324,8 @@ describe('card.ts', () => {
       // Wait for image promise to resolve
       await new Promise((resolve) => setTimeout(resolve, 0));
       expect(card['_image']).to.equal('/local/test.jpg');
-      expect(card['image']).to.be.true; // Should be true when iconBackground is not set
-      expect(card['iconBackground']).to.be.false;
+      expect(card['image']).to.be.true;
+      expect(card.hasAttribute('icon-bg')).to.be.false;
     });
 
     it('should set frostedGlass property from getRoomProperties flags', () => {
@@ -395,6 +427,25 @@ describe('card.ts', () => {
       const overlay = el.querySelector('.card-overlay');
 
       expect(overlay).to.not.exist;
+    });
+
+    it('should pass mixin state to renderCardStyles as opacity state', () => {
+      const opacityState = e('sensor', 'opacity', '128', {
+        unit_of_measurement: '%',
+      });
+      card['state'] = opacityState;
+      card.render();
+
+      expect(renderCardStylesStub.calledOnce).to.be.true;
+      expect(renderCardStylesStub.lastCall.args[8]).to.equal(opacityState);
+    });
+
+    it('should pass undefined to renderCardStyles when mixin state is unset', () => {
+      card['state'] = undefined;
+      card.render();
+
+      expect(renderCardStylesStub.calledOnce).to.be.true;
+      expect(renderCardStylesStub.lastCall.args[8]).to.be.undefined;
     });
   });
 

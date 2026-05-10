@@ -38,6 +38,7 @@ import { getRgbColor } from '../get-rgb';
  * @param isActive - Whether the room is considered active (for styling).
  * @param thresholds - Climate threshold results containing hot/humid flags and custom colors.
  * @param ambientLightEntities - (Optional) Array of ambient light entity states for background color.
+ * @param opacityState - (Optional) Current state of the entity referenced by `config.background.opacity` when configured as an entity_id.
  * @returns A DirectiveResult containing the computed style map for the card.
  */
 export const renderCardStyles = (
@@ -49,6 +50,7 @@ export const renderCardStyles = (
   isActive: boolean = false,
   thresholds?: ClimateThresholds,
   ambientLightEntities?: EntityState[],
+  opacityState?: EntityState,
 ): DirectiveResult<typeof StyleMapDirective> => {
   const { state } = entity as { state: HassEntity };
   const thresholdResult = getThresholdResult(entity);
@@ -75,7 +77,7 @@ export const renderCardStyles = (
   }
 
   const skipStyles = hasFeature(config, 'skip_entity_styles');
-  const opacity = getBackgroundOpacity(config, isActive);
+  const opacity = getBackgroundOpacity(config, isActive, opacityState);
   // Get alarm CSS vars based on current alarm state
   let alarmVars: Record<string, string> = {};
   if (alarm === 'smoke') {

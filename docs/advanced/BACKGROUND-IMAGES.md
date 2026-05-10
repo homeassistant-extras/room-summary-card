@@ -64,6 +64,8 @@ background:
   opacity: 50 # 50% opacity (0-100 scale)
 ```
 
+You can also point `opacity` at an entity ID so transparency follows a sensor (state interpreted as **0–1**). See [Background Configuration — Entity-driven opacity](https://homeassistant-extras.github.io/room-summary-card/configuration/BACKGROUND-CONFIGURATION/#entity-driven-opacity).
+
 If no opacity is specified, the card uses theme-aware automatic opacity:
 
 - Light mode: Adjusts opacity based on entity state

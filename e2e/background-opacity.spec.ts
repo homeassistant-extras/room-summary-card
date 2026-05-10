@@ -4,6 +4,7 @@ import {
   backgroundOpacityPath,
   describeHa,
   E2eCardTarget,
+  expectEntityIconPictureBackground,
   roomSummaryCardByE2eTarget,
 } from './helpers';
 
@@ -12,6 +13,8 @@ import {
  *
  * 1) Full card background — `opacity: 90` (card overlay, not icon_background)
  * 2) Icon-only background — `icon_background`, `hide_icon_only`, `opacity: 30` (main entity `.icon::before`)
+ *
+ * Entity grid: first `entity-collection` icon should be an “on” `media_player` with `entity_picture` (same as basic e2e `expectEntityIconPictureBackground`).
  *
  * ```yaml
  * - type: custom:room-summary-card
@@ -52,9 +55,23 @@ describeHa('Background & Opacity', () => {
 
     await expect(fullCardBg).toBeVisible();
     await expect(iconBgCard).toBeVisible();
+
+    const firstEntityIcon = fullCardBg
+      .locator('entity-collection')
+      .locator('room-state-icon')
+      .first();
+    await expectEntityIconPictureBackground(firstEntityIcon);
+
     await expect(fullCardBg).toHaveAttribute('image');
-    await expect(fullCardBg).not.toHaveAttribute('icon-bg');
-    await expect(iconBgCard).toHaveAttribute('icon-bg');
+    await expect(fullCardBg.locator('room-state-icon[room]')).toHaveAttribute(
+      'image',
+    );
+    await expect(
+      fullCardBg.locator('room-state-icon[room]'),
+    ).not.toHaveAttribute('icon-bg');
+    await expect(iconBgCard.locator('room-state-icon[room]')).toHaveAttribute(
+      'icon-bg',
+    );
 
     await expect
       .poll(async () => {

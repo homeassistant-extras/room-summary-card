@@ -46,6 +46,8 @@
      opacity: 15 # Lower for subtle background
    ```
 
+   Or tie opacity to a sensor (state **0–1**), for example so a room fades as occupancy drops—see [Background Configuration — Entity-driven opacity](https://homeassistant-extras.github.io/room-summary-card/configuration/BACKGROUND-CONFIGURATION/#entity-driven-opacity).
+
 2. **Use different image**: Choose images with better contrast
 3. **Hide room icon for cleaner look**:
    ```yaml

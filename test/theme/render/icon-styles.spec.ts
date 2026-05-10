@@ -211,124 +211,9 @@ describe('icon-styles.ts', () => {
       );
     });
 
-    it('should apply opacity from config when icon_background option is set and isMainRoomEntity is true', () => {
-      getStyleDataStub.returns({
-        active: true,
-        cssColor: 'var(--primary-color)',
-        themeOverride: 'var(--theme-override)',
-        activeClass: 'active',
-      });
-      const entity = createEntityInfo('light', 'test', 'on');
-      const imageUrl = '/local/images/test-image.png';
-      const config = {
-        area: 'test',
-        background: {
-          opacity: 50,
-          options: ['icon_background'],
-        },
-      } as any;
-
-      const result = renderEntityIconStyles(
-        mockHass,
-        entity,
-        true,
-        imageUrl,
-        true, // isMainRoomEntity must be true
-        config,
-      );
-
-      expect(result).to.deep.equal(
-        styleMap({
-          '--icon-color': 'var(--primary-color)',
-          '--icon-opacity': 'var(--opacity-icon-active)',
-          '--background-color-icon': 'var(--primary-color)',
-          '--background-opacity-icon': 0.5,
-          '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': `url(${imageUrl})`,
-          '--icon-filter': '',
-        }),
-      );
-    });
-
-    it('should not apply opacity from config when icon_background is set but isMainRoomEntity is false', () => {
-      getStyleDataStub.returns({
-        active: true,
-        cssColor: 'var(--primary-color)',
-        themeOverride: 'var(--theme-override)',
-        activeClass: 'active',
-      });
-      const entity = createEntityInfo('light', 'test', 'on');
-      const imageUrl = '/local/images/test-image.png';
-      const config = {
-        area: 'test',
-        background: {
-          opacity: 50,
-          options: ['icon_background'],
-        },
-      } as any;
-
-      const result = renderEntityIconStyles(
-        mockHass,
-        entity,
-        true,
-        imageUrl,
-        false, // isMainRoomEntity is false
-        config,
-      );
-
-      expect(result).to.deep.equal(
-        styleMap({
-          '--icon-color': 'var(--primary-color)',
-          '--icon-opacity': 'var(--opacity-icon-active)',
-          '--background-color-icon': 'var(--primary-color)',
-          '--background-opacity-icon': '1',
-          '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': `url(${imageUrl})`,
-          '--icon-filter': '',
-        }),
-      );
-    });
-
-    it('should apply opacity from config when isMainRoomEntity is true (legacy behavior)', () => {
-      getStyleDataStub.returns({
-        active: true,
-        cssColor: 'var(--primary-color)',
-        themeOverride: 'var(--theme-override)',
-        activeClass: 'active',
-      });
-      const entity = createEntityInfo('light', 'test', 'on');
-      const imageUrl = '/local/images/test-image.png';
-      const config = {
-        area: 'test',
-        background: {
-          opacity: 50,
-          options: ['icon_background'],
-        },
-      } as any;
-
-      const result = renderEntityIconStyles(
-        mockHass,
-        entity,
-        true,
-        imageUrl,
-        true,
-        config,
-      );
-
-      expect(result).to.deep.equal(
-        styleMap({
-          '--icon-color': 'var(--primary-color)',
-          '--icon-opacity': 'var(--opacity-icon-active)',
-          '--background-color-icon': 'var(--primary-color)',
-          '--background-opacity-icon': 0.5,
-          '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': `url(${imageUrl})`,
-          '--icon-filter': '',
-        }),
-      );
-    });
-
-    it('should apply icon_background opacity when image URL is absent and light inactive (image_entity / no entity_picture)', () => {
+    it('should use inactive default opacity when entity is inactive and no image is present', () => {
+      // Config-driven user opacity is now routed by CSS, not by this function.
+      // The function always emits the default fill var or '1' (when image+active).
       getStyleDataStub.returns({
         active: false,
         cssColor: 'var(--disabled-color)',
@@ -336,104 +221,17 @@ describe('icon-styles.ts', () => {
         activeClass: 'inactive',
       });
       const entity = createEntityInfo('light', 'test', 'off');
-      const config = {
-        area: 'test',
-        background: {
-          opacity: 30,
-          options: ['icon_background', 'hide_icon_only'],
-        },
-      } as any;
 
-      const result = renderEntityIconStyles(
-        mockHass,
-        entity,
-        true,
-        undefined,
-        true,
-        config,
-      );
+      const result = renderEntityIconStyles(mockHass, entity, true, undefined);
 
       expect(result).to.deep.equal(
         styleMap({
           '--icon-color': 'var(--disabled-color)',
           '--icon-opacity': 'var(--opacity-icon-inactive)',
           '--background-color-icon': 'var(--disabled-color)',
-          '--background-opacity-icon': 0.3,
+          '--background-opacity-icon': 'var(--opacity-icon-fill-inactive)',
           '--state-color-icon-theme': 'var(--theme-override)',
           '--background-image': undefined,
-          '--icon-filter': '',
-        }),
-      );
-    });
-
-    it('should not apply opacity from config when icon_background is not set and isMainRoomEntity is false', () => {
-      getStyleDataStub.returns({
-        active: true,
-        cssColor: 'var(--primary-color)',
-        themeOverride: 'var(--theme-override)',
-        activeClass: 'active',
-      });
-      const entity = createEntityInfo('light', 'test', 'on');
-      const imageUrl = '/local/images/test-image.png';
-      const config = {
-        area: 'test',
-        background: {
-          opacity: 50,
-        },
-      } as any;
-
-      const result = renderEntityIconStyles(
-        mockHass,
-        entity,
-        true,
-        imageUrl,
-        false,
-        config,
-      );
-
-      expect(result).to.deep.equal(
-        styleMap({
-          '--icon-color': 'var(--primary-color)',
-          '--icon-opacity': 'var(--opacity-icon-active)',
-          '--background-color-icon': 'var(--primary-color)',
-          '--background-opacity-icon': '1',
-          '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': `url(${imageUrl})`,
-          '--icon-filter': '',
-        }),
-      );
-    });
-
-    it('should use default opacity when image is present but opacity is not configured', () => {
-      getStyleDataStub.returns({
-        active: true,
-        cssColor: 'var(--primary-color)',
-        themeOverride: 'var(--theme-override)',
-        activeClass: 'active',
-      });
-      const entity = createEntityInfo('light', 'test', 'on');
-      const imageUrl = '/local/images/test-image.png';
-      const config = {
-        area: 'test',
-      } as any;
-
-      const result = renderEntityIconStyles(
-        mockHass,
-        entity,
-        true,
-        imageUrl,
-        true,
-        config,
-      );
-
-      expect(result).to.deep.equal(
-        styleMap({
-          '--icon-color': 'var(--primary-color)',
-          '--icon-opacity': 'var(--opacity-icon-active)',
-          '--background-color-icon': 'var(--primary-color)',
-          '--background-opacity-icon': '1',
-          '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': `url(${imageUrl})`,
           '--icon-filter': '',
         }),
       );

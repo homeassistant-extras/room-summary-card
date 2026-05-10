@@ -99,6 +99,35 @@ describe('card-styles.ts', () => {
   });
 
   describe('renderCardStyles', () => {
+    it('should pass opacityState to getBackgroundOpacity when provided', () => {
+      const entity = createEntityInfo('light.test');
+      const opacityState = s('sensor.room_dimmer', '0.42');
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        undefined,
+        undefined,
+        false,
+        undefined,
+        [],
+        opacityState,
+      );
+
+      expect(
+        getBackgroundOpacityStub.calledWith(mockConfig, false, opacityState),
+      ).to.be.true;
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--background-filter': '',
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+        }),
+      );
+    });
+
     it('should render basic inactive styles', () => {
       const entity = createEntityInfo('light.test');
       const styles = renderCardStyles(
@@ -108,7 +137,6 @@ describe('card-styles.ts', () => {
         undefined,
         undefined,
         false,
-        undefined,
       );
 
       expect(getThresholdResultStub.calledWith(entity)).to.be.true;
@@ -120,7 +148,8 @@ describe('card-styles.ts', () => {
           false,
         ),
       ).to.be.true;
-      expect(getBackgroundOpacityStub.calledWith(mockConfig, false)).to.be.true;
+      expect(getBackgroundOpacityStub.calledWith(mockConfig, false, undefined))
+        .to.be.true;
       expect(styles).to.deep.equal(
         styleMap({
           '--background-color-card': undefined,
@@ -154,7 +183,6 @@ describe('card-styles.ts', () => {
         undefined,
         image,
         true,
-        undefined,
       );
 
       expect(getThresholdResultStub.calledWith(entity)).to.be.true;
@@ -225,7 +253,6 @@ describe('card-styles.ts', () => {
         'occupied',
         undefined,
         false,
-        undefined,
       );
 
       expect(getThresholdResultStub.calledWith(entity)).to.be.true;
@@ -267,7 +294,6 @@ describe('card-styles.ts', () => {
         undefined,
         undefined,
         false,
-        undefined,
       );
 
       expect(getThresholdResultStub.calledWith(entity)).to.be.true;
@@ -299,7 +325,6 @@ describe('card-styles.ts', () => {
         undefined,
         undefined,
         undefined as any,
-        undefined,
       );
 
       expect(
@@ -332,7 +357,6 @@ describe('card-styles.ts', () => {
         undefined,
         undefined,
         false,
-        undefined,
       );
 
       expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
@@ -358,7 +382,6 @@ describe('card-styles.ts', () => {
         undefined,
         undefined,
         false,
-        undefined,
       );
 
       expect(stateColorBrightnessStub.calledWith(entity.state)).to.be.true;
@@ -580,15 +603,13 @@ describe('card-styles.ts', () => {
       it('should fall back to entity theme color when ambientLightEntities is undefined', () => {
         const entity = createEntityInfo('light.main');
 
-        const styles = renderCardStyles(
+        renderCardStyles(
           mockHass,
           mockConfig,
           entity,
           undefined,
           undefined,
           false,
-          undefined,
-          undefined,
         );
 
         expect(getRgbColorStub.called).to.be.false;
@@ -605,7 +626,7 @@ describe('card-styles.ts', () => {
       it('should fall back to entity theme color when ambientLightEntities is empty', () => {
         const entity = createEntityInfo('light.main');
 
-        const styles = renderCardStyles(
+        renderCardStyles(
           mockHass,
           mockConfig,
           entity,

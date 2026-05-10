@@ -29,7 +29,10 @@ export const E2eCardTarget = {
  * `room-summary-card` whose inner `ha-card` inline style includes the marker variable and value
  * (merged from `styles.card` in config).
  */
-export function roomSummaryCardByE2eTarget(page: Page, markerValue: string): Locator {
+export function roomSummaryCardByE2eTarget(
+  page: Page,
+  markerValue: string,
+): Locator {
   return page.locator(
     `room-summary-card:has(ha-card[style*="${E2E_CARD_MARKER_VAR}"][style*="${markerValue}"])`,
   );
@@ -41,14 +44,13 @@ export const describeHa = process.env.PLAYWRIGHT_HA_STORAGE_STATE
   : test.describe.skip;
 
 /**
- * Asserts a `room-state-icon` shows `entity_picture` styling: reflected `image` + `icon-bg`,
+ * Asserts a `room-state-icon` shows `entity_picture` styling: reflected `image`,
  * `--background-opacity-icon` resolved to 1, and a `::before` background-image `url(...)`.
  */
 export async function expectEntityIconPictureBackground(
   roomStateIcon: Locator,
 ): Promise<void> {
   await expect(roomStateIcon).toHaveAttribute('image');
-  await expect(roomStateIcon).toHaveAttribute('icon-bg');
   const icon = roomStateIcon.locator('.icon');
   await expect
     .poll(async () => {
@@ -56,9 +58,9 @@ export async function expectEntityIconPictureBackground(
         const raw = getComputedStyle(el)
           .getPropertyValue('--background-opacity-icon')
           .trim();
-        const n = parseFloat(raw);
+        const n = Number.parseFloat(raw);
         if (!Number.isNaN(n)) return n;
-        return parseFloat(getComputedStyle(el, '::before').opacity);
+        return Number.parseFloat(getComputedStyle(el, '::before').opacity);
       });
     })
     .toBeCloseTo(1, 5);

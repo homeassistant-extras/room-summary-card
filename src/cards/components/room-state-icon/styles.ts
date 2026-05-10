@@ -8,7 +8,7 @@ export const styles = css`
     width: var(--user-entity-icon-size, 100%);
   }
 
-  :host([image][icon-bg]) {
+  :host([image]) {
     --user-background-image-overlay: linear-gradient(
       to bottom,
       rgba(0, 0, 0, 0.4),
@@ -42,8 +42,14 @@ export const styles = css`
     filter: var(--icon-filter, none);
   }
 
+  /* When this icon is the main room icon AND owns the background,
+     route the card-level --user-opacity here instead of to the card. */
+  :host([room][icon-bg]) .icon::before {
+    opacity: var(--user-opacity, var(--background-opacity-icon));
+  }
+
   /* Icon background image styling */
-  :host([image][icon-bg]) .icon::before {
+  :host([image]) .icon::before {
     background-image:
       var(--user-background-image-overlay), var(--background-image);
     background-repeat: no-repeat;

@@ -117,8 +117,14 @@ export interface Config {
     /** Entity ID for dynamic background images */
     image_entity?: string;
 
-    /** Opacity level for the background image (0 to 1) */
-    opacity?: number;
+    /**
+     * Opacity level for the background.
+     *
+     * - `number`: static percentage (0–100).
+     * - `string`: an entity_id; state is parsed as **0–1** and applied whenever
+     *   the entity updates (subscription on the card).
+     */
+    opacity?: number | string;
 
     /** Background options */
     options?: ('disable' | 'icon_background' | 'hide_icon_only')[];

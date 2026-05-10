@@ -64,10 +64,7 @@ describe('slider-entity.ts', () => {
     it('should skip plain string entries (no metadata to inspect)', () => {
       const config = {
         area: 'lr',
-        entities: [
-          'slider',
-          { entity_id: 'number.fan_speed', slider: {} },
-        ],
+        entities: ['slider', { entity_id: 'number.fan_speed', slider: {} }],
       } as any as Config;
 
       const result = getSliderEntity(config);
@@ -102,9 +99,7 @@ describe('slider-entity.ts', () => {
     it('should expose the per-entity slider config block to callers', () => {
       const config = {
         area: 'lr',
-        entities: [
-          { entity_id: 'input_number.x', slider: { style: 'ha' } },
-        ],
+        entities: [{ entity_id: 'input_number.x', slider: { style: 'ha' } }],
       } as any as Config;
 
       const result = getSliderEntity(config);

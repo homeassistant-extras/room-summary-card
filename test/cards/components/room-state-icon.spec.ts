@@ -668,7 +668,6 @@ describe('room-state-icon.ts', () => {
 
       expect(element['_hideIconContent']).to.be.true;
       expect(element['image']).to.be.true;
-      expect(element['iconBackground']).to.be.true;
     });
 
     it('should not set iconBackground property when config has no icon_background option', () => {
@@ -803,7 +802,6 @@ describe('room-state-icon.ts', () => {
       // Verify that _image was set from entity_picture (line 148)
       expect(element['_image']).to.equal('/local/test-picture.jpg');
       expect(element['image']).to.be.true;
-      expect(element['iconBackground']).to.be.true;
       expect(element['_hideIconContent']).to.be.true;
     });
 

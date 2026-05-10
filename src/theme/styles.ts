@@ -79,6 +79,21 @@ const haCardThemeStyles = css`
     );
   }
 
+  /* When the main icon owns the background, suppress card-level image effects
+     and prevent the user-configured opacity from applying to the card.
+     --user-opacity still inherits down to room-state-icon, where its
+     own CSS routes it to the icon background instead. */
+  :host:has(room-state-icon[room][icon-bg]) ha-card {
+    --opacity-theme: unset;
+    --text-opacity-theme: unset;
+    --opacity-icon-fill-inactive: unset;
+    --user-opacity: unset;
+  }
+
+  :host:has(room-state-icon[room][icon-bg]) {
+    --user-background-image-overlay: unset;
+  }
+
   :host([icon-opacity-preset='medium']) {
     --opacity-icon-inactive: 0.6;
     --opacity-icon-fill-inactive: 0.15;
@@ -123,7 +138,7 @@ const cardContainerStyles = css`
     background-size: cover;
   }
 
-  :host([image][icon-bg]) ha-card::before {
+  :host:has(room-state-icon[room][icon-bg]) ha-card::before {
     background-image: none;
   }
 
@@ -133,7 +148,10 @@ const cardContainerStyles = css`
     width: 100%;
     height: 100%;
     background-color: var(--background-color-card);
-    opacity: var(--opacity-theme, var(--background-opacity-card));
+    opacity: var(
+      --user-opacity,
+      var(--opacity-theme, var(--background-opacity-card))
+    );
     filter: var(--background-filter, none);
   }
 
