@@ -46,6 +46,7 @@ export const renderProblemIndicator = (
             showProblemDialog(element, {
               entities: ids,
               config,
+              ownerHost: element,
             })}
           >${problemSensors.length}</span
         >`

@@ -20,7 +20,6 @@ import {
 } from '@delegates/action-handler-delegate';
 import type { ClimateThresholds } from '@delegates/checks/thresholds';
 import { getRoomProperties } from '@delegates/utils/setup-card';
-import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { info } from '@html/info';
 import { renderCardStyles } from '@theme/render/card-styles';
@@ -29,6 +28,7 @@ import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { d } from '@util/debug';
+import type { HassUpdateEvent } from './mixins/hass-update-mixin';
 import { SubscribeEntityStateMixin } from './mixins/subscribe-entity-state-mixin';
 const equal = require('fast-deep-equal');
 
@@ -206,10 +206,14 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
       // https://github.com/home-assistant/frontend/issues/25648
       this._hass = hass;
     } else {
-      // update children who are subscribed
-      fireEvent(this, 'hass-update', {
-        hass,
-      });
+      // Dispatch on our own shadow root so only descendants in *this* card's
+      // shadow tree receive it. Each card has a distinct shadow root, so this
+      // isolates events between sibling cards on the dashboard.
+      this.shadowRoot?.dispatchEvent(
+        new CustomEvent<HassUpdateEvent>('hass-update', {
+          detail: { hass },
+        }),
+      );
     }
   }
 

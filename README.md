@@ -126,3 +126,4 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Sensor Improvements`**: feature requests to make sensors awesome - thanks @MelleD, @bobo-cher
 - [x] **`Entity Sliders`**: entity transforms into slider - thanks @tmaihoff, @hfalk, @benjycov
 - [x] **`Entity Badges`**: dynamic badge overlays- thanks @ojm88
+- [x] **`Performance`**: scope state-update events per card so dashboards with many rooms don't cross-wake each other - thanks @guillochon

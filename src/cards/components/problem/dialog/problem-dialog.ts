@@ -32,12 +32,24 @@ export class ProblemDialog
   @state() private _opened = false;
 
   /**
+   * Owning `room-summary-card` host. Read by the `HassUpdateMixin` so the
+   * portalled dialog tree subscribes to the correct card's shadow root.
+   */
+  override _host?: Element;
+
+  /**
    * Opens the dialog with the given entities
    * Supports both direct call (entities array) and dialog manager (params object)
    */
   showDialog(params: ProblemDialogParams): void {
     this.problemEntities = params.entities;
     this.config = params.config;
+    // Set the owner host before re-binding so the mixin walk picks it up.
+    // The dialog's own connectedCallback already ran (via HA's dialog
+    // manager) before this method, so the listener was not attached yet.
+    this._host = params.ownerHost;
+    this._unbindHassUpdateListener();
+    this._bindHassUpdateListener();
     this._opened = true;
   }
 

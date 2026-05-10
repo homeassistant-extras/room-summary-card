@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> Cross-agent instructions (including the rule for diagnosing `yarn test` failures) live in [AGENTS.md](./AGENTS.md). Read that first.
+
 ## Package Manager
 
 This is a **Yarn project**. Use `yarn` commands instead of `npm` for consistency.

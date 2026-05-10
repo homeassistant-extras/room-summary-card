@@ -4,6 +4,13 @@ import type { Config } from '@type/config';
 export interface ProblemDialogParams {
   entities: string[];
   config: Config;
+  /**
+   * The owning `room-summary-card` host element. Used by `HassUpdateMixin`
+   * inside the portalled dialog tree to scope `hass-update` listeners back
+   * to the card that opened the dialog. Optional: when omitted, the dialog
+   * tree will not receive `hass-update` events.
+   */
+  ownerHost?: HTMLElement;
 }
 
 export const loadProblemDialog = () =>

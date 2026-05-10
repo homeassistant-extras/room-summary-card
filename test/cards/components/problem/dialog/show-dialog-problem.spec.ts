@@ -22,7 +22,11 @@ describe('show-dialog-problem.ts', () => {
       'binary_sensor.problem2',
     ];
 
-    showProblemDialog(element, { entities, config: {} as any });
+    showProblemDialog(element, {
+      entities,
+      config: {} as any,
+      ownerHost: element,
+    });
 
     expect(fireEventStub.calledOnce).to.be.true;
     expect(fireEventStub.firstCall.args[0]).to.equal(element);
@@ -33,12 +37,17 @@ describe('show-dialog-problem.ts', () => {
     expect(fireEventStub.firstCall.args[2].dialogParams).to.deep.equal({
       config: {},
       entities,
+      ownerHost: element,
     });
     expect(fireEventStub.firstCall.args[2].dialogImport).to.be.a('function');
   });
 
   it('should not fire event when entities array is empty', () => {
-    showProblemDialog(element, { entities: [], config: {} as any });
+    showProblemDialog(element, {
+      entities: [],
+      config: {} as any,
+      ownerHost: element,
+    });
 
     expect(fireEventStub.called).to.be.false;
   });

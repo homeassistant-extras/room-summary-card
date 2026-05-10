@@ -2,83 +2,111 @@ import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import type { HomeAssistant } from '@hass/types';
 import { expect } from 'chai';
 import { LitElement } from 'lit';
-import { match, stub } from 'sinon';
 
+/**
+ * The mixin attaches its listener to the result of `getRootNode()` (or
+ * `_host.shadowRoot` if set). To test that without JSDOM custom-element
+ * upgrade quirks, we construct mixin elements directly and stub
+ * `getRootNode` to return a fresh `EventTarget` standing in for the
+ * card's shadow root.
+ */
 describe('HassUpdateMixin', () => {
+  type Mixed = LitElement & {
+    hass?: HomeAssistant;
+    _host?: Element;
+  };
   let TestElement: ReturnType<typeof HassUpdateMixin>;
-  let element: InstanceType<typeof TestElement>;
-  let hass: HomeAssistant;
   let elementCounter = 0;
+  let hass: HomeAssistant;
+  let otherHass: HomeAssistant;
 
   beforeEach(() => {
-    // Create a test element class using the mixin with unique name
-    const elementName = `test-hass-update-${elementCounter++}`;
     TestElement = HassUpdateMixin(LitElement);
-
-    // Only define if not already defined
+    const elementName = `test-hass-update-${elementCounter++}`;
     if (!customElements.get(elementName)) {
       customElements.define(elementName, TestElement);
     }
-
-    element = new TestElement();
-    hass = {
-      language: 'en',
-      localize: (key: string) => key,
-    } as HomeAssistant;
+    hass = { language: 'en', localize: (k: string) => k } as HomeAssistant;
+    otherHass = { language: 'fr', localize: (k: string) => k } as HomeAssistant;
   });
 
-  it('should have hass property', () => {
-    expect(element).to.have.property('hass');
-    expect(element.hass).to.be.undefined;
+  function attach(rootNode: EventTarget, host?: Element): Mixed {
+    const el = new TestElement() as unknown as Mixed;
+    (el as any).getRootNode = () => rootNode;
+    if (host) el._host = host;
+    el.connectedCallback();
+    return el;
+  }
+
+  function dispatch(target: EventTarget, h: HomeAssistant): void {
+    // Use Node's native CustomEvent so Node's EventTarget accepts it.
+    target.dispatchEvent(new CustomEvent('hass-update', { detail: { hass: h } }));
+  }
+
+  it('exposes hass and config properties', () => {
+    const el = new TestElement() as unknown as Mixed;
+    expect(el).to.have.property('hass');
+    expect(el.hass).to.be.undefined;
+    el.hass = hass;
+    expect(el.hass).to.deep.equal(hass);
   });
 
-  it('should update hass property when set directly', () => {
-    element.hass = hass;
-    expect(element.hass).to.deep.equal(hass);
+  it('attaches listener to its root node on connect', () => {
+    const root = new EventTarget();
+    const el = attach(root);
+
+    dispatch(root, hass);
+    expect(el.hass).to.deep.equal(hass);
   });
 
-  it('should have connectedCallback and disconnectedCallback methods', () => {
-    expect(element.connectedCallback).to.be.a('function');
-    expect(element.disconnectedCallback).to.be.a('function');
+  it('isolates sibling cards (different root nodes)', () => {
+    const rootA = new EventTarget();
+    const rootB = new EventTarget();
+    const childA = attach(rootA);
+    const childB = attach(rootB);
+
+    dispatch(rootA, hass);
+    expect(childA.hass).to.deep.equal(hass);
+    expect(childB.hass).to.be.undefined;
+
+    dispatch(rootB, otherHass);
+    expect(childB.hass).to.deep.equal(otherHass);
+    expect(childA.hass).to.deep.equal(hass);
   });
 
-  it('should add event listener when connected to DOM', () => {
-    const addEventListenerSpy = stub(globalThis, 'addEventListener');
+  it('removes its listener on disconnect', () => {
+    const root = new EventTarget();
+    const el = attach(root);
+    el.disconnectedCallback();
 
-    // Call connectedCallback directly (it will be called automatically when appended)
-    element.connectedCallback();
-
-    expect(addEventListenerSpy.calledWith('hass-update', match.any)).to.be.true;
-
-    addEventListenerSpy.restore();
+    dispatch(root, hass);
+    expect(el.hass).to.be.undefined;
   });
 
-  it('should remove event listener when disconnected from DOM', () => {
-    const removeEventListenerSpy = stub(globalThis, 'removeEventListener');
+  it('routes through `_host.shadowRoot` for portalled descendants', () => {
+    // Stand-in for a card host with a shadow root.
+    const cardShadow = new EventTarget();
+    const card = { shadowRoot: cardShadow } as unknown as Element;
+    // Portal element's own root is somewhere else (e.g. home-assistant-main).
+    const otherRoot = new EventTarget();
 
-    // Set up: connect first
-    element.connectedCallback();
-    // Then disconnect
-    element.disconnectedCallback();
+    const portal = attach(otherRoot, card);
 
-    expect(removeEventListenerSpy.calledWith('hass-update', match.any)).to.be
-      .true;
+    // Events on the original card's shadow root reach the portal.
+    dispatch(cardShadow, hass);
+    expect(portal.hass).to.deep.equal(hass);
 
-    removeEventListenerSpy.restore();
+    // Events on the portal's own root node do NOT (we routed past it).
+    portal.hass = undefined as any;
+    dispatch(otherRoot, otherHass);
+    expect(portal.hass).to.be.undefined;
   });
 
-  it('should update hass property when hass-update event is fired', () => {
-    // Connect the element to set up the event listener
-    element.connectedCallback();
-
-    // Create a custom event that works in jsdom
-    const updateEvent = document.createEvent('Event') as CustomEvent<{
-      hass: HomeAssistant;
-    }>;
-    updateEvent.initEvent('hass-update', false, false);
-    (updateEvent as any).detail = { hass };
-    globalThis.dispatchEvent(updateEvent);
-
-    expect(element.hass).to.deep.equal(hass);
+  it('no-ops when getRootNode returns self (no scope)', () => {
+    const el = new TestElement() as unknown as Mixed;
+    (el as any).getRootNode = () => el;
+    el.connectedCallback();
+    // No throw, no listener attached. Disconnecting also a no-op.
+    el.disconnectedCallback();
   });
 });

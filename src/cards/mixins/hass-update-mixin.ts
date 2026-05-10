@@ -29,6 +29,15 @@ export const HassUpdateMixin = <T extends Constructor<LitElement>>(
   class HassUpdateClass extends superClass implements HassUpdateElement {
     private __hassValue?: HomeAssistant;
     private __configValue?: Config;
+    private _listenerTarget?: EventTarget;
+
+    /**
+     * Optional escape hatch for portalled descendants (e.g. `problem-dialog`,
+     * which HA's dialog manager moves out of the card's shadow tree). When
+     * set, the mixin listens on `_host.shadowRoot` instead of `getRootNode()`,
+     * routing events back to the original card.
+     */
+    _host?: Element;
 
     get hass(): HomeAssistant {
       return this.__hassValue!;
@@ -51,15 +60,53 @@ export const HassUpdateMixin = <T extends Constructor<LitElement>>(
 
     override connectedCallback(): void {
       super.connectedCallback();
-      globalThis.addEventListener('hass-update', this._boundHassUpdateHandler);
+      this._bindHassUpdateListener();
     }
 
     override disconnectedCallback(): void {
       super.disconnectedCallback();
-      globalThis.removeEventListener(
-        'hass-update',
-        this._boundHassUpdateHandler,
-      );
+      this._unbindHassUpdateListener();
+    }
+
+    /**
+     * Attaches the listener to the closest scope: an explicit `_host`'s
+     * shadow root if set (for portalled descendants), otherwise the
+     * component's own root node (the parent shadow tree). Each card has a
+     * distinct shadow root, so this naturally isolates events per card.
+     *
+     * Exposed so portalled descendants can re-bind after `_host` is supplied,
+     * since their `connectedCallback` runs before the property is set.
+     */
+    protected _bindHassUpdateListener(): void {
+      if (this._listenerTarget) return;
+      const target = this._resolveListenerTarget();
+      if (target) {
+        this._listenerTarget = target;
+        target.addEventListener('hass-update', this._boundHassUpdateHandler);
+      }
+    }
+
+    protected _unbindHassUpdateListener(): void {
+      if (this._listenerTarget) {
+        this._listenerTarget.removeEventListener(
+          'hass-update',
+          this._boundHassUpdateHandler,
+        );
+        this._listenerTarget = undefined;
+      }
+    }
+
+    private _resolveListenerTarget(): EventTarget | undefined {
+      if (this._host?.shadowRoot) {
+        return this._host.shadowRoot;
+      }
+      const getRootNode = (this as unknown as { getRootNode?: () => unknown })
+        .getRootNode;
+      if (typeof getRootNode !== 'function') return undefined;
+      const root = getRootNode.call(this) as EventTarget;
+      return root && root !== (this as unknown as EventTarget)
+        ? root
+        : undefined;
     }
 
     private _handleHassUpdate(event: Event): void {
