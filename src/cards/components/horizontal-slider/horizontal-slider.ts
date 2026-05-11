@@ -55,9 +55,9 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
 ) {
   /**
    * Selected visual style — derived from config in the `config` setter.
-   * Reflected as [style] for CSS scoping.
+   * Reflected as [variant] for CSS scoping (not `style`, which is reserved).
    */
-  @property({ type: String, reflect: true, attribute: 'style' })
+  @property({ type: String, reflect: true, attribute: 'variant' })
   private _style: HorizontalSliderStyle | undefined;
 
   /**

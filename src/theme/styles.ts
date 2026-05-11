@@ -245,12 +245,12 @@ const statusEntityStyles = css`
   }
 
   /* scooty on upwards is slider */
-  :host:has(horizontal-slider[style='bar']) .problems {
+  :host:has(horizontal-slider[variant='bar']) .problems {
     margin-bottom: calc(10% + var(--horizontal-slider-height, 6%) + 20px);
   }
 
   /* scooty on upwards is slider */
-  :host:has(horizontal-slider[style='ha']) .problems {
+  :host:has(horizontal-slider[variant='ha']) .problems {
     margin-bottom: calc(10% + var(--horizontal-slider-height, 6%) + 10px);
   }
 

@@ -94,4 +94,27 @@ describe('area-statistics.ts', () => {
     expect(stats).to.exist;
     expect(stats?.textContent?.trim()).to.equal('1 devices 2 entities');
   });
+
+  it('should omit zero device or entity counts from the summary', async () => {
+    const el = new AreaStatistics();
+    el.hass = {
+      devices: {},
+      entities: {
+        'light.only': {
+          entity_id: 'light.only',
+          area_id: areaId,
+          device_id: '',
+          labels: [],
+        } as EntityRegistryDisplayEntry,
+      },
+    } as unknown as HomeAssistant;
+    el.config = { area: areaId } as Config;
+
+    const root = await fixture(el.render() as TemplateResult);
+    const stats = root.matches('span.stats.text')
+      ? root
+      : root.querySelector('span.stats.text');
+
+    expect(stats?.textContent?.trim()).to.equal('1 entities');
+  });
 });

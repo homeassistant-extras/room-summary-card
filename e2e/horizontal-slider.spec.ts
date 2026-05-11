@@ -76,7 +76,7 @@ describeHa('Horizontal Slider', () => {
 
     const slider = card.locator('horizontal-slider');
     await expect(slider).toBeVisible();
-    await expect(slider).toHaveAttribute('style', /ha/);
+    await expect(slider).toHaveAttribute('variant', /ha/);
     await expect(slider.locator('ha-slider')).toBeVisible();
 
     // hide_icon: true → input_number.test (mdi:test-tube) must NOT
@@ -99,7 +99,7 @@ describeHa('Horizontal Slider', () => {
 
     const slider = card.locator('horizontal-slider');
     await expect(slider).toBeVisible();
-    await expect(slider).toHaveAttribute('style', /bar/);
+    await expect(slider).toHaveAttribute('variant', /bar/);
     await expect(slider.locator('ha-slider')).toBeVisible();
 
     // No `hide_icon` → input_number.test should still render as the

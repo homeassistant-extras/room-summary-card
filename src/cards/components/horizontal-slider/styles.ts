@@ -10,11 +10,11 @@ import { css } from 'lit';
  * read by the parent card to lift overlapping elements.
  *
  * We always render <ha-slider>; the visual variant is driven by the
- * [style] reflected attribute and only applies CSS overrides
+ * [variant] reflected attribute and only applies CSS overrides
  * to ha-slider (no custom DOM):
  *
- *  - [style='ha']  : standard HA slider.
- *  - [style='bar'] : ha-slider re-styled as a chunky full-height
+ *  - [variant='ha']  : standard HA slider.
+ *  - [variant='bar'] : ha-slider re-styled as a chunky full-height
  *                           bar (track fills the strip, thumb hidden).
  *
  * User-controllable CSS variables (set via card `styles:`, theme, or
@@ -70,7 +70,7 @@ export const styles = css`
      Track is forced tall enough to fill the host, thumb is hidden, and
      the indicator becomes the moving fill.
      --------------------------------------------------------------------- */
-  :host([style='bar']) ha-slider {
+  :host([variant='bar']) ha-slider {
     --ha-slider-track-size: var(--user-slider-height, 25px);
     --ha-slider-thumb-color: transparent;
   }
@@ -78,7 +78,7 @@ export const styles = css`
   /* ---------------------------------------------------------------------
      'ha' style — the standard HA slider, slightly thickened and themed.
      --------------------------------------------------------------------- */
-  :host([style='ha']) {
+  :host([variant='ha']) {
     height: var(--user-slider-height, 3.5%);
   }
 `;

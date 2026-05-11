@@ -42,11 +42,12 @@ export class AreaStatistics extends HassConfigMixin(LitElement) {
       );
     });
 
-    const summary = [
+    const rows: [number, string][] = [
       [devices.length, 'devices'],
       [entities.length, 'entities'],
-    ]
-      .filter((count) => count.length > 0)
+    ];
+    const summary = rows
+      .filter(([n]) => n > 0)
       .map(([count, type]) => `${count} ${type}`)
       .join(' ');
 
