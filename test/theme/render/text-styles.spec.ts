@@ -6,7 +6,7 @@ import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
 import { nothing } from 'lit';
-import { styleMap } from 'lit-html/directives/style-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import * as sinon from 'sinon';
 
 // Helper to create entity information for testing

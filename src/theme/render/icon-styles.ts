@@ -1,8 +1,8 @@
-import type { DirectiveResult } from 'lit-html/directive';
+import type { DirectiveResult } from 'lit/directive.js';
 import {
   type StyleMapDirective,
   styleMap,
-} from 'lit-html/directives/style-map.js';
+} from 'lit/directives/style-map.js';
 
 import { stateColorBrightness } from '@hass/common/entity/state_color';
 import type { HomeAssistant } from '@hass/types';

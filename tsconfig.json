@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
-    "noEmit": true,
     /* Base Options: */
     "skipLibCheck": true,
-    "target": "es2015",
+    "target": "es2022",
     "lib": ["es2021"],
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "verbatimModuleSyntax": true,
-    "ignoreDeprecations": "6.0",
 
     /* Strictness */
     "strict": true,
@@ -20,7 +19,6 @@
     "noImplicitOverride": true,
 
     /* Paths */
-    "baseUrl": ".",
     "paths": {
       "@cards/*": ["./src/cards/*"],
       "@type/*": ["./src/types/*"],

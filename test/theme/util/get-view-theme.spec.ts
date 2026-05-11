@@ -106,4 +106,46 @@ describe('get-view-theme.ts', () => {
     expect(result).to.be.undefined;
     document.body.removeChild(div);
   });
+
+  describe('caching', () => {
+    it('should reflect in-place theme mutations on subsequent calls (cache hit reads live)', () => {
+      const viewContainer = document.createElement('hui-view-container');
+      (viewContainer as any).theme = 'first-theme';
+      document.body.appendChild(viewContainer);
+      const div = document.createElement('div');
+      viewContainer.appendChild(div);
+
+      expect(getViewTheme(div, mockHass)).to.equal('first-theme');
+
+      // HA mutates `.theme` in place when the view's theme changes.
+      (viewContainer as any).theme = 'second-theme';
+      expect(getViewTheme(div, mockHass)).to.equal('second-theme');
+
+      document.body.removeChild(viewContainer);
+    });
+
+    it('should re-walk when a previously cached container has been detached', () => {
+      const firstContainer = document.createElement('hui-view-container');
+      (firstContainer as any).theme = 'first-theme';
+      document.body.appendChild(firstContainer);
+      const div = document.createElement('div');
+      firstContainer.appendChild(div);
+
+      // Prime the cache with firstContainer.
+      expect(getViewTheme(div, mockHass)).to.equal('first-theme');
+
+      // Detach the calling element from the old container, mount under a new one.
+      firstContainer.removeChild(div);
+      document.body.removeChild(firstContainer);
+
+      const secondContainer = document.createElement('hui-view-container');
+      (secondContainer as any).theme = 'second-theme';
+      document.body.appendChild(secondContainer);
+      secondContainer.appendChild(div);
+
+      expect(getViewTheme(div, mockHass)).to.equal('second-theme');
+
+      document.body.removeChild(secondContainer);
+    });
+  });
 });

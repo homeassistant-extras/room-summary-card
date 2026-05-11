@@ -22,7 +22,7 @@ import type { EntityConfig, EntityFeatures } from '@type/config/entity';
 import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
-import { styleMap } from 'lit-html/directives/style-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { stub } from 'sinon';
 
 describe('room-state-icon.ts', () => {

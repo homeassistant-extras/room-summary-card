@@ -220,12 +220,6 @@ const gridLayoutStyles = css`
  * Entity and component area styles
  */
 const entityAreaStyles = css`
-  /* Statistics text */
-  .stats {
-    font-size: 0.8em;
-    opacity: var(--text-opacity-theme, 0.4);
-  }
-
   /* Common text styles */
   .text {
     text-overflow: ellipsis;

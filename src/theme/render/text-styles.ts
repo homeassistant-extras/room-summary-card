@@ -7,8 +7,8 @@ import { nothing } from 'lit';
 import {
   type StyleMapDirective,
   styleMap,
-} from 'lit-html/directives/style-map.js';
-import type { DirectiveResult } from 'lit/directive';
+} from 'lit/directives/style-map.js';
+import type { DirectiveResult } from 'lit/directive.js';
 import { getStyleData } from './common-style';
 
 /**

@@ -7,7 +7,7 @@ import type {
   ActionHandlerOptions,
 } from '@hass/data/lovelace/action_handler';
 import { noChange } from 'lit';
-import type { AttributePart, DirectiveParameters } from 'lit/directive';
+import type { AttributePart, DirectiveParameters } from 'lit/directive.js';
 import { directive, Directive } from 'lit/directive.js';
 
 interface ActionHandlerType extends HTMLElement {

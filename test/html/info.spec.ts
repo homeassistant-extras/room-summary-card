@@ -1,8 +1,8 @@
 import * as actionDelegate from '@delegates/action-handler-delegate';
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import * as actionHandlerDirective from '@hass/panels/lovelace/common/directives/action-handler-directive';
+import type { AreaStatistics } from '@cards/components/area-statistics/area-statistics';
 import type { HomeAssistant } from '@hass/types';
-import * as areaStatsModule from '@html/area-statistics';
 import { info } from '@html/info';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity as e } from '@test/test-helpers';
@@ -11,7 +11,7 @@ import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { expect } from 'chai';
-import { html, nothing, type TemplateResult } from 'lit';
+import { html, type TemplateResult } from 'lit';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { stub, type SinonStub } from 'sinon';
 
@@ -22,7 +22,6 @@ describe('info.ts', () => {
   let mockRoomEntity: EntityInformation;
   let mockElement: HTMLElement;
   let renderTextStylesStub: SinonStub;
-  let renderAreaStatisticsStub: SinonStub;
   let hassActionHandlerStub: SinonStub;
   let fireEventStub: SinonStub;
 
@@ -62,11 +61,6 @@ describe('info.ts', () => {
       styleMap({ '--text-color': 'var(--primary-color)' }),
     );
 
-    renderAreaStatisticsStub = stub(
-      areaStatsModule,
-      'renderAreaStatistics',
-    ).returns(html`<span class="stats">2 devices 3 entities</span>`);
-
     // Stub the action handler dependencies
     hassActionHandlerStub = stub(
       actionHandlerDirective,
@@ -77,7 +71,6 @@ describe('info.ts', () => {
 
   afterEach(() => {
     renderTextStylesStub.restore();
-    renderAreaStatisticsStub.restore();
     hassActionHandlerStub.restore();
     fireEventStub.restore();
   });
@@ -142,7 +135,7 @@ describe('info.ts', () => {
       expect((sensorCollection as any).hass).to.equal(mockHass);
     });
 
-    it('should call renderAreaStatistics', () => {
+    it('should pass hass and config to area-statistics', async () => {
       const sensors: SensorData = {
         individual: [],
         averaged: [],
@@ -152,7 +145,7 @@ describe('info.ts', () => {
         thresholdSensors: [],
       };
 
-      info(
+      const result = info(
         mockElement,
         mockHass,
         mockRoomInformation,
@@ -161,9 +154,11 @@ describe('info.ts', () => {
         sensors,
       );
 
-      expect(renderAreaStatisticsStub.calledOnce).to.be.true;
-      expect(renderAreaStatisticsStub.calledWith(mockHass, mockConfig)).to.be
-        .true;
+      const el = await fixture(result as TemplateResult);
+      const stats = el.querySelector('area-statistics');
+      expect(stats).to.exist;
+      expect((stats as any).hass).to.equal(mockHass);
+      expect((stats as any).config).to.equal(mockConfig);
     });
 
     it('should apply text styles to name element', async () => {
@@ -195,8 +190,8 @@ describe('info.ts', () => {
       ).to.be.true;
     });
 
-    it('should handle when renderAreaStatistics returns nothing', async () => {
-      renderAreaStatisticsStub.returns(nothing);
+    it('should omit stats when hide_area_stats is enabled', async () => {
+      mockConfig.features = ['hide_area_stats'];
       const sensors: SensorData = {
         individual: [],
         averaged: [],
@@ -217,8 +212,13 @@ describe('info.ts', () => {
 
       const el = await fixture(result as TemplateResult);
 
+      const areaStats = el.querySelector('area-statistics');
+      expect(areaStats).to.exist;
+      await (areaStats as AreaStatistics).updateComplete;
+
       expect(el.querySelector('.name')).to.exist;
       expect(el.querySelector('sensor-collection')).to.exist;
+      expect(areaStats!.shadowRoot?.querySelector('.stats')).to.not.exist;
     });
 
     it('should handle special characters in room names', async () => {
@@ -279,14 +279,9 @@ describe('info.ts', () => {
       // Check that the name element is inside the text div
       const nameElement = textDiv!.querySelector('.name.text');
       expect(nameElement).to.exist;
-      expect(nameElement!.textContent!.trim()).to.equal('Living Room');
+      expect(nameElement?.textContent?.trim()).to.equal('Living Room');
 
-      // Check that the stats are inside the text div
-      const statsElement = textDiv!.querySelector('.stats');
-      expect(statsElement).to.exist;
-      expect(statsElement!.textContent!.trim()).to.equal(
-        '2 devices 3 entities',
-      );
+      expect(textDiv!.querySelector('area-statistics')).to.exist;
     });
 
     it('merges config.actions over the room entity config for the info section handlers', () => {

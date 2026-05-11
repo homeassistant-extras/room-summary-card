@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { styleMap } from 'lit-html/directives/style-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import * as sinon from 'sinon';
 
 // Import the modules we need to stub

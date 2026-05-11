@@ -1,3 +1,4 @@
+import '@cards/components/area-statistics/area-statistics';
 import {
   actionHandler,
   handleClickAction,
@@ -8,7 +9,6 @@ import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { html } from 'lit';
-import { renderAreaStatistics } from './area-statistics';
 
 /**
  * Renders the information section for a room summary card.
@@ -32,7 +32,6 @@ export const info = (
   isActive?: boolean,
 ) => {
   const textStyle = renderTextStyles(hass, config, roomEntity, isActive);
-  const stats = renderAreaStatistics(hass, config);
 
   // Override the room entity config with the user's actions config
   const actionEntity = {
@@ -50,7 +49,7 @@ export const info = (
       <div class="name text" style=${textStyle}>
         ${roomInformation.area_name}
       </div>
-      ${stats}
+      <area-statistics .hass=${hass} .config=${config}></area-statistics>
     </div>
     <sensor-collection
       .config=${config}

@@ -2,7 +2,7 @@ import { fixture } from '@open-wc/testing-helpers';
 import { stylesToHostCss, stylesToMap } from '@theme/util/style-converter';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
-import { styleMap } from 'lit-html/directives/style-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
 describe('styles-converter.ts', () => {
   describe('stylesToHostCss', () => {
@@ -161,26 +161,19 @@ describe('styles-converter.ts', () => {
   });
 
   describe('stylesToMap', () => {
-    it('should return empty styleMap for undefined styles', () => {
+    it('should return nothing for undefined styles', () => {
       const result = stylesToMap(undefined);
-
-      // Should be a styleMap directive result
-      expect(result).to.exist;
-      expect(typeof result).to.equal('object');
+      expect(result).to.equal(nothing);
     });
 
-    it('should return empty styleMap for null styles', () => {
+    it('should return nothing for null styles', () => {
       const result = stylesToMap(null as any);
-
-      expect(result).to.exist;
-      expect(typeof result).to.equal('object');
+      expect(result).to.equal(nothing);
     });
 
-    it('should return empty styleMap for empty object', () => {
+    it('should return nothing for empty object', () => {
       const result = stylesToMap({});
-
-      expect(result).to.exist;
-      expect(typeof result).to.equal('object');
+      expect(result).to.equal(nothing);
     });
 
     it('should return styleMap directive for valid styles', () => {

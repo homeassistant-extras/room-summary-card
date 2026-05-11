@@ -1,9 +1,9 @@
 import { html, nothing, type TemplateResult } from 'lit';
-import type { DirectiveResult } from 'lit-html/directive';
+import type { DirectiveResult } from 'lit/directive.js';
 import {
   styleMap,
   type StyleMapDirective,
-} from 'lit-html/directives/style-map.js';
+} from 'lit/directives/style-map.js';
 import memoizeOne from 'memoize-one';
 
 /**
