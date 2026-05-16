@@ -5,16 +5,14 @@ import {
   handleClickAction,
 } from '@delegates/action-handler-delegate';
 import { getIconResources } from '@delegates/retrievers/icons';
-import { sensorDataToDisplaySensors } from '@delegates/utils/sensor-utils';
 import {
   FALLBACK_DOMAIN_ICONS,
   type CategoryType,
   type IconResources,
 } from '@hass/data/icon';
 import type { HomeAssistant } from '@hass/types';
-import { stateDisplay } from '@html/state-display';
 import { processHomeAssistantColors } from '@theme/colors';
-import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
+import { getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { SensorConfig } from '@type/config/sensor';
 import type { EntityInformation, EntityState } from '@type/room';
@@ -24,6 +22,7 @@ import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { until } from 'lit/directives/until.js';
+import './sensor-label';
 import { styles } from './styles';
 
 /**
@@ -59,7 +58,6 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
   private hide!: boolean;
   @property({ type: String, reflect: true })
   private layout!: string;
-  private _hideLabels!: boolean;
 
   /**
    * Returns the component's styles
@@ -77,7 +75,6 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
     d(this.config, 'sensor-collection', 'set hass');
     this._hass = hass;
     this.hide = hasFeature(this.config, 'hide_sensor_icons');
-    this._hideLabels = hasFeature(this.config, 'hide_sensor_labels');
     this.layout = this.config.sensor_layout ?? 'default';
   }
 
@@ -110,7 +107,11 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
         return html`
           <div class="sensor">
             ${this.renderMultiIcon(s)}
-            ${this._hideLabels ? nothing : sensorDataToDisplaySensors(s)}
+            <room-sensor-label
+              .hass=${this._hass}
+              .config=${this.config}
+              .sensor=${s}
+            ></room-sensor-label>
           </div>
         `;
       }
@@ -142,10 +143,6 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
 
     // Get state/threshold-based styling result
     const result = getThresholdResult(info);
-
-    // Get label (priority: state/threshold label > config label)
-    const label = getEntityLabel(info, result);
-
     // Icon priority: state/threshold icon > configured icon > default
     // State-based icons override configured icons for dynamic behavior
     const icon = result?.icon || sensorConfig?.icon;
@@ -161,27 +158,13 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
         .actionHandler=${actionHandler(info)}
       >
         ${this.renderStateIcon(state, icon)}
-        ${this.renderSensorLabel(state, label, sensorConfig)}
+        <room-sensor-label
+          .hass=${this._hass}
+          .config=${this.config}
+          .entity=${info}
+        ></room-sensor-label>
       </div>
     `;
-  }
-
-  /**
-   * Renders the sensor label with proper fallback logic
-   * @param state - The entity state
-   * @param label - The configured label (if any)
-   * @param sensorConfig - The sensor configuration (if any)
-   * @returns The label content, attribute value, state display, or nothing if labels are hidden
-   */
-  private renderSensorLabel(
-    state: EntityState,
-    label?: string,
-    sensorConfig?: SensorConfig,
-  ): TemplateResult | typeof nothing {
-    if (this._hideLabels) return nothing;
-    if (label) return html`${label}`;
-
-    return stateDisplay(this._hass, state, sensorConfig?.attribute);
   }
 
   /**
@@ -227,7 +210,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
   }
 
   private renderStateIcon(
-    state?: any,
+    state?: EntityState,
     icon?: string,
   ): TemplateResult | typeof nothing {
     if (this.hide || !state) return nothing;

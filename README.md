@@ -112,7 +112,7 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Random bugs`**: pointing out issues to improve card - thanks @rickd1994, @avijavez10, @awfulwoman, @anandv85
 - [x] **`Occupancy Detection`**: visual indicators for room occupancy with motion/occupancy sensors - thanks @X1pheR
 - [x] **`Mold Indicator`**: animated warning indicator for mold detection with threshold-based display - thanks @ma-gu-16, @Bacaliu
-- [x] **`Entity Labels`**: display entity names under icons for better identification - thanks @Ltek
+- [x] **`Entity Labels`**: display entity names under icons for better identification - thanks @Ltek, @guillochon
 - [x] **`Clickable Sensors`**: individual sensors in info section open more info dialog - thanks @enrico-semrau
 - [x] **`Threshold-Based Icon Coloring`**: dynamic icon colors based on sensor values with configurable thresholds and operators - thanks @fusionstream, @marcokreeft87, @a0365d9b
 - [x] **`State-Based Icon Coloring`**: exact state & attribute matching for sensors like washing machines, device trackers, and status indicators - thanks @marcokreeft87, @zoic21, and @sebashi!

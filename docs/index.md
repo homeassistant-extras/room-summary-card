@@ -129,6 +129,16 @@ Small overlay icons that appear on entity icons to provide additional visual inf
 
 📖 **See [Badge Configuration](configuration/BADGE-CONFIGURATION.md) for complete documentation.**
 
+### Entity and sensor labels
+
+Optional captions under entity icons (`show_entity_labels`) or beside climate sensors:
+
+- **Plain text** — fixed captions such as `Kitchen` or `Door`
+- **Jinja templates** — any `label` on entities, sensors, **states**, or **thresholds** (e.g. show another sensor’s temperature under a light)
+- **Priority** — state/threshold label → entity/sensor `label` → attribute → name or formatted state
+
+📖 **See [Label templates (Jinja)](configuration/LABEL-TEMPLATES.md)** · [Entity labels](configuration/ENTITY-CONFIGURATION.md#entity-labels) · [Sensor labels](configuration/SENSOR-CONFIGURATION.md#labels-for-sensors)
+
 ### Problem Detection
 
 - Automatically detects entities labeled as "problem" in the area
@@ -316,6 +326,8 @@ The card automatically discovers and displays:
 📚 **Detailed Documentation:**
 
 - **[Configuration Guide](CONFIGURATION.md)** - Complete configuration options and examples
+- **[Label templates (Jinja)](configuration/LABEL-TEMPLATES.md)** - Dynamic entity and sensor labels with Home Assistant templates
+- **[Release notes](RELEASE_NOTES.md)** - What’s new (e.g. label templates)
 - **[Theming Guide](THEMING.md)** - Theme support and color customization
 - **[Advanced Usage](ADVANCED.md)** - Advanced features and entity attributes
 - **[Troubleshooting](TROUBLESHOOTING.md)** - Common issues and solutions

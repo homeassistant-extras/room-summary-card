@@ -40,7 +40,7 @@ State-based icons take priority over the configured icon, which serves as a fall
 
 #### Object Format with State-Based Styling and Labels
 
-You can configure sensors with state-based styling and custom labels, similar to entity configuration:
+You can configure sensors with state-based styling and custom labels, similar to entity configuration. Labels may be **plain text** or **[Jinja templates](LABEL-TEMPLATES.md)**:
 
 ```yaml
 sensors:
@@ -188,9 +188,11 @@ When the sensor state matches a configured state, the card will:
 Sensors can have custom labels configured at multiple levels:
 
 1. **State label** (highest priority) - Displayed when a matching state configuration has a `label` property
-2. **Entity-level label** - Displayed when the sensor has a `label` property configured
+2. **Sensor `label`** - Displayed when the sensor entry has a `label` property configured
 3. **Attribute value(s)** - Displayed when an `attribute` property is configured (replaces state display); use a string or list of strings
 4. **Sensor state value** (fallback) - Displayed when no label or attribute is configured (e.g., "75°F", "50%", "450 ppm")
+
+📖 **Jinja templates:** `label` on the sensor, or on a matching `states` / `thresholds` row, can use [Home Assistant Jinja2](https://www.home-assistant.io/docs/configuration/templating/). See **[Label templates (Jinja)](LABEL-TEMPLATES.md)** for examples.
 
 ```yaml
 sensors:
@@ -230,6 +232,13 @@ sensors:
 ```
 
 **Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified (string or list), it displays the formatted attribute value(s) instead of the state. When labels are not configured, sensors display their normal state values.
+
+```yaml
+# Template label: show outdoor temp next to indoor sensor
+sensors:
+  - entity_id: sensor.living_room_temperature
+    label: "{{ states('sensor.outdoor_temperature') | round(0) }}° out"
+```
 
 #### Icon Priority
 

@@ -13,7 +13,10 @@ export interface BaseEntityConfig {
   /** Unique identifier for the sensor entity */
   entity_id: string;
 
-  /** Custom label to display instead of default state display */
+  /**
+   * Label under the icon: plain text, or Jinja when it contains `{{` / `{%`
+   * (rendered live via the `render_template` websocket).
+   */
   label?: string;
 
   /** Attribute or attributes to display instead of entity state (single key or list for multiple values) */

@@ -11,6 +11,7 @@ Some of these go to their own documents - so use this ToC as a guide.
 - [Feature Flags](#feature-flags)
 - [Background Configuration](configuration/BACKGROUND-CONFIGURATION.md)
 - [Entity Configuration](configuration/ENTITY-CONFIGURATION.md)
+- [Label templates (Jinja)](configuration/LABEL-TEMPLATES.md)
 - [Badge Configuration](configuration/BADGE-CONFIGURATION.md)
 - [Entity Color Configuration](configuration/ENTITY-COLOR-CONFIGURATION.md)
 - [Sensor Configuration](configuration/SENSOR-CONFIGURATION.md)
@@ -111,7 +112,7 @@ features:
 | skip_climate_styles      | Disable climate-based color coding & borders                                                   |
 | skip_entity_styles       | Disable card background styling based on main entity                                           |
 | skip_mold_styles         | Disable mold indicator animations (reduces CPU usage on low-power devices)                     |
-| show_entity_labels       | Show entity labels under each entity icon                                                      |
+| show_entity_labels       | Show entity labels under each entity icon (labels support plain text and [Jinja](configuration/LABEL-TEMPLATES.md)) |
 | multi_light_background   | Enable background lighting when any light in the room is on                                    |
 | ignore_entity            | Ignore the custom entity configuration and use default room entity (useful with auto-entities) |
 | sticky_entities          | Keep entity positions stable even when state is unavailable (prevents UI layout shifts)        |

@@ -34,7 +34,6 @@ describe('room-state-icon.ts', () => {
   let handleClickActionStub: sinon.SinonStub;
   let hasFeatureStub: sinon.SinonStub;
   let computeEntityNameStub: sinon.SinonStub;
-  let getEntityLabelStub: sinon.SinonStub;
   let getThresholdResultStub: sinon.SinonStub;
   let hasEntityFeatureStub: sinon.SinonStub;
   let stateDisplayStub: sinon.SinonStub;
@@ -98,9 +97,6 @@ describe('room-state-icon.ts', () => {
       computeEntityNameModule,
       'computeEntityName',
     ).returns('Living Room Light');
-    getEntityLabelStub = stub(thresholdColorModule, 'getEntityLabel').returns(
-      undefined,
-    );
     getThresholdResultStub = stub(
       thresholdColorModule,
       'getThresholdResult',
@@ -144,7 +140,6 @@ describe('room-state-icon.ts', () => {
     handleClickActionStub.restore();
     hasFeatureStub.restore();
     computeEntityNameStub.restore();
-    getEntityLabelStub.restore();
     getThresholdResultStub.restore();
     hasEntityFeatureStub.restore();
     stateDisplayStub.restore();
@@ -188,7 +183,6 @@ describe('room-state-icon.ts', () => {
 
       element.config = newConfig;
       expect(element['_config']).to.equal(newConfig);
-      expect(element['_showLabels']).to.be.true;
       expect(element['iconBackground']).to.be.true;
     });
 
@@ -310,47 +304,7 @@ describe('room-state-icon.ts', () => {
         .true;
     });
 
-    it('should show entity label when show_entity_labels feature is enabled', async () => {
-      // Set up config with show_entity_labels feature enabled
-      const configWithLabels = {
-        ...mockConfig,
-        features: ['show_entity_labels'],
-      } as Config;
-      element.config = configWithLabels;
-      computeEntityNameStub.returns('Living Room Light');
-
-      const result = element.render() as TemplateResult;
-      expect(result).to.not.equal(nothing);
-
-      // Render to actual DOM using fixture
-      const el = await fixture(result);
-
-      // Verify that computeEntityName was called with the correct parameters
-      expect(computeEntityNameStub.calledWith(mockEntityState, mockHass)).to.be
-        .true;
-
-      // Verify that the DOM includes the entity label
-      const entityLabel = el.querySelector('.entity-label');
-      expect(entityLabel).to.exist;
-      expect(entityLabel?.textContent?.trim()).to.equal('Living Room Light');
-    });
-
-    it('should not show entity label when show_entity_labels feature is disabled', async () => {
-      // Use default config without show_entity_labels feature
-      element.config = mockConfig;
-
-      const result = element.render() as TemplateResult;
-      expect(result).to.not.equal(nothing);
-
-      // Verify that computeEntityName was NOT called since the feature is disabled
-      expect(computeEntityNameStub.called).to.be.false;
-
-      // Verify that the template does NOT include the entity label
-      const templateString = result.strings.join('');
-      expect(templateString).to.not.include('class="entity-label"');
-    });
-
-    it('should prioritize threshold label over config label', async () => {
+    it('should pass entity and hass to the room-entity-label sub-component', async () => {
       const configWithLabels = {
         ...mockConfig,
         features: ['show_entity_labels'],
@@ -366,123 +320,12 @@ describe('room-state-icon.ts', () => {
       };
       element.entity = entityWithConfigLabel;
 
-      // Mock threshold result with label
-      getThresholdResultStub.returns({
-        label: 'Threshold Label',
-        icon: 'mdi:icon',
-        color: 'red',
-        styles: {},
-      });
-      getEntityLabelStub.returns('Threshold Label');
+      const el = await fixture(element.render() as TemplateResult);
 
-      const result = element.render() as TemplateResult;
-      const el = await fixture(result);
-
-      const entityLabel = el.querySelector('.entity-label');
+      const entityLabel = el.querySelector('room-entity-label') as any;
       expect(entityLabel).to.exist;
-      expect(entityLabel?.textContent?.trim()).to.equal('Threshold Label');
-      expect(getEntityLabelStub.called).to.be.true;
-    });
-
-    it('should use config label when threshold label is not available', async () => {
-      const configWithLabels = {
-        ...mockConfig,
-        features: ['show_entity_labels'],
-      } as Config;
-      element.config = configWithLabels;
-
-      const entityWithConfigLabel = {
-        ...mockEntity,
-        config: {
-          ...mockEntityConfig,
-          label: 'Config Label',
-        },
-      };
-      element.entity = entityWithConfigLabel;
-
-      // Mock threshold result without label
-      getThresholdResultStub.returns({
-        icon: 'mdi:icon',
-        color: 'red',
-        styles: {},
-      });
-      getEntityLabelStub.returns(undefined);
-
-      const result = element.render() as TemplateResult;
-      const el = await fixture(result);
-
-      const entityLabel = el.querySelector('.entity-label');
-      expect(entityLabel).to.exist;
-      expect(entityLabel?.textContent?.trim()).to.equal('Config Label');
-    });
-
-    it('should use state display for attribute when attribute is configured and no label', async () => {
-      const configWithLabels = {
-        ...mockConfig,
-        features: ['show_entity_labels'],
-      } as Config;
-      element.config = configWithLabels;
-
-      const entityWithAttribute = {
-        ...mockEntity,
-        config: {
-          ...mockEntityConfig,
-          attribute: 'brightness',
-        },
-      };
-      element.entity = entityWithAttribute;
-
-      // Mock threshold result without label
-      getThresholdResultStub.returns({
-        icon: 'mdi:icon',
-        color: 'red',
-        styles: {},
-      });
-      getEntityLabelStub.returns(undefined);
-      stateDisplayStub.returns(html`<span>50%</span>`);
-
-      const result = element.render() as TemplateResult;
-      const el = await fixture(result);
-
-      const entityLabel = el.querySelector('.entity-label');
-      expect(entityLabel).to.exist;
-      expect(
-        stateDisplayStub.calledWith(mockHass, mockEntityState, 'brightness'),
-      ).to.be.true;
-    });
-
-    it('should use entity name as fallback when no label or attribute', async () => {
-      const configWithLabels = {
-        ...mockConfig,
-        features: ['show_entity_labels'],
-      } as Config;
-      element.config = configWithLabels;
-
-      const entityWithoutLabel = {
-        ...mockEntity,
-        config: {
-          entity_id: 'light.living_room',
-        },
-      };
-      element.entity = entityWithoutLabel;
-
-      // Mock threshold result without label
-      getThresholdResultStub.returns({
-        icon: 'mdi:icon',
-        color: 'red',
-        styles: {},
-      });
-      getEntityLabelStub.returns(undefined);
-      computeEntityNameStub.returns('Living Room Light');
-
-      const result = element.render() as TemplateResult;
-      const el = await fixture(result);
-
-      const entityLabel = el.querySelector('.entity-label');
-      expect(entityLabel).to.exist;
-      expect(entityLabel?.textContent?.trim()).to.equal('Living Room Light');
-      expect(computeEntityNameStub.calledWith(mockEntityState, mockHass)).to.be
-        .true;
+      expect(entityLabel.entity).to.equal(entityWithConfigLabel);
+      expect(entityLabel.hass).to.equal(mockHass);
     });
   });
 

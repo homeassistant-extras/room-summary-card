@@ -157,23 +157,15 @@ describe('states-row-editor.ts', () => {
           selector: { ui_color: {} },
         },
         {
-          type: 'grid',
-          name: '',
-          label: 'editor.entity.entity_label',
-          schema: [
-            {
-              name: 'icon',
-              label: 'editor.entity.state.icon',
-              required: false,
-              selector: { icon: {} },
-            },
-            {
-              name: 'label',
-              label: 'editor.entity.state.label',
-              required: false,
-              selector: { text: {} },
-            },
-          ],
+          name: 'icon',
+          label: 'editor.entity.state.icon',
+          required: false,
+          selector: { icon: {} },
+        },
+        {
+          name: 'label',
+          label: 'editor.entity.state.label',
+          selector: { template: { preview: true } },
         },
         {
           name: 'attribute',
@@ -241,23 +233,15 @@ describe('states-row-editor.ts', () => {
           selector: { ui_color: {} },
         },
         {
-          type: 'grid',
-          name: '',
-          label: 'editor.entity.entity_label',
-          schema: [
-            {
-              name: 'icon',
-              label: 'editor.entity.state.icon',
-              required: false,
-              selector: { icon: {} },
-            },
-            {
-              name: 'label',
-              label: 'editor.entity.state.label',
-              required: false,
-              selector: { text: {} },
-            },
-          ],
+          name: 'icon',
+          label: 'editor.entity.state.icon',
+          required: false,
+          selector: { icon: {} },
+        },
+        {
+          name: 'label',
+          label: 'editor.entity.state.label',
+          selector: { template: { preview: true } },
         },
         {
           name: 'attribute',
@@ -319,23 +303,15 @@ describe('states-row-editor.ts', () => {
           selector: { ui_color: {} },
         },
         {
-          type: 'grid',
-          name: '',
-          label: 'editor.entity.entity_label',
-          schema: [
-            {
-              name: 'icon',
-              label: 'editor.entity.state.icon',
-              required: false,
-              selector: { icon: {} },
-            },
-            {
-              name: 'label',
-              label: 'editor.entity.state.label',
-              required: false,
-              selector: { text: {} },
-            },
-          ],
+          name: 'icon',
+          label: 'editor.entity.state.icon',
+          required: false,
+          selector: { icon: {} },
+        },
+        {
+          name: 'label',
+          label: 'editor.entity.state.label',
+          selector: { template: { preview: true } },
         },
         {
           name: 'attribute',

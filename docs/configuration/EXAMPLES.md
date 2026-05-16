@@ -500,6 +500,33 @@ styles:
 
 This example shows entity labels with custom icon styling and opacity levels.
 
+### Entity and sensor labels with Jinja templates
+
+Show live values from other entities under icons or in the sensor row. Requires `show_entity_labels` for icon labels. See **[Label templates (Jinja)](LABEL-TEMPLATES.md)** and the [Home Assistant templating docs](https://www.home-assistant.io/docs/configuration/templating/).
+
+```yaml
+type: custom:room-summary-card
+area: bedroom
+features:
+  - show_entity_labels
+entities:
+  - entity_id: light.bedroom
+    label: "{{ states('sensor.bedroom_temperature') | round(1) }}°"
+  - entity_id: sensor.washing_machine_state
+    states:
+      - state: running
+        label: Running
+      - state: finished
+        label: "{{ states('sensor.bedroom_humidity') | int }}% RH"
+sensors:
+  - entity_id: sensor.bedroom_temperature
+    thresholds:
+      - threshold: 75
+        operator: gte
+        icon_color: red
+        label: "Hot {{ states('sensor.bedroom_temperature') | round(0) }}°"
+```
+
 ### Problem Entities Setup
 
 To use problem detection, label entities with "problem":

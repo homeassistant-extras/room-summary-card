@@ -16,9 +16,7 @@ export const computeEntityName = (
   stateObj: HassEntity,
   hass: HomeAssistant,
 ): string | undefined => {
-  const entry = hass.entities[stateObj.entity_id] as
-    | EntityRegistryDisplayEntry
-    | undefined;
+  const entry = hass.entities[stateObj.entity_id];
 
   if (!entry) {
     // Fall back to state name if not in the entity registry (friendly name)

@@ -32,6 +32,7 @@
 1. **Check sensor update frequency**: Reduce polling frequency
 2. **Use template sensors**: Aggregate data before display
 3. **Limit real-time sensors**: Use static data where possible
+4. **Label templates**: Each templated `label` uses a `render_template` subscription; prefer static text where you do not need live data. See [Label templates](../configuration/LABEL-TEMPLATES.md).
 
 ### Memory Issues
 

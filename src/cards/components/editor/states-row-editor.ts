@@ -1,5 +1,6 @@
 import { ensureArray } from '@hass/common/array/ensure-array';
 import { fireEvent } from '@hass/common/dom/fire_event';
+import { isTemplateString } from '@hass/common/string/is_template';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
 import { localize } from '@localize/localize';
@@ -106,23 +107,15 @@ export class RoomSummaryStatesRowEditor extends LitElement {
 
       schema.push(
         {
-          type: 'grid',
-          name: '',
-          label: 'editor.entity.entity_label',
-          schema: [
-            {
-              name: 'icon',
-              label: 'editor.entity.state.icon',
-              required: false,
-              selector: { icon: {} },
-            },
-            {
-              name: 'label',
-              label: 'editor.entity.state.label',
-              required: false,
-              selector: { text: {} },
-            },
-          ],
+          name: 'icon',
+          label: 'editor.entity.state.icon',
+          required: false,
+          selector: { icon: {} },
+        },
+        {
+          name: 'label',
+          label: 'editor.entity.state.label',
+          selector: { template: { preview: true } },
         },
         {
           name: 'attribute',
@@ -217,23 +210,15 @@ export class RoomSummaryStatesRowEditor extends LitElement {
           },
         },
         {
-          type: 'grid',
-          name: '',
-          label: 'editor.entity.entity_label',
-          schema: [
-            {
-              name: 'icon',
-              label: 'editor.entity.threshold.icon',
-              required: false,
-              selector: { icon: {} },
-            },
-            {
-              name: 'label',
-              label: 'editor.entity.threshold.label',
-              required: false,
-              selector: { text: {} },
-            },
-          ],
+          name: 'icon',
+          label: 'editor.entity.threshold.icon',
+          required: false,
+          selector: { icon: {} },
+        },
+        {
+          name: 'label',
+          label: 'editor.entity.threshold.label',
+          selector: { template: { preview: true } },
         },
         {
           name: 'attribute',
@@ -390,13 +375,13 @@ export class RoomSummaryStatesRowEditor extends LitElement {
   private _getItemTitle(item: StateConfig | ThresholdConfig): string {
     if (this.mode === 'states') {
       const state = item as StateConfig;
-      if (state.label) {
+      if (state.label && !isTemplateString(state.label)) {
         return `${state.state} (${state.label})`;
       }
       return state.state || 'New State';
     } else {
       const threshold = item as ThresholdConfig;
-      if (threshold.label) {
+      if (threshold.label && !isTemplateString(threshold.label)) {
         return `${threshold.threshold} (${threshold.label})`;
       }
       return threshold.threshold?.toString() || 'New Threshold';

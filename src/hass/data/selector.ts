@@ -16,6 +16,7 @@ export type Selector =
   | ObjectSelector
   | SelectSelector
   | StringSelector
+  | TemplateSelector
   | UiActionSelector
   | UiColorSelector
   | UiStateContentSelector;
@@ -121,6 +122,12 @@ export interface StringSelector {
       | 'color';
     suffix?: string;
   };
+}
+
+export interface TemplateSelector {
+  template: {
+    preview?: boolean;
+  } | null;
 }
 
 export interface UiActionSelector {

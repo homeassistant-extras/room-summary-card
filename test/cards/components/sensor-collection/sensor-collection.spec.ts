@@ -13,7 +13,7 @@ import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { expect } from 'chai';
-import { html, nothing, type TemplateResult } from 'lit';
+import { html, nothing, render, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
 
 describe('sensor-collection.ts', () => {
@@ -84,8 +84,6 @@ describe('sensor-collection.ts', () => {
       expect(element['_hass']).to.equal(mockHass);
       expect(hasFeatureStub.calledWith(element.config, 'hide_sensor_icons')).to
         .be.true;
-      expect(hasFeatureStub.calledWith(element.config, 'hide_sensor_labels')).to
-        .be.true;
     });
 
     it('should set layout from config', () => {
@@ -119,6 +117,119 @@ describe('sensor-collection.ts', () => {
     });
   });
 
+  describe('sensor render order', () => {
+    beforeEach(() => {
+      element.hass = mockHass;
+    });
+
+    it('should render averaged sensors before individual sensors', async () => {
+      element.sensors = {
+        averaged: [
+          {
+            domain: 'sensor',
+            device_class: 'temperature',
+            states: [
+              { entity_id: 'sensor.temp_a', state: '20' } as EntityState,
+            ],
+          },
+        ],
+        individual: [
+          { entity_id: 'sensor.humidity_a', state: '45' } as EntityState,
+          { entity_id: 'sensor.pressure_a', state: '1013' } as EntityState,
+        ],
+      } as SensorData;
+
+      const root = document.createElement('div');
+      render(element.render() as TemplateResult, root);
+
+      const sensorDivs = Array.from(root.querySelectorAll('.sensor'));
+      expect(sensorDivs).to.have.length(3);
+
+      // Each sensor div hosts an ha-state-icon (or ha-icon for multi-averaged).
+      // We assert that the averaged sensor (only one state ⇒ rendered like a single)
+      // comes first, then the individuals in config order.
+      const ids = sensorDivs.map(
+        (d) => (d.querySelector('ha-state-icon') as any)?.stateObj?.entity_id,
+      );
+      expect(ids).to.deep.equal([
+        'sensor.temp_a',
+        'sensor.humidity_a',
+        'sensor.pressure_a',
+      ]);
+    });
+
+    it('should preserve order across multiple averaged groups', async () => {
+      element.sensors = {
+        averaged: [
+          {
+            domain: 'sensor',
+            device_class: 'temperature',
+            states: [
+              { entity_id: 'sensor.temp_1', state: '20' } as EntityState,
+            ],
+          },
+          {
+            domain: 'sensor',
+            device_class: 'humidity',
+            states: [
+              { entity_id: 'sensor.humidity_1', state: '50' } as EntityState,
+            ],
+          },
+        ],
+        individual: [
+          { entity_id: 'sensor.battery_1', state: '90' } as EntityState,
+        ],
+      } as SensorData;
+
+      const root = document.createElement('div');
+      render(element.render() as TemplateResult, root);
+
+      const ids = Array.from(root.querySelectorAll('.sensor')).map(
+        (d) => (d.querySelector('ha-state-icon') as any)?.stateObj?.entity_id,
+      );
+      expect(ids).to.deep.equal([
+        'sensor.temp_1',
+        'sensor.humidity_1',
+        'sensor.battery_1',
+      ]);
+    });
+
+    it('should keep multi-averaged sensors before individual sensors', async () => {
+      element.sensors = {
+        averaged: [
+          {
+            domain: 'sensor',
+            device_class: 'temperature',
+            states: [
+              { entity_id: 'sensor.temp_m1', state: '20' } as EntityState,
+              { entity_id: 'sensor.temp_m2', state: '22' } as EntityState,
+            ],
+            uom: '°C',
+            average: 21,
+          } as any,
+        ],
+        individual: [
+          { entity_id: 'sensor.humidity_x', state: '45' } as EntityState,
+        ],
+      } as SensorData;
+
+      const root = document.createElement('div');
+      render(element.render() as TemplateResult, root);
+
+      const sensorDivs = Array.from(root.querySelectorAll('.sensor'));
+      expect(sensorDivs).to.have.length(2);
+
+      // First sensor is the multi-averaged group (rendered through renderMultiIcon path):
+      // it does NOT have an ha-state-icon, only a (deferred) ha-icon. The second sensor is
+      // the individual sensor with ha-state-icon for sensor.humidity_x.
+      expect(sensorDivs[0]!.querySelector('ha-state-icon')).to.not.exist;
+      expect(
+        (sensorDivs[1]!.querySelector('ha-state-icon') as any)?.stateObj
+          ?.entity_id,
+      ).to.equal('sensor.humidity_x');
+    });
+  });
+
   describe('renderSensor', () => {
     beforeEach(() => {
       element.hass = mockHass;
@@ -128,7 +239,11 @@ describe('sensor-collection.ts', () => {
       const sensor = element.sensors.averaged[0]!;
       const el = await fixture(element['renderSensor'](sensor, true));
 
-      expect(stateDisplayStub.called).to.be.true;
+      // Single averaged sensor renders through renderSingleSensor; label is delegated
+      // to <room-sensor-label> (priority logic is tested in render-label.spec.ts).
+      expect(el.tagName).to.equal('DIV');
+      expect(el.classList.contains('sensor')).to.be.true;
+      expect(el.querySelector('room-sensor-label')).to.exist;
     });
 
     it('should render multi averaged sensor correctly', async () => {
@@ -145,7 +260,11 @@ describe('sensor-collection.ts', () => {
 
       const el = await fixture(element['renderSensor'](sensor, true));
 
-      expect(sensorDataToDisplayStub.called).to.be.true;
+      // Averaged display text is delegated to <room-sensor-label>.
+      const label = el.querySelector('room-sensor-label') as any;
+      expect(label).to.exist;
+      expect(label.sensor).to.equal(sensor);
+      expect(sensorDataToDisplayStub.called).to.be.false;
     });
 
     it('should render individual sensor with configured class', async () => {
@@ -155,7 +274,7 @@ describe('sensor-collection.ts', () => {
       // Check that the sensor div exists and has the correct structure
       expect(el.tagName).to.equal('DIV');
       expect(el.classList.contains('sensor')).to.be.true;
-      expect(stateDisplayStub.called).to.be.true;
+      expect(el.querySelector('room-sensor-label')).to.exist;
     });
 
     it('should call stylesToHostCss with config styles', async () => {
@@ -195,13 +314,13 @@ describe('sensor-collection.ts', () => {
         .returns(true);
       element.hass = mockHass;
 
-      expect(element['renderStateIcon']({})).to.equal(nothing);
+      expect(element['renderStateIcon']({} as EntityState)).to.equal(nothing);
     });
 
     it('should render state icon when not hidden', async () => {
       const state = { entity_id: 'sensor.test', state: '20' };
       const el = await fixture(
-        element['renderStateIcon'](state) as TemplateResult,
+        element['renderStateIcon'](state as EntityState) as TemplateResult,
       );
 
       expect(el.tagName).to.equal('HA-STATE-ICON');
@@ -233,55 +352,7 @@ describe('sensor-collection.ts', () => {
       element.hass = mockHass;
     });
 
-    it('should hide labels when hide_sensor_labels is enabled for single sensors', async () => {
-      hasFeatureStub
-        .withArgs(element.config, 'hide_sensor_labels')
-        .returns(true);
-      element.hass = mockHass;
-
-      const sensor = element.sensors.individual[0]!;
-      const result = element['renderSingleSensor'](sensor as EntityState);
-
-      // The stateDisplay function should not be called when labels are hidden
-      expect(stateDisplayStub.called).to.be.false;
-    });
-
-    it('should hide labels when hide_sensor_labels is enabled for multi sensors', async () => {
-      hasFeatureStub
-        .withArgs(element.config, 'hide_sensor_labels')
-        .returns(true);
-      element.hass = mockHass;
-
-      const sensor = {
-        domain: 'sensor',
-        device_class: 'temperature',
-        states: [
-          { entity_id: 'sensor.temp1', state: '20' },
-          { entity_id: 'sensor.temp2', state: '22' },
-        ],
-        uom: '°C',
-        average: 21,
-      } as any;
-
-      const result = element['renderSensor'](sensor, true);
-
-      // The sensorDataToDisplaySensors function should not be called when labels are hidden
-      expect(sensorDataToDisplayStub.called).to.be.false;
-    });
-
-    it('should render labels when hide_sensor_labels is disabled', async () => {
-      hasFeatureStub
-        .withArgs(element.config, 'hide_sensor_labels')
-        .returns(false);
-      element.hass = mockHass;
-
-      const sensor = element.sensors.individual[0]!;
-      await fixture(element['renderSingleSensor'](sensor as EntityState));
-
-      expect(stateDisplayStub.called).to.be.true;
-    });
-
-    it('should pass attribute to stateDisplay when sensor config has attribute and no label', async () => {
+    it('should pass attribute through to the sensor label sub-component', async () => {
       hasFeatureStub
         .withArgs(element.config, 'hide_sensor_labels')
         .returns(false);
@@ -310,10 +381,15 @@ describe('sensor-collection.ts', () => {
       };
 
       const sensor = element.sensors.individual[0]!;
-      await fixture(element['renderSingleSensor'](sensor as EntityState));
+      const el = await fixture(
+        element['renderSingleSensor'](sensor as EntityState),
+      );
 
-      expect(stateDisplayStub.calledWith(mockHass, sensor, 'humidity')).to.be
-        .true;
+      const label = el.querySelector('room-sensor-label') as any;
+      expect(label).to.exist;
+      expect(label.entity.config.entity_id).to.equal('sensor.humidity');
+      expect(label.entity.config.attribute).to.equal('humidity');
+      expect(label.entity.state).to.equal(sensor);
     });
   });
 
@@ -785,7 +861,6 @@ describe('sensor-collection.ts', () => {
 
   describe('threshold-based sensor styling', () => {
     let getThresholdResultStub: sinon.SinonStub;
-    let getEntityLabelStub: sinon.SinonStub;
 
     beforeEach(() => {
       element.hass = mockHass;
@@ -793,14 +868,10 @@ describe('sensor-collection.ts', () => {
         thresholdColorModule,
         'getThresholdResult',
       ).returns(undefined);
-      getEntityLabelStub = stub(thresholdColorModule, 'getEntityLabel').returns(
-        undefined,
-      );
     });
 
     afterEach(() => {
       getThresholdResultStub.restore();
-      getEntityLabelStub.restore();
     });
 
     it('should pass thresholds to getThresholdResult', async () => {
@@ -979,7 +1050,7 @@ describe('sensor-collection.ts', () => {
       expect((icon as any)?.icon).to.equal('mdi:thermometer-alert');
     });
 
-    it('should apply threshold labels when threshold matches', async () => {
+    it('should forward threshold-labelled config to the sensor label sub-component', async () => {
       element.config = {
         sensors: [
           {
@@ -1013,15 +1084,17 @@ describe('sensor-collection.ts', () => {
         label: 'Hot',
         styles: undefined,
       });
-      getEntityLabelStub.returns('Hot');
 
       const sensor = element.sensors.individual[0]!;
       const el = await fixture(
         element['renderSingleSensor'](sensor as EntityState),
       );
 
-      // Verify getEntityLabel was called with the threshold result
-      expect(getEntityLabelStub.called).to.be.true;
+      // The label resolution (incl. threshold label) is tested in render-label.spec.ts.
+      // Here we just verify the label sub-component receives the entity carrying the threshold config.
+      const label = el.querySelector('room-sensor-label') as any;
+      expect(label).to.exist;
+      expect(label.entity.config.thresholds?.[0]?.label).to.equal('Hot');
     });
 
     it('should apply threshold styles when threshold matches', async () => {

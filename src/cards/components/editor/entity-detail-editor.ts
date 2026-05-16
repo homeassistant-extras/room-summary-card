@@ -61,23 +61,16 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
           selector: { entity: {} },
         },
         {
-          type: 'grid',
-          name: '',
+          name: 'icon',
+          label: 'editor.entity.entity_icon',
+          selector: {
+            icon: {},
+          },
+        },
+        {
+          name: 'label',
           label: 'editor.entity.entity_label',
-          schema: [
-            {
-              name: 'label',
-              label: 'editor.entity.entity_label',
-              selector: { text: {} },
-            },
-            {
-              name: 'icon',
-              label: 'editor.entity.entity_icon',
-              selector: {
-                icon: {},
-              },
-            },
-          ],
+          selector: { template: { preview: true } },
         },
         {
           name: 'attribute',
@@ -238,23 +231,16 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
           selector: { entity: {} },
         },
         {
-          type: 'grid',
-          name: '',
+          name: 'icon',
+          label: 'editor.entity.entity_icon',
+          selector: {
+            icon: {},
+          },
+        },
+        {
+          name: 'label',
           label: 'editor.entity.entity_label',
-          schema: [
-            {
-              name: 'label',
-              label: 'editor.entity.entity_label',
-              selector: { text: {} },
-            },
-            {
-              name: 'icon',
-              label: 'editor.entity.entity_icon',
-              selector: {
-                icon: {},
-              },
-            },
-          ],
+          selector: { template: { preview: true } },
         },
         {
           name: 'attribute',

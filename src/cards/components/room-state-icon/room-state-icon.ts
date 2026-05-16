@@ -4,20 +4,19 @@ import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
-import { computeEntityName } from '@hass/common/entity/compute_entity_name';
 import type { HomeAssistant } from '@hass/types';
 import { renderBadgeElements } from '@html/badge-squad';
 import { renderStateDisplay } from '@html/render-state-display';
-import { stateDisplay } from '@html/state-display';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { computeEntityIcon } from '@theme/render/loot-box-icon';
-import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
+import { getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { d } from '@util/debug';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import './entity-label';
 import { styles } from './styles';
 const equal = require('fast-deep-equal');
 
@@ -34,7 +33,6 @@ const equal = require('fast-deep-equal');
  * - Integration with Home Assistant state management
  * - Support for custom icon configuration
  * - Proper state display delegation to the icon rendering system
- * - Optional entity labels when show_entity_labels feature is enabled
  *
  * @version See package.json
  */
@@ -49,12 +47,6 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
    */
   @state()
   private _config!: Config;
-
-  /**
-   * Whether to show entity labels
-   */
-  @state()
-  private _showLabels!: boolean;
 
   /**
    * Whether to hide the icon
@@ -124,9 +116,6 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     if (!equal(config, this._config)) {
       this.iconBackground =
         config.background?.options?.includes('icon_background') ?? false;
-
-      this._showLabels =
-        config.features?.includes('show_entity_labels') ?? false;
 
       // Calculate hiding logic for main room entity
       if (this.isMainRoomEntity) {
@@ -204,25 +193,6 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
       ...thresholdResult?.styles,
     };
 
-    // Get label (priority: state/threshold label > config label > attribute value > entity name)
-    let label: TemplateResult | string | undefined;
-    if (this._showLabels && !this._hideIconContent) {
-      // First priority: label from state/threshold result
-      const thresholdLabel = getEntityLabel(this.entity, thresholdResult);
-      if (thresholdLabel) {
-        label = thresholdLabel;
-      } else if (this.entity.config.label) {
-        // Second priority: configured label
-        label = this.entity.config.label;
-      } else if (this.entity.config.attribute) {
-        // Third priority: attribute value if attribute is configured
-        label = stateDisplay(this._hass, state, this.entity.config.attribute);
-      } else {
-        // Fallback: entity name
-        label = computeEntityName(state, this._hass);
-      }
-    }
-
     const icon = computeEntityIcon(this.entity, this._config, {
       thresholdResult,
     });
@@ -250,7 +220,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
               .icon=${icon}
             ></ha-state-icon>`}
         ${badgeElements}
-        ${label ? html`<div class="entity-label">${label}</div>` : nothing}
+        <room-entity-label
+          .hass=${this._hass}
+          .config=${this._config}
+          .entity=${this.entity}
+          .isMainRoomEntity=${this.isMainRoomEntity}
+        ></room-entity-label>
         ${renderStateDisplay(this._hass, this.entity, this._hideIconContent)}
       </div>
     `;

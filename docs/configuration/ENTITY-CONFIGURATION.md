@@ -30,48 +30,48 @@ entities:
 
 ## Entity Configuration Options
 
-| Name              | Type                      | Default                 | Description                                                                                           |
-| ----------------- | ------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| entity_id         | string                    | **Required**            | Entity ID in Home Assistant                                                                           |
-| icon              | string                    | entity default          | Custom MDI icon                                                                                       |
-| label             | string                    | none                    | Custom label to display instead of entity name (when `show_entity_labels` is enabled) or sensor state |
-| attribute         | string or list of strings | none                    | Attribute(s) to show instead of entity state                                                          |
-| on_color          | string                    | domain default          | Color when entity is active                                                                           |
-| off_color         | string                    | theme off color         | Color when entity is inactive                                                                         |
-| thresholds        | array                     | none                    | Dynamic colors/icons based on sensor values                                                           |
-| states            | array                     | none                    | Colors/icons based on exact entity states                                                             |
-| badges            | array                     | none                    | Badge overlays for additional visual information (up to 4 badges per entity)                          |
-| styles            | object                    | none                    | Custom CSS styles to apply to the entity                                                              |
-| features          | array                     | none                    | Feature flags for this entity                                                                         |
-| tap_action        | object                    | `{action: "toggle"}`    | Action on single tap                                                                                  |
-| hold_action       | object                    | `{action: "more-info"}` | Action on hold                                                                                        |
-| double_tap_action | object                    | `{action: "none"}`      | Action on double tap                                                                                  |
+| Name              | Type                      | Default                 | Description                                                                             |
+| ----------------- | ------------------------- | ----------------------- | --------------------------------------------------------------------------------------- |
+| entity_id         | string                    | **Required**            | Entity ID in Home Assistant                                                             |
+| icon              | string                    | entity default          | Custom MDI icon                                                                         |
+| label             | string                    | none                    | Label under the icon or for sensors: plain text or [Jinja template](LABEL-TEMPLATES.md) |
+| attribute         | string or list of strings | none                    | Attribute(s) to show instead of entity state                                            |
+| on_color          | string                    | domain default          | Color when entity is active                                                             |
+| off_color         | string                    | theme off color         | Color when entity is inactive                                                           |
+| thresholds        | array                     | none                    | Dynamic colors/icons based on sensor values                                             |
+| states            | array                     | none                    | Colors/icons based on exact entity states                                               |
+| badges            | array                     | none                    | Badge overlays for additional visual information (up to 4 badges per entity)            |
+| styles            | object                    | none                    | Custom CSS styles to apply to the entity                                                |
+| features          | array                     | none                    | Feature flags for this entity                                                           |
+| tap_action        | object                    | `{action: "toggle"}`    | Action on single tap                                                                    |
+| hold_action       | object                    | `{action: "more-info"}` | Action on hold                                                                          |
+| double_tap_action | object                    | `{action: "none"}`      | Action on double tap                                                                    |
 
 ### Threshold Configuration Options
 
-| Name        | Type   | Default      | Description                                                                        |
-| ----------- | ------ | ------------ | ---------------------------------------------------------------------------------- |
-| threshold   | number | **Required** | Threshold value to compare against entity state or attribute                       |
-| icon_color  | string | **Required** | Color to use when this threshold condition is met                                  |
-| title_color | string | none         | Color to use for the card title when this threshold condition is met               |
-| icon        | string | none         | Icon to use when this threshold condition is met                                   |
-| label       | string | none         | Custom label to display when this threshold matches (overrides entity-level label) |
-| operator    | string | `gte`        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq`                                |
-| attribute   | string | none         | Optional attribute name to compare instead of entity state                         |
-| styles      | object | none         | Custom CSS styles to apply to entity icon                                          |
+| Name        | Type   | Default      | Description                                                                                                   |
+| ----------- | ------ | ------------ | ------------------------------------------------------------------------------------------------------------- |
+| threshold   | number | **Required** | Threshold value to compare against entity state or attribute                                                  |
+| icon_color  | string | **Required** | Color to use when this threshold condition is met                                                             |
+| title_color | string | none         | Color to use for the card title when this threshold condition is met                                          |
+| icon        | string | none         | Icon to use when this threshold condition is met                                                              |
+| label       | string | none         | Label when this threshold matches (plain text or [Jinja](LABEL-TEMPLATES.md); overrides entity-level `label`) |
+| operator    | string | `gte`        | Comparison operator: `gt`, `gte`, `lt`, `lte`, `eq`                                                           |
+| attribute   | string | none         | Optional attribute name to compare instead of entity state                                                    |
+| styles      | object | none         | Custom CSS styles to apply to entity icon                                                                     |
 
 ### State Configuration Options
 
-| Name        | Type   | Default      | Description                                                                    |
-| ----------- | ------ | ------------ | ------------------------------------------------------------------------------ |
-| state       | string | **Required** | Entity state or attribute value to match exactly                               |
-| operator    | string | `eq`         | Comparison operator: `eq` (equal) or `ne` (not equal)                          |
-| icon_color  | string | **Required** | Color to use when this state is active                                         |
-| title_color | string | none         | Color to use for the card title when this state is active                      |
-| icon        | string | none         | Icon to use when this state is active                                          |
-| label       | string | none         | Custom label to display when this state matches (overrides entity-level label) |
-| attribute   | string | none         | Optional attribute name to match instead of entity state                       |
-| styles      | object | none         | Custom CSS styles to apply to entity icon                                      |
+| Name        | Type   | Default      | Description                                                                                               |
+| ----------- | ------ | ------------ | --------------------------------------------------------------------------------------------------------- |
+| state       | string | **Required** | Entity state or attribute value to match exactly                                                          |
+| operator    | string | `eq`         | Comparison operator: `eq` (equal) or `ne` (not equal)                                                     |
+| icon_color  | string | **Required** | Color to use when this state is active                                                                    |
+| title_color | string | none         | Color to use for the card title when this state is active                                                 |
+| icon        | string | none         | Icon to use when this state is active                                                                     |
+| label       | string | none         | Label when this state matches (plain text or [Jinja](LABEL-TEMPLATES.md); overrides entity-level `label`) |
+| attribute   | string | none         | Optional attribute name to match instead of entity state                                                  |
+| styles      | object | none         | Custom CSS styles to apply to entity icon                                                                 |
 
 ### Badge Configuration
 
@@ -465,6 +465,8 @@ The `show_entity_labels` feature flag displays labels under each entity icon. La
 3. **Attribute value(s)** - Displayed when an `attribute` property is configured (replaces entity name/label). Use a string for one attribute or a list for multiple.
 4. **Entity name** (fallback) - Displayed when no label or attribute is configured (uses Home Assistant's entity naming logic)
 
+📖 **Jinja templates:** Any of the `label` fields above—including on `states` and `thresholds` rows—can use [Home Assistant Jinja2](https://www.home-assistant.io/docs/configuration/templating/) when the string contains `{{` or `{%`. See **[Label templates (Jinja)](LABEL-TEMPLATES.md)** for examples (related sensors, threshold captions, and editor notes).
+
 ### Label Priority Examples
 
 ```yaml
@@ -554,4 +556,6 @@ sensors:
       - state
 ```
 
-**Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified (string or list), it displays the formatted attribute value(s) instead of the state. When labels are not configured, sensors display their normal state values (e.g., "75°F", "50%", "450 ppm").
+**Note**: When labels are configured for sensors, they replace the sensor's state display. When an `attribute` is specified (string or list), it displays the formatted attribute value(s) instead of the state. When labels are not configured, sensors display their normal state values (e.g., "75°F", "50%", "450 ppm"). Sensor `label` values support the same [Jinja templates](LABEL-TEMPLATES.md) as entity labels.
+
+📖 **See also:** [Sensor configuration — labels](SENSOR-CONFIGURATION.md#labels-for-sensors) and [Label templates (Jinja)](LABEL-TEMPLATES.md).

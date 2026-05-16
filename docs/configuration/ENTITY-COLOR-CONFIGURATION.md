@@ -54,7 +54,7 @@ entities:
 
 ### 3. State-Based Colors and Icons
 
-Configure colors, icons, and labels that match exact entity states (perfect for non-numeric sensors):
+Configure colors, icons, and labels that match exact entity states (perfect for non-numeric sensors). Each row’s `label` may be plain text or a [Jinja template](LABEL-TEMPLATES.md):
 
 ```yaml
 entities:
@@ -150,7 +150,7 @@ The `styles` property accepts any CSS property-value pairs and applies them dire
 
 ![Thresholds](../assets/thresholds.gif)
 
-Configure dynamic colors, icons, and labels based on numeric sensor values:
+Configure dynamic colors, icons, and labels based on numeric sensor values. Threshold `label` fields also support [Jinja templates](LABEL-TEMPLATES.md):
 
 ```yaml
 entities:

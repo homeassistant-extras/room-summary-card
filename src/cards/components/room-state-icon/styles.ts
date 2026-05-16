@@ -66,16 +66,6 @@ export const styles = css`
     filter: var(--icon-filter, none);
   }
 
-  /* Entity label styling */
-  .entity-label {
-    position: absolute;
-    font-size: 0.7em;
-    text-align: center;
-    overflow: hidden;
-    margin-top: 75%;
-    display: var(--user-entity-label-display, block);
-  }
-
   /* Entity state styling */
   .entity-state {
     position: absolute;
