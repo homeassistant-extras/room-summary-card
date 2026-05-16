@@ -223,5 +223,25 @@ describe('badge-editor-utils', () => {
       const title = getBadgeTitle(badge);
       expect(title).to.equal('Badge top_right');
     });
+
+    it('should include a plain badge label preview', () => {
+      const badge: BadgeConfig = {
+        mode: 'show_always',
+        position: 'top_right',
+        label: 'Temperature',
+      };
+      const title = getBadgeTitle(badge);
+      expect(title).to.equal('Show Always (top_right) - Temperature');
+    });
+
+    it('should not include a Jinja badge label preview', () => {
+      const badge: BadgeConfig = {
+        mode: 'show_always',
+        position: 'top_right',
+        label: '{{ states("sensor.temp") }}',
+      };
+      const title = getBadgeTitle(badge);
+      expect(title).to.equal('Show Always (top_right)');
+    });
   });
 });

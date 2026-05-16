@@ -224,6 +224,45 @@ describe('badge.ts', () => {
         expect((stateIcon as any).stateObj).to.equal(mockEntityState);
         expect((stateIcon as any).icon).to.equal('mdi:light-on');
       });
+
+      it('should render badge label text instead of state icon', async () => {
+        element.badge = {
+          ...mockBadgeConfig,
+          mode: 'show_always',
+          label: '72F',
+        };
+
+        const result = element.render() as TemplateResult;
+        const el = await fixture(result);
+
+        expect(el.querySelector('ha-state-icon')).to.not.exist;
+        const badgeLabel = el.querySelector('room-badge-label') as HTMLElement;
+        expect(badgeLabel).to.exist;
+        expect((badgeLabel as any).hass).to.equal(mockHass);
+        expect((badgeLabel as any).entityId).to.equal('light.living_room');
+        expect((badgeLabel as any).label).to.equal('72F');
+      });
+
+      it('should prefer matching state label over badge label', async () => {
+        const matchingState: StateConfig = {
+          state: 'on',
+          icon_color: 'yellow',
+          label: 'Open',
+        };
+        getMatchingBadgeStateStub.returns(matchingState);
+        element.badge = {
+          ...mockBadgeConfig,
+          mode: 'show_always',
+          label: 'Closed',
+        };
+
+        const result = element.render() as TemplateResult;
+        const el = await fixture(result);
+
+        const badgeLabel = el.querySelector('room-badge-label') as HTMLElement;
+        expect(badgeLabel).to.exist;
+        expect((badgeLabel as any).label).to.equal('Open');
+      });
     });
 
     describe('styles handling', () => {

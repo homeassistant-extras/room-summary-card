@@ -16,6 +16,7 @@ import {
 } from 'lit';
 import { property } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import './badge-label';
 import { styles } from './styles';
 const equal = require('fast-deep-equal');
 
@@ -23,7 +24,8 @@ const equal = require('fast-deep-equal');
  * Badge Component
  *
  * A small Lit element that renders a badge overlay for an entity.
- * Badges can display entity state icons or custom icons based on configuration.
+ * Badges can display entity state icons, custom icons, or short text based on
+ * configuration.
  */
 export class Badge extends SubscribeEntityStateMixin(
   HassUpdateMixin(LitElement),
@@ -91,6 +93,8 @@ export class Badge extends SubscribeEntityStateMixin(
       return nothing;
     }
 
+    const label = matchingState?.label ?? badge.label;
+
     return html`
       ${matchingState?.styles ? stylesToHostCss(matchingState.styles) : nothing}
       <ha-tile-badge
@@ -100,11 +104,21 @@ export class Badge extends SubscribeEntityStateMixin(
           ),
         })}
       >
-        <ha-state-icon
-          .hass=${hass}
-          .stateObj=${state}
-          .icon=${matchingState?.icon}
-        ></ha-state-icon>
+        ${label
+          ? html`
+              <room-badge-label
+                .hass=${hass}
+                .entityId=${id ?? ''}
+                .label=${label}
+              ></room-badge-label>
+            `
+          : html`
+              <ha-state-icon
+                .hass=${hass}
+                .stateObj=${state}
+                .icon=${matchingState?.icon}
+              ></ha-state-icon>
+            `}
       </ha-tile-badge>
     `;
   }

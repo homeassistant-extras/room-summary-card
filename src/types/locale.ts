@@ -191,6 +191,7 @@ export type TranslationKey =
   | 'editor.badge.mode.if_match'
   | 'editor.badge.mode.homeassistant'
   | 'editor.badge.mode_label'
+  | 'editor.badge.label'
   | 'editor.badge.max_badges';
 
 export interface Translation {

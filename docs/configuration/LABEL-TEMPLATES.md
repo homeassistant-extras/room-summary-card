@@ -1,17 +1,19 @@
 # Label templates (Jinja)
 
-Entity icons and climate sensors can show a **label** under (or beside) the icon. Labels are usually plain text, but any `label` field—including on **entities**, **sensors**, **states**, and **thresholds**—can use [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) when the value contains `{{` or `{%`.
+Entity icons, climate sensors, and badges can show a **label**. Labels are usually plain text, but any `label` field—including on **entities**, **sensors**, **badges**, **states**, and **thresholds**—can use [Home Assistant Jinja2 templates](https://www.home-assistant.io/docs/configuration/templating/) when the value contains `{{` or `{%`.
 
 The card evaluates templates on the server via the `render_template` websocket API and updates the label when referenced entities or time change.
 
 ## Where templates work
 
-| Location | YAML path | When it is shown |
-| -------- | --------- | ---------------- |
-| Entity icon | `entities[].label` | `show_entity_labels` is enabled |
-| Sensor row | `sensors[].label` | Sensor labels are not hidden (`hide_sensor_labels` off) |
-| State match | `entities[].states[].label` or `sensors[].states[].label` | When that state row matches |
-| Threshold match | `entities[].thresholds[].label` or `sensors[].thresholds[].label` | When that threshold row matches |
+| Location          | YAML path                                                         | When it is shown                                        |
+| ----------------- | ----------------------------------------------------------------- | ------------------------------------------------------- |
+| Entity icon       | `entities[].label`                                                | `show_entity_labels` is enabled                         |
+| Sensor row        | `sensors[].label`                                                 | Sensor labels are not hidden (`hide_sensor_labels` off) |
+| Badge             | `entities[].badges[].label`                                       | When the badge is shown                                 |
+| Badge state match | `entities[].badges[].states[].label`                              | When that badge state row matches                       |
+| State match       | `entities[].states[].label` or `sensors[].states[].label`         | When that state row matches                             |
+| Threshold match   | `entities[].thresholds[].label` or `sensors[].thresholds[].label` | When that threshold row matches                         |
 
 **Priority** (same as static labels):
 
@@ -21,6 +23,8 @@ The card evaluates templates on the server via the `render_template` websocket A
 4. **Entity name** (icons only) or **formatted state** (sensors)
 
 If the winning label contains template syntax, it is rendered as Jinja; otherwise it is shown as plain text.
+
+Badge labels use a similar priority inside the badge: matching badge state `label`, then the badge-level `label`, then the normal badge icon.
 
 ## Plain text (no template)
 
@@ -55,6 +59,22 @@ sensors:
   - entity_id: sensor.bedroom_temperature
     label: "{{ states('sensor.bedroom_humidity') | int }}% RH"
 ```
+
+## Badge label with template
+
+Show a short related value directly on an entity badge:
+
+```yaml
+entities:
+  - entity_id: light.bedroom
+    badges:
+      - entity_id: sensor.bedroom_temperature
+        position: top_right
+        mode: show_always
+        label: "{{ states('sensor.bedroom_temperature') | round(0) }}°"
+```
+
+Keep badge labels short because they sit over a corner of the entity icon.
 
 ## State-based template label
 
@@ -96,6 +116,7 @@ entities:
 
 - **Detection**: Only strings containing `{{` or `{%` are sent to the template engine. Plain text is never parsed as Jinja.
 - **Context**: Templates use the row’s `entity_id` as template context (same as many HA cards).
+- **Badges**: Badge templates use the badge entity, which defaults to the parent entity unless `badges[].entity_id` is set.
 - **Editor**: In the UI editor, the label field uses the template selector with optional preview.
 - **Performance**: Each templated label holds one `render_template` subscription. Use templates where they add value; static labels are cheaper.
 - **Errors**: Invalid templates are logged in the browser console; the label may stay empty until the template is fixed.
@@ -104,5 +125,6 @@ entities:
 
 - [Entity labels](ENTITY-CONFIGURATION.md#entity-labels) — feature flag, priority, attributes
 - [Sensor labels](SENSOR-CONFIGURATION.md#labels-for-sensors) — sensor-specific behavior
+- [Badge labels](BADGE-CONFIGURATION.md#badge-text) — text badges and template examples
 - [State-based styling](ENTITY-COLOR-CONFIGURATION.md#3-state-based-colors-and-icons) — colors, icons, and labels per state
 - [Threshold styling](ENTITY-COLOR-CONFIGURATION.md#4-threshold-based-colors-and-icons) — numeric thresholds and labels

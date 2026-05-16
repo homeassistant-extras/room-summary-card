@@ -1,3 +1,4 @@
+import { isTemplateString } from '@hass/common/string/is_template';
 import type { BadgeConfig } from '@type/config/entity';
 
 /**
@@ -40,17 +41,26 @@ export function cleanEmptyStrings(obj: any): any {
  * Generates a display title for a badge based on its configuration
  */
 export function getBadgeTitle(badge: BadgeConfig): string {
+  let labelPreview = '';
+  if (badge.label && !isTemplateString(badge.label)) {
+    const shortLabel =
+      badge.label.length > 20 ? badge.label.slice(0, 20) + '...' : badge.label;
+    labelPreview = ` - ${shortLabel}`;
+  }
+
   if (badge.mode === 'show_always') {
-    return `Show Always (${badge.position || 'top_right'})`;
+    return `Show Always (${badge.position || 'top_right'})${labelPreview}`;
   }
   if (badge.mode === 'if_match') {
-    return `If Match (${badge.position || 'top_right'})`;
+    return `If Match (${badge.position || 'top_right'})${labelPreview}`;
   }
   if (badge.mode === 'homeassistant') {
     return `Home Assistant (${badge.position || 'top_right'})`;
   }
   if (badge.states && badge.states.length > 0) {
-    return `States (${badge.states.length}) - ${badge.position || 'top_right'}`;
+    return `States (${badge.states.length}) - ${
+      badge.position || 'top_right'
+    }${labelPreview}`;
   }
-  return `Badge ${badge.position || 'top_right'}`;
+  return `Badge ${badge.position || 'top_right'}${labelPreview}`;
 }

@@ -1,6 +1,6 @@
 # Badge Configuration
 
-Badges are small overlay icons that appear on entity icons to provide additional visual information. Each entity can have up to 4 badges configured, positioned at the corners of the entity icon.
+Badges are small overlays that appear on entity icons to provide additional visual information. Each entity can have up to 4 badges configured, positioned at the corners of the entity icon.
 
 ![Entity Badges](../assets/badges.png)
 
@@ -10,6 +10,7 @@ Badges allow you to display:
 
 - Entity state icons (`ha-state-icon`) - automatically shows the state of an entity
 - Custom icons (`ha-icon`) - displays a specific icon based on state matching
+- Short text labels - fixed text or Home Assistant Jinja templates
 - Multiple badges per entity - up to 4 badges can be configured
 - Flexible positioning - badges can be placed at any corner of the entity icon
 
@@ -24,17 +25,18 @@ entities:
       - position: top_right
         mode: show_always
       - position: bottom_left
-        mode: if_active
+        mode: if_match
 ```
 
 ## Badge Configuration Options
 
-| Name      | Type   | Default     | Description                                                                                                                                                     |
-| --------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| entity_id | string | parent      | Optional entity ID for the badge (defaults to parent entity)                                                                                                    |
-| position  | string | `top_right` | Badge position: `top_right`, `top_left`, `bottom_right`, or `bottom_left`                                                                                       |
-| mode      | string | none        | Display mode: `show_always` (always show), `if_active` (show when entity is active), or `homeassistant` (use HA's native badge rendering for supported domains) |
-| states    | array  | none        | State-based configuration (when mode is not specified) - uses same format as entity `states`                                                                    |
+| Name      | Type   | Default     | Description                                                                                                                                                              |
+| --------- | ------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| entity_id | string | parent      | Optional entity ID for the badge (defaults to parent entity)                                                                                                             |
+| label     | string | none        | Optional text to show instead of an icon. Supports plain text or [Jinja templates](LABEL-TEMPLATES.md)                                                                   |
+| position  | string | `top_right` | Badge position: `top_right`, `top_left`, `bottom_right`, or `bottom_left`                                                                                                |
+| mode      | string | none        | Display mode: `show_always` (always show), `if_match` (show when a configured state matches), or `homeassistant` (use HA's native badge rendering for supported domains) |
+| states    | array  | none        | State-based configuration (when mode is not specified) - uses same format as entity `states`                                                                             |
 
 ### Position Options
 
@@ -61,19 +63,23 @@ entities:
 
 This badge will always be visible and will display the current state of `light.living_room` using Home Assistant's state icon.
 
-### If Active Mode
+### If Match Mode
 
-The `if_active` mode displays the badge only when the entity is considered "active" (on, open, playing, etc.):
+The `if_match` mode displays the badge only when one of the configured badge states matches:
 
 ```yaml
 entities:
   - entity_id: switch.living_room_fan
     badges:
       - position: top_right
-        mode: if_active
+        mode: if_match
+        states:
+          - state: 'on'
+            icon: mdi:fan
+            icon_color: blue
 ```
 
-This badge will only appear when the switch is on, and will display the active state icon.
+This badge will only appear when the switch is on, and will display the matching state icon or label.
 
 ### Home Assistant Mode
 
@@ -152,18 +158,53 @@ entities:
 
 This is useful when you want to show related entity information on a main entity icon.
 
+## Badge Text
+
+Use `label` when you want a badge to show short text instead of an icon. The label can be fixed text or a Home Assistant Jinja template:
+
+```yaml
+entities:
+  - entity_id: light.living_room
+    badges:
+      - entity_id: sensor.living_room_temperature
+        position: top_right
+        mode: show_always
+        label: "{{ states('sensor.living_room_temperature') | round(0) }}F"
+      - entity_id: sensor.living_room_humidity
+        position: bottom_right
+        mode: show_always
+        label: "{{ states('sensor.living_room_humidity') | int }}%"
+```
+
+State-based badges can also use `label`. When a state row matches, its `label` overrides the top-level badge `label`:
+
+```yaml
+entities:
+  - entity_id: binary_sensor.window
+    badges:
+      - position: top_right
+        label: OK
+        states:
+          - state: 'on'
+            icon_color: orange
+            label: Open
+```
+
+Keep badge text short, ideally 2-4 characters, because it overlays the corner of the entity icon. `mode: homeassistant` uses Home Assistant's native tile badge rendering and does not use custom badge text.
+
 ## State Configuration
 
 When using state-based badges (no `mode` specified), the `states` array uses the same configuration format as entity `states`:
 
-| Name       | Type   | Default      | Description                                              |
-| ---------- | ------ | ------------ | -------------------------------------------------------- |
-| state      | string | **Required** | Entity state or attribute value to match exactly         |
-| operator   | string | `eq`         | Comparison operator: `eq` (equal) or `ne` (not equal)    |
-| icon_color | string | **Required** | Color to use when this state is active                   |
-| icon       | string | none         | Icon to use when this state is active                    |
-| attribute  | string | none         | Optional attribute name to match instead of entity state |
-| styles     | object | none         | Custom CSS styles to apply to the badge icon             |
+| Name       | Type   | Default      | Description                                                                                        |
+| ---------- | ------ | ------------ | -------------------------------------------------------------------------------------------------- |
+| state      | string | **Required** | Entity state or attribute value to match exactly                                                   |
+| operator   | string | `eq`         | Comparison operator: `eq` (equal) or `ne` (not equal)                                              |
+| icon_color | string | **Required** | Color to use when this state is active                                                             |
+| icon       | string | none         | Icon to use when this state is active                                                              |
+| label      | string | none         | Text to show when this state matches. Supports plain text or [Jinja templates](LABEL-TEMPLATES.md) |
+| attribute  | string | none         | Optional attribute name to match instead of entity state                                           |
+| styles     | object | none         | Custom CSS styles to apply to the badge icon                                                       |
 
 ### State-Based Badge Examples
 
@@ -228,9 +269,13 @@ entities:
       # Always show entity state
       - position: top_right
         mode: show_always
-      # Show when active
+      # Show when matching a configured state
       - position: top_left
-        mode: if_active
+        mode: if_match
+        states:
+          - state: 'on'
+            icon: mdi:lightbulb-on
+            icon_color: yellow
       # Show brightness level badge
       - position: bottom_right
         states:
@@ -350,9 +395,9 @@ entities:
       # Always show state
       - position: top_right
         mode: show_always
-      # Show brightness indicator when active
+      # Show brightness indicator when matching a configured state
       - position: top_left
-        mode: if_active
+        mode: if_match
         states:
           - state: '255'
             attribute: brightness
@@ -390,7 +435,7 @@ entities:
 ## Best Practices
 
 1. **Limit badges**: While up to 4 badges are supported, use them sparingly to avoid cluttering the interface
-2. **Use modes when possible**: `show_always`, `if_active`, and `homeassistant` modes are simpler than state-based configuration
+2. **Use modes when possible**: `show_always`, `if_match`, and `homeassistant` modes are simpler than state-based configuration
 3. **Use `homeassistant` mode for supported domains**: For `person`, `device_tracker`, `climate`, and `humidifier` entities, use `homeassistant` mode to get native Home Assistant badge rendering
 4. **Position strategically**: Place the most important badge at `top_right` (most visible)
 5. **Use related entities**: Badges are great for showing related sensor data on main entity icons

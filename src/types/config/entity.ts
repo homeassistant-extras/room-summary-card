@@ -100,6 +100,9 @@ export interface BadgeConfig {
   /** Optional entity ID (defaults to parent entity) */
   entity_id?: string;
 
+  /** Text to show in the badge instead of an icon. Supports Jinja templates. */
+  label?: string;
+
   /** Badge position: top_right, top_left, bottom_right, bottom_left */
   position?: 'top_right' | 'top_left' | 'bottom_right' | 'bottom_left';
 

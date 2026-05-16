@@ -85,6 +85,7 @@
         "homeassistant": "Home Assistant"
       },
       "mode_label": "Mode",
+      "label": "Badge Text",
       "max_badges": "Maximum 4 badges allowed"
     },
     "entities": {

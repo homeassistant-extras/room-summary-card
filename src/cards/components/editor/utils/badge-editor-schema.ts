@@ -16,6 +16,12 @@ export const getBadgeSchema = memoizeOne(
         selector: { entity: {} },
       },
       {
+        name: 'label',
+        required: false,
+        label: 'editor.badge.label',
+        selector: { template: { preview: true } },
+      },
+      {
         name: 'position',
         required: false,
         label: 'editor.badge.position_label',

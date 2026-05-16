@@ -29,7 +29,7 @@ describe('badge-editor-schema', () => {
     it('should return the correct schema structure', () => {
       const schema = getBadgeSchema('sensor.test', mockHass);
 
-      expect(schema).to.be.an('array').with.lengthOf(3);
+      expect(schema).to.be.an('array').with.lengthOf(4);
 
       expect(schema[0]).to.deep.equal({
         name: 'entity_id',
@@ -38,25 +38,32 @@ describe('badge-editor-schema', () => {
         selector: { entity: {} },
       });
 
-      expect(schema[1]).to.deep.include({
+      expect(schema[1]).to.deep.equal({
+        name: 'label',
+        required: false,
+        label: 'editor.badge.label',
+        selector: { template: { preview: true } },
+      });
+
+      expect(schema[2]).to.deep.include({
         name: 'position',
         required: false,
         label: 'editor.badge.position_label',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const positionSchema = schema[1] as any;
+      const positionSchema = schema[2] as any;
       expect(positionSchema.selector.select.options).to.have.lengthOf(4);
       expect(positionSchema.selector.select.options[0].value).to.equal(
         'top_right',
       );
 
-      expect(schema[2]).to.deep.include({
+      expect(schema[3]).to.deep.include({
         name: 'mode',
         required: false,
         label: 'editor.badge.mode_label',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const modeSchema = schema[2] as any;
+      const modeSchema = schema[3] as any;
       expect(modeSchema.selector.select.options).to.have.lengthOf(3);
       expect(modeSchema.selector.select.options[0].value).to.equal(
         'show_always',
