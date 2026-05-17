@@ -77,6 +77,7 @@ This project is protected under the MIT License. For more details, refer to the 
 - Inspired by Home Assistant's chip design
 - Button-Card and Auto-Entities were a huge inspo
 - Thanks to all contributors!
+- Maintained by [Patrick Masters](https://github.com/warmfire540) / [Curious Cat Consulting](https://curiouscat.consulting/projects/ha-room-summary-card?utm_source=github-room-summary-card&utm_medium=readme&utm_campaign=oss-presence&utm_content=maintained-by)
 
 [![contributors](https://contrib.rocks/image?repo=homeassistant-extras/room-summary-card)](https://github.com/homeassistant-extras/room-summary-card/graphs/contributors)
 

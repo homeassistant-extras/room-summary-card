@@ -1,9 +1,20 @@
 {
   "name": "room-summary-card",
   "version": "0.68.0",
-  "author": "Patrick Masters",
+  "author": {
+    "name": "Patrick Masters",
+    "url": "https://curiouscat.consulting/projects/ha-room-summary-card?utm_source=github-room-summary-card&utm_medium=package-metadata&utm_campaign=oss-presence&utm_content=author-url"
+  },
   "license": "ISC",
   "description": "Custom card Home Assistant which can show a summary of room entities.",
+  "homepage": "https://homeassistant-extras.github.io/room-summary-card/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/homeassistant-extras/room-summary-card.git"
+  },
+  "bugs": {
+    "url": "https://github.com/homeassistant-extras/room-summary-card/issues"
+  },
   "source": "src/index.ts",
   "module": "dist/room-summary-card.js",
   "targets": {

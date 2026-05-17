@@ -19,9 +19,11 @@ This is a **Yarn project**. Use `yarn` commands instead of `npm` for consistency
 
 ### Testing
 
-- `yarn test` - Run tests using Mocha with TypeScript
+- `yarn test` - Run unit tests using Mocha with TypeScript
 - `yarn test:coverage` - Run tests with NYC coverage reporting
 - `yarn test:watch` - Run tests in watch mode for development
+- `yarn test:e2e` - Run Playwright end-to-end tests against a live Home Assistant instance
+- `yarn test:e2e:auth` - Capture a Playwright storage state for authenticated e2e runs (requires `.env` with `PLAYWRIGHT_HA_ORIGIN` and `PLAYWRIGHT_HA_STORAGE_STATE`)
 
 ### Single Test Execution
 
@@ -46,33 +48,45 @@ This is a **Home Assistant custom card** built with **LitElement/Lit** that disp
 
 ### Key Directory Structure
 
-- **`src/cards/`**: Lit-based UI components (main card, editor, sub-components)
+- **`src/cards/`**: Lit-based UI components (main card, sub-components, badges, sliders)
+- **`src/config/`**: Configuration parsing, defaults, and schema helpers
 - **`src/delegates/`**: Business logic separated from UI (retrievers, checks, utilities)
-- **`src/theme/`**: Theming system, CSS generation, color management
+- **`src/editor/`**: Visual configuration editor and its row/sub-element editors
 - **`src/hass/`**: Home Assistant integration, types, and API wrappers
-- **`src/types/`**: TypeScript type definitions for config, sensors, etc.
 - **`src/html/`**: HTML template functions for UI rendering
+- **`src/localize/`**: Localization helpers consuming `src/translations/`
+- **`src/theme/`**: Theming system, CSS generation, color management
+- **`src/translations/`**: JSON translation bundles
+- **`src/types/`**: TypeScript type definitions for config, sensors, etc.
+- **`src/util/`**: Generic utility helpers shared across layers
 
 ### TypeScript Path Aliases
 
 The project uses path aliases defined in `tsconfig.json`:
 
 - `@cards/*` → `./src/cards/*`
-- `@delegates/*` → `./src/delegates/*`
-- `@theme/*` → `./src/theme/*`
-- `@hass/*` → `./src/hass/*`
-- `@type/*` → `./src/types/*`
 - `@config/*` → `./src/config/*`
+- `@delegates/*` → `./src/delegates/*`
+- `@editor/*` → `./src/editor/*`
+- `@hass/*` → `./src/hass/*`
 - `@html/*` → `./src/html/*`
+- `@localize/*` → `./src/localize/*`
+- `@theme/*` → `./src/theme/*`
+- `@type/*` → `./src/types/*`
 - `@util/*` → `./src/util/*`
+- `@test/*` → `./test/*`
+- `@/*` → `./src/*`
 
 ### Component Registration
 
-The card registers multiple custom elements:
+The card registers multiple custom elements (see `src/index.ts`):
 
 - `room-summary-card` - Main card component
 - `room-summary-card-editor` - Visual configuration editor
-- `sensor-collection`, `entity-collection`, `room-state-icon` - Sub-components
+- `sensor-collection`, `entity-collection`, `entity-slider`, `room-state-icon`, `room-badge` - Sub-components
+- `room-summary-entity-detail-editor`, `room-summary-entities-row-editor`, `room-summary-states-row-editor`, `room-summary-thresholds-row-editor`, `room-summary-badge-row-editor`, `room-summary-sub-element-editor` - Editor row/sub-element components
+
+Additional `@customElement`-decorated components are registered inline under `src/cards/components/` (e.g. `area-statistics`, `problem-entity-row`, `problem-entity-list`, `problem-dialog`, `horizontal-slider`, `room-sensor-label`, `room-entity-label`, `room-badge-label`).
 
 ### Data Flow Pattern
 
@@ -91,11 +105,12 @@ The card registers multiple custom elements:
 
 ### Testing Setup
 
-- **Framework**: Mocha + Chai + Sinon
+- **Framework**: Mocha + Chai + Sinon for unit tests
 - **TypeScript**: Tests use separate `tsconfig.test.json`
-- **DOM Testing**: Uses JSDOM for component testing
+- **DOM Testing**: Uses JSDOM (+ `@open-wc/testing`, `@testing-library/dom`) for component testing
 - **Coverage**: NYC with Istanbul for coverage reporting
 - **Setup**: `mocha.setup.ts` provides test environment configuration
+- **End-to-end**: Playwright tests run against a live Home Assistant instance via `yarn test:e2e`; auth state is captured with `yarn test:e2e:auth`
 
 ### Build System
 
