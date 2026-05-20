@@ -258,17 +258,9 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
       return nothing;
     }
 
-    const actions = {
-      ...this._roomEntity,
-      config: {
-        ...this._roomEntity.config,
-        ...this._config.actions,
-      },
-    };
-
     const roomEntity = renderRoomIcon(
       this._hass,
-      actions,
+      this._roomEntity,
       this._config,
       {
         isMainRoomEntity: true,
@@ -297,6 +289,13 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
       this,
     );
 
+    const actions = {
+      ...this._roomEntity,
+      config: {
+        ...this._roomEntity.config,
+        ...this._config.actions,
+      },
+    };
 
     return html`
       <ha-card style="${cardStyle}">
