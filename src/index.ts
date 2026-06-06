@@ -19,6 +19,11 @@ import { EntitySlider } from '@cards/components/entity-slider/entity-slider';
 import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
 import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
 import { RoomSummaryCardEditor } from '@cards/editor';
+import {
+  getEntitySuggestion,
+  type CardSuggestion,
+} from '@delegates/utils/entity-suggestion';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { version } from '../package.json';
 
 declare global {
@@ -28,6 +33,14 @@ declare global {
     description: string;
     preview: boolean;
     documentationURL: string;
+    /**
+     * Optional card-picker entity suggestion hook (Home Assistant 2026.6+).
+     * @see https://developers.home-assistant.io/docs/frontend/custom-ui/custom-card#suggesting-your-card-for-an-entity
+     */
+    getEntitySuggestion?: (
+      hass: HomeAssistant,
+      entityId: string,
+    ) => CardSuggestion[] | null;
   }>;
 }
 
@@ -84,6 +97,9 @@ globalThis.customCards.push({
 
   // URL for the card's documentation
   documentationURL: 'https://github.com/homeassistant-extras/room-summary-card',
+
+  // Card-picker entity suggestion hook (Home Assistant 2026.6+)
+  getEntitySuggestion,
 });
 
 console.info(

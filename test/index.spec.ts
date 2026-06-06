@@ -70,7 +70,8 @@ describe('index.ts', () => {
     require('@/index.ts');
 
     expect(globalThis.customCards).to.have.lengthOf(1);
-    expect(globalThis.customCards[0]).to.deep.equal({
+    const card = globalThis.customCards[0] as Record<string, unknown>;
+    expect(card).to.include({
       type: 'room-summary-card',
       name: 'Room Summary',
       description:
@@ -79,6 +80,7 @@ describe('index.ts', () => {
       documentationURL:
         'https://github.com/homeassistant-extras/room-summary-card',
     });
+    expect(card.getEntitySuggestion).to.be.a('function');
   });
 
   it('should preserve existing cards when adding new card', () => {
