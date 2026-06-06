@@ -2,9 +2,9 @@ import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
-import * as actionHandlerDirective from '@hass/panels/lovelace/common/directives/action-handler-directive';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { ActionHandlerEvent } from '@homeassistant-extras/hass/data/lovelace/action_handler';
+import * as actionHandlerDirective from '@homeassistant-extras/hass/panels/lovelace/common/directives/action-handler-directive';
 import { expect } from 'chai';
 import { restore, type SinonStub, stub } from 'sinon';
 

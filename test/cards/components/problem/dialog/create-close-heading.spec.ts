@@ -1,5 +1,5 @@
 import { createCloseHeading } from '@cards/components/problem/dialog/create-close-heading';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { expect } from 'chai';
 

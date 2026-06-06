@@ -1,31 +1,15 @@
-import * as featureModule from '@config/feature';
 import { climateThresholds } from '@delegates/checks/thresholds';
 import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import type { SensorData } from '@type/sensor';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
-import { stub, type SinonStub } from 'sinon';
-
 describe('climate-thresholds.ts', () => {
-  let hasFeatureStub: SinonStub;
-
-  beforeEach(() => {
-    hasFeatureStub = stub(featureModule, 'hasFeature');
-    hasFeatureStub.returns(false);
-  });
-
-  afterEach(() => {
-    hasFeatureStub.restore();
-  });
-
   describe('climateThresholds', () => {
     it('should return false for both when skip_climate_styles is enabled', () => {
-      hasFeatureStub
-        .withArgs(sinon.match.any, 'skip_climate_styles')
-        .returns(true);
-
-      const config: Config = { area: 'test' };
+      const config: Config = {
+        area: 'test',
+        features: ['skip_climate_styles'],
+      };
       const sensorData: SensorData = {
         individual: [],
         averaged: [],

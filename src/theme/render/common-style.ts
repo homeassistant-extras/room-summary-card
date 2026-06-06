@@ -1,7 +1,7 @@
-import { stateActive } from '@hass/common/entity/state_active';
-import { stateColorCss } from '@hass/common/entity/state_color';
-import type { HomeAssistant } from '@hass/types';
-import type { HassEntity } from '@hass/ws/types';
+import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
+import { stateColorCss } from '@homeassistant-extras/hass/common/entity/state_color';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import { getThemeColorOverride } from '@theme/custom-theme';
 import {
   getThresholdResult,

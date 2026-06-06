@@ -1,5 +1,5 @@
-import * as stateActiveModule from '@hass/common/entity/state_active';
-import * as stateColorModule from '@hass/common/entity/state_color';
+import * as stateActiveModule from '@homeassistant-extras/hass/common/entity/state_active';
+import * as stateColorModule from '@homeassistant-extras/hass/common/entity/state_color';
 import { createStateEntity as s } from '@test/test-helpers';
 import * as customThemeModule from '@theme/custom-theme';
 import { getStyleData } from '@theme/render/common-style';

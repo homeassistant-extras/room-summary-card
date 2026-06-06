@@ -17,7 +17,11 @@ describe('badge-editor-handlers', () => {
         position: 'bottom_left',
         mode: 'homeassistant',
       };
-      const newBadges = badgeValueChanged(badges, 0, updatedBadge);
+      const newBadges = badgeValueChanged(
+        badges,
+        0,
+        updatedBadge as BadgeConfig,
+      );
       expect(newBadges[0]).to.deep.equal(updatedBadge);
       expect(newBadges[1]).to.deep.equal(badges[1]);
     });
@@ -54,7 +58,11 @@ describe('badge-editor-handlers', () => {
         entity_id: 'light.test',
         empty: '',
       };
-      const newBadges = badgeValueChanged(badges, 0, updatedBadge);
+      const newBadges = badgeValueChanged(
+        badges,
+        0,
+        updatedBadge as BadgeConfig,
+      );
       expect(newBadges[0]).to.deep.equal({
         position: 'top_right',
         entity_id: 'light.test',
@@ -86,7 +94,11 @@ describe('badge-editor-handlers', () => {
         },
         empty: '',
       };
-      const newBadges = badgeValueChanged(badges, 0, updatedBadge);
+      const newBadges = badgeValueChanged(
+        badges,
+        0,
+        updatedBadge as BadgeConfig,
+      );
       expect(newBadges[0]).to.deep.equal({
         position: 'top_right',
         nested: {

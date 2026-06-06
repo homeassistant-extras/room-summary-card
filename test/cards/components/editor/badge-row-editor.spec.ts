@@ -1,11 +1,20 @@
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import { RoomSummaryBadgeRowEditor } from '@cards/components/editor/badge-row-editor';
+import { RoomSummaryStatesRowEditor } from '@cards/components/editor/states-row-editor';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { BadgeConfig, StateConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { RoomSummaryBadgeRowEditor } from '../../../../src/cards/components/editor/badge-row-editor';
-import { RoomSummaryStatesRowEditor } from '../../../../src/cards/components/editor/states-row-editor';
+
+for (const [tag, Ctor] of [
+  ['room-summary-badge-row-editor', RoomSummaryBadgeRowEditor],
+  ['room-summary-states-row-editor', RoomSummaryStatesRowEditor],
+] as const) {
+  if (!customElements.get(tag)) {
+    customElements.define(tag, Ctor);
+  }
+}
 
 describe('badge-row-editor.ts', () => {
   let element: RoomSummaryBadgeRowEditor;
@@ -34,14 +43,6 @@ describe('badge-row-editor.ts', () => {
 
   beforeEach(() => {
     fireEventStub = stub(fireEventModule, 'fireEvent');
-
-    // Register custom elements needed for tests
-    if (!customElements.get('room-summary-states-row-editor')) {
-      customElements.define(
-        'room-summary-states-row-editor',
-        RoomSummaryStatesRowEditor,
-      );
-    }
 
     mockHass = {
       localize: (key: string) => {
@@ -354,7 +355,7 @@ describe('badge-row-editor.ts', () => {
       expect(result.strings.length).to.be.greaterThan(0);
     });
 
-    it('should render add badge button when under max badges', async () => {
+    it('should render add badge button when under max badges', () => {
       element.badges = [{ position: 'top_right' }];
       const result = element['render']() as TemplateResult;
       // Check that the template renders correctly
@@ -367,7 +368,7 @@ describe('badge-row-editor.ts', () => {
       expect(element.badges.length).to.be.lessThan(4);
     });
 
-    it('should render max badges message when at max badges', async () => {
+    it('should render max badges message when at max badges', () => {
       element.badges = [
         { position: 'top_right' },
         { position: 'top_left' },
@@ -399,7 +400,7 @@ describe('badge-row-editor.ts', () => {
       expect(result).to.not.equal(nothing);
     });
 
-    it('should render states editor when badge has no mode', async () => {
+    it('should render states editor when badge has no mode', () => {
       element.badges = [
         {
           position: 'top_right',
@@ -427,7 +428,6 @@ describe('badge-row-editor.ts', () => {
         },
       ];
       const result = element['render']() as TemplateResult;
-      const templateString = result.strings.join('');
       // States editor should not be present when mode is set
       // We can't easily test this without more complex parsing, but the render should succeed
       expect(result).to.not.equal(nothing);
@@ -440,10 +440,6 @@ describe('badge-row-editor.ts', () => {
       const result = element['render']() as TemplateResult;
       expect(result).to.not.equal(nothing);
 
-      // Simulate expansion panel opening
-      const expansionEvent = new CustomEvent('expanded-changed', {
-        detail: { value: true },
-      });
       // We can't directly test the event handler, but we can verify the structure
       expect(element['_expandedBadges'].size).to.equal(0);
     });

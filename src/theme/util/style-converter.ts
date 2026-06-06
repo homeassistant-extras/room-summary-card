@@ -1,9 +1,5 @@
 import { html, nothing, type TemplateResult } from 'lit';
-import type { DirectiveResult } from 'lit/directive.js';
-import {
-  styleMap,
-  type StyleMapDirective,
-} from 'lit/directives/style-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import memoizeOne from 'memoize-one';
 
 /**
@@ -60,7 +56,7 @@ export const stylesToHostCss = memoizeOne(
 export const stylesToMap = memoizeOne(
   (
     styles?: Record<string, string>,
-  ): DirectiveResult<typeof StyleMapDirective> => {
+  ): ReturnType<typeof styleMap> | typeof nothing => {
     if (!styles || Object.keys(styles).length === 0) {
       return nothing;
     }

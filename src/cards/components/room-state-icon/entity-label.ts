@@ -1,32 +1,30 @@
-import { HassConfigMixin } from '@cards/mixins/hass-config-mixin';
 import { LabelTemplateConnection } from '@delegates/label-template-connection';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import { renderConfiguredEntityLabel } from '@html/render-label';
+import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
-import { CSSResult, LitElement, css, nothing, type TemplateResult } from 'lit';
+import { d } from '@util/debug';
+import equal from 'fast-deep-equal';
+import {
+  css,
+  type CSSResult,
+  LitElement,
+  type nothing,
+  type TemplateResult,
+} from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-const equal = require('fast-deep-equal');
 
 /**
  * Label under a room-state icon: state/threshold label, Jinja `label`, static
  * text, attribute, or entity name.
  */
 @customElement('room-entity-label')
-export class RoomEntityLabel extends HassConfigMixin(LitElement) {
+export class RoomEntityLabel extends HassConfigMixin<typeof LitElement, Config>(
+  LitElement,
+) {
   private readonly _labelTemplateConn = new LabelTemplateConnection(() =>
     this.requestUpdate(),
   );
-
-  isMainRoomEntity = false;
-
-  get show(): boolean {
-    return (
-      (this.config?.features?.includes('show_entity_labels') ?? false) &&
-      !(
-        this.isMainRoomEntity &&
-        (this.config?.background?.options?.includes('hide_icon_only') ?? false)
-      )
-    );
-  }
 
   @property({
     type: Object,
@@ -60,11 +58,7 @@ export class RoomEntityLabel extends HassConfigMixin(LitElement) {
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
-    if (!this.show) {
-      this._labelTemplateConn.disconnect();
-      return nothing;
-    }
-
+    d(this.config, 'room-entity-label', 'render');
     return renderConfiguredEntityLabel(
       this.hass,
       this.entity,

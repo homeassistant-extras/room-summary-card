@@ -9,8 +9,8 @@ import {
   type ClimateThresholds,
 } from '@delegates/checks/thresholds';
 import { getArea } from '@delegates/retrievers/area';
-import { stateActive } from '@hass/common/entity/state_active';
-import type { HomeAssistant } from '@hass/types';
+import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { getBackgroundImageUrl } from '@theme/image/get-pic';
 import { getViewTheme } from '@theme/util/get-view-theme';
 import type { Config } from '@type/config';

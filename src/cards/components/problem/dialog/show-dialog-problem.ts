@@ -1,4 +1,4 @@
-import { fireEvent } from '@hass/common/dom/fire_event';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
 import type { Config } from '@type/config';
 
 export interface ProblemDialogParams {
@@ -14,8 +14,8 @@ export interface ProblemDialogParams {
 }
 
 export const loadProblemDialog = () =>
-  // this creates a new bundle in the dist folder
-  // @ts-ignore - Dynamic import is supported at runtime
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Parcel dynamic chunk
+  // @ts-ignore
   import('./problem-dialog');
 
 export const showProblemDialog = (

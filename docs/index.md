@@ -377,8 +377,7 @@ This project is protected under the MIT License. For more details, refer to the 
 
 ## Build & Code Quality
 
-Check out **[Build Documentation](BUILD.md)**!
----
+## Check out **[Build Documentation](BUILD.md)**!
 
 <p align="center">
     <em>Built and maintained by <a href="https://curiouscat.consulting/projects/ha-room-summary-card?utm_source=github-room-summary-card&utm_medium=docs-site&utm_campaign=oss-presence&utm_content=footer">Curious Cat Consulting</a></em>

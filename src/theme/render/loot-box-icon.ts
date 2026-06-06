@@ -1,11 +1,11 @@
-import { hasFeature } from '@config/feature';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import {
   CLIMATE_HVAC_ACTION_TO_MODE,
   CLIMATE_HVAC_MODE_ICONS,
   climateHvacModeIcon,
   type HvacAction,
   type HvacMode,
-} from '@hass/data/climate';
+} from '@homeassistant-extras/hass/data/climate';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 

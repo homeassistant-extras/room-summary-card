@@ -5,11 +5,11 @@
  * @see https://developers.home-assistant.io/docs/api/websocket#subscribe_entities
  */
 
-import { computeDomain } from '@hass/common/entity/compute_domain';
+import { computeDomain } from '@homeassistant-extras/hass/common/entity/compute_domain';
 import type {
   EntityDiff,
   EntityState as HassEntityState,
-} from '@hass/ws/entities';
+} from '@homeassistant-extras/hass/ws/entities';
 import type { EntityState } from '@type/room';
 
 const COMPRESSED_STATE = 's';
@@ -19,7 +19,7 @@ export function compressedToEntityState(
   entityId: string,
   comp: HassEntityState,
 ): EntityState {
-  let last_changed = new Date(comp.lc * 1000).toISOString();
+  const last_changed = new Date(comp.lc * 1000).toISOString();
   return {
     entity_id: entityId,
     state: comp.s,
@@ -50,7 +50,7 @@ export function applyDiff(
   const add = diff['+'];
   const remove = diff['-'];
   let state = current.state;
-  let attributes = { ...current.attributes };
+  const attributes = { ...current.attributes };
 
   if (add) {
     if (add.s !== undefined) state = add.s;

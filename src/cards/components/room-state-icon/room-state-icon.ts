@@ -1,11 +1,13 @@
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
-import { hasEntityFeature, hasFeature } from '@config/feature';
+import { hasEntityFeature } from '@config/feature';
 import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
-import type { HomeAssistant } from '@hass/types';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderBadgeElements } from '@html/badge-squad';
+import { renderEntityLabel } from '@html/render-label';
 import { renderStateDisplay } from '@html/render-state-display';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { computeEntityIcon } from '@theme/render/loot-box-icon';
@@ -14,11 +16,17 @@ import { stylesToHostCss } from '@theme/util/style-converter';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { d } from '@util/debug';
-import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
+import equal from 'fast-deep-equal';
+import {
+  LitElement,
+  html,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { property, state } from 'lit/decorators.js';
 import './entity-label';
 import { styles } from './styles';
-const equal = require('fast-deep-equal');
 
 /**
  * Room State Icon Component
@@ -133,12 +141,14 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
    * Updates the card's state when Home Assistant state changes
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
-  // @ts-ignore
   override set hass(hass: HomeAssistant) {
     d(this._config, 'room-state-icon', 'set hass');
+    const entityPicture = this.entity?.state?.attributes?.entity_picture;
     this._image = hasEntityFeature(this.entity, 'use_entity_icon')
       ? undefined
-      : this.entity?.state?.attributes?.entity_picture;
+      : typeof entityPicture === 'string'
+        ? entityPicture
+        : undefined;
 
     if (this._image) {
       this.image = true;
@@ -220,12 +230,12 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
               .icon=${icon}
             ></ha-state-icon>`}
         ${badgeElements}
-        <room-entity-label
-          .hass=${this._hass}
-          .config=${this._config}
-          .entity=${this.entity}
-          .isMainRoomEntity=${this.isMainRoomEntity}
-        ></room-entity-label>
+        ${renderEntityLabel(
+          this._hass,
+          this._config,
+          this.entity,
+          this.isMainRoomEntity,
+        )}
         ${renderStateDisplay(this._hass, this.entity, this._hideIconContent)}
       </div>
     `;

@@ -1,4 +1,3 @@
-import * as featureModule from '@config/feature';
 import { createStateEntity as s } from '@test/test-helpers';
 import * as commonStyleModule from '@theme/render/common-style';
 import { renderTextStyles } from '@theme/render/text-styles';
@@ -27,17 +26,12 @@ describe('text-styles.ts', () => {
   let mockHass: any;
   let mockConfig: Config;
   let sandbox: sinon.SinonSandbox;
-  let hasFeatureStub: sinon.SinonStub;
   let getStyleDataStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
-    hasFeatureStub = sandbox.stub(featureModule, 'hasFeature');
     getStyleDataStub = sandbox.stub(commonStyleModule, 'getStyleData');
-
-    // Default behavior for stubs
-    hasFeatureStub.returns(false);
 
     mockHass = {
       themes: {
@@ -58,14 +52,16 @@ describe('text-styles.ts', () => {
   describe('renderTextStyles', () => {
     it('should return nothing when skip_entity_styles is enabled', () => {
       const entity = createEntityInfo('light', 'test', 'on');
-      hasFeatureStub.withArgs(mockConfig, 'skip_entity_styles').returns(true);
-      const result = renderTextStyles(mockHass, mockConfig, entity);
+      const configWithSkipStyles: Config = {
+        ...mockConfig,
+        features: ['skip_entity_styles'],
+      };
+      const result = renderTextStyles(mockHass, configWithSkipStyles, entity);
       expect(result).to.equal(nothing);
     });
 
     it('should return nothing when styleData is null', () => {
       const entity = createEntityInfo('light', 'test', 'on');
-      hasFeatureStub.returns(false);
       getStyleDataStub.returns(null);
       const result = renderTextStyles(mockHass, mockConfig, entity);
       expect(result).to.equal(nothing);

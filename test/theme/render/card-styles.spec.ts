@@ -3,10 +3,9 @@ import { styleMap } from 'lit/directives/style-map.js';
 import * as sinon from 'sinon';
 
 // Import the modules we need to stub
-import * as featureModule from '@config/feature';
 import * as occupancyModule from '@delegates/checks/occupancy';
-import * as stateActiveModule from '@hass/common/entity/state_active';
-import * as stateColorModule from '@hass/common/entity/state_color';
+import * as stateActiveModule from '@homeassistant-extras/hass/common/entity/state_active';
+import * as stateColorModule from '@homeassistant-extras/hass/common/entity/state_color';
 import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import * as backgroundBitsModule from '@theme/background/background-bits';
 import * as customThemeModule from '@theme/custom-theme';
@@ -34,7 +33,6 @@ describe('card-styles.ts', () => {
   let stateColorCssStub: sinon.SinonStub;
   let getThemeColorOverrideStub: sinon.SinonStub;
   let getThresholdResultStub: sinon.SinonStub;
-  let hasFeatureStub: sinon.SinonStub;
   let getBackgroundOpacityStub: sinon.SinonStub;
   let getOccupancyCssVarsStub: sinon.SinonStub;
   let getSmokeCssVarsStub: sinon.SinonStub;
@@ -60,7 +58,6 @@ describe('card-styles.ts', () => {
       thresholdColorModule,
       'getThresholdResult',
     );
-    hasFeatureStub = sandbox.stub(featureModule, 'hasFeature');
     getBackgroundOpacityStub = sandbox.stub(
       backgroundBitsModule,
       'getBackgroundOpacity',
@@ -80,7 +77,6 @@ describe('card-styles.ts', () => {
     stateColorBrightnessStub.returns('');
     getThresholdResultStub.returns(undefined);
     getThemeColorOverrideStub.returns('var(--theme-override)');
-    hasFeatureStub.returns(false);
     getBackgroundOpacityStub.returns({
       '--background-opacity-card': 'var(--opacity-background-inactive)',
     });
@@ -206,7 +202,10 @@ describe('card-styles.ts', () => {
       mockHass.themes.darkMode = true;
       stateActiveStub.returns(true);
       stateColorCssStub.returns('var(--active-color)');
-      hasFeatureStub.withArgs(mockConfig, 'skip_entity_styles').returns(true);
+      const configWithSkipStyles: Config = {
+        ...mockConfig,
+        features: ['skip_entity_styles'],
+      };
       getBackgroundOpacityStub.returns({
         '--background-opacity-card': 'var(--opacity-background-active)',
       });
@@ -214,7 +213,7 @@ describe('card-styles.ts', () => {
       const entity = createEntityInfo('light.test', 'on');
       const styles = renderCardStyles(
         mockHass,
-        mockConfig,
+        configWithSkipStyles,
         entity,
         undefined,
         undefined,

@@ -1,8 +1,8 @@
-import { fireEvent } from '@hass/common/dom/fire_event';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { UiAction } from '@hass/panels/lovelace/editor/hui-element-editor';
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
+import { computeLabel } from '@editor/utils/compute-label';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { UiAction } from '@homeassistant-extras/hass/panels/lovelace/editor/hui-element-editor';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { localize, type LocalizedHaFormSchema } from '@localize/localize';
 import type { EntityConfig } from '@type/config/entity';
 import type { LightConfigObject } from '@type/config/light';
 import {
@@ -52,7 +52,7 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
   }
 
   private readonly _entitiesSchema = memoizeOne(
-    (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
+    (hass: HomeAssistant): LocalizedHaFormSchema[] => {
       return [
         {
           name: 'entity_id',
@@ -221,84 +221,80 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     },
   );
 
-  private readonly _sensorsSchema = memoizeOne(
-    (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
-      return [
-        {
-          name: 'entity_id',
-          required: true,
-          label: 'editor.entity.entity_id',
-          selector: { entity: {} },
-        },
-        {
-          name: 'icon',
-          label: 'editor.entity.entity_icon',
-          selector: {
-            icon: {},
-          },
-        },
-        {
-          name: 'label',
-          label: 'editor.entity.entity_label',
-          selector: { template: { preview: true } },
-        },
-        {
-          name: 'attribute',
-          label: 'editor.entity.entity_attribute',
-          selector: {
-            ui_state_content: {
-              allow_context: true,
-            },
-          },
-          context: {
-            filter_entity: 'entity_id',
-          },
-        },
-        {
-          name: 'interactions',
-          label: 'editor.interactions.interactions',
-          type: 'expandable',
-          flatten: true,
-          icon: 'mdi:gesture-tap',
-          schema: [
-            {
-              name: 'tap_action',
-              label: 'editor.interactions.tap_action',
-              required: false,
-              selector: {
-                ui_action: {
-                  default_action: 'more-info' as UiAction,
-                },
-              },
-            },
-            {
-              name: 'double_tap_action',
-              label: 'editor.interactions.double_tap_action',
-              required: false,
-              selector: {
-                ui_action: {
-                  default_action: 'none' as UiAction,
-                },
-              },
-            },
-            {
-              name: 'hold_action',
-              label: 'editor.interactions.hold_action',
-              required: false,
-              selector: {
-                ui_action: {
-                  default_action: 'none' as UiAction,
-                },
-              },
-            },
-          ],
-        },
-      ];
+  private readonly _sensorsSchema: LocalizedHaFormSchema[] = [
+    {
+      name: 'entity_id',
+      required: true,
+      label: 'editor.entity.entity_id',
+      selector: { entity: {} },
     },
-  );
+    {
+      name: 'icon',
+      label: 'editor.entity.entity_icon',
+      selector: {
+        icon: {},
+      },
+    },
+    {
+      name: 'label',
+      label: 'editor.entity.entity_label',
+      selector: { template: { preview: true } },
+    },
+    {
+      name: 'attribute',
+      label: 'editor.entity.entity_attribute',
+      selector: {
+        ui_state_content: {
+          allow_context: true,
+        },
+      },
+      context: {
+        filter_entity: 'entity_id',
+      },
+    },
+    {
+      name: 'interactions',
+      label: 'editor.interactions.interactions',
+      type: 'expandable',
+      flatten: true,
+      icon: 'mdi:gesture-tap',
+      schema: [
+        {
+          name: 'tap_action',
+          label: 'editor.interactions.tap_action',
+          required: false,
+          selector: {
+            ui_action: {
+              default_action: 'more-info' as UiAction,
+            },
+          },
+        },
+        {
+          name: 'double_tap_action',
+          label: 'editor.interactions.double_tap_action',
+          required: false,
+          selector: {
+            ui_action: {
+              default_action: 'none' as UiAction,
+            },
+          },
+        },
+        {
+          name: 'hold_action',
+          label: 'editor.interactions.hold_action',
+          required: false,
+          selector: {
+            ui_action: {
+              default_action: 'none' as UiAction,
+            },
+          },
+        },
+      ],
+    },
+  ];
 
   private readonly _lightsSchema = memoizeOne(
-    (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
+    (hass: HomeAssistant): LocalizedHaFormSchema[] => {
       return [
         {
           name: 'entity_id',
@@ -335,13 +331,13 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       return nothing;
     }
 
-    let schema: HaFormSchema[];
+    let schema: LocalizedHaFormSchema[];
     if (this.type === 'entity') {
-      schema = this._entitiesSchema(this._config.entity_id, this.hass);
+      schema = this._entitiesSchema(this.hass);
     } else if (this.type === 'sensor') {
-      schema = this._sensorsSchema(this._config.entity_id, this.hass);
+      schema = this._sensorsSchema;
     } else {
-      schema = this._lightsSchema(this._config.entity_id, this.hass);
+      schema = this._lightsSchema(this.hass);
     }
 
     // Only access states/thresholds/badges for entity/sensor types, not for lights
@@ -395,7 +391,8 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
         .hass=${this.hass}
         .data=${this._config}
         .schema=${schema}
-        .computeLabel=${this._computeLabelCallback}
+        .computeLabel=${(schema: LocalizedHaFormSchema) =>
+          computeLabel(schema, this.hass!)}
         @value-changed=${this._valueChanged}
       ></ha-form>
       ${this._config.entity_id && this.type !== 'light'
@@ -419,8 +416,10 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
   /**
    * Removes empty string properties from a config object
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- deep config prune
   private _cleanEmptyStrings(obj: any): any {
     if (!obj || typeof obj !== 'object') return obj;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cleaned: any = {};
     for (const [key, value] of Object.entries(obj)) {
       // Skip empty strings
@@ -466,7 +465,6 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       delete newConfig.states;
     }
 
-    // @ts-ignore
     fireEvent(this, 'config-changed', { config: newConfig });
   }
 
@@ -498,7 +496,6 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       delete newConfig.thresholds;
     }
 
-    // @ts-ignore
     fireEvent(this, 'config-changed', { config: newConfig });
   }
 
@@ -528,21 +525,10 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
       delete newConfig.badges;
     }
 
-    // @ts-ignore
     fireEvent(this, 'config-changed', { config: newConfig });
   }
 
-  private readonly _computeLabelCallback = (schema: HaFormSchema): string => {
-    if (!schema.label) return '';
-    return `${localize(this.hass!, schema.label)} ${
-      schema.required
-        ? `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.required')})`
-        : `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.optional')})`
-    }`;
-  };
-
   private _valueChanged(ev: CustomEvent): void {
-    // @ts-ignore
     fireEvent(this, 'config-changed', { config: ev.detail.value });
   }
 

@@ -1,7 +1,7 @@
 import { showProblemDialog } from '@cards/components/problem/dialog/show-dialog-problem';
 import { shouldShowMoldIndicator } from '@delegates/checks/moldy';
-import { stateActive } from '@hass/common/entity/state_active';
-import type { HomeAssistant } from '@hass/types';
+import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';

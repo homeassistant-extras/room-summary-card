@@ -1,5 +1,5 @@
 import { getState } from '@delegates/retrievers/state';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { createStateEntity as e } from '@test/test-helpers';
 import { expect } from 'chai';
 

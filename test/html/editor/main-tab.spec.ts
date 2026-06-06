@@ -1,5 +1,5 @@
 import * as editorSchemaModule from '@editor/editor-schema';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderMainTab } from '@html/editor/main-tab';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Config } from '@type/config';
@@ -145,9 +145,6 @@ describe('main-tab.ts', () => {
     expect(getAreaSchemaStub.calledOnce).to.be.true;
     expect(getMainSchemaRestStub.calledOnce).to.be.true;
     expect(getMainSchemaRestStub.firstCall.args[0]).to.equal(mockHass);
-    expect(getMainSchemaRestStub.firstCall.args[1]).to.deep.equal([
-      'light.living_room',
-    ]);
   });
 
   it('should call computeLabel function on both ha-form elements', async () => {

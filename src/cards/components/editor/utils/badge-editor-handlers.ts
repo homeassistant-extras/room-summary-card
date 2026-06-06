@@ -7,7 +7,7 @@ import { cleanEmptyStrings } from './badge-editor-utils';
 export function badgeValueChanged(
   badges: BadgeConfig[] | undefined,
   index: number,
-  updatedBadge: any,
+  updatedBadge: BadgeConfig,
 ): BadgeConfig[] {
   const newBadges = (badges || []).concat();
   if (updatedBadge && typeof updatedBadge === 'object') {
@@ -23,7 +23,7 @@ export function badgeValueChanged(
 export function badgeStatesValueChanged(
   badges: BadgeConfig[] | undefined,
   index: number,
-  statesValue: any,
+  statesValue: unknown[],
 ): BadgeConfig[] {
   const newBadges = (badges || []).concat();
 

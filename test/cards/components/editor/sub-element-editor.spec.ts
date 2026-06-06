@@ -1,10 +1,17 @@
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import { RoomSummarySubElementEditor } from '@cards/components/editor/sub-element-editor';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { EntityConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { RoomSummarySubElementEditor } from '../../../../src/cards/components/editor/sub-element-editor';
+
+if (!customElements.get('room-summary-sub-element-editor')) {
+  customElements.define(
+    'room-summary-sub-element-editor',
+    RoomSummarySubElementEditor,
+  );
+}
 
 describe('sub-element-editor.ts', () => {
   let element: RoomSummarySubElementEditor;

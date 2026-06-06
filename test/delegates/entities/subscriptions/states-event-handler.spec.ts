@@ -1,6 +1,6 @@
 import { StatesEventHandler } from '@delegates/entities/subscriptions';
-import type { HomeAssistant } from '@hass/types';
-import type { StatesUpdates } from '@hass/ws/entities';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import type { StatesUpdates } from '@homeassistant-extras/hass/ws/entities';
 import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 

@@ -1,5 +1,5 @@
-import { hasFeature } from '@config/feature';
-import type { AreaRegistryEntry } from '@hass/data/area/area_registry';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import type { AreaRegistryEntry } from '@homeassistant-extras/hass/data/area/area_registry';
 import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
 
@@ -20,7 +20,7 @@ export const probablyClassSensorUsersMadeThisComplex = (
   const deviceClass = state.attributes?.device_class;
   if (
     state.domain !== 'sensor' ||
-    !deviceClass ||
+    typeof deviceClass !== 'string' ||
     !sensorClasses.includes(deviceClass)
   ) {
     return false;

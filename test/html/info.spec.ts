@@ -1,8 +1,9 @@
-import * as actionDelegate from '@delegates/action-handler-delegate';
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import * as actionHandlerDirective from '@hass/panels/lovelace/common/directives/action-handler-directive';
 import type { AreaStatistics } from '@cards/components/area-statistics/area-statistics';
-import type { HomeAssistant } from '@hass/types';
+import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
+import * as actionDelegate from '@delegates/action-handler-delegate';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import * as actionHandlerDirective from '@homeassistant-extras/hass/panels/lovelace/common/directives/action-handler-directive';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { info } from '@html/info';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity as e } from '@test/test-helpers';
@@ -14,6 +15,10 @@ import { expect } from 'chai';
 import { html, type TemplateResult } from 'lit';
 import { styleMap } from 'lit-html/directives/style-map.js';
 import { stub, type SinonStub } from 'sinon';
+
+if (!customElements.get('sensor-collection')) {
+  customElements.define('sensor-collection', SensorCollection);
+}
 
 describe('info.ts', () => {
   let mockHass: HomeAssistant;
@@ -132,7 +137,7 @@ describe('info.ts', () => {
       expect(sensorCollection).to.exist;
       expect((sensorCollection as any).config).to.equal(mockConfig);
       expect((sensorCollection as any).sensors).to.equal(sensors);
-      expect((sensorCollection as any).hass).to.equal(mockHass);
+      expect((sensorCollection as any)._hass).to.equal(mockHass);
     });
 
     it('should pass hass and config to area-statistics', async () => {

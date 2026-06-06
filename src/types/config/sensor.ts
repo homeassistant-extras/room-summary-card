@@ -8,4 +8,4 @@ import type { BaseEntityConfig } from './common';
 /**
  * Configuration for an individual sensor.
  */
-export interface SensorConfig extends BaseEntityConfig {}
+export type SensorConfig = BaseEntityConfig;

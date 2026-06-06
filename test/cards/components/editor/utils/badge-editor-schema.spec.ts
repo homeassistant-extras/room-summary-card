@@ -1,9 +1,5 @@
-import {
-  computeLabelCallback,
-  getBadgeSchema,
-} from '@cards/components/editor/utils/badge-editor-schema';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
+import { getBadgeSchema } from '@cards/components/editor/utils/badge-editor-schema';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as localizeModule from '@localize/localize';
 import { expect } from 'chai';
 import { restore, stub } from 'sinon';
@@ -27,7 +23,7 @@ describe('badge-editor-schema', () => {
 
   describe('getBadgeSchema', () => {
     it('should return the correct schema structure', () => {
-      const schema = getBadgeSchema('sensor.test', mockHass);
+      const schema = getBadgeSchema(mockHass);
 
       expect(schema).to.be.an('array').with.lengthOf(4);
 
@@ -50,7 +46,7 @@ describe('badge-editor-schema', () => {
         required: false,
         label: 'editor.badge.position_label',
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const positionSchema = schema[2] as any;
       expect(positionSchema.selector.select.options).to.have.lengthOf(4);
       expect(positionSchema.selector.select.options[0].value).to.equal(
@@ -62,45 +58,11 @@ describe('badge-editor-schema', () => {
         required: false,
         label: 'editor.badge.mode_label',
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const modeSchema = schema[3] as any;
       expect(modeSchema.selector.select.options).to.have.lengthOf(3);
       expect(modeSchema.selector.select.options[0].value).to.equal(
         'show_always',
-      );
-    });
-  });
-
-  describe('computeLabelCallback', () => {
-    it('should return empty string when schema has no label', () => {
-      const schema = { name: 'test' } as unknown as HaFormSchema;
-      const result = computeLabelCallback(schema, mockHass);
-      expect(result).to.equal('');
-    });
-
-    it('should return localized label with optional suffix for non-required fields', () => {
-      const schema: HaFormSchema = {
-        name: 'test',
-        label: 'editor.entity.entity_id',
-        required: false,
-        selector: { entity: {} },
-      };
-      const result = computeLabelCallback(schema, mockHass);
-      expect(result).to.equal(
-        'localized:editor.entity.entity_id (translated:ui.panel.lovelace.editor.card.config.optional)',
-      );
-    });
-
-    it('should return localized label with required suffix for required fields', () => {
-      const schema: HaFormSchema = {
-        name: 'test',
-        label: 'editor.entity.entity_id',
-        required: true,
-        selector: { entity: {} },
-      };
-      const result = computeLabelCallback(schema, mockHass);
-      expect(result).to.equal(
-        'localized:editor.entity.entity_id (translated:ui.panel.lovelace.editor.card.config.required)',
       );
     });
   });

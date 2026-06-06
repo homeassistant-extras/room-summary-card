@@ -1,4 +1,4 @@
-import type { HassEntity } from '@hass/ws/types';
+import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import type { EntityState } from '@type/room';
 
 /**

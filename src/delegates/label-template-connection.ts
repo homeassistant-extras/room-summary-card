@@ -1,6 +1,6 @@
-import { subscribeRenderTemplate } from '@hass/data/ws-templates';
-import type { HomeAssistant } from '@hass/types';
-import type { SubscriptionUnsubscribe } from '@hass/ws/types';
+import { subscribeRenderTemplate } from '@homeassistant-extras/hass/data/ws-templates';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import type { UnsubscribeFunc } from '@homeassistant-extras/hass/ws/types';
 
 /**
  * One live Jinja `render_template` subscription for an entity `label` that
@@ -8,7 +8,7 @@ import type { SubscriptionUnsubscribe } from '@hass/ws/types';
  * or hass instance should change.
  */
 export class LabelTemplateConnection {
-  private _unsub?: Promise<SubscriptionUnsubscribe>;
+  private _unsub?: Promise<UnsubscribeFunc>;
   private _subscriptionKey?: string;
   private _callbackGen = 0;
   private _displayedText = '';

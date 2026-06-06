@@ -1,10 +1,5 @@
-import type { DirectiveResult } from 'lit/directive.js';
-import {
-  type StyleMapDirective,
-  styleMap,
-} from 'lit/directives/style-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
-import { hasFeature } from '@config/feature';
 import {
   getGasCssVars,
   getOccupancyCssVars,
@@ -12,13 +7,14 @@ import {
   getWaterCssVars,
 } from '@delegates/checks/occupancy';
 import type { ClimateThresholds } from '@delegates/checks/thresholds';
-import { stateActive } from '@hass/common/entity/state_active';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
 import {
   stateColorBrightness,
   stateColorCss,
-} from '@hass/common/entity/state_color';
-import type { HomeAssistant } from '@hass/types';
-import type { HassEntity } from '@hass/ws/types';
+} from '@homeassistant-extras/hass/common/entity/state_color';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import { getThresholdResult } from '@theme/threshold-color';
 import type { Config } from '@type/config';
 import type { EntityInformation, EntityState } from '@type/room';
@@ -51,7 +47,7 @@ export const renderCardStyles = (
   thresholds?: ClimateThresholds,
   ambientLightEntities?: EntityState[],
   opacityState?: EntityState,
-): DirectiveResult<typeof StyleMapDirective> => {
+): ReturnType<typeof styleMap> => {
   const { state } = entity as { state: HassEntity };
   const thresholdResult = getThresholdResult(entity);
 

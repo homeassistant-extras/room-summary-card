@@ -1,6 +1,6 @@
 import { ProblemDialog } from '@cards/components/problem/dialog/problem-dialog';
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { expect } from 'chai';
 import { nothing } from 'lit';

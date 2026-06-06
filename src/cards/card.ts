@@ -8,29 +8,35 @@
  * @version See package.json
  */
 
-import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
+import {
+  LitElement,
+  html,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderRoomIcon } from '@/html/icon';
-import '@cards/components/horizontal-slider/horizontal-slider';
-import { hasFeature } from '@config/feature';
 import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
 import type { ClimateThresholds } from '@delegates/checks/thresholds';
 import { getRoomProperties } from '@delegates/utils/setup-card';
-import type { HomeAssistant } from '@hass/types';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { info } from '@html/info';
+import { renderHorizontalSlider } from '@html/render-horizontal-slider';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { styles } from '@theme/styles';
 import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { d } from '@util/debug';
+import equal from 'fast-deep-equal';
 import type { HassUpdateEvent } from './mixins/hass-update-mixin';
 import { SubscribeEntityStateMixin } from './mixins/subscribe-entity-state-mixin';
-const equal = require('fast-deep-equal');
 
 export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
   /**
@@ -169,7 +175,7 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
     this._isIconActive = isIconActive;
     this.iconOpacityPreset = this._config.icon_opacity_preset;
 
-    image.then((resolvedImage) => {
+    void image.then((resolvedImage) => {
       this.image = !!resolvedImage;
       this._image = resolvedImage;
     });
@@ -222,12 +228,12 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
     return document.createElement('room-summary-card-editor');
   }
 
-  public static async getStubConfig(hass: HomeAssistant): Promise<Config> {
+  public static getStubConfig(hass: HomeAssistant): Config {
     // Get all area IDs and their friendly names
     const areas = Object.entries(hass.areas);
 
     // Find the first area that has matching entities
-    const matchingArea = areas.find(([areaId, area]) => {
+    const matchingArea = areas.find(([, area]) => {
       const areaName = area.area_id.toLowerCase().replaceAll(/\s+/g, '_');
 
       // Check if either entity exists for this area
@@ -332,10 +338,7 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
           ${problems}
         </div>
 
-        <horizontal-slider
-          .config=${this._config}
-          .hass=${this._hass}
-        ></horizontal-slider>
+        ${renderHorizontalSlider(this._hass, this._config)}
 
         <!-- Full Card Action Overlay -->
         ${hasFeature(this._config, 'full_card_actions')

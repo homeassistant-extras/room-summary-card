@@ -1,8 +1,8 @@
-import { ensureArray } from '@hass/common/array/ensure-array';
-import { fireEvent } from '@hass/common/dom/fire_event';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
+import { computeLabel } from '@editor/utils/compute-label';
+import { ensureArray } from '@homeassistant-extras/hass/common/array/ensure-array';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { localize, type LocalizedHaFormSchema } from '@localize/localize';
 import type { ThresholdEntry } from '@type/config';
 import {
   css,
@@ -46,7 +46,7 @@ export class RoomSummaryThresholdsRowEditor extends LitElement {
       hass: HomeAssistant,
       thresholdType: 'temperature' | 'humidity',
       availableEntities: string[],
-    ): HaFormSchema[] => {
+    ): LocalizedHaFormSchema[] => {
       const isTemperature = thresholdType === 'temperature';
       const entityFilter = isTemperature
         ? { device_class: 'temperature' }
@@ -139,15 +139,6 @@ export class RoomSummaryThresholdsRowEditor extends LitElement {
     },
   );
 
-  private readonly _computeLabelCallback = (schema: HaFormSchema): string => {
-    if (!schema.label) return '';
-    return `${localize(this.hass!, schema.label)} ${
-      schema.required
-        ? `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.required')})`
-        : `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.optional')})`
-    }`;
-  };
-
   private _addThreshold(): void {
     const newThreshold: ThresholdEntry = {};
     const newThresholds = [...(this.thresholds || []), newThreshold];
@@ -184,8 +175,10 @@ export class RoomSummaryThresholdsRowEditor extends LitElement {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- deep config prune
   private _cleanEmptyStrings(obj: any): any {
     if (!obj || typeof obj !== 'object') return obj;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cleaned: any = {};
     for (const [key, value] of Object.entries(obj)) {
       if (value === '') continue;
@@ -304,7 +297,8 @@ export class RoomSummaryThresholdsRowEditor extends LitElement {
                           this.availableEntities || [],
                         )
                       : []}
-                    .computeLabel=${this._computeLabelCallback}
+                    .computeLabel=${(schema: LocalizedHaFormSchema) =>
+                      computeLabel(schema, this.hass!)}
                     @value-changed=${(ev: CustomEvent) =>
                       this._thresholdValueChanged(index, ev)}
                   ></ha-form>

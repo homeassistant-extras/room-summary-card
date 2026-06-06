@@ -1,6 +1,5 @@
 import { html, nothing, type TemplateResult } from 'lit';
-import type { Ref } from 'lit/directives/ref.js';
-import { ref } from 'lit/directives/ref.js';
+import { ref, type Ref } from 'lit/directives/ref.js';
 
 export interface TabBarParams {
   currentTab: number;
@@ -9,6 +8,11 @@ export interface TabBarParams {
   tabContainerRef: Ref<HTMLDivElement>;
   onScroll: () => void;
   onTabClick: (index: number) => void;
+  /** Shift+click Main tab */
+  onDebugMenuToggle?: () => void;
+  /** Triple-click Alarm tab */
+  onAlarmTabSecretClick?: () => void;
+  debugPanel?: TemplateResult;
   tabContent: TemplateResult | typeof nothing;
 }
 
@@ -25,6 +29,9 @@ export function renderTabBar(params: TabBarParams): TemplateResult {
     tabContainerRef,
     onScroll,
     onTabClick,
+    onDebugMenuToggle,
+    onAlarmTabSecretClick,
+    debugPanel,
     tabContent,
   } = params;
 
@@ -50,7 +57,12 @@ export function renderTabBar(params: TabBarParams): TemplateResult {
           <div class="custom-tab-bar">
             <button
               class="custom-tab ${currentTab === 0 ? 'active' : ''}"
-              @click=${() => onTabClick(0)}
+              @click=${(ev: MouseEvent) => {
+                onTabClick(0);
+                if (ev.shiftKey) {
+                  onDebugMenuToggle?.();
+                }
+              }}
             >
               Main
             </button>
@@ -74,7 +86,10 @@ export function renderTabBar(params: TabBarParams): TemplateResult {
             </button>
             <button
               class="custom-tab ${currentTab === 4 ? 'active' : ''}"
-              @click=${() => onTabClick(4)}
+              @click=${() => {
+                onTabClick(4);
+                onAlarmTabSecretClick?.();
+              }}
             >
               Alarm
             </button>
@@ -92,7 +107,7 @@ export function renderTabBar(params: TabBarParams): TemplateResult {
           </svg>
         </div>
       </div>
-      ${tabContent}
+      ${debugPanel ?? nothing} ${tabContent}
     </div>
   `;
 }

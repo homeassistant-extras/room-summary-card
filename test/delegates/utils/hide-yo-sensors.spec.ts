@@ -1,6 +1,6 @@
 import { getSensors } from '@delegates/utils/hide-yo-sensors';
 import * as sensorAveragesModule from '@delegates/utils/sensor-averages';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { createStateEntity as e } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import { expect } from 'chai';

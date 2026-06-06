@@ -3,7 +3,7 @@ import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderTextStyles } from '@theme/render/text-styles';
 import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';

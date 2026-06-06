@@ -1,12 +1,18 @@
 import { LabelTemplateConnection } from '@delegates/label-template-connection';
-import * as computeEntityNameModule from '@hass/common/entity/compute_entity_name';
-import type { HomeAssistant } from '@hass/types';
-import { renderConfiguredEntityLabel } from '@html/render-label';
+import * as computeEntityNameModule from '@homeassistant-extras/hass/common/entity/compute_entity_name';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import {
+  renderConfiguredEntityLabel,
+  renderEntityLabel,
+  renderSensorLabel,
+} from '@html/render-label';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
 import * as thresholdColorModule from '@theme/threshold-color';
+import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
+import type { AveragedSensor } from '@type/sensor';
 import { expect } from 'chai';
 import { html, nothing } from 'lit';
 import { stub } from 'sinon';
@@ -32,14 +38,97 @@ describe('render-label.ts', () => {
     connection: {},
   } as any as HomeAssistant;
 
+  const averagedSensor: AveragedSensor = {
+    domain: 'sensor',
+    device_class: 'temperature',
+    states: [state],
+    average: 21,
+    uom: '°C',
+  };
+
+  describe('renderSensorLabel', () => {
+    const config = { area: 'living_room' } as Config;
+
+    it('renders room-sensor-label with entity when labels are shown', async () => {
+      const el = await fixture(
+        html`<div>
+          ${renderSensorLabel(hass, config, { entity: baseEntity })}
+        </div>`,
+      );
+
+      const label = el.querySelector('room-sensor-label');
+      expect(label).to.exist;
+      expect((label as any).entity).to.equal(baseEntity);
+      expect((label as any).hass).to.equal(hass);
+    });
+
+    it('renders room-sensor-label with sensor for averaged rows', async () => {
+      const el = await fixture(
+        html`<div>
+          ${renderSensorLabel(hass, config, { sensor: averagedSensor })}
+        </div>`,
+      );
+
+      const label = el.querySelector('room-sensor-label');
+      expect(label).to.exist;
+      expect((label as any).sensor).to.equal(averagedSensor);
+    });
+
+    it('returns nothing when hide_sensor_labels is enabled', () => {
+      const result = renderSensorLabel(
+        hass,
+        { area: 'living_room', features: ['hide_sensor_labels'] },
+        { entity: baseEntity },
+      );
+
+      expect(result).to.equal(nothing);
+    });
+  });
+
+  describe('renderEntityLabel', () => {
+    const config = {
+      area: 'living_room',
+      features: ['show_entity_labels'],
+    } as Config;
+
+    it('renders room-entity-label when entity labels are enabled', async () => {
+      const el = await fixture(
+        html`<div>${renderEntityLabel(hass, config, baseEntity, false)}</div>`,
+      );
+
+      const label = el.querySelector('room-entity-label');
+      expect(label).to.exist;
+      expect((label as any).entity).to.equal(baseEntity);
+      expect((label as any).hass).to.equal(hass);
+    });
+
+    it('returns nothing when entity labels are disabled', () => {
+      const result = renderEntityLabel(
+        hass,
+        { area: 'living_room' },
+        baseEntity,
+        false,
+      );
+
+      expect(result).to.equal(nothing);
+    });
+
+    it('returns nothing for the main room entity when hide_icon_only is enabled', () => {
+      const hideIconConfig = {
+        ...config,
+        background: { options: ['hide_icon_only'] },
+      } as Config;
+
+      const result = renderEntityLabel(hass, hideIconConfig, baseEntity, true);
+
+      expect(result).to.equal(nothing);
+    });
+  });
+
   let conn: LabelTemplateConnection;
-  let requestUpdateCalls: number;
 
   beforeEach(() => {
-    requestUpdateCalls = 0;
-    conn = new LabelTemplateConnection(() => {
-      requestUpdateCalls++;
-    });
+    conn = new LabelTemplateConnection(() => {});
 
     getThresholdResultStub = stub(thresholdColorModule, 'getThresholdResult');
     getEntityLabelStub = stub(thresholdColorModule, 'getEntityLabel');

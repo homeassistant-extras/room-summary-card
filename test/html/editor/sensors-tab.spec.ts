@@ -1,5 +1,5 @@
 import * as editorSchemaModule from '@editor/editor-schema';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderSensorsTab } from '@html/editor/sensors-tab';
 import * as localizeModule from '@localize/localize';
 import { fixture } from '@open-wc/testing-helpers';

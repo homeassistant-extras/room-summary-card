@@ -1,4 +1,4 @@
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { stateDisplay } from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityState } from '@type/room';

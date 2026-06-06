@@ -1,5 +1,5 @@
 import { hasEntityFeature } from '@config/feature';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { stateDisplay } from '@html/state-display';
 import type { EntityInformation } from '@type/room';
 import { shouldHideStateDisplayWhenInactive } from '@util/should-hide-state-display';

@@ -1,5 +1,5 @@
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { expect } from 'chai';
 import { LitElement } from 'lit';
 
@@ -40,7 +40,9 @@ describe('HassUpdateMixin', () => {
 
   function dispatch(target: EventTarget, h: HomeAssistant): void {
     // Use Node's native CustomEvent so Node's EventTarget accepts it.
-    target.dispatchEvent(new CustomEvent('hass-update', { detail: { hass: h } }));
+    target.dispatchEvent(
+      new CustomEvent('hass-update', { detail: { hass: h } }),
+    );
   }
 
   it('exposes hass and config properties', () => {

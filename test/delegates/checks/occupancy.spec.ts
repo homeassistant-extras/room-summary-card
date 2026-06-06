@@ -8,8 +8,8 @@ import {
   getWaterCssVars,
   getWaterState,
 } from '@delegates/checks/occupancy';
-import * as stateActiveModule from '@hass/common/entity/state_active';
-import type { HomeAssistant } from '@hass/types';
+import * as stateActiveModule from '@homeassistant-extras/hass/common/entity/state_active';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { createState as s } from '@test/test-helpers';
 import type { AlarmConfig } from '@type/config';
 import { expect } from 'chai';

@@ -1,14 +1,20 @@
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
-import { fireEvent } from '@hass/common/dom/fire_event';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
 // more-info-mixin is now compiled
-import { computeEntityName } from '@hass/common/entity/compute_entity_name';
-import { stateActive } from '@hass/common/entity/state_active';
-import '@hass/state/more-info-mixin';
+import { computeEntityName } from '@homeassistant-extras/hass/common/entity/compute_entity_name';
+import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
+import '@homeassistant-extras/hass/state/more-info-mixin';
 import { stateDisplay } from '@html/state-display';
 import { localize } from '@localize/localize';
 import { d } from '@util/debug';
-import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
+import {
+  LitElement,
+  html,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { styles } from './styles';
 

@@ -1,6 +1,8 @@
-import { HassConfigMixin } from '@cards/mixins/hass-config-mixin';
 import { LabelTemplateConnection } from '@delegates/label-template-connection';
-import { isTemplateString } from '@hass/common/string/is_template';
+import { isTemplateString } from '@homeassistant-extras/hass/common/string/is_template';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import type { Config } from '@type/config';
+import { d } from '@util/debug';
 import { css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
@@ -8,7 +10,9 @@ import { customElement } from 'lit/decorators.js';
  * Text content inside a badge. Handles static labels and live Jinja templates.
  */
 @customElement('room-badge-label')
-export class RoomBadgeLabel extends HassConfigMixin(LitElement) {
+export class RoomBadgeLabel extends HassConfigMixin<typeof LitElement, Config>(
+  LitElement,
+) {
   private readonly _labelTemplateConn = new LabelTemplateConnection(() =>
     this.requestUpdate(),
   );
@@ -35,6 +39,7 @@ export class RoomBadgeLabel extends HassConfigMixin(LitElement) {
   }
 
   override render(): TemplateResult | typeof nothing {
+    d(this.config, 'room-badge-label', 'render');
     if (!this.label) {
       this._labelTemplateConn.disconnect();
       return nothing;

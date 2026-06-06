@@ -3,7 +3,7 @@
  * @description Core type definitions for card configuration.
  */
 
-import type { ActionConfig } from '@hass/data/lovelace/config/action';
+import type { ActionConfig } from '@homeassistant-extras/hass/data/lovelace/config/action';
 import type { ComparisonOperator } from '../comparison';
 import type { EntityConfig } from './entity';
 import type { LightConfig } from './light';
@@ -111,7 +111,7 @@ export interface Config {
       | {
           media_content_id: string;
           media_content_type?: string;
-          metadata?: Record<string, any>;
+          metadata?: Record<string, unknown>;
         };
 
     /** Entity ID for dynamic background images */

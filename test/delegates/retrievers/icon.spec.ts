@@ -1,5 +1,5 @@
 import { getIconResources } from '@delegates/retrievers/icons';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 

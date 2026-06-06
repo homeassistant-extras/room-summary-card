@@ -1,5 +1,5 @@
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { localize, type TranslationKey } from '@localize/localize';
 import { expect } from 'chai';
 
 describe('localize.ts', () => {
@@ -23,7 +23,7 @@ describe('localize.ts', () => {
     });
 
     it('should return key when translation not found', () => {
-      const result = localize(mockHass, 'nonexistent.key' as any);
+      const result = localize(mockHass, 'nonexistent.key' as TranslationKey);
       expect(result).to.equal('nonexistent.key');
     });
 
@@ -56,7 +56,10 @@ describe('localize.ts', () => {
       // 'editor.area.area' resolves to the string "Area", so accessing
       // 'editor.area.area.nonexistent' should hit the check at line 52-53
       // because "Area" is a string, not an object
-      const result = localize(mockHass, 'editor.area.area.nonexistent' as any);
+      const result = localize(
+        mockHass,
+        'editor.area.area.nonexistent' as TranslationKey,
+      );
       // Should return the key since the path doesn't resolve to a string
       expect(result).to.equal('editor.area.area.nonexistent');
     });
@@ -64,13 +67,19 @@ describe('localize.ts', () => {
     it('should handle getNestedTranslation when result becomes null', () => {
       // Test line 52: result === null check
       // Use a path that doesn't exist to trigger null check
-      const result = localize(mockHass, 'editor.nonexistent.path' as any);
+      const result = localize(
+        mockHass,
+        'editor.nonexistent.path' as TranslationKey,
+      );
       expect(result).to.equal('editor.nonexistent.path');
     });
 
     it('should handle getNestedTranslation when result becomes undefined', () => {
       // Test line 52: result === undefined check
-      const result = localize(mockHass, 'editor.area.nonexistent.key' as any);
+      const result = localize(
+        mockHass,
+        'editor.area.nonexistent.key' as TranslationKey,
+      );
       expect(result).to.equal('editor.area.nonexistent.key');
     });
   });

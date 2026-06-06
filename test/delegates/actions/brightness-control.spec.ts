@@ -1,5 +1,5 @@
 import { setBrightness } from '@delegates/actions/brightness-control';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { expect } from 'chai';
 import { restore, type SinonStub, stub } from 'sinon';
 

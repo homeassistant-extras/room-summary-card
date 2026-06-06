@@ -1,27 +1,26 @@
-import { HassConfigMixin } from '@cards/mixins/hass-config-mixin';
-import { hasFeature } from '@config/feature';
 import { LabelTemplateConnection } from '@delegates/label-template-connection';
 import { sensorDataToDisplaySensors } from '@delegates/utils/sensor-utils';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import { renderConfiguredEntityLabel } from '@html/render-label';
+import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import type { AveragedSensor } from '@type/sensor';
+import { d } from '@util/debug';
+import equal from 'fast-deep-equal';
 import { html, LitElement, nothing, type TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-const equal = require('fast-deep-equal');
 
 /**
  * Label beside a sensor icon: threshold/state label, Jinja `label`, static
  * text, or formatted state/attribute.
  */
 @customElement('room-sensor-label')
-export class RoomSensorLabel extends HassConfigMixin(LitElement) {
+export class RoomSensorLabel extends HassConfigMixin<typeof LitElement, Config>(
+  LitElement,
+) {
   private readonly _labelTemplateConn = new LabelTemplateConnection(() =>
     this.requestUpdate(),
   );
-
-  get show(): boolean {
-    return !hasFeature(this.config, 'hide_sensor_labels');
-  }
 
   /*
    * Entity information
@@ -51,11 +50,7 @@ export class RoomSensorLabel extends HassConfigMixin(LitElement) {
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
-    if (!this.show) {
-      this._labelTemplateConn.disconnect();
-      return nothing;
-    }
-
+    d(this.config, 'room-sensor-label', 'render');
     if (this.sensor) {
       return html`${sensorDataToDisplaySensors(this.sensor)}`;
     }

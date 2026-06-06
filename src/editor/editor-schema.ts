@@ -1,9 +1,11 @@
-import { computeDomain } from '@hass/common/entity/compute_domain';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import { getSensorNumericDeviceClasses } from '@hass/data/sensor';
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
-import type { TranslationKey } from '@type/locale';
+import { computeDomain } from '@homeassistant-extras/hass/common/entity/compute_domain';
+import { getSensorNumericDeviceClasses } from '@homeassistant-extras/hass/data/sensor';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import {
+  localize,
+  type LocalizedHaFormSchema,
+  type TranslationKey,
+} from '@localize/localize';
 import { INTERACTIONS } from './schema-constants';
 
 export const areaEntities = (hass: HomeAssistant, area: string) => {
@@ -43,10 +45,7 @@ export const deviceClasses = async (
   return [...new Set(classes)];
 };
 
-const schemeStyles = (
-  hass: HomeAssistant,
-  entities: string[],
-): HaFormSchema => {
+const schemeStyles = (hass: HomeAssistant): LocalizedHaFormSchema => {
   return {
     name: 'styles',
     label: 'editor.styles.styles',
@@ -175,7 +174,7 @@ const schemeStyles = (
  */
 export const getEntitiesStylesSchema = (
   hass: HomeAssistant,
-): HaFormSchema[] => {
+): LocalizedHaFormSchema[] => {
   return [
     {
       name: 'styles',
@@ -277,7 +276,7 @@ export const getEntitiesStylesSchema = (
 export const getLightsSchema = (
   hass: HomeAssistant,
   entities: string[],
-): HaFormSchema[] => {
+): LocalizedHaFormSchema[] => {
   return [
     {
       name: 'lights',
@@ -299,7 +298,7 @@ export const getSensorsSchema = (
   hass: HomeAssistant,
   sensorClasses: string[],
   entities: string[],
-): HaFormSchema[] => {
+): LocalizedHaFormSchema[] => {
   return [
     {
       name: 'sensors',
@@ -353,7 +352,7 @@ export const getSensorsSchema = (
 export const getSensorsSchemaRest = (
   hass: HomeAssistant,
   sensorClasses: string[],
-): HaFormSchema[] => {
+): LocalizedHaFormSchema[] => {
   return [
     {
       name: 'sensor_classes',
@@ -411,7 +410,7 @@ export const getSensorsSchemaRest = (
 /**
  * Returns schema for the area field only
  */
-export const getAreaSchema = (): HaFormSchema => ({
+export const getAreaSchema = (): LocalizedHaFormSchema => ({
   name: 'area',
   label: 'editor.area.area',
   required: true,
@@ -425,8 +424,7 @@ export const getAreaSchema = (): HaFormSchema => ({
  */
 export const getMainSchemaRest = (
   hass: HomeAssistant,
-  entities: string[],
-): HaFormSchema[] => [
+): LocalizedHaFormSchema[] => [
   {
     name: 'content',
     label: 'editor.layout.content',
@@ -478,7 +476,7 @@ export const getMainSchemaRest = (
     ],
   },
   INTERACTIONS,
-  schemeStyles(hass, entities),
+  schemeStyles(hass),
   featuresSchema(hass),
 ];
 
@@ -489,7 +487,7 @@ const getAlarmConfigSchema = (
   hass: HomeAssistant,
   entities: string[],
   alarmType: 'occupancy' | 'smoke' | 'gas' | 'water',
-): HaFormSchema => {
+): LocalizedHaFormSchema => {
   const isSmoke = alarmType === 'smoke';
   const isGas = alarmType === 'gas';
   const isWater = alarmType === 'water';
@@ -610,7 +608,7 @@ const getAlarmConfigSchema = (
 export const getOccupancySchema = (
   hass: HomeAssistant,
   entities: string[],
-): HaFormSchema[] => {
+): LocalizedHaFormSchema[] => {
   return [
     getAlarmConfigSchema(hass, entities, 'occupancy'),
     getAlarmConfigSchema(hass, entities, 'smoke'),
@@ -619,7 +617,7 @@ export const getOccupancySchema = (
   ];
 };
 
-const featuresSchema = (hass: HomeAssistant): HaFormSchema => {
+const featuresSchema = (hass: HomeAssistant): LocalizedHaFormSchema => {
   return {
     name: 'features',
     label: 'editor.features.features',
@@ -675,7 +673,9 @@ const featuresSchema = (hass: HomeAssistant): HaFormSchema => {
  * Returns schema for entity-specific features only
  * Filters the full features list to only include entity-related features
  */
-export const entityFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
+export const entityFeaturesSchema = (
+  hass: HomeAssistant,
+): LocalizedHaFormSchema => {
   return {
     name: 'features',
     label: 'editor.features.features',
@@ -718,7 +718,9 @@ export const entityFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
 /**
  * Returns schema for lights-specific features only
  */
-export const lightsFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
+export const lightsFeaturesSchema = (
+  hass: HomeAssistant,
+): LocalizedHaFormSchema => {
   return {
     name: 'features',
     label: 'editor.features.features',
@@ -741,7 +743,9 @@ export const lightsFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
 /**
  * Returns schema for sensors-specific features only
  */
-export const sensorsFeaturesSchema = (hass: HomeAssistant): HaFormSchema => {
+export const sensorsFeaturesSchema = (
+  hass: HomeAssistant,
+): LocalizedHaFormSchema => {
   return {
     name: 'features',
     label: 'editor.features.features',

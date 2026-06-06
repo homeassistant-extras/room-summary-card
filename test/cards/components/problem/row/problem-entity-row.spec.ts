@@ -1,6 +1,6 @@
 import { ProblemEntityRow } from '@cards/components/problem/row/problem-entity-row';
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
 import { expect } from 'chai';

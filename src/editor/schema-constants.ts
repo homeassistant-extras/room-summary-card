@@ -1,7 +1,7 @@
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { UiAction } from '@hass/panels/lovelace/editor/hui-element-editor';
+import type { UiAction } from '@homeassistant-extras/hass/panels/lovelace/editor/hui-element-editor';
+import type { LocalizedHaFormSchema } from '@localize/localize';
 
-export const INTERACTIONS: HaFormSchema = {
+export const INTERACTIONS: LocalizedHaFormSchema = {
   name: 'actions',
   label: 'editor.interactions.interactions',
   type: 'expandable' as const,

@@ -1,8 +1,8 @@
 import { Badge } from '@cards/components/badge/badge';
 import { styles } from '@cards/components/badge/styles';
 import * as badgeStateModule from '@delegates/utils/badge-state';
-import * as renderTileBadgeModule from '@hass/panels/lovelace/cards/tile/badges/tile-badge';
-import type { HomeAssistant } from '@hass/types';
+import * as renderTileBadgeModule from '@homeassistant-extras/hass/panels/lovelace/cards/tile/badges/tile-badge';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity } from '@test/test-helpers';
 import * as styleConverterModule from '@theme/util/style-converter';
@@ -11,6 +11,10 @@ import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
+
+if (!customElements.get('room-badge')) {
+  customElements.define('room-badge', Badge);
+}
 
 describe('badge.ts', () => {
   let element: Badge;

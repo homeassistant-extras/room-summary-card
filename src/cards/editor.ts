@@ -1,3 +1,4 @@
+import { renderDebugPanel } from '@/html/editor/debug-panel';
 import { renderEntitiesTab } from '@/html/editor/entities-tab';
 import { renderLightsTab } from '@/html/editor/lights-tab';
 import { renderMainTab } from '@/html/editor/main-tab';
@@ -9,15 +10,20 @@ import { areaEntities, deviceClasses } from '@editor/editor-schema';
 import { cleanAndFireConfigChanged } from '@editor/utils/fire-config-changed';
 import { handleSubElementChanged } from '@editor/utils/handle-sub-element-changed';
 import { updateScrollIndicators } from '@editor/utils/update-scroll-indicators';
-import type { HASSDomEvent } from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import type { HASSDomEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { Task } from '@lit/task';
 import type { Config } from '@type/config';
 import { d } from '@util/debug';
-import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
+import {
+  type CSSResult,
+  html,
+  LitElement,
+  nothing,
+  type TemplateResult,
+} from 'lit';
 import { state } from 'lit/decorators.js';
-import type { Ref } from 'lit/directives/ref.js';
-import { createRef } from 'lit/directives/ref.js';
+import { createRef, type Ref } from 'lit/directives/ref.js';
 import { styles } from '../theme/css/editor';
 
 export class RoomSummaryCardEditor extends LitElement {
@@ -52,6 +58,13 @@ export class RoomSummaryCardEditor extends LitElement {
    */
   @state()
   private _subElementEditorConfig?: SubElementEditorConfig;
+
+  @state()
+  private _debugMenuUnlocked = false;
+
+  private _alarmTabClickCount = 0;
+
+  private _alarmTabClickTimer?: ReturnType<typeof globalThis.setTimeout>;
 
   /**
    * Home Assistant instance
@@ -119,6 +132,21 @@ export class RoomSummaryCardEditor extends LitElement {
       onTabClick: (index: number) => {
         this._currentTab = index;
       },
+      onDebugMenuToggle: () => this._toggleDebugMenu(),
+      onAlarmTabSecretClick: () => this._handleAlarmTabSecretClick(),
+      debugPanel: this._debugMenuUnlocked
+        ? renderDebugPanel({
+            hass: this.hass,
+            config: this._config,
+            onConfigChanged: (config) => {
+              this._config = config;
+              cleanAndFireConfigChanged(this, config);
+            },
+            onClose: () => {
+              this._debugMenuUnlocked = false;
+            },
+          })
+        : undefined,
       tabContent: this._renderTabContent(),
     });
   }
@@ -241,6 +269,9 @@ export class RoomSummaryCardEditor extends LitElement {
    */
   setConfig(config: Config) {
     this._config = { ...config };
+    if (config.debug !== undefined) {
+      this._debugMenuUnlocked = true;
+    }
   }
 
   private _valueChanged(ev: CustomEvent) {
@@ -250,7 +281,8 @@ export class RoomSummaryCardEditor extends LitElement {
 
   private _entitiesRowChanged(ev: CustomEvent) {
     const value = ev.detail.value;
-    const field = (ev.target as any).field as 'entities' | 'lights';
+    const field = (ev.target as HTMLElement & { field?: 'entities' | 'lights' })
+      .field as 'entities' | 'lights';
 
     // Guard: only process if value is an array (from our custom component)
     // If it's a string, it's from the picker directly and should be ignored
@@ -360,5 +392,22 @@ export class RoomSummaryCardEditor extends LitElement {
 
   private _goBack(): void {
     this._subElementEditorConfig = undefined;
+  }
+
+  private _toggleDebugMenu(): void {
+    this._debugMenuUnlocked = !this._debugMenuUnlocked;
+  }
+
+  private _handleAlarmTabSecretClick(): void {
+    this._alarmTabClickCount += 1;
+    globalThis.clearTimeout(this._alarmTabClickTimer);
+    this._alarmTabClickTimer = globalThis.setTimeout(() => {
+      this._alarmTabClickCount = 0;
+    }, 600);
+
+    if (this._alarmTabClickCount >= 3) {
+      this._alarmTabClickCount = 0;
+      this._toggleDebugMenu();
+    }
   }
 }

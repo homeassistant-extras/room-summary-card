@@ -13,7 +13,7 @@ export const d = (
   config: Config | undefined,
   component: string,
   category: string,
-  ...args: any[]
+  ...args: unknown[]
 ) => {
   if (!config?.debug) return;
 
@@ -21,5 +21,6 @@ export const d = (
   if (scope?.length && !scope.includes(component)) return;
   if (categories?.length && !categories.includes(category)) return;
 
+  // eslint-disable-next-line no-console -- intentional debug logging
   console.debug(`[${component}] ${category}`, ...args);
 };

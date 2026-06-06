@@ -1,8 +1,8 @@
-import { hasFeature } from '@config/feature';
 import { getArea } from '@delegates/retrievers/area';
 import { getDevice } from '@delegates/retrievers/device';
 import { getState } from '@delegates/retrievers/state';
-import type { HomeAssistant } from '@hass/types';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { Config } from '@type/config';
 import type { LightConfig } from '@type/config/light';
 import type { SensorConfig } from '@type/config/sensor';
@@ -145,7 +145,9 @@ export const getSensors = (hass: HomeAssistant, config: Config): SensorData => {
 
     // Check if this sensor is explicitly configured
     const isConfigSensor = configSensorIds.includes(entity.entity_id);
-    const device = getDevice(hass.devices, entity.device_id);
+    const device = entity.device_id
+      ? getDevice(hass.devices, entity.device_id)
+      : undefined;
     const isInArea = [entity.area_id, device?.area_id].includes(config.area);
 
     // Check if this is a configured light entity (always process these)

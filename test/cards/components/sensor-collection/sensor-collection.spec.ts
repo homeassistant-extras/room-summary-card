@@ -1,9 +1,8 @@
 import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
-import * as featureModule from '@config/feature';
 import * as actionHandlerModule from '@delegates/action-handler-delegate';
 import * as iconModule from '@delegates/retrievers/icons';
 import * as sensorUtilsModule from '@delegates/utils/sensor-utils';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntityForEntityId as s } from '@test/test-helpers';
@@ -16,10 +15,13 @@ import { expect } from 'chai';
 import { html, nothing, render, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
 
+if (!customElements.get('sensor-collection')) {
+  customElements.define('sensor-collection', SensorCollection);
+}
+
 describe('sensor-collection.ts', () => {
   let element: SensorCollection;
   let mockHass: HomeAssistant;
-  let hasFeatureStub: sinon.SinonStub;
   let getIconResourcesStub: sinon.SinonStub;
   let sensorDataToDisplayStub: sinon.SinonStub;
   let stateDisplayStub: sinon.SinonStub;
@@ -27,7 +29,6 @@ describe('sensor-collection.ts', () => {
   let handleClickActionStub: sinon.SinonStub;
 
   beforeEach(() => {
-    hasFeatureStub = stub(featureModule, 'hasFeature').returns(false);
     getIconResourcesStub = stub(iconModule, 'getIconResources').resolves({
       resources: {},
     });
@@ -69,7 +70,6 @@ describe('sensor-collection.ts', () => {
   });
 
   afterEach(() => {
-    hasFeatureStub.restore();
     getIconResourcesStub.restore();
     sensorDataToDisplayStub.restore();
     stateDisplayStub.restore();
@@ -79,11 +79,14 @@ describe('sensor-collection.ts', () => {
 
   describe('hass property setter', () => {
     it('should set internal hass and update flags', () => {
+      element.config = {
+        sensor_layout: 'default',
+        features: ['hide_sensor_icons'],
+      } as Config;
       element.hass = mockHass;
 
       expect(element['_hass']).to.equal(mockHass);
-      expect(hasFeatureStub.calledWith(element.config, 'hide_sensor_icons')).to
-        .be.true;
+      expect(element['hide']).to.be.true;
     });
 
     it('should set layout from config', () => {
@@ -108,9 +111,7 @@ describe('sensor-collection.ts', () => {
     });
 
     it('should render nothing when hide_climate_label is enabled', () => {
-      hasFeatureStub
-        .withArgs(element.config, 'hide_climate_label')
-        .returns(true);
+      element.config = { features: ['hide_climate_label'] } as Config;
       element.hass = mockHass;
 
       expect(element.render()).to.equal(nothing);
@@ -122,7 +123,7 @@ describe('sensor-collection.ts', () => {
       element.hass = mockHass;
     });
 
-    it('should render averaged sensors before individual sensors', async () => {
+    it('should render averaged sensors before individual sensors', () => {
       element.sensors = {
         averaged: [
           {
@@ -158,7 +159,7 @@ describe('sensor-collection.ts', () => {
       ]);
     });
 
-    it('should preserve order across multiple averaged groups', async () => {
+    it('should preserve order across multiple averaged groups', () => {
       element.sensors = {
         averaged: [
           {
@@ -194,7 +195,7 @@ describe('sensor-collection.ts', () => {
       ]);
     });
 
-    it('should keep multi-averaged sensors before individual sensors', async () => {
+    it('should keep multi-averaged sensors before individual sensors', () => {
       element.sensors = {
         averaged: [
           {
@@ -260,11 +261,12 @@ describe('sensor-collection.ts', () => {
 
       const el = await fixture(element['renderSensor'](sensor, true));
 
-      // Averaged display text is delegated to <room-sensor-label>.
+      // Averaged display text is delegated to <room-sensor-label>, which formats
+      // multi-state sensors via sensorDataToDisplaySensors when fixture upgrades it.
       const label = el.querySelector('room-sensor-label') as any;
       expect(label).to.exist;
       expect(label.sensor).to.equal(sensor);
-      expect(sensorDataToDisplayStub.called).to.be.false;
+      expect(sensorDataToDisplayStub.calledWith(sensor)).to.be.true;
     });
 
     it('should render individual sensor with configured class', async () => {
@@ -309,9 +311,10 @@ describe('sensor-collection.ts', () => {
     });
 
     it('should hide icons when hide_sensor_icons is enabled', () => {
-      hasFeatureStub
-        .withArgs(element.config, 'hide_sensor_icons')
-        .returns(true);
+      element.config = {
+        sensor_layout: 'default',
+        features: ['hide_sensor_icons'],
+      } as Config;
       element.hass = mockHass;
 
       expect(element['renderStateIcon']({} as EntityState)).to.equal(nothing);
@@ -353,9 +356,6 @@ describe('sensor-collection.ts', () => {
     });
 
     it('should pass attribute through to the sensor label sub-component', async () => {
-      hasFeatureStub
-        .withArgs(element.config, 'hide_sensor_labels')
-        .returns(false);
       element.hass = mockHass;
 
       element.config = {
@@ -415,7 +415,7 @@ describe('sensor-collection.ts', () => {
 
     it('should not attach action handlers to averaged sensors', async () => {
       const sensor = element.sensors.averaged[0]!;
-      const el = await fixture(element['renderSensor'](sensor, true));
+      await fixture(element['renderSensor'](sensor, true));
 
       // Single averaged sensors should have action handlers (they use renderSingleSensor)
       expect(actionHandlerStub.called).to.be.true;
@@ -424,7 +424,7 @@ describe('sensor-collection.ts', () => {
 
     it('should create proper entity information for individual sensors', async () => {
       const sensor = element.sensors.individual[0]!;
-      const el = await fixture(element['renderSensor'](sensor, false));
+      await fixture(element['renderSensor'](sensor, false));
 
       // Verify that actionHandler was called with the correct entity information
       expect(actionHandlerStub.called).to.be.true;

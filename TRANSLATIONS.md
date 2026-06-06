@@ -13,51 +13,50 @@ Only native speakers should translate to ensure high-quality and natural transla
 
 ### Step 1: Create a Translation File
 
-1. Copy the `src/translations/en.json` file
+1. Copy `src/translations/en.json`
 2. Name it with the appropriate language code following BCP 47 standards (e.g., `fr.json` for French, `de.json` for German, `zh-Hans.json` for Simplified Chinese)
-3. Translate the values (right side) only, leaving the keys (left side) unchanged
+3. Translate the values only — keep every key unchanged
 
-For example:
+Example (`fr.json`):
 
 ```json
 {
   "editor": {
-    "area": "Area", // Original English
-    "area": "Zone" // Translated to French
+    "area": {
+      "area": "Zone"
+    }
   }
 }
 ```
 
-### Step 2: Update the Localization System
+### Step 2: Register the Language
 
-1. Open `src/localize/localize.ts`
-2. Import your new translation file at the top:
-   ```typescript
-   import * as en from '../translations/en.json';
-   import * as fr from '../translations/fr.json'; // Add your language here
-   ```
-3. Add your language to the `languages` record:
-   ```typescript
-   const languages: Record<string, any> = {
-     en: en,
-     fr: fr, // Add your language here
-   };
-   ```
+Open `src/localize/localize.ts` and:
 
-### Step 3: Update Type Definitions (Optional)
+1. Import your new translation file
+2. Add it to the object passed to `createLocalize`
 
-If you've added new translation keys, update the `TranslationKey` type in `src/types/locale.ts`.
+```typescript
+import * as de from '../translations/de.json';
 
-### Step 4: Update Documentation
+export const localize = createLocalize({
+  en,
+  de, // Add your language here
+});
+```
 
-1. Add your language to the list in the main README.md
+Translation keys are derived automatically from `en.json`. You do not need to update any TypeScript types when adding keys or languages.
 
-### Step 5: Test Your Translation
+### Step 3: Update Documentation
 
-1. Test locally by changing your Home Assistant language to your translated language
-2. Make sure all text appears correctly and fits within the card layout
+Add your language to the supported languages list in this file and in `README.md` if applicable.
 
-### Step 6: Submit Your Translation
+### Step 4: Test Your Translation
+
+1. Change your Home Assistant language to your translated language
+2. Confirm all text appears correctly and fits within the card layout
+
+### Step 5: Submit Your Translation
 
 1. Fork the repository
 2. Create a new branch for your translation
@@ -87,67 +86,33 @@ Thank you for helping make the Room Summary Card more accessible to everyone!
 | English              | en     | 100%       | @warmfire540 |
 | _Your language here_ | _code_ | _progress_ | _your name_  |
 
-# Explanation of Files to Update
+## Files Overview
 
-Here's a breakdown of what files need to be updated when working with localization:
+### Translation files (`src/translations/`)
 
-## 1. Translation Files
+Each language has its own JSON file named with the language code (e.g., `en.json`, `fr.json`). The structure is a nested JSON object: keys are translation paths, values are the translated strings. English is the source of truth for key structure.
 
-The core translation files are located in the `src/translations/` directory. Each language has its own JSON file with the language code as the filename:
+### Localization wrapper (`src/localize/localize.ts`)
 
-- `en.json` - English (base language)
-- Add new languages as needed (e.g., `fr.json`, `de.json`, etc.)
+This thin wrapper imports all language JSON files and registers them with `createLocalize` from `@homeassistant-extras/hass`. The exported `localize()` function handles language lookup, English fallback, and optional string replacement.
 
-The structure of these files is a nested JSON object where keys represent the translation keys and values are the translated strings.
-
-## 2. Localization System
-
-The localization system is primarily in `src/localize/localize.ts`. This file contains:
-
-- Imports for all language JSON files
-- A `languages` record mapping language codes to their translations
-- The `localize()` function that handles translation lookups and string replacements
-
-When adding a new language:
-
-1. Import the language file at the top
-2. Add an entry to the `languages` record
-
-## 3. Type Definitions
-
-The file `src/types/locale.ts` contains TypeScript type definitions for translation keys. This provides type safety when using translations in the code.
-
-If new translation keys are added, this file should be updated to include those keys.
-
-## 4. Using Translations in Components
-
-In component files, translations are used with the `localize()` function:
+### Using translations in components
 
 ```typescript
 import { localize } from '@localize/localize';
 
-// Basic usage
-const translatedText = localize(hass, 'editor.area');
+const translatedText = localize(hass, 'editor.area.area');
 
-// With string replacement
-const clientsText = localize(
-  hass,
-  'editor.area',
-  '{number}',
-  clientCount.toString(),
-);
+// Optional string replacement
+const message = localize(hass, 'editor.area.area_name', 'Area', 'Room');
 ```
-
-## 5. README Updates
-
-When a new language is added, the main README.md should be updated to include the new language in the supported languages list.
 
 ## Guidelines for Good Translations
 
-- **Be concise** - UI space is limited
-- **Be consistent** - Maintain same terminology throughout
-- **Maintain context** - Understand how the string is used in the UI
-- **Keep placeholders** - Don't remove or change `{number}` or similar placeholders
-- **Natural language** - Translation should read naturally in your language, not as a direct word-for-word translation
+- **Be concise** — UI space is limited
+- **Be consistent** — maintain the same terminology throughout
+- **Maintain context** — understand how the string is used in the UI
+- **Keep placeholders** — don't remove or change `{number}` or similar placeholders
+- **Natural language** — translation should read naturally in your language, not as a direct word-for-word translation
 
 Thank you for helping make Room Summary Card accessible to more users around the world!

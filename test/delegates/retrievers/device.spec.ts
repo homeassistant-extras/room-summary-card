@@ -1,5 +1,5 @@
 import { getDevice } from '@delegates/retrievers/device';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 

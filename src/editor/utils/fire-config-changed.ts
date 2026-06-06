@@ -2,7 +2,8 @@ import {
   cleanEmptyArrays,
   cleanEmptyProps,
 } from '@editor/utils/config-cleanup';
-import { fireEvent } from '@hass/common/dom/fire_event';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import '@homeassistant-extras/hass/panels/lovelace/editor/hui-element-editor';
 import type { Config } from '@type/config';
 
 /**
@@ -42,6 +43,5 @@ export function cleanAndFireConfigChanged(
   cleanEmptyProps(config, 'gas');
   cleanEmptyProps(config, 'water');
 
-  // @ts-ignore
   fireEvent(element, 'config-changed', { config });
 }

@@ -1,18 +1,19 @@
-import { computeDomain } from '@hass/common/entity/compute_domain';
+import { computeDomain } from '@homeassistant-extras/hass/common/entity/compute_domain';
+import type { HassEntities } from '@homeassistant-extras/hass/ws/types';
 import type { EntityState } from '@type/room';
 import memoizeOne from 'memoize-one';
 
 /**
  * Retrieves the state of an entity
  *
- * @param {Record<string, any>} states - The states registry
- * @param {string} [entityId] - The ID of the entity
- * @param {boolean} [fakeState=false] - Whether to create a fake state if none exists
- * @returns {EntityState | undefined} The entity's state or undefined
+ * @param states - The states registry
+ * @param entityId - The ID of the entity
+ * @param fakeState - Whether to create a fake state if none exists
+ * @returns The entity's state or undefined
  */
 export const getState = memoizeOne(
   (
-    states: Record<string, any>,
+    states: HassEntities,
     entityId?: string,
     fakeState: boolean = false,
   ): EntityState | undefined => {
@@ -24,8 +25,9 @@ export const getState = memoizeOne(
         ? {
             entity_id: entityId,
             state: 'off',
-            // Set friendly_name to an empty string so the label is blank
             attributes: { friendly_name: '' },
+            last_changed: '',
+            last_updated: '',
           }
         : undefined);
 

@@ -1,10 +1,17 @@
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import { RoomSummaryStatesRowEditor } from '@cards/components/editor/states-row-editor';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { StateConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { RoomSummaryStatesRowEditor } from '../../../../src/cards/components/editor/states-row-editor';
+
+if (!customElements.get('room-summary-states-row-editor')) {
+  customElements.define(
+    'room-summary-states-row-editor',
+    RoomSummaryStatesRowEditor,
+  );
+}
 
 describe('states-row-editor.ts', () => {
   let element: RoomSummaryStatesRowEditor;
@@ -363,50 +370,6 @@ describe('states-row-editor.ts', () => {
       );
 
       expect(schema1).to.not.equal(schema2);
-    });
-  });
-
-  describe('_computeLabelCallback', () => {
-    beforeEach(() => {
-      element.hass = mockHass;
-    });
-
-    it('should return empty string when schema has no label', () => {
-      const schema = { name: 'test' };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.equal('');
-    });
-
-    it('should compute label for required field', () => {
-      const schema = {
-        name: 'state',
-        label: 'editor.entity.state.state',
-        required: true,
-      };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.include('State');
-      expect(result).to.include('(required)');
-    });
-
-    it('should compute label for optional field', () => {
-      const schema = {
-        name: 'label',
-        label: 'editor.entity.state.label',
-        required: false,
-      };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.include('Label');
-      expect(result).to.include('(optional)');
-    });
-
-    it('should handle undefined required field as optional', () => {
-      const schema = {
-        name: 'icon',
-        label: 'editor.entity.state.icon',
-      };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.include('Icon');
-      expect(result).to.include('(optional)');
     });
   });
 

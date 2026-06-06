@@ -1,4 +1,4 @@
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 
 /**
  * Module-level cache mapping a calling element to its resolved
@@ -61,5 +61,7 @@ export const getViewTheme = (
   }
 
   if (!container) return hass.themes?.theme;
-  return (container as any).theme || hass.themes?.theme;
+  return (
+    (container as HTMLElement & { theme?: string }).theme || hass.themes?.theme
+  );
 };

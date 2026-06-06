@@ -1,7 +1,7 @@
 import { EntityCollection } from '@cards/components/entity-collection/entity-collection';
 import { styles } from '@cards/components/entity-collection/styles';
 import * as iconEntitiesModule from '@delegates/entities/icon-entities';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as iconModule from '@html/icon';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity as s } from '@test/test-helpers';
@@ -12,6 +12,10 @@ import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
+
+if (!customElements.get('entity-collection')) {
+  customElements.define('entity-collection', EntityCollection);
+}
 
 describe('entity-collection.ts', () => {
   let element: EntityCollection;
@@ -153,7 +157,7 @@ describe('entity-collection.ts', () => {
       expect(element.render()).to.equal(nothing);
     });
 
-    it('should render entities when both hass and entities are available', async () => {
+    it('should render entities when both hass and entities are available', () => {
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
 

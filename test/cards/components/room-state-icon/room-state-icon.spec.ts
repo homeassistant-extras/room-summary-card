@@ -2,13 +2,14 @@ import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon
 import { styles } from '@cards/components/room-state-icon/styles';
 import * as featureModule from '@config/feature';
 import * as actionHandlerModule from '@delegates/action-handler-delegate';
-import * as computeEntityNameModule from '@hass/common/entity/compute_entity_name';
+import * as computeEntityNameModule from '@homeassistant-extras/hass/common/entity/compute_entity_name';
 import type {
   MoreInfoActionConfig,
   ToggleActionConfig,
-} from '@hass/data/lovelace/config/action';
-import type { HomeAssistant } from '@hass/types';
+} from '@homeassistant-extras/hass/data/lovelace/config/action';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as badgeSquadModule from '@html/badge-squad';
+import * as renderLabelModule from '@html/render-label';
 import * as renderStateDisplayModule from '@html/render-state-display';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';
@@ -25,6 +26,10 @@ import { html, nothing, type TemplateResult } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 import { stub } from 'sinon';
 
+if (!customElements.get('room-state-icon')) {
+  customElements.define('room-state-icon', RoomStateIcon);
+}
+
 describe('room-state-icon.ts', () => {
   let element: RoomStateIcon;
   let mockHass: HomeAssistant;
@@ -32,7 +37,6 @@ describe('room-state-icon.ts', () => {
   let stylesToHostCssStub: sinon.SinonStub;
   let actionHandlerStub: sinon.SinonStub;
   let handleClickActionStub: sinon.SinonStub;
-  let hasFeatureStub: sinon.SinonStub;
   let computeEntityNameStub: sinon.SinonStub;
   let getThresholdResultStub: sinon.SinonStub;
   let hasEntityFeatureStub: sinon.SinonStub;
@@ -92,7 +96,6 @@ describe('room-state-icon.ts', () => {
       handleEvent: () => {},
     });
 
-    hasFeatureStub = stub(featureModule, 'hasFeature').returns(false);
     computeEntityNameStub = stub(
       computeEntityNameModule,
       'computeEntityName',
@@ -138,7 +141,6 @@ describe('room-state-icon.ts', () => {
     stylesToHostCssStub.restore();
     actionHandlerStub.restore();
     handleClickActionStub.restore();
-    hasFeatureStub.restore();
     computeEntityNameStub.restore();
     getThresholdResultStub.restore();
     hasEntityFeatureStub.restore();
@@ -187,9 +189,6 @@ describe('room-state-icon.ts', () => {
     });
 
     it('should handle config setter with hide_room_icon feature for main room entity', () => {
-      // Configure hasFeature stub to return true for this test
-      hasFeatureStub.returns(true);
-
       element.isMainRoomEntity = true;
       const configWithHideIcon = {
         area: 'living_room',
@@ -232,7 +231,7 @@ describe('room-state-icon.ts', () => {
       expect(() => element.render()).to.throw(TypeError);
     });
 
-    it('should render icon when entity state is available', async () => {
+    it('should render icon when entity state is available', () => {
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
 
@@ -272,7 +271,7 @@ describe('room-state-icon.ts', () => {
       expect(el.querySelector('ha-state-icon')).to.exist;
     });
 
-    it('should handle config without styles', async () => {
+    it('should handle config without styles', () => {
       element.config = { area: 'living_room' } as Config;
 
       const result = element.render() as TemplateResult;
@@ -304,28 +303,16 @@ describe('room-state-icon.ts', () => {
         .true;
     });
 
-    it('should pass entity and hass to the room-entity-label sub-component', async () => {
-      const configWithLabels = {
-        ...mockConfig,
-        features: ['show_entity_labels'],
-      } as Config;
-      element.config = configWithLabels;
+    it('should call renderEntityLabel once during render', () => {
+      const renderEntityLabelStub = stub(
+        renderLabelModule,
+        'renderEntityLabel',
+      ).returns(nothing);
 
-      const entityWithConfigLabel = {
-        ...mockEntity,
-        config: {
-          ...mockEntityConfig,
-          label: 'Config Label',
-        },
-      };
-      element.entity = entityWithConfigLabel;
+      element.render();
 
-      const el = await fixture(element.render() as TemplateResult);
-
-      const entityLabel = el.querySelector('room-entity-label') as any;
-      expect(entityLabel).to.exist;
-      expect(entityLabel.entity).to.equal(entityWithConfigLabel);
-      expect(entityLabel.hass).to.equal(mockHass);
+      expect(renderEntityLabelStub.calledOnce).to.be.true;
+      renderEntityLabelStub.restore();
     });
   });
 
@@ -557,9 +544,6 @@ describe('room-state-icon.ts', () => {
 
   describe('hide icon behavior', () => {
     it('should render empty div with action handlers when hideIcon is true', async () => {
-      // Configure hasFeature stub to return true for this test
-      hasFeatureStub.returns(true);
-
       // Configure as main room entity with hide_room_icon feature enabled
       element.isMainRoomEntity = true;
       const configWithHideIcon = {
@@ -846,8 +830,6 @@ describe('room-state-icon.ts', () => {
 
   describe('show_state feature', () => {
     beforeEach(() => {
-      // Reset stubs
-      hasFeatureStub.returns(true); // Enable show_entity_labels
       hasEntityFeatureStub.restore();
       renderStateDisplayStub.restore();
     });

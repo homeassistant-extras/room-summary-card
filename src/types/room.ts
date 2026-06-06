@@ -23,7 +23,7 @@ export interface EntityState {
   state: string;
 
   /** Additional attributes associated with the state */
-  attributes: Record<string, any>;
+  attributes: Record<string, unknown>;
 
   /** Returns the domain portion of the entity_id */
   domain: string;

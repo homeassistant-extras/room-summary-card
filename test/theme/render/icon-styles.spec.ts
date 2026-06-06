@@ -1,4 +1,4 @@
-import * as stateColorModule from '@hass/common/entity/state_color';
+import * as stateColorModule from '@homeassistant-extras/hass/common/entity/state_color';
 import { createStateEntity as s } from '@test/test-helpers';
 import * as commonStyleModule from '@theme/render/common-style';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';

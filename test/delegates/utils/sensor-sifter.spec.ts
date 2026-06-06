@@ -1,5 +1,5 @@
 import { probablyClassSensorUsersMadeThisComplex } from '@delegates/utils/sensor-sifter';
-import type { AreaRegistryEntry } from '@hass/data/area/area_registry';
+import type { AreaRegistryEntry } from '@homeassistant-extras/hass/data/area/area_registry';
 import { createStateEntity as e } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import { expect } from 'chai';

@@ -1,5 +1,5 @@
 import { RoomBadgeLabel } from '@cards/components/badge/badge-label';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { expect } from 'chai';
 import { html, nothing } from 'lit';

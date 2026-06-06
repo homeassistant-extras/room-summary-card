@@ -101,24 +101,24 @@ features:
   - hide_hidden_entities
 ```
 
-| Feature                  | Description                                                                                    |
-| ------------------------ | ---------------------------------------------------------------------------------------------- |
-| hide_climate_label       | Hide the climate/sensor information                                                            |
-| hide_area_stats          | Hide the area statistics (device/entity counts)                                                |
-| hide_room_icon           | Hide the room icon (for cleaner layouts)                                                       |
-| hide_sensor_icons        | Hide the icons next to sensor values                                                           |
-| hide_sensor_labels       | Hide the labels next to sensor icons (opposite of hide_sensor_icons)                           |
-| exclude_default_entities | Don't include default light/fan entities                                                       |
-| skip_climate_styles      | Disable climate-based color coding & borders                                                   |
-| skip_entity_styles       | Disable card background styling based on main entity                                           |
-| skip_mold_styles         | Disable mold indicator animations (reduces CPU usage on low-power devices)                     |
+| Feature                  | Description                                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| hide_climate_label       | Hide the climate/sensor information                                                                                 |
+| hide_area_stats          | Hide the area statistics (device/entity counts)                                                                     |
+| hide_room_icon           | Hide the room icon (for cleaner layouts)                                                                            |
+| hide_sensor_icons        | Hide the icons next to sensor values                                                                                |
+| hide_sensor_labels       | Hide the labels next to sensor icons (opposite of hide_sensor_icons)                                                |
+| exclude_default_entities | Don't include default light/fan entities                                                                            |
+| skip_climate_styles      | Disable climate-based color coding & borders                                                                        |
+| skip_entity_styles       | Disable card background styling based on main entity                                                                |
+| skip_mold_styles         | Disable mold indicator animations (reduces CPU usage on low-power devices)                                          |
 | show_entity_labels       | Show entity labels under each entity icon (labels support plain text and [Jinja](configuration/LABEL-TEMPLATES.md)) |
-| multi_light_background   | Enable background lighting when any light in the room is on                                    |
-| ignore_entity            | Ignore the custom entity configuration and use default room entity (useful with auto-entities) |
-| sticky_entities          | Keep entity positions stable even when state is unavailable (prevents UI layout shifts)        |
-| slider                   | Display the first entity as a draggable slider for brightness control                          |
-| full_card_actions        | Make entire card clickable with tap/hold actions for mobile-friendly navigation                |
-| hide_hidden_entities     | Skip entities that are marked as hidden in Home Assistant                                      |
+| multi_light_background   | Enable background lighting when any light in the room is on                                                         |
+| ignore_entity            | Ignore the custom entity configuration and use default room entity (useful with auto-entities)                      |
+| sticky_entities          | Keep entity positions stable even when state is unavailable (prevents UI layout shifts)                             |
+| slider                   | Display the first entity as a draggable slider for brightness control                                               |
+| full_card_actions        | Make entire card clickable with tap/hold actions for mobile-friendly navigation                                     |
+| hide_hidden_entities     | Skip entities that are marked as hidden in Home Assistant                                                           |
 
 ### Using `ignore_entity` with Auto-Entities
 

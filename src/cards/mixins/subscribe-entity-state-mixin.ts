@@ -1,13 +1,14 @@
 import { getEntitySubscriptionManager } from '@delegates/entities/subscriptions';
-import type { HomeAssistant } from '@hass/types';
-import type { SubscriptionUnsubscribe } from '@hass/ws/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import type { UnsubscribeFunc } from '@homeassistant-extras/hass/ws/types';
 import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
 import { d } from '@util/debug';
 import type { LitElement } from 'lit';
 import { state } from 'lit/decorators.js';
 
-export type Constructor<T = {}> = new (...args: any[]) => T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- mixin constructor
+export type Constructor<T = object> = new (...args: any[]) => T;
 
 export interface SubscribeEntityStateElement {
   /**
@@ -36,7 +37,7 @@ export const SubscribeEntityStateMixin = <
     /**
      * The unsubscribe function for the subscription.
      */
-    private _unsubscribe?: SubscriptionUnsubscribe;
+    private _unsubscribe?: UnsubscribeFunc;
 
     /**
      * The entity_id of the subscribed entity.

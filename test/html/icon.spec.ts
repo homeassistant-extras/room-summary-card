@@ -1,4 +1,5 @@
-import type { HomeAssistant } from '@hass/types';
+import * as actionHandlerModule from '@delegates/action-handler-delegate';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderProblemIndicator, renderRoomIcon } from '@html/icon';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntityForEntityId as s } from '@test/test-helpers';
@@ -6,6 +7,7 @@ import type { Config } from '@type/config';
 import type { EntityInformation, EntityState } from '@type/room';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
+import { stub } from 'sinon';
 
 describe('icon.ts', () => {
   let mockHass: HomeAssistant;
@@ -485,8 +487,19 @@ describe('icon.ts', () => {
     let entity: EntityInformation;
     let mockState: EntityState;
     let config: Config;
+    let actionHandlerStub: sinon.SinonStub;
+    let handleClickActionStub: sinon.SinonStub;
 
     beforeEach(() => {
+      actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns(
+        () => {},
+      );
+      handleClickActionStub = stub(
+        actionHandlerModule,
+        'handleClickAction',
+      ).returns({
+        handleEvent: () => {},
+      });
       // Mock state object
       mockState = s('light.living_room', 'on', {
         icon: 'mdi:light',
@@ -507,6 +520,11 @@ describe('icon.ts', () => {
         area_name: 'Living Room',
         navigate: '/lovelace/living-room',
       };
+    });
+
+    afterEach(() => {
+      actionHandlerStub.restore();
+      handleClickActionStub.restore();
     });
 
     it('should return nothing when state is not present and sticky entities is not enabled', () => {

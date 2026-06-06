@@ -1,8 +1,8 @@
-import { ensureArray } from '@hass/common/array/ensure-array';
-import { fireEvent } from '@hass/common/dom/fire_event';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
+import { computeLabel } from '@editor/utils/compute-label';
+import { ensureArray } from '@homeassistant-extras/hass/common/array/ensure-array';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { localize, type LocalizedHaFormSchema } from '@localize/localize';
 import type { BadgeConfig } from '@type/config/entity';
 import {
   css,
@@ -24,10 +24,7 @@ import {
   adjustExpandedIndicesAfterRemoval,
   removeBadgeItem,
 } from './utils/badge-editor-manager';
-import {
-  computeLabelCallback,
-  getBadgeSchema,
-} from './utils/badge-editor-schema';
+import { getBadgeSchema } from './utils/badge-editor-schema';
 import { getBadgeTitle, getKey } from './utils/badge-editor-utils';
 
 declare global {
@@ -144,9 +141,9 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
                         <ha-form
                           .hass=${this.hass}
                           .data=${item}
-                          .schema=${getBadgeSchema(entityId, this.hass)}
-                          .computeLabel=${(schema: HaFormSchema) =>
-                            computeLabelCallback(schema, this.hass!)}
+                          .schema=${getBadgeSchema(this.hass)}
+                          .computeLabel=${(schema: LocalizedHaFormSchema) =>
+                            computeLabel(schema, this.hass!)}
                           @value-changed=${(ev: CustomEvent) =>
                             this._badgeValueChanged(index, ev)}
                         ></ha-form>

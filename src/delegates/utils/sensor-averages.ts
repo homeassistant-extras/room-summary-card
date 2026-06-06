@@ -1,4 +1,4 @@
-import { isNumericState } from '@hass/common/number/format_number';
+import { isNumericState } from '@homeassistant-extras/hass/common/number/format_number';
 import type { EntityState } from '@type/room';
 import type { AveragedSensor } from '@type/sensor';
 
@@ -9,13 +9,16 @@ const getNumericEntitiesByClass = (
   entities: EntityState[],
   deviceClass: string,
 ): EntityState[] => {
-  return entities.filter(
-    (entity) =>
-      entity.attributes.device_class === deviceClass &&
+  return entities.filter((entity) => {
+    const entityDeviceClass = entity.attributes.device_class;
+    return (
+      typeof entityDeviceClass === 'string' &&
+      entityDeviceClass === deviceClass &&
       isNumericState(entity) &&
       entity.state.trim() !== '' &&
-      !Number.isNaN(Number(entity.state)),
-  );
+      !Number.isNaN(Number(entity.state))
+    );
+  });
 };
 
 /**
@@ -27,7 +30,8 @@ const groupEntitiesByUom = (
   const uomGroups = new Map<string, EntityState[]>();
 
   for (const entity of entities) {
-    const uom = entity.attributes.unit_of_measurement ?? '';
+    const uomAttr = entity.attributes.unit_of_measurement;
+    const uom = typeof uomAttr === 'string' ? uomAttr : '';
     if (!uomGroups.has(uom)) {
       uomGroups.set(uom, []);
     }

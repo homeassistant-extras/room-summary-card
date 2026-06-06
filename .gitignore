@@ -8,6 +8,8 @@
 # You can whitelist files/folders with !, these will not be ignored.
 !*.json
 !*.ts
+!*.cjs
+!eslint.config.mjs
 !.prettierrc
 !.nycrc
 !.browserslistrc

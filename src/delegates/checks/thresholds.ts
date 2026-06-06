@@ -1,4 +1,4 @@
-import { hasFeature } from '@config/feature';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import type { ComparisonOperator } from '@type/comparison';
 import type { Config, ThresholdEntry } from '@type/config';
 import type { SensorData } from '@type/sensor';

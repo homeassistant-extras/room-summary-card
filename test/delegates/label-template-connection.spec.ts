@@ -1,5 +1,5 @@
 import { LabelTemplateConnection } from '@delegates/label-template-connection';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
@@ -40,7 +40,11 @@ describe('label-template-connection.ts', () => {
   });
 
   it('subscribes to a trimmed template and updates displayed text', () => {
-    conn.sync(hass, 'sensor.temperature', '  {{ states("sensor.temperature") }}  ');
+    conn.sync(
+      hass,
+      'sensor.temperature',
+      '  {{ states("sensor.temperature") }}  ',
+    );
 
     expect(messages[0]).to.deep.equal({
       type: 'render_template',
@@ -65,7 +69,11 @@ describe('label-template-connection.ts', () => {
 
   it('does not resubscribe for the same entity and template', () => {
     conn.sync(hass, 'sensor.temperature', '{{ states("sensor.temperature") }}');
-    conn.sync(hass, 'sensor.temperature', '  {{ states("sensor.temperature") }}  ');
+    conn.sync(
+      hass,
+      'sensor.temperature',
+      '  {{ states("sensor.temperature") }}  ',
+    );
 
     expect(subscribeMessage.calledOnce).to.be.true;
   });

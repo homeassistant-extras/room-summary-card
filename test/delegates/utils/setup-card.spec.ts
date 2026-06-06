@@ -4,7 +4,7 @@ import * as getRoomEntityModule from '@delegates/entities/room-entity';
 import * as areaRetrieverModule from '@delegates/retrievers/area';
 import * as getSensorsModule from '@delegates/utils/hide-yo-sensors';
 import { getRoomProperties } from '@delegates/utils/setup-card';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { createState as s } from '@test/test-helpers';
 import * as getBackgroundImageModule from '@theme/image/get-pic';
 import type { Config } from '@type/config';

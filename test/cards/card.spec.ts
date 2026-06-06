@@ -1,7 +1,11 @@
 import { RoomSummaryCard } from '@cards/card';
+import { EntityCollection } from '@cards/components/entity-collection/entity-collection';
+import { EntitySlider } from '@cards/components/entity-slider/entity-slider';
+import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
 import * as actionHandlerModule from '@delegates/action-handler-delegate';
 import * as setupCardModule from '@delegates/utils/setup-card';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import * as renderHorizontalSliderModule from '@html/render-horizontal-slider';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity as e, createState as s } from '@test/test-helpers';
 import * as cardStylesModule from '@theme/render/card-styles';
@@ -9,6 +13,17 @@ import { styles } from '@theme/styles';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
+
+for (const [tag, Ctor] of [
+  ['room-summary-card', RoomSummaryCard],
+  ['room-state-icon', RoomStateIcon],
+  ['entity-slider', EntitySlider],
+  ['entity-collection', EntityCollection],
+] as const) {
+  if (!customElements.get(tag)) {
+    customElements.define(tag, Ctor);
+  }
+}
 
 /** Capture before any sinon stub replaces the module export. */
 const renderCardStylesOriginal = cardStylesModule.renderCardStyles;
@@ -19,11 +34,16 @@ describe('card.ts', () => {
   let actionHandlerStub: sinon.SinonStub;
   let getRoomPropertiesStub: sinon.SinonStub;
   let renderCardStylesStub: sinon.SinonStub;
+  let renderHorizontalSliderStub: sinon.SinonStub;
 
   beforeEach(() => {
     renderCardStylesStub = stub(cardStylesModule, 'renderCardStyles').callsFake(
       (...args: Parameters<typeof renderCardStylesOriginal>) =>
         renderCardStylesOriginal(...args),
+    );
+    renderHorizontalSliderStub = stub(
+      renderHorizontalSliderModule,
+      'renderHorizontalSlider',
     );
     actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
       bind: () => {},
@@ -93,6 +113,7 @@ describe('card.ts', () => {
 
   afterEach(() => {
     renderCardStylesStub.restore();
+    renderHorizontalSliderStub.restore();
     actionHandlerStub.restore();
     getRoomPropertiesStub.restore();
   });
@@ -427,6 +448,14 @@ describe('card.ts', () => {
       const overlay = el.querySelector('.card-overlay');
 
       expect(overlay).to.not.exist;
+    });
+
+    it('should call renderHorizontalSlider with hass and config', () => {
+      card.render();
+
+      expect(renderHorizontalSliderStub.calledOnce).to.be.true;
+      expect(renderHorizontalSliderStub.calledWith(mockHass, card['_config']))
+        .to.be.true;
     });
 
     it('should pass mixin state to renderCardStyles as opacity state', () => {

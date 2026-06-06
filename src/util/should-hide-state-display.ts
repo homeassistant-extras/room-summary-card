@@ -1,8 +1,8 @@
-import { ensureArray } from '@hass/common/array/ensure-array';
+import { ensureArray } from '@homeassistant-extras/hass/common/array/ensure-array';
 import {
   DEFAULT_STATE_CONTENT_DOMAINS,
   HIDDEN_ZERO_ATTRIBUTES_DOMAINS,
-} from '@hass/state-display/state-display';
+} from '@homeassistant-extras/hass/state-display/state-display';
 import type { EntityState } from '@type/room';
 
 /**

@@ -1,7 +1,7 @@
 import { getAreaSchema, getMainSchemaRest } from '@editor/editor-schema';
 import { computeLabel } from '@editor/utils/compute-label';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import type { LocalizedHaFormSchema } from '@localize/localize';
 import type { Config } from '@type/config';
 import { html, type TemplateResult } from 'lit';
 
@@ -30,7 +30,7 @@ export function renderMainTab(params: MainTabParams): TemplateResult {
   } = params;
 
   const areaSchema = getAreaSchema();
-  const restSchema = getMainSchemaRest(hass, entities);
+  const restSchema = getMainSchemaRest(hass);
 
   // Convert single entity to array for row-editor
   const entityArray = config.entity ? [config.entity] : [];
@@ -41,7 +41,8 @@ export function renderMainTab(params: MainTabParams): TemplateResult {
         .hass=${hass}
         .data=${config}
         .schema=${[areaSchema]}
-        .computeLabel=${(schema: HaFormSchema) => computeLabel(hass, schema)}
+        .computeLabel=${(schema: LocalizedHaFormSchema) =>
+          computeLabel(schema, hass)}
         @value-changed=${onValueChanged}
       ></ha-form>
       <room-summary-entities-row-editor
@@ -58,7 +59,8 @@ export function renderMainTab(params: MainTabParams): TemplateResult {
         .hass=${hass}
         .data=${config}
         .schema=${restSchema}
-        .computeLabel=${(schema: HaFormSchema) => computeLabel(hass, schema)}
+        .computeLabel=${(schema: LocalizedHaFormSchema) =>
+          computeLabel(schema, hass)}
         @value-changed=${onValueChanged}
       ></ha-form>
     </div>

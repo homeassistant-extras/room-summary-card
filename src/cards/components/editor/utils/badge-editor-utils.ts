@@ -1,4 +1,4 @@
-import { isTemplateString } from '@hass/common/string/is_template';
+import { isTemplateString } from '@homeassistant-extras/hass/common/string/is_template';
 import type { BadgeConfig } from '@type/config/entity';
 
 /**
@@ -11,8 +11,10 @@ export function getKey(item: BadgeConfig, index: number): string {
 /**
  * Recursively removes empty string values from an object
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- deep config prune
 export function cleanEmptyStrings(obj: any): any {
   if (!obj || typeof obj !== 'object') return obj;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleaned: any = {};
   for (const [key, value] of Object.entries(obj)) {
     // Skip empty strings

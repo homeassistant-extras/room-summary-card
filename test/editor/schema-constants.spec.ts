@@ -1,5 +1,5 @@
 import { INTERACTIONS } from '@editor/schema-constants';
-import type { UiAction } from '@hass/panels/lovelace/editor/hui-element-editor';
+import type { UiAction } from '@homeassistant-extras/hass/panels/lovelace/editor/hui-element-editor';
 import { expect } from 'chai';
 
 describe('schema-constants.ts', () => {

@@ -1,7 +1,6 @@
 import { RoomSensorLabel } from '@cards/components/sensor-collection/sensor-label';
-import * as featureModule from '@config/feature';
 import * as sensorUtilsModule from '@delegates/utils/sensor-utils';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as renderLabelModule from '@html/render-label';
 import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import type { EntityInformation } from '@type/room';
@@ -15,7 +14,6 @@ describe('sensor-label.ts', () => {
   let mockHass: HomeAssistant;
   let mockEntity: EntityInformation;
   let mockSensor: AveragedSensor;
-  let hasFeatureStub: sinon.SinonStub;
   let sensorDataToDisplaySensorsStub: sinon.SinonStub;
   let renderConfiguredEntityLabelStub: sinon.SinonStub;
 
@@ -29,7 +27,7 @@ describe('sensor-label.ts', () => {
         'sensor.temperature': state,
       },
       formatEntityState: () => '21 °C',
-    } as any as HomeAssistant;
+    } as unknown as HomeAssistant;
 
     mockEntity = {
       config: { entity_id: 'sensor.temperature' },
@@ -44,7 +42,6 @@ describe('sensor-label.ts', () => {
       uom: '°C',
     };
 
-    hasFeatureStub = stub(featureModule, 'hasFeature').returns(false);
     sensorDataToDisplaySensorsStub = stub(
       sensorUtilsModule,
       'sensorDataToDisplaySensors',
@@ -61,25 +58,8 @@ describe('sensor-label.ts', () => {
   });
 
   afterEach(() => {
-    hasFeatureStub.restore();
     sensorDataToDisplaySensorsStub.restore();
     renderConfiguredEntityLabelStub.restore();
-  });
-
-  describe('show', () => {
-    it('returns true when sensor labels are not hidden', () => {
-      expect(element.show).to.be.true;
-      expect(hasFeatureStub.calledWith(element.config, 'hide_sensor_labels')).to
-        .be.true;
-    });
-
-    it('returns false when hide_sensor_labels is enabled', () => {
-      hasFeatureStub
-        .withArgs(element.config, 'hide_sensor_labels')
-        .returns(true);
-
-      expect(element.show).to.be.false;
-    });
   });
 
   describe('render', () => {
@@ -105,22 +85,6 @@ describe('sensor-label.ts', () => {
           'state-display',
         ),
       ).to.be.true;
-    });
-
-    it('returns nothing when hidden and disconnects templates', () => {
-      const disconnectStub = stub(element['_labelTemplateConn'], 'disconnect');
-      hasFeatureStub
-        .withArgs(element.config, 'hide_sensor_labels')
-        .returns(true);
-
-      const result = element.render();
-
-      expect(result).to.equal(nothing);
-      expect(disconnectStub.calledOnce).to.be.true;
-      expect(sensorDataToDisplaySensorsStub.called).to.be.false;
-      expect(renderConfiguredEntityLabelStub.called).to.be.false;
-
-      disconnectStub.restore();
     });
 
     it('returns nothing when neither sensor nor entity is set', () => {

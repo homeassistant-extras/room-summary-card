@@ -3,12 +3,12 @@
  */
 
 import { getState } from '@delegates/retrievers/state';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type {
   EntityDiff,
   EntityState as HassEntityState,
   StatesUpdates,
-} from '@hass/ws/entities';
+} from '@homeassistant-extras/hass/ws/entities';
 import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
 import { d } from '@util/debug';

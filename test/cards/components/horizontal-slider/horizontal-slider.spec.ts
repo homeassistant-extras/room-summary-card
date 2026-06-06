@@ -1,11 +1,10 @@
 import { HorizontalSlider } from '@cards/components/horizontal-slider/horizontal-slider';
 import { styles } from '@cards/components/horizontal-slider/styles';
 import * as brightnessControlModule from '@delegates/actions/brightness-control';
-import * as inputTextModule from '@hass/data/input_text';
-import * as mediaPlayerModule from '@hass/data/media-player';
-import type { HomeAssistant } from '@hass/types';
+import * as inputTextModule from '@homeassistant-extras/hass/data/input_text';
+import * as mediaPlayerModule from '@homeassistant-extras/hass/data/media-player';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { createStateEntity } from '@test/test-helpers';
-import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 import { nothing } from 'lit';
@@ -18,6 +17,11 @@ describe('horizontal-slider.ts', () => {
   let setValueStub: sinon.SinonStub;
   let setMediaPlayerVolumeStub: sinon.SinonStub;
   let setBrightnessStub: sinon.SinonStub;
+
+  const sliderEntity = {
+    entity_id: 'input_number.brightness',
+    slider: {},
+  };
 
   beforeEach(() => {
     mockEntityState = createStateEntity('input_number', 'brightness', '42', {
@@ -38,6 +42,7 @@ describe('horizontal-slider.ts', () => {
 
     element = new HorizontalSlider();
     element.hass = mockHass;
+    element.config = { area: 'office' };
   });
 
   afterEach(() => {
@@ -46,44 +51,24 @@ describe('horizontal-slider.ts', () => {
     setBrightnessStub.restore();
   });
 
-  describe('config setter', () => {
-    it('should leave entity/style undefined when no entity declares a slider block', () => {
-      element.config = {
-        area: 'office',
-        entity: { entity_id: 'light.office' },
-        entities: ['switch.office_fan'],
-      } as any as Config;
-
+  describe('slider setter', () => {
+    it('should leave entity and style undefined before slider is assigned', () => {
       expect(element['entity']).to.be.undefined;
       expect(element['_style']).to.be.undefined;
     });
 
-    it('should bind to the first entity with a slider block and default style to "bar"', () => {
-      element.config = {
-        area: 'office',
-        entity: { entity_id: 'light.office' },
-        entities: [
-          {
-            entity_id: 'input_number.brightness',
-            slider: {},
-          },
-        ],
-      } as any as Config;
+    it('should bind to the slider entity and default style to "bar"', () => {
+      element.slider = sliderEntity;
 
       expect(element['entity']).to.equal('input_number.brightness');
       expect(element['_style']).to.equal('bar');
     });
 
     it('should respect an explicit slider.style', () => {
-      element.config = {
-        area: 'office',
-        entities: [
-          {
-            entity_id: 'input_number.brightness',
-            slider: { style: 'ha' },
-          },
-        ],
-      } as any as Config;
+      element.slider = {
+        entity_id: 'input_number.brightness',
+        slider: { style: 'ha' },
+      };
 
       expect(element['_style']).to.equal('ha');
     });
@@ -97,31 +82,14 @@ describe('horizontal-slider.ts', () => {
 
   describe('render', () => {
     it('should render nothing when state is unavailable', () => {
-      element.config = {
-        area: 'office',
-        entities: [
-          {
-            entity_id: 'input_number.brightness',
-            slider: {},
-          },
-        ],
-      } as any as Config;
-      // no state subscription has fired in tests
+      element.slider = sliderEntity;
       expect(element.render()).to.equal(nothing);
     });
   });
 
   describe('_handleChange', () => {
     beforeEach(() => {
-      element.config = {
-        area: 'office',
-        entities: [
-          {
-            entity_id: 'input_number.brightness',
-            slider: {},
-          },
-        ],
-      } as any as Config;
+      element.slider = sliderEntity;
       element['state'] = mockEntityState;
     });
 

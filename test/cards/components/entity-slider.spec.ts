@@ -2,8 +2,8 @@ import { EntitySlider } from '@cards/components/entity-slider/entity-slider';
 import { styles } from '@cards/components/entity-slider/styles';
 import * as brightnessControlModule from '@delegates/actions/brightness-control';
 import * as iconEntitiesModule from '@delegates/entities/icon-entities';
-import * as stateActiveModule from '@hass/common/entity/state_active';
-import type { HomeAssistant } from '@hass/types';
+import * as stateActiveModule from '@homeassistant-extras/hass/common/entity/state_active';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as iconModule from '@html/icon';
 import { fixture } from '@open-wc/testing-helpers';
 import { createStateEntity as s } from '@test/test-helpers';
@@ -343,7 +343,7 @@ describe('entity-slider.ts', () => {
       expect(element.render()).to.equal(nothing);
     });
 
-    it('should render entity when both hass and entity are available', async () => {
+    it('should render entity when both hass and entity are available', () => {
       const result = element.render() as TemplateResult;
       expect(result).to.not.equal(nothing);
 
@@ -355,7 +355,7 @@ describe('entity-slider.ts', () => {
       expect(call.args[2]).to.equal(element.config);
     });
 
-    it('should not apply dragging class when not dragging', async () => {
+    it('should not apply dragging class when not dragging', () => {
       element['_isDragging'] = false;
       const result = element.render() as TemplateResult;
 
@@ -368,7 +368,7 @@ describe('entity-slider.ts', () => {
       expect(hasDragging).to.be.false;
     });
 
-    it('should render bar-container when slider style is bar', async () => {
+    it('should render bar-container when slider style is bar', () => {
       element.config = {
         ...element.config,
         slider_style: 'bar',
@@ -387,7 +387,7 @@ describe('entity-slider.ts', () => {
       expect(renderRoomIconStub.called).to.be.false;
     });
 
-    it('should render bar-container when slider style is bar-filled', async () => {
+    it('should render bar-container when slider style is bar-filled', () => {
       element.config = {
         ...element.config,
         slider_style: 'bar-filled',
@@ -406,7 +406,7 @@ describe('entity-slider.ts', () => {
       expect(renderRoomIconStub.called).to.be.false;
     });
 
-    it('should set slider position CSS variable in render', async () => {
+    it('should set slider position CSS variable in render', () => {
       const setPropertySpy = stub();
       Object.defineProperty(element, 'style', {
         value: {
@@ -423,7 +423,7 @@ describe('entity-slider.ts', () => {
         .to.be.true;
     });
 
-    it('should render icon-container when slider style is not bar or bar-filled', async () => {
+    it('should render icon-container when slider style is not bar or bar-filled', () => {
       element.config = {
         ...element.config,
         slider_style: 'filled',
@@ -550,7 +550,7 @@ describe('entity-slider.ts', () => {
       expect(element['_yPosition']).to.equal(initialPosition);
     });
 
-    it('should handle drag end and call setBrightness', async () => {
+    it('should handle drag end and call setBrightness', () => {
       const removeEventListenerSpy = stub(document, 'removeEventListener');
       element['_isDragging'] = true;
       element['_yPosition'] = 25; // 25% from top = 75% brightness
@@ -698,7 +698,7 @@ describe('entity-slider.ts', () => {
       expect(element['_yPosition']).to.equal(initialPosition);
     });
 
-    it('should handle touch end and call setBrightness', async () => {
+    it('should handle touch end and call setBrightness', () => {
       const removeEventListenerSpy = stub(document, 'removeEventListener');
       element['_isDragging'] = true;
       element['_yPosition'] = 30; // 30% from top = 70% brightness

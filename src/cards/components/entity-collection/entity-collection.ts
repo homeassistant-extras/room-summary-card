@@ -1,14 +1,20 @@
 import { renderRoomIcon } from '@/html/icon';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { getIconEntities } from '@delegates/entities/icon-entities';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { EntityInformation } from '@type/room';
 import { d } from '@util/debug';
-import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
+import equal from 'fast-deep-equal';
+import {
+  LitElement,
+  html,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { state } from 'lit/decorators.js';
 import { styles } from './styles';
-const equal = require('fast-deep-equal');
 /**
  * Entity Collection Component
  *
@@ -48,7 +54,6 @@ export class EntityCollection extends HassUpdateMixin(LitElement) {
    * Updates the card's state when Home Assistant state changes
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
-  // @ts-ignore
   override set hass(hass: HomeAssistant) {
     d(this.config, 'entity-collection', 'set hass');
     const states = getIconEntities(hass, this.config);

@@ -6,7 +6,7 @@ import {
 import type {
   EntityDiff,
   EntityState as HassEntityState,
-} from '@hass/ws/entities';
+} from '@homeassistant-extras/hass/ws/entities';
 import type { EntityState } from '@type/room';
 import { expect } from 'chai';
 

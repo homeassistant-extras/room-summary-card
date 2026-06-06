@@ -3,9 +3,8 @@ import {
   sensorsFeaturesSchema,
 } from '@editor/editor-schema';
 import { computeLabel } from '@editor/utils/compute-label';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { localize, type LocalizedHaFormSchema } from '@localize/localize';
 import type { Config } from '@type/config';
 import { html, type TemplateResult } from 'lit';
 
@@ -56,7 +55,8 @@ export function renderSensorsTab(params: SensorsTabParams): TemplateResult {
         .hass=${hass}
         .data=${config}
         .schema=${restSchema}
-        .computeLabel=${(schema: HaFormSchema) => computeLabel(hass, schema)}
+        .computeLabel=${(schema: LocalizedHaFormSchema) =>
+          computeLabel(schema, hass)}
         @value-changed=${onValueChanged}
       ></ha-form>
       <div class="info-header">
@@ -71,7 +71,8 @@ export function renderSensorsTab(params: SensorsTabParams): TemplateResult {
         .hass=${hass}
         .data=${config}
         .schema=${[sensorsFeaturesSchema(hass)]}
-        .computeLabel=${(schema: HaFormSchema) => computeLabel(hass, schema)}
+        .computeLabel=${(schema: LocalizedHaFormSchema) =>
+          computeLabel(schema, hass)}
         @value-changed=${onValueChanged}
       ></ha-form>
     </div>

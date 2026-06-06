@@ -1,8 +1,8 @@
 // problem-entity-list is imported dynamically
 import '@cards/components/problem/list/problem-entity-list';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
-import { fireEvent } from '@hass/common/dom/fire_event';
-import type { HassDialog } from '@hass/dialogs/make-dialog-manager';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HassDialog } from '@homeassistant-extras/hass/dialogs/make-dialog-manager';
 import { d } from '@util/debug';
 import { LitElement, html, nothing, type TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';

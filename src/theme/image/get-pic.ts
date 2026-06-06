@@ -3,8 +3,8 @@ import { getState } from '@delegates/retrievers/state';
 import {
   isMediaSourceContentId,
   resolveMediaSource,
-} from '@hass/data/media_source';
-import type { HomeAssistant } from '@hass/types';
+} from '@homeassistant-extras/hass/data/media_source';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { Config } from '@type/config';
 
 /**
@@ -47,8 +47,9 @@ export const getBackgroundImageUrl = async (
   // Check entity picture first
   if (config.background?.image_entity) {
     const entityState = getState(hass.states, config.background.image_entity);
-    if (entityState?.attributes?.entity_picture) {
-      return entityState.attributes.entity_picture;
+    const entityPicture = entityState?.attributes?.entity_picture;
+    if (typeof entityPicture === 'string') {
+      return entityPicture;
     }
   }
 

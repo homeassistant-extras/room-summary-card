@@ -1,13 +1,12 @@
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { localize, type LocalizedHaFormSchema } from '@localize/localize';
 import memoizeOne from 'memoize-one';
 
 /**
  * Generates the form schema for badge configuration
  */
 export const getBadgeSchema = memoizeOne(
-  (entity_id: string, hass: HomeAssistant): HaFormSchema[] => {
+  (hass: HomeAssistant): LocalizedHaFormSchema[] => {
     return [
       {
         name: 'entity_id',
@@ -89,18 +88,3 @@ export const getBadgeSchema = memoizeOne(
     ];
   },
 );
-
-/**
- * Computes the label for a form schema field
- */
-export function computeLabelCallback(
-  schema: HaFormSchema,
-  hass: HomeAssistant,
-): string {
-  if (!schema.label) return '';
-  return `${localize(hass, schema.label)} ${
-    schema.required
-      ? `(${hass.localize('ui.panel.lovelace.editor.card.config.required')})`
-      : `(${hass.localize('ui.panel.lovelace.editor.card.config.optional')})`
-  }`;
-}

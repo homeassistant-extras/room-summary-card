@@ -1,14 +1,10 @@
-import { hasFeature } from '@config/feature';
-import type { HomeAssistant } from '@hass/types';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { processHomeAssistantColors } from '@theme/colors';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { nothing } from 'lit';
-import {
-  type StyleMapDirective,
-  styleMap,
-} from 'lit/directives/style-map.js';
-import type { DirectiveResult } from 'lit/directive.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { getStyleData } from './common-style';
 
 /**
@@ -20,7 +16,7 @@ import { getStyleData } from './common-style';
  * @param config - The configuration object that may include feature flags and style preferences.
  * @param entity - Information about the entity for which styles are being rendered.
  * @param isActive - Whether the room is considered active (for styling).
- * @returns A `DirectiveResult` containing a style map with CSS variables for text color and theme override,
+ * @returns A style-map directive with CSS variables for text color and theme override,
  *          or `nothing` if styles should not be applied.
  */
 export const renderTextStyles = (
@@ -28,7 +24,7 @@ export const renderTextStyles = (
   config: Config,
   entity: EntityInformation,
   isActive?: boolean,
-): DirectiveResult<typeof StyleMapDirective> | typeof nothing => {
+): ReturnType<typeof styleMap> | typeof nothing => {
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   if (skipStyles) return nothing;
 

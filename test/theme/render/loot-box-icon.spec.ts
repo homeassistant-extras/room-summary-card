@@ -1,23 +1,13 @@
-import * as featureModule from '@config/feature';
 import { createStateEntity } from '@test/test-helpers';
 import { computeEntityIcon } from '@theme/render/loot-box-icon';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { expect } from 'chai';
-import { stub } from 'sinon';
-
 describe('loot-box-icon.ts', () => {
   let mockConfig: Config;
-  let hasFeatureStub: sinon.SinonStub;
 
   beforeEach(() => {
     mockConfig = { area: 'test_room' } as Config;
-    hasFeatureStub = stub(featureModule, 'hasFeature');
-    hasFeatureStub.returns(false);
-  });
-
-  afterEach(() => {
-    hasFeatureStub.restore();
   });
 
   describe('computeEntityIcon', () => {
@@ -121,7 +111,10 @@ describe('loot-box-icon.ts', () => {
     });
 
     it('should not return climate icon when skip_climate_styles is enabled', () => {
-      hasFeatureStub.withArgs(mockConfig, 'skip_climate_styles').returns(true);
+      mockConfig = {
+        area: 'test_room',
+        features: ['skip_climate_styles'],
+      };
 
       const entity: EntityInformation = {
         config: { entity_id: 'climate.thermostat' },

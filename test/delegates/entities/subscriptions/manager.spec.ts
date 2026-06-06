@@ -1,5 +1,5 @@
 import { getEntitySubscriptionManager } from '@delegates/entities/subscriptions';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { expect } from 'chai';
 import { useFakeTimers } from 'sinon';
 

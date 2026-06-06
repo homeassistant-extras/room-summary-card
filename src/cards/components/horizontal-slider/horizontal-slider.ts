@@ -38,21 +38,30 @@
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
 import { setBrightness } from '@delegates/actions/brightness-control';
-import { getSliderEntity } from '@delegates/entities/slider-entity';
-import { setValue } from '@hass/data/input_text';
-import { setMediaPlayerVolume } from '@hass/data/media-player';
-import type { Config } from '@type/config';
-import type { HorizontalSliderStyle } from '@type/config/entity';
+import { setValue } from '@homeassistant-extras/hass/data/input_text';
+import { setMediaPlayerVolume } from '@homeassistant-extras/hass/data/media-player';
+import type { EntityConfig, HorizontalSliderStyle } from '@type/config/entity';
 import { d } from '@util/debug';
-import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
+import equal from 'fast-deep-equal';
+import {
+  LitElement,
+  html,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { styles } from './styles';
-const equal = require('fast-deep-equal');
 
 @customElement('horizontal-slider')
 export class HorizontalSlider extends SubscribeEntityStateMixin(
   HassUpdateMixin(LitElement),
 ) {
+  /**
+   * The entity configuration for the slider.
+   */
+  _slider!: EntityConfig;
+
   /**
    * Selected visual style — derived from config in the `config` setter.
    * Reflected as [variant] for CSS scoping (not `style`, which is reserved).
@@ -67,18 +76,13 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
     return styles;
   }
 
-  override set config(value: Config) {
-    if (equal(value, this.config)) return;
+  public set slider(value: EntityConfig) {
+    if (equal(value, this.slider)) return;
 
-    super.config = value;
-    const slider = getSliderEntity(this.config);
-    this.entity = slider?.entity_id;
+    this._slider = value;
+    this.entity = value?.entity_id;
     // only set style if slider is defined as to not affect other components
-    this._style = slider ? (slider.slider?.style ?? 'bar') : undefined;
-  }
-
-  override get config(): Config {
-    return super.config;
+    this._style = value ? (value.slider?.style ?? 'bar') : undefined;
   }
 
   /**
@@ -93,16 +97,20 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
     const target = ev.target as HTMLInputElement;
 
     if (state.domain === 'media_player') {
-      setMediaPlayerVolume(hass, state.entity_id, Number(target.value) / 100);
+      void setMediaPlayerVolume(
+        hass,
+        state.entity_id,
+        Number(target.value) / 100,
+      );
       return;
     }
 
     if (state.domain === 'light') {
-      setBrightness(hass, state.entity_id, Number(target.value));
+      void setBrightness(hass, state.entity_id, Number(target.value));
       return;
     }
 
-    setValue(hass, state.entity_id, target.value);
+    void setValue(hass, state.entity_id, target.value);
   };
 
   public override render(): TemplateResult | typeof nothing {

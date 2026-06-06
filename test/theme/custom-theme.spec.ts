@@ -1,4 +1,4 @@
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { createStateEntityForEntityId as s } from '@test/test-helpers';
 import * as colorsModule from '@theme/colors';
 import { getThemeColorOverride } from '@theme/custom-theme';
@@ -182,9 +182,8 @@ describe('custom-theme.ts', () => {
       getThemeColorOverride(hassDefault, entity, undefined, false);
 
       // Should use config.off_color (undefined) since state.attributes is undefined
-      expect(
-        getRgbColorStub.calledWith(entity.state, undefined, undefined, false),
-      ).to.be.true;
+      expect(getRgbColorStub.calledWith(entity.state, '', '', false)).to.be
+        .true;
     });
 
     it('should use state.attributes.off_color when config.off_color is not set', () => {
@@ -195,9 +194,8 @@ describe('custom-theme.ts', () => {
       getThemeColorOverride(hassDefault, entity, undefined, false);
 
       // Should use state.attributes.off_color since config.off_color is undefined
-      expect(
-        getRgbColorStub.calledWith(entity.state, undefined, 'purple', false),
-      ).to.be.true;
+      expect(getRgbColorStub.calledWith(entity.state, '', 'purple', false)).to
+        .be.true;
     });
 
     it('should handle undefined theme when checking minimalist theme', () => {
@@ -251,7 +249,7 @@ describe('custom-theme.ts', () => {
       expect(result).to.equal('rgb(var(--color-red))');
       expect(
         processMinimalistColorsStub.calledWith(
-          undefined,
+          '',
           'red',
           undefined,
           'light',

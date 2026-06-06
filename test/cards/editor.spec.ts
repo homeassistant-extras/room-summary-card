@@ -1,13 +1,17 @@
 import type { SubElementEditorConfig } from '@cards/components/editor/sub-element-editor';
 import { RoomSummaryCardEditor } from '@cards/editor';
 import * as editorSchemaModule from '@editor/editor-schema';
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
 import { expect } from 'chai';
 import { CSSResult, nothing } from 'lit';
 import { stub } from 'sinon';
+
+if (!customElements.get('room-summary-card-editor')) {
+  customElements.define('room-summary-card-editor', RoomSummaryCardEditor);
+}
 
 describe('editor.ts', () => {
   let card: RoomSummaryCardEditor;
@@ -21,7 +25,7 @@ describe('editor.ts', () => {
   let mockSchema: any[];
   let mockTaskValue: { sensorClasses: string[]; entities: string[] };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     // Create mock schema
     mockSchema = [
       {
@@ -680,7 +684,7 @@ describe('editor.ts', () => {
 
       const event = new CustomEvent('config-changed', {
         detail: {
-          config: { entity_id: 'light.new' } as EntityConfig,
+          config: { entity_id: 'light.new' },
         },
       });
 

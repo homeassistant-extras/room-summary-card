@@ -1,9 +1,9 @@
-import { ensureArray } from '@hass/common/array/ensure-array';
-import { fireEvent } from '@hass/common/dom/fire_event';
-import { isTemplateString } from '@hass/common/string/is_template';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
+import { computeLabel } from '@editor/utils/compute-label';
+import { ensureArray } from '@homeassistant-extras/hass/common/array/ensure-array';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import { isTemplateString } from '@homeassistant-extras/hass/common/string/is_template';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { localize, type LocalizedHaFormSchema } from '@localize/localize';
 import type { StateConfig, ThresholdConfig } from '@type/config/entity';
 import {
   css,
@@ -59,8 +59,8 @@ export class RoomSummaryStatesRowEditor extends LitElement {
       hass: HomeAssistant,
       isSensor: boolean,
       isMainEntity: boolean,
-    ): HaFormSchema[] => {
-      const schema: HaFormSchema[] = [
+    ): LocalizedHaFormSchema[] => {
+      const schema: LocalizedHaFormSchema[] = [
         {
           name: 'state',
           required: true,
@@ -141,8 +141,8 @@ export class RoomSummaryStatesRowEditor extends LitElement {
       hass: HomeAssistant,
       isSensor: boolean,
       isMainEntity: boolean,
-    ): HaFormSchema[] => {
-      const schema: HaFormSchema[] = [
+    ): LocalizedHaFormSchema[] => {
+      const schema: LocalizedHaFormSchema[] = [
         {
           name: 'threshold',
           required: true,
@@ -238,20 +238,11 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     },
   );
 
-  private readonly _computeLabelCallback = (schema: HaFormSchema): string => {
-    if (!schema.label) return '';
-    return `${localize(this.hass!, schema.label)} ${
-      schema.required
-        ? `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.required')})`
-        : `(${this.hass!.localize('ui.panel.lovelace.editor.card.config.optional')})`
-    }`;
-  };
-
   private _addItem(): void {
     if (this.mode === 'states') {
       const newState = {
         state: '',
-      } as any as StateConfig;
+      } as StateConfig;
       const newStates = [...(this.states || []), newState];
       const newIndex = newStates.length - 1;
       this._expandedStates = new Set([...this._expandedStates, newIndex]);
@@ -259,7 +250,7 @@ export class RoomSummaryStatesRowEditor extends LitElement {
     } else {
       const newThreshold = {
         threshold: 0,
-      } as any as ThresholdConfig;
+      } as ThresholdConfig;
       const newThresholds = [...(this.thresholds || []), newThreshold];
       const newIndex = newThresholds.length - 1;
       this._expandedStates = new Set([...this._expandedStates, newIndex]);
@@ -325,8 +316,10 @@ export class RoomSummaryStatesRowEditor extends LitElement {
   /**
    * Removes empty string properties from a config object
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- deep config prune
   private _cleanEmptyStrings(obj: any): any {
     if (!obj || typeof obj !== 'object') return obj;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cleaned: any = {};
     for (const [key, value] of Object.entries(obj)) {
       // Skip empty strings
@@ -454,7 +447,8 @@ export class RoomSummaryStatesRowEditor extends LitElement {
                       this.isSensor,
                       this.isMainEntity,
                     )}
-                    .computeLabel=${this._computeLabelCallback}
+                    .computeLabel=${(schema: LocalizedHaFormSchema) =>
+                      computeLabel(schema, this.hass!)}
                     @value-changed=${(ev: CustomEvent) =>
                       this._itemValueChanged(index, ev)}
                   ></ha-form>
@@ -512,7 +506,8 @@ export class RoomSummaryStatesRowEditor extends LitElement {
                       this.isSensor,
                       this.isMainEntity,
                     )}
-                    .computeLabel=${this._computeLabelCallback}
+                    .computeLabel=${(schema: LocalizedHaFormSchema) =>
+                      computeLabel(schema, this.hass!)}
                     @value-changed=${(ev: CustomEvent) =>
                       this._itemValueChanged(index, ev)}
                   ></ha-form>

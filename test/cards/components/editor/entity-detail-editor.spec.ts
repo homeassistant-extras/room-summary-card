@@ -1,13 +1,22 @@
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import { RoomSummaryEntityDetailEditor } from '@cards/components/editor/entity-detail-editor';
+import { RoomSummaryStatesRowEditor } from '@cards/components/editor/states-row-editor';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityConfig, StateConfig } from '@type/config/entity';
 import type { LightConfigObject } from '@type/config/light';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { RoomSummaryEntityDetailEditor } from '../../../../src/cards/components/editor/entity-detail-editor';
-import { RoomSummaryStatesRowEditor } from '../../../../src/cards/components/editor/states-row-editor';
+
+for (const [tag, Ctor] of [
+  ['room-summary-entity-detail-editor', RoomSummaryEntityDetailEditor],
+  ['room-summary-states-row-editor', RoomSummaryStatesRowEditor],
+] as const) {
+  if (!customElements.get(tag)) {
+    customElements.define(tag, Ctor);
+  }
+}
 
 describe('entity-detail-editor.ts', () => {
   let element: RoomSummaryEntityDetailEditor;
@@ -24,14 +33,6 @@ describe('entity-detail-editor.ts', () => {
 
   beforeEach(() => {
     fireEventStub = stub(fireEventModule, 'fireEvent');
-
-    // Register custom elements needed for tests
-    if (!customElements.get('room-summary-states-row-editor')) {
-      customElements.define(
-        'room-summary-states-row-editor',
-        RoomSummaryStatesRowEditor,
-      );
-    }
 
     mockHass = {
       language: 'en',
@@ -141,7 +142,7 @@ describe('entity-detail-editor.ts', () => {
   describe('schema', () => {
     it('should create schema with correct structure', () => {
       element.hass = mockHass;
-      const schema = element['_entitiesSchema']('light.living_room', mockHass);
+      const schema = element['_entitiesSchema'](mockHass);
 
       const expectedSchema = [
         {
@@ -311,8 +312,8 @@ describe('entity-detail-editor.ts', () => {
 
     it('should memoize schema', () => {
       element.hass = mockHass;
-      const schema1 = element['_entitiesSchema']('light.living_room', mockHass);
-      const schema2 = element['_entitiesSchema']('light.living_room', mockHass);
+      const schema1 = element['_entitiesSchema'](mockHass);
+      const schema2 = element['_entitiesSchema'](mockHass);
 
       expect(schema1).to.equal(schema2); // Same reference due to memoization
     });
@@ -547,47 +548,6 @@ describe('entity-detail-editor.ts', () => {
       );
       expect(statesRowEditor).to.exist;
       expect((statesRowEditor as any).states).to.be.undefined;
-    });
-  });
-
-  describe('_computeLabelCallback', () => {
-    beforeEach(() => {
-      element.hass = mockHass;
-    });
-
-    it('should return empty string when schema has no label', () => {
-      const schema = { name: 'test' };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.equal('');
-    });
-
-    it('should compute label for required field', () => {
-      const schema = {
-        name: 'entity_id',
-        label: 'editor.entity_id',
-        required: true,
-      };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.include('(required)');
-    });
-
-    it('should compute label for optional field', () => {
-      const schema = {
-        name: 'label',
-        label: 'editor.entity.entity_label',
-        required: false,
-      };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.include('(optional)');
-    });
-
-    it('should handle undefined required field as optional', () => {
-      const schema = {
-        name: 'icon',
-        label: 'editor.entity.entity_icon',
-      };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.include('(optional)');
     });
   });
 

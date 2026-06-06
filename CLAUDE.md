@@ -8,6 +8,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **Yarn project**. Use `yarn` commands instead of `npm` for consistency.
 
+## Lint / typecheck
+
+- `yarn lint` / `yarn lint:fix` — ESLint flat config (`eslint.config.mjs`); Lit + WC rules on card/html files; `e2e/**` is ignored.
+- `yarn typecheck` — production `tsconfig.json` (`include`: `src/**/*.ts` only) plus test `tsconfig.test.json`.
+- `yarn pass` — format, typecheck, lint, and test in one shot.
+
+If `yarn test` fails with `ERR_MODULE_NOT_FOUND` on an `@cards/*`/`@homeassistant-extras/hass/*`/etc. import, **don't chase path-alias config**. It's almost always a TypeScript compile error in the imported file or a transitive import. Run `yarn typecheck` (or `npx tsc -p tsconfig.test.json --noEmit`) and fix what it reports.
+
 ## Development Commands
 
 ### Build and Development
@@ -15,6 +23,10 @@ This is a **Yarn project**. Use `yarn` commands instead of `npm` for consistency
 - `yarn build` - Build the project using Parcel (outputs to dist/)
 - `yarn watch` - Watch mode for development (rebuilds on changes)
 - `yarn format` - Format code using Prettier
+- `yarn lint` - ESLint (TypeScript + Lit + web component best practices)
+- `yarn lint:fix` - ESLint with auto-fix where safe
+- `yarn typecheck` - `tsc` against `tsconfig.json` and `tsconfig.test.json`
+- `yarn pass` - format + typecheck + lint + test (run before shipping)
 - `yarn update` - Update dependencies with npm-check-updates
 
 ### Testing
@@ -52,7 +64,6 @@ This is a **Home Assistant custom card** built with **LitElement/Lit** that disp
 - **`src/config/`**: Configuration parsing, defaults, and schema helpers
 - **`src/delegates/`**: Business logic separated from UI (retrievers, checks, utilities)
 - **`src/editor/`**: Visual configuration editor and its row/sub-element editors
-- **`src/hass/`**: Home Assistant integration, types, and API wrappers
 - **`src/html/`**: HTML template functions for UI rendering
 - **`src/localize/`**: Localization helpers consuming `src/translations/`
 - **`src/theme/`**: Theming system, CSS generation, color management
@@ -68,7 +79,7 @@ The project uses path aliases defined in `tsconfig.json`:
 - `@config/*` → `./src/config/*`
 - `@delegates/*` → `./src/delegates/*`
 - `@editor/*` → `./src/editor/*`
-- `@hass/*` → `./src/hass/*`
+- `@homeassistant-extras/hass/*` → shared package (vendored HA frontend helpers, types, mixins, etc.)
 - `@html/*` → `./src/html/*`
 - `@localize/*` → `./src/localize/*`
 - `@theme/*` → `./src/theme/*`

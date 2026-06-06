@@ -1,16 +1,17 @@
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
-import { hasFeature } from '@config/feature';
 import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
 import { getIconResources } from '@delegates/retrievers/icons';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import {
   FALLBACK_DOMAIN_ICONS,
   type CategoryType,
   type IconResources,
-} from '@hass/data/icon';
-import type { HomeAssistant } from '@hass/types';
+} from '@homeassistant-extras/hass/data/icon';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { renderSensorLabel } from '@html/render-label';
 import { processHomeAssistantColors } from '@theme/colors';
 import { getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
@@ -18,7 +19,13 @@ import type { SensorConfig } from '@type/config/sensor';
 import type { EntityInformation, EntityState } from '@type/room';
 import type { AveragedSensor, SensorData } from '@type/sensor';
 import { d } from '@util/debug';
-import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
+import {
+  LitElement,
+  html,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { property } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { until } from 'lit/directives/until.js';
@@ -70,7 +77,6 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
    * Updates the card's state when Home Assistant state changes
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
-  // @ts-ignore
   override set hass(hass: HomeAssistant) {
     d(this.config, 'sensor-collection', 'set hass');
     this._hass = hass;
@@ -107,11 +113,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
         return html`
           <div class="sensor">
             ${this.renderMultiIcon(s)}
-            <room-sensor-label
-              .hass=${this._hass}
-              .config=${this.config}
-              .sensor=${s}
-            ></room-sensor-label>
+            ${renderSensorLabel(this._hass, this.config, { sensor: s })}
           </div>
         `;
       }
@@ -158,11 +160,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
         .actionHandler=${actionHandler(info)}
       >
         ${this.renderStateIcon(state, icon)}
-        <room-sensor-label
-          .hass=${this._hass}
-          .config=${this.config}
-          .entity=${info}
-        ></room-sensor-label>
+        ${renderSensorLabel(this._hass, this.config, { entity: info })}
       </div>
     `;
   }
@@ -211,7 +209,7 @@ export class SensorCollection extends HassUpdateMixin(LitElement) {
 
   private renderStateIcon(
     state?: EntityState,
-    icon?: string,
+    icon?: string | null,
   ): TemplateResult | typeof nothing {
     if (this.hide || !state) return nothing;
     return html`<ha-state-icon

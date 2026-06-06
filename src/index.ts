@@ -22,7 +22,6 @@ import { RoomSummaryCardEditor } from '@cards/editor';
 import { version } from '../package.json';
 
 declare global {
-  // eslint-disable-next-line no-var
   var customCards: Array<{
     type: string;
     name: string;

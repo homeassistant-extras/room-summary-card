@@ -1,4 +1,4 @@
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { EntityInformation } from '@type/room';
 import { processHomeAssistantColors, processMinimalistColors } from './colors';
 import { getRgbColor } from './get-rgb';
@@ -38,13 +38,19 @@ export const getThemeColorOverride = (
 
   // icon color is the second priority - hex colors
   const iconColor = state.attributes?.icon_color;
-  if (iconColor?.startsWith('#')) {
+  if (typeof iconColor === 'string' && iconColor.startsWith('#')) {
     return iconColor;
   }
 
-  const onColor = entity.config.on_color ?? state.attributes?.on_color;
-  const offColor = entity.config.off_color ?? state?.attributes?.off_color;
-  const rgbColor = getRgbColor(state, onColor, offColor, active);
+  const onColorAttr = state.attributes?.on_color;
+  const offColorAttr = state.attributes?.off_color;
+  const onColor =
+    entity.config.on_color ??
+    (typeof onColorAttr === 'string' ? onColorAttr : undefined);
+  const offColor =
+    entity.config.off_color ??
+    (typeof offColorAttr === 'string' ? offColorAttr : undefined);
+  const rgbColor = getRgbColor(state, onColor ?? '', offColor ?? '', active);
 
   // If the state has a specific RGB color, return it directly
   if (rgbColor) {
@@ -53,9 +59,10 @@ export const getThemeColorOverride = (
 
   // Try minimalist colors first if minimalist theme
   const theme = getViewTheme(null, hass);
+  const resolvedIconColor = typeof iconColor === 'string' ? iconColor : '';
   if (theme?.startsWith('minimalist-')) {
     const minimalistResult = processMinimalistColors(
-      iconColor,
+      resolvedIconColor,
       onColor,
       offColor,
       state.domain,
@@ -65,5 +72,10 @@ export const getThemeColorOverride = (
   }
 
   // Fallback to Home Assistant colors
-  return processHomeAssistantColors(iconColor, onColor, offColor, active);
+  return processHomeAssistantColors(
+    typeof iconColor === 'string' ? iconColor : undefined,
+    onColor ?? '',
+    offColor ?? '',
+    active ?? false,
+  );
 };

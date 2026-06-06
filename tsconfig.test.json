@@ -6,7 +6,6 @@
     "allowJs": true,
     "checkJs": false,
     "module": "commonjs",
-    "moduleResolution": "node",
     "target": "es2018",
     "strict": false,
     "noImplicitAny": false,

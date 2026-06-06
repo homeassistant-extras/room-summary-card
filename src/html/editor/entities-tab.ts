@@ -3,9 +3,8 @@ import {
   getEntitiesStylesSchema,
 } from '@editor/editor-schema';
 import { computeLabel } from '@editor/utils/compute-label';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { localize, type LocalizedHaFormSchema } from '@localize/localize';
 import type { Config } from '@type/config';
 import { html, type TemplateResult } from 'lit';
 
@@ -53,7 +52,8 @@ export function renderEntitiesTab(params: EntitiesTabParams): TemplateResult {
         .hass=${hass}
         .data=${config}
         .schema=${getEntitiesStylesSchema(hass)}
-        .computeLabel=${(schema: HaFormSchema) => computeLabel(hass, schema)}
+        .computeLabel=${(schema: LocalizedHaFormSchema) =>
+          computeLabel(schema, hass)}
         @value-changed=${onValueChanged}
       ></ha-form>
       <div class="info-header">
@@ -72,7 +72,8 @@ export function renderEntitiesTab(params: EntitiesTabParams): TemplateResult {
         .hass=${hass}
         .data=${config}
         .schema=${[entityFeaturesSchema(hass)]}
-        .computeLabel=${(schema: HaFormSchema) => computeLabel(hass, schema)}
+        .computeLabel=${(schema: LocalizedHaFormSchema) =>
+          computeLabel(schema, hass)}
         @value-changed=${onValueChanged}
       ></ha-form>
     </div>

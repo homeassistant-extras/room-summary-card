@@ -1,5 +1,5 @@
 import { ProblemEntityList } from '@cards/components/problem/list/problem-entity-list';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { expect } from 'chai';
 import { nothing } from 'lit';

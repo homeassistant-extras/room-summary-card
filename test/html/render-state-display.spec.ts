@@ -1,5 +1,5 @@
 import * as featureModule from '@config/feature';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderStateDisplay } from '@html/render-state-display';
 import * as stateDisplayModule from '@html/state-display';
 import { fixture } from '@open-wc/testing-helpers';

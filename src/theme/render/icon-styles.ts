@@ -1,12 +1,8 @@
-import type { DirectiveResult } from 'lit/directive.js';
-import {
-  type StyleMapDirective,
-  styleMap,
-} from 'lit/directives/style-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
-import { stateColorBrightness } from '@hass/common/entity/state_color';
-import type { HomeAssistant } from '@hass/types';
-import type { HassEntity } from '@hass/ws/types';
+import { stateColorBrightness } from '@homeassistant-extras/hass/common/entity/state_color';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import type { EntityInformation } from '@type/room';
 import { nothing } from 'lit';
 import { getStyleData } from './common-style';
@@ -25,7 +21,7 @@ export const renderEntityIconStyles = (
   entity: EntityInformation,
   isActive?: boolean,
   image?: string | null,
-): DirectiveResult<typeof StyleMapDirective> | typeof nothing => {
+): ReturnType<typeof styleMap> | typeof nothing => {
   const { state } = entity as { state: HassEntity };
   const filter = stateColorBrightness(state);
   const styleData = getStyleData(hass, 'icon', entity, isActive);

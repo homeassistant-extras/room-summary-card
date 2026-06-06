@@ -6,14 +6,13 @@
  */
 
 import { getState } from '@delegates/retrievers/state';
-import type { HomeAssistant } from '@hass/types';
-import type { StatesUpdates } from '@hass/ws/entities';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import type { StatesUpdates } from '@homeassistant-extras/hass/ws/entities';
 import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
 import { d } from '@util/debug';
 import { ResubscribeScheduler } from './resubscribe-scheduler';
-import type { Listener } from './states-event-handler';
-import { StatesEventHandler } from './states-event-handler';
+import { StatesEventHandler, type Listener } from './states-event-handler';
 
 type Connection = HomeAssistant['connection'];
 

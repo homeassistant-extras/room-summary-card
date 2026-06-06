@@ -1,11 +1,18 @@
-import * as fireEventModule from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import { RoomSummaryThresholdsRowEditor } from '@cards/components/editor/thresholds-row-editor';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as localizeModule from '@localize/localize';
 import type { ThresholdEntry } from '@type/config';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { RoomSummaryThresholdsRowEditor } from '../../../../src/cards/components/editor/thresholds-row-editor';
+
+if (!customElements.get('room-summary-thresholds-row-editor')) {
+  customElements.define(
+    'room-summary-thresholds-row-editor',
+    RoomSummaryThresholdsRowEditor,
+  );
+}
 
 describe('thresholds-row-editor.ts', () => {
   let element: RoomSummaryThresholdsRowEditor;
@@ -298,50 +305,6 @@ describe('thresholds-row-editor.ts', () => {
       expect(operatorField?.selector?.select?.options.length).to.equal(5);
       expect(operatorField?.selector?.select?.options[0].value).to.equal('gt');
       expect(operatorField?.selector?.select?.options[4].value).to.equal('eq');
-    });
-  });
-
-  describe('_computeLabelCallback', () => {
-    beforeEach(() => {
-      element.hass = mockHass;
-    });
-
-    it('should return empty string when schema has no label', () => {
-      const schema = { name: 'test' };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.equal('');
-    });
-
-    it('should compute label for required field', () => {
-      const schema = {
-        name: 'value',
-        label: 'editor.threshold.temperature_threshold',
-        required: true,
-      };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.include('Temperature threshold');
-      expect(result).to.include('(required)');
-    });
-
-    it('should compute label for optional field', () => {
-      const schema = {
-        name: 'entity_id',
-        label: 'editor.threshold.temperature_entity',
-        required: false,
-      };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.include('Temperature Entity');
-      expect(result).to.include('(optional)');
-    });
-
-    it('should handle undefined required field as optional', () => {
-      const schema = {
-        name: 'operator',
-        label: 'editor.threshold.temperature_operator',
-      };
-      const result = element['_computeLabelCallback'](schema as any);
-      expect(result).to.include('Temperature Operator');
-      expect(result).to.include('(optional)');
     });
   });
 

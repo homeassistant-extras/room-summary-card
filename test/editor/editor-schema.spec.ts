@@ -7,8 +7,8 @@ import {
   getSensorsSchema,
   getSensorsSchemaRest,
 } from '@editor/editor-schema';
-import * as sensorModule from '@hass/data/sensor';
-import type { HomeAssistant } from '@hass/types';
+import * as sensorModule from '@homeassistant-extras/hass/data/sensor';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as localizeModule from '@localize/localize';
 import { expect } from 'chai';
 import { stub, type SinonStub } from 'sinon';

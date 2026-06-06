@@ -25,7 +25,7 @@ Error: Cannot find package '@cards/...' imported from test/.../foo.spec.ts
 code: 'ERR_MODULE_NOT_FOUND'
 ```
 
-It is usually not a module-resolution problem. The path aliases (`@cards/*`, `@hass/*`, `@delegates/*`, and similar aliases) are configured in `tsconfig.json` and registered at runtime by the test setup.
+It is usually not a module-resolution problem. The path aliases (`@cards/*`, `@delegates/*`, and similar aliases) are configured in `tsconfig.json`; `@homeassistant-extras/hass/*` resolves via the linked package and `tsconfig-paths` at test runtime.
 
 The common cause is a TypeScript compilation error somewhere in the imported file or its transitive imports. `ts-node` can surface those as a misleading module-resolution error.
 
@@ -40,5 +40,8 @@ Fix the type errors it reports, then rerun `yarn test`. Do not investigate path 
 ## Other Commands
 
 - Format with `yarn format`.
+- Lint with `yarn lint` / `yarn lint:fix`.
+- Typecheck with `yarn typecheck`.
+- Full gate with `yarn pass` (format + typecheck + lint + test).
 - Build with `yarn build`.
 - Check `CLAUDE.md` for repo-specific architecture, directory layout, and aliases.

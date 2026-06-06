@@ -1,6 +1,6 @@
 import { getRoomEntity } from '@delegates/entities/room-entity';
-import type { NavigateActionConfig } from '@hass/data/lovelace/config/action';
-import type { HomeAssistant } from '@hass/types';
+import type { NavigateActionConfig } from '@homeassistant-extras/hass/data/lovelace/config/action';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { createStateEntity as e } from '@test/test-helpers';
 import type { Config } from '@type/config';
 import { expect } from 'chai';

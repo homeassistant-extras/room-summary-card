@@ -3,7 +3,7 @@
  * @description TypeScript type definitions for entity configuration.
  */
 
-import type { ActionConfig } from '@hass/data/lovelace/config/action';
+import type { ActionConfig } from '@homeassistant-extras/hass/data/lovelace/config/action';
 import type { StateConfig, ThresholdConfig } from './entity';
 
 /**
@@ -23,7 +23,7 @@ export interface BaseEntityConfig {
   attribute?: string | string[];
 
   /** Custom icon to display for the entity */
-  icon?: string;
+  icon?: string | null;
 
   /** State-based color and icon configuration */
   states?: StateConfig[];

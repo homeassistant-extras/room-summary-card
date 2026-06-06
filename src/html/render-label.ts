@@ -1,14 +1,67 @@
-import { LabelTemplateConnection } from '@delegates/label-template-connection';
-import { computeEntityName } from '@hass/common/entity/compute_entity_name';
-import { isTemplateString } from '@hass/common/string/is_template';
-import type { HomeAssistant } from '@hass/types';
+import { type LabelTemplateConnection } from '@delegates/label-template-connection';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import { computeEntityName } from '@homeassistant-extras/hass/common/entity/compute_entity_name';
+import { isTemplateString } from '@homeassistant-extras/hass/common/string/is_template';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { stateDisplay } from '@html/state-display';
 import { getEntityLabel, getThresholdResult } from '@theme/threshold-color';
+import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
+import type { AveragedSensor } from '@type/sensor';
 import { html, nothing, type TemplateResult } from 'lit';
 
 /** Final fallback when no configured label applies. */
 export type EntityLabelFallback = 'entity-name' | 'state-display';
+
+/**
+ * Renders the entity label sub-component when labels are enabled for the card.
+ */
+export function renderEntityLabel(
+  hass: HomeAssistant,
+  config: Config,
+  entity: EntityInformation,
+  isMainRoomEntity: boolean,
+): TemplateResult | typeof nothing {
+  const showEntityLabels = hasFeature(config, 'show_entity_labels');
+  const hideForMainRoomIcon =
+    isMainRoomEntity &&
+    (config?.background?.options?.includes('hide_icon_only') ?? false);
+
+  if (!showEntityLabels || hideForMainRoomIcon) {
+    return nothing;
+  }
+
+  return html`<room-entity-label
+    .hass=${hass}
+    .config=${config}
+    .entity=${entity}
+  ></room-entity-label>`;
+}
+
+export type SensorLabelProps = {
+  sensor?: AveragedSensor;
+  entity?: EntityInformation;
+};
+
+/**
+ * Renders the sensor label sub-component when sensor labels are not hidden.
+ */
+export function renderSensorLabel(
+  hass: HomeAssistant,
+  config: Config,
+  props: SensorLabelProps,
+): TemplateResult | typeof nothing {
+  if (hasFeature(config, 'hide_sensor_labels')) {
+    return nothing;
+  }
+
+  return html`<room-sensor-label
+    .hass=${hass}
+    .config=${config}
+    .sensor=${props.sensor}
+    .entity=${props.entity}
+  ></room-sensor-label>`;
+}
 
 /**
  * Renders label content for an entity row: threshold/state label, Jinja

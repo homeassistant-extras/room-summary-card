@@ -1,4 +1,4 @@
-import { css, CSSResult } from 'lit';
+import { css, type CSSResult } from 'lit';
 
 /**
  * Styles for the problem entity list component

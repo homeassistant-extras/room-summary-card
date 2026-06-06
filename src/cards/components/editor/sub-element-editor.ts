@@ -1,9 +1,16 @@
-import { fireEvent } from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import '@homeassistant-extras/hass/panels/lovelace/editor/hui-element-editor';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { EntityConfig } from '@type/config/entity';
 import type { LightConfigObject } from '@type/config/light';
-import type { CSSResult, TemplateResult } from 'lit';
-import { css, html, LitElement, nothing } from 'lit';
+import {
+  css,
+  html,
+  LitElement,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 export interface SubElementEditorConfig {
@@ -98,14 +105,12 @@ export class RoomSummarySubElementEditor extends LitElement {
   private _handleConfigChanged(ev: CustomEvent): void {
     ev.stopPropagation();
     const value = ev.detail.config;
-    // @ts-ignore
     fireEvent(this, 'config-changed', { config: value });
   }
 
   private _handleYAMLChanged(ev: CustomEvent): void {
     ev.stopPropagation();
     const value = ev.detail.value;
-    // @ts-ignore
     fireEvent(this, 'config-changed', { config: value });
   }
 

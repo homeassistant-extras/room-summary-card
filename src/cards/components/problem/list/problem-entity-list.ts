@@ -3,7 +3,13 @@ import '@cards/components/problem/row/problem-entity-row';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { localize } from '@localize/localize';
 import { d } from '@util/debug';
-import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
+import {
+  LitElement,
+  html,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { styles } from './styles';

@@ -1,5 +1,5 @@
-import { fireEvent } from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { EntityConfig } from '@type/config/entity';
 import type { LightConfig, LightConfigObject } from '@type/config/light';
 import {
@@ -184,35 +184,38 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
     `;
   }
 
-  private async _addEntity(ev: CustomEvent): Promise<void> {
+  private _addEntity(ev: CustomEvent): void {
     ev.stopPropagation(); // Stop the picker's event from bubbling up
     const value = ev.detail.value;
     if (value === '') {
       return;
     }
 
+    const target = ev.target as HTMLElement & { value?: string };
+
     // In single mode, replace instead of add
     if (this.single) {
-      (ev.target as any).value = '';
+      target.value = '';
       fireEvent(this, 'value-changed', { value: [value] });
       return;
     }
 
     if (this.field === 'entities') {
       const newConfigEntities = [...(this.entities || []), value];
-      (ev.target as any).value = '';
+      target.value = '';
       fireEvent(this, 'value-changed', { value: newConfigEntities });
     } else {
       // For lights, convert string to LightConfig
       const lightValue: LightConfig = value;
       const newConfigLights = [...(this.lights || []), lightValue];
-      (ev.target as any).value = '';
+      target.value = '';
       fireEvent(this, 'value-changed', { value: newConfigLights });
     }
   }
 
   private _removeRow(ev: CustomEvent): void {
-    const index = (ev.currentTarget as any).index;
+    const index = (ev.currentTarget as HTMLElement & { index?: number }).index;
+    if (index === undefined) return;
 
     if (this.field === 'entities') {
       const newConfigEntities = (this.entities || []).concat();
@@ -250,7 +253,8 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
 
   private _valueChanged(ev: CustomEvent): void {
     const value = ev.detail.value;
-    const index = (ev.target as any).index;
+    const index = (ev.target as HTMLElement & { index?: number }).index;
+    if (index === undefined) return;
 
     if (this.field === 'entities') {
       const newConfigEntities = this._updateItemInArray(
@@ -270,7 +274,8 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
   }
 
   private _editRow(ev: CustomEvent): void {
-    const index = (ev.currentTarget as any).index;
+    const index = (ev.currentTarget as HTMLElement & { index?: number }).index;
+    if (index === undefined) return;
     const items =
       this.field === 'entities' ? this.entities || [] : this.lights || [];
     const elementConfig = items[index] as

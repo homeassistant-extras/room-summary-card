@@ -1,16 +1,17 @@
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
 import { getMatchingBadgeState } from '@delegates/utils/badge-state';
-import { renderTileBadge } from '@hass/panels/lovelace/cards/tile/badges/tile-badge';
+import { renderTileBadge } from '@homeassistant-extras/hass/panels/lovelace/cards/tile/badges/tile-badge';
 import { processHomeAssistantColors } from '@theme/colors';
 import { stylesToHostCss } from '@theme/util/style-converter';
 import type { BadgeConfig } from '@type/config/entity';
 import { d } from '@util/debug';
+import equal from 'fast-deep-equal';
 import {
-  CSSResult,
   LitElement,
   html,
   nothing,
+  type CSSResult,
   type PropertyValues,
   type TemplateResult,
 } from 'lit';
@@ -18,7 +19,6 @@ import { property } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import './badge-label';
 import { styles } from './styles';
-const equal = require('fast-deep-equal');
 
 /**
  * Badge Component
@@ -83,7 +83,7 @@ export class Badge extends SubscribeEntityStateMixin(
     // For homeassistant mode, use renderTileBadge (HA's native badge helper)
     const badge = this._badge;
     if (badge.mode === 'homeassistant') {
-      return renderTileBadge(state, hass);
+      return renderTileBadge(state, hass) as TemplateResult;
     }
 
     const matchingState = getMatchingBadgeState(state, badge);
@@ -108,6 +108,7 @@ export class Badge extends SubscribeEntityStateMixin(
           ? html`
               <room-badge-label
                 .hass=${hass}
+                .config=${config}
                 .entityId=${id ?? ''}
                 .label=${label}
               ></room-badge-label>

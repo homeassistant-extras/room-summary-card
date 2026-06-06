@@ -1,4 +1,4 @@
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderBadgeElements } from '@html/badge-squad';
 import { createStateEntity } from '@test/test-helpers';
 import type { EntityInformation } from '@type/room';

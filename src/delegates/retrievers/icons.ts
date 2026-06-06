@@ -1,6 +1,8 @@
-import type { CategoryType, IconResources } from '@hass/data/icon';
-import type { HomeAssistant } from '@hass/types';
-// @ts-ignore
+import type {
+  CategoryType,
+  IconResources,
+} from '@homeassistant-extras/hass/data/icon';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import memoizeOne from 'async-memoize-one';
 
 /**

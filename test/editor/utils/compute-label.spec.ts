@@ -1,6 +1,6 @@
 import { computeLabel } from '@editor/utils/compute-label';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { type LocalizedHaFormSchema } from '@localize/localize';
 import { expect } from 'chai';
 
 describe('compute-label', () => {
@@ -14,34 +14,32 @@ describe('compute-label', () => {
   });
 
   it('should compute label for required field', () => {
-    const schema: HaFormSchema = {
+    const schema: LocalizedHaFormSchema = {
       name: 'area',
       label: 'editor.area.area',
       required: true,
       selector: { area: {} },
     };
 
-    const result = computeLabel(hass, schema);
+    const result = computeLabel(schema, hass);
 
-    // The result should include the localized label and required indicator
-    expect(result).to.be.a('string');
-    expect(result.length).to.be.greaterThan(0);
-    expect(result).to.include('required');
+    expect(result).to.equal(
+      'Area (ui.panel.lovelace.editor.card.config.required)',
+    );
   });
 
   it('should compute label for optional field', () => {
-    const schema: HaFormSchema = {
+    const schema: LocalizedHaFormSchema = {
       name: 'entity',
       label: 'editor.entity.entity_id',
       required: false,
       selector: { entity: {} },
     };
 
-    const result = computeLabel(hass, schema);
+    const result = computeLabel(schema, hass);
 
-    // The result should include the localized label and optional indicator
-    expect(result).to.be.a('string');
-    expect(result.length).to.be.greaterThan(0);
-    expect(result).to.include('optional');
+    expect(result).to.equal(
+      'Entity (ui.panel.lovelace.editor.card.config.optional)',
+    );
   });
 });

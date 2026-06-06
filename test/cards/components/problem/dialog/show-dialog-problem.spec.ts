@@ -1,5 +1,5 @@
 import { showProblemDialog } from '@cards/components/problem/dialog/show-dialog-problem';
-import * as fireEventModule from '@hass/common/dom/fire_event';
+import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
 import { expect } from 'chai';
 import { restore, stub, type SinonStub } from 'sinon';
 

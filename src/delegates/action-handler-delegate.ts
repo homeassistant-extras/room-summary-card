@@ -1,8 +1,8 @@
-import { fireEvent } from '@hass/common/dom/fire_event';
-import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
-import { actionHandler as hassActionHandler } from '@hass/panels/lovelace/common/directives/action-handler-directive';
-import type { ActionConfigParams } from '@hass/panels/lovelace/common/handle-action';
-import type { HomeAssistant } from '@hass/types';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { ActionHandlerEvent } from '@homeassistant-extras/hass/data/lovelace/action_handler';
+import { actionHandler as hassActionHandler } from '@homeassistant-extras/hass/panels/lovelace/common/directives/action-handler-directive';
+import type { ActionConfigParams } from '@homeassistant-extras/hass/panels/lovelace/common/handle-action';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { EntityInformation } from '@type/room';
 
 export interface HassUpdateEvent {
@@ -12,6 +12,7 @@ export interface HassUpdateEvent {
 declare global {
   interface HASSDomEvents {
     'hass-update': HassUpdateEvent;
+    'hass-action': { config: ActionConfigParams; action: string };
   }
 }
 
@@ -94,7 +95,6 @@ export const handleClickAction = (
         ...entity.config,
       };
 
-      // @ts-ignore
       fireEvent(element, 'hass-action', {
         config,
         action,

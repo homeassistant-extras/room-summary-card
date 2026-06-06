@@ -1,6 +1,6 @@
-import { hasFeature } from '@config/feature';
 import { getState } from '@delegates/retrievers/state';
-import type { HomeAssistant } from '@hass/types';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
 import type { EntityInformation } from '@type/room';

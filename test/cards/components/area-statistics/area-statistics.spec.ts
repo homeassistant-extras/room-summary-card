@@ -1,10 +1,10 @@
 import { AreaStatistics } from '@cards/components/area-statistics/area-statistics';
 import { styles } from '@cards/components/area-statistics/styles';
-import type { DeviceRegistryEntry } from '@hass/data/device_registry';
-import type { EntityRegistryDisplayEntry } from '@hass/data/entity_registry';
-import type { HomeAssistant } from '@hass/types';
-import type { Config } from '@type/config';
+import type { DeviceRegistryEntry } from '@homeassistant-extras/hass/data/device/device_registry';
+import type { EntityRegistryDisplayEntry } from '@homeassistant-extras/hass/data/entity/entity_registry';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
+import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 

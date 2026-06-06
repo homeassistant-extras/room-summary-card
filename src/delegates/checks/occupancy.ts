@@ -1,5 +1,5 @@
-import { stateActive } from '@hass/common/entity/state_active';
-import type { HomeAssistant } from '@hass/types';
+import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { processHomeAssistantColors } from '@theme/colors';
 import type { AlarmConfig } from '@type/config';
 

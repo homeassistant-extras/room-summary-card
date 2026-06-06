@@ -1,8 +1,7 @@
 import { getOccupancySchema } from '@editor/editor-schema';
 import { computeLabel } from '@editor/utils/compute-label';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { HomeAssistant } from '@hass/types';
-import { localize } from '@localize/localize';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { localize, type LocalizedHaFormSchema } from '@localize/localize';
 import type { Config, ThresholdEntry } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
 
@@ -108,7 +107,8 @@ export function renderOccupancyTab(params: OccupancyTabParams): TemplateResult {
       .hass=${hass}
       .data=${config}
       .schema=${schema}
-      .computeLabel=${(schema: HaFormSchema) => computeLabel(hass, schema)}
+      .computeLabel=${(schema: LocalizedHaFormSchema) =>
+        computeLabel(schema, hass)}
       @value-changed=${onValueChanged}
     ></ha-form>
     <ha-expansion-panel outlined>
@@ -153,7 +153,8 @@ export function renderOccupancyTab(params: OccupancyTabParams): TemplateResult {
               },
             },
           ]}
-          .computeLabel=${(schema: HaFormSchema) => computeLabel(hass, schema)}
+          .computeLabel=${(schema: LocalizedHaFormSchema) =>
+            computeLabel(schema, hass)}
           @value-changed=${handleMoldThresholdChanged}
         ></ha-form>
       </div>

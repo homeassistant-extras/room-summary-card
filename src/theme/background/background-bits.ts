@@ -1,4 +1,4 @@
-import { hasFeature } from '@config/feature';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import type { Config } from '@type/config';
 import type { EntityState } from '@type/room';
 
