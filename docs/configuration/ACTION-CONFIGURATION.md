@@ -31,6 +31,21 @@ entity:
 
 Configure card-level interactions in the visual editor under **Interactions** (`tap_action`, `double_tap_action`, `hold_action`). The legacy top-level **`navigate`** shortcut is not exposed there; use `actions` instead (see below).
 
+### With `hide_room_icon`
+
+When the **`hide_room_icon`** feature is enabled, the icon is replaced by an invisible box covering its area of the card. Since there is no visible icon to split behavior with, that box follows **`actions`** (merged over the entity's action config) the same way the info area does — so tapping anywhere on the card body behaves consistently with the room name.
+
+```yaml
+type: custom:room-summary-card
+area: office
+features:
+  - hide_room_icon
+actions:
+  tap_action:
+    action: navigate
+    navigation_path: '#office-popup'
+```
+
 ## Deprecated navigate
 
 The root-level **`navigate: string`** property is **deprecated** in favor of:

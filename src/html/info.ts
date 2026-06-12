@@ -33,16 +33,9 @@ export const info = (
 ) => {
   const textStyle = renderTextStyles(hass, config, roomEntity, isActive);
 
-  // Override the room entity config with the user's actions config
-  const actionEntity = {
-    ...roomEntity,
-    config: {
-      ...roomEntity.config,
-      ...config.actions,
-    },
-  };
-  const handler = actionHandler(actionEntity);
-  const action = handleClickAction(element, actionEntity);
+  // The caller passes the room entity with `config.actions` already merged
+  const handler = actionHandler(roomEntity);
+  const action = handleClickAction(element, roomEntity);
 
   return html`<div class="info">
     <div class="text" @action=${action} .actionHandler=${handler}>

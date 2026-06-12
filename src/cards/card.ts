@@ -23,6 +23,7 @@ import {
   handleClickAction,
 } from '@delegates/action-handler-delegate';
 import type { ClimateThresholds } from '@delegates/checks/thresholds';
+import { mergeActions } from '@delegates/utils/merge-actions';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
@@ -295,13 +296,7 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
       this,
     );
 
-    const actions = {
-      ...this._roomEntity,
-      config: {
-        ...this._roomEntity.config,
-        ...this._config.actions,
-      },
-    };
+    const actions = mergeActions(this._roomEntity, this._config);
 
     return html`
       <ha-card style="${cardStyle}">

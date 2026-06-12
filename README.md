@@ -122,7 +122,7 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Custom Labels`**: entity and sensor labels with state/threshold-based overrides - thanks @ojm88, @bobo-cher
 - [x] **`Smoke, Gas, Water Detection`**: visual indicators for alarm states - thanks @Arjan-21, @robex2005
 - [x] **`Entity-Based Threshold Values`**: **⭐ Contributor ⭐** dynamic threshold based on entity - thanks @Micky2149
-- [x] **`Full Card Actions`**: make entire card clickable with larger touch targets for mobile-friendly navigation - thanks @devkaiwang, @jameshirka
+- [x] **`Full Card Actions`**: make entire card clickable with larger touch targets for mobile-friendly navigation - thanks @devkaiwang, @jameshirka, @ziat007
 - [x] **`Frosted Glass Theme Support`**: automatic detection and styling for Frosted Glass themes with transparent blurred card effects - thanks @devkaiwang
 - [x] **`Sensor Improvements`**: feature requests to make sensors awesome - thanks @MelleD, @bobo-cher
 - [x] **`Entity Sliders`**: entity transforms into slider - thanks @tmaihoff, @hfalk, @benjycov

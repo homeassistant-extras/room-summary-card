@@ -34,8 +34,9 @@ export interface Config {
 
   /**
    * Actions merged over the main room entity’s tap/hold/double-tap config for the **info** area
-   * (room name, area statistics) and for the **`full_card_actions`** overlay when that feature is on.
-   * The main room **icon** still uses `entity` actions only.
+   * (room name, area statistics), for the **`full_card_actions`** overlay when that feature is on,
+   * and for the hidden icon box when **`hide_room_icon`** is enabled.
+   * The visible main room **icon** still uses `entity` actions only (split-tap pattern).
    */
   actions?: {
     /** Action to perform on tap */

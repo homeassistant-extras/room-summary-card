@@ -1,0 +1,182 @@
+# Action handling test dashboard — issue #437 / PR #431
+#
+# Exercises `actions` (card-level), `entity.tap_action` (icon-level), the
+# split-tap pattern, `hide_room_icon`, `full_card_actions`, and the deprecated
+# `navigate` shorthand. Each card's title (area_name) says what it tests and
+# what SHOULD happen on click.
+#
+# The bug (#437): with `hide_room_icon` enabled, the hidden icon box covering
+# the card body ignored `actions.tap_action` and always used the room entity's
+# default navigate (e.g. /lovelace/dining-room) instead of the configured path
+# (e.g. a hash path like #dining-room).
+#
+# Usage: Settings → Dashboards → Add Dashboard → ⋮ → Raw configuration editor →
+# paste this file. Swap areas/entities for your own if needed.
+
+title: Room Summary Card Action Test
+views:
+  - title: Room Summary Card Action Test
+    type: sections
+    max_columns: 3
+    sections:
+      #################################################
+      # BASELINE — no `actions` configured
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Baseline (no actions)'
+            heading_style: title
+
+          # No actions at all.
+          # Expect: icon AND title tap → navigate to /<area-with-dashes>;
+          # hold → more-info; double tap → nothing.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'Default: tap→/dining-room'
+
+          # Deprecated root-level navigate shorthand.
+          # Expect: icon AND title tap → navigate to /foo.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'navigate: tap→/foo (deprecated)'
+            navigate: foo
+
+      #################################################
+      # CARD-LEVEL `actions` + SPLIT TAP
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'actions + split tap'
+            heading_style: title
+
+          # actions only — applies to the info area (title/stats).
+          # Expect: TITLE tap → /patio. ICON tap → default /dining-room
+          # (split behavior is documented; icon keeps entity actions).
+          - type: custom:room-summary-card
+            area: patio
+            area_name: 'actions: title→/patio, icon→/bar'
+            actions:
+              tap_action:
+                action: navigate
+                navigation_path: bar
+
+          # Full split tap: navigate on title, toggle on icon.
+          # Expect: TITLE tap → /test-target. ICON tap → toggles the light.
+          - type: custom:room-summary-card
+            area: living_room
+            area_name: 'split: title→nav, icon→toggle'
+            entity:
+              entity_id: input_boolean.test_toggle
+              tap_action:
+                action: toggle
+            actions:
+              tap_action:
+                action: navigate
+                navigation_path: living_room
+
+          # Hold/double-tap overrides via actions.
+          # Expect on TITLE: tap → default nav, hold → toggle, double tap → more-info.
+          # Expect on ICON: defaults (tap nav, hold more-info, double none).
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'actions: title hold→toggle, dbl→more-info'
+            actions:
+              hold_action:
+                action: toggle
+              double_tap_action:
+                action: more-info
+
+      #################################################
+      # THE BUG — hide_room_icon + actions (#437)
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'hide_room_icon (#437)'
+            heading_style: title
+
+          # THE ISSUE: hidden icon box should respect actions.tap_action.
+          # BEFORE fix: tap on card body → /dining-room (wrong).
+          # AFTER fix: tap on card body → #test-hash (same as title).
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'BUG: body tap→#test-hash (not /dining-room)'
+            features:
+              - hide_room_icon
+            actions:
+              tap_action:
+                action: navigate
+                navigation_path: '#test-hash'
+
+          # hide_room_icon + split-tap config: with the icon hidden, the box is
+          # just card body, so `actions` wins over entity.tap_action there.
+          # AFTER fix: body tap → /baz (NOT toggle). Hold → more-info
+          # (entity default, since actions doesn't set hold).
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'hidden+split: body→/baz'
+            features:
+              - hide_room_icon
+            entity:
+              entity_id: input_boolean.test_toggle
+              tap_action:
+                action: toggle
+            actions:
+              tap_action:
+                action: navigate
+                navigation_path: baz
+
+          # hide_room_icon WITHOUT actions — regression check.
+          # Expect (unchanged): body tap → /dining-room, hold → more-info.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'hidden, no actions: body→/dining-room'
+            features:
+              - hide_room_icon
+
+          # hide_room_icon + entity tap_action only — regression check.
+          # Expect (unchanged): body tap → toggles the light.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'hidden, entity toggle: body→toggle'
+            features:
+              - hide_room_icon
+            entity:
+              entity_id: input_boolean.test_toggle
+              tap_action:
+                action: toggle
+
+      #################################################
+      # full_card_actions — overlay merge (regression)
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'full_card_actions'
+            heading_style: title
+
+          # Overlay uses merged actions.
+          # Expect: tap ANYWHERE → #test-hash. Hold anywhere → more-info.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'overlay: anywhere→#test-hash'
+            features:
+              - full_card_actions
+            actions:
+              tap_action:
+                action: navigate
+                navigation_path: '#test-hash'
+
+          # Overlay without actions — entity config drives it.
+          # Expect: tap anywhere → toggles the light.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'overlay, no actions: anywhere→toggle'
+            features:
+              - full_card_actions
+            entity:
+              entity_id: input_boolean.test_toggle
+              tap_action:
+                action: toggle

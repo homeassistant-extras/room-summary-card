@@ -569,6 +569,28 @@ describe('room-state-icon.ts', () => {
       expect(handleClickActionStub.calledWith(element, mockEntity)).to.be.true;
     });
 
+    it('should merge config.actions into the hidden box action handlers', () => {
+      // fixes #437 - the hidden box is card body, so card-level actions win
+      element.isMainRoomEntity = true;
+      element.config = {
+        ...mockConfig,
+        features: ['hide_room_icon'],
+        actions: {
+          tap_action: { action: 'navigate', navigation_path: '#test-hash' },
+        },
+      } as Config;
+
+      element.render();
+
+      const boxEntity = actionHandlerStub.firstCall.args[0];
+      expect(boxEntity.config.entity_id).to.equal('light.living_room');
+      expect(boxEntity.config.tap_action).to.deep.equal({
+        action: 'navigate',
+        navigation_path: '#test-hash',
+      });
+      expect(handleClickActionStub.calledWith(element, boxEntity)).to.be.true;
+    });
+
     it('should render without icon content when hideIconContent is true', async () => {
       // Set up entity with entity_picture to trigger hideIconContent
       const entityWithPicture = {

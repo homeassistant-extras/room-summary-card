@@ -4,6 +4,7 @@ import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
+import { mergeActions } from '@delegates/utils/merge-actions';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderBadgeElements } from '@html/badge-squad';
@@ -177,13 +178,16 @@ export class RoomStateIcon extends HassUpdateMixin(LitElement) {
     const { state } = this.entity;
     if (!state) return nothing;
 
-    // If the icon should be completely hidden, return nothing
-    if (this._hideRoomIcon)
+    // With the icon hidden the box is just card body, so card-level
+    // `config.actions` win over the entity's own actions
+    if (this._hideRoomIcon) {
+      const boxEntity = mergeActions(this.entity, this._config);
       return html`<div
         class="box"
-        @action=${handleClickAction(this, this.entity)}
-        .actionHandler=${actionHandler(this.entity)}
+        @action=${handleClickAction(this, boxEntity)}
+        .actionHandler=${actionHandler(boxEntity)}
       ></div>`;
+    }
 
     const thresholdResult = getThresholdResult(this.entity);
 

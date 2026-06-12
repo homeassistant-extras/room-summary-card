@@ -1,6 +1,5 @@
 import type { AreaStatistics } from '@cards/components/area-statistics/area-statistics';
 import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
-import * as actionDelegate from '@delegates/action-handler-delegate';
 import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
 import * as actionHandlerDirective from '@homeassistant-extras/hass/panels/lovelace/common/directives/action-handler-directive';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
@@ -287,66 +286,6 @@ describe('info.ts', () => {
       expect(nameElement?.textContent?.trim()).to.equal('Living Room');
 
       expect(textDiv!.querySelector('area-statistics')).to.exist;
-    });
-
-    it('merges config.actions over the room entity config for the info section handlers', () => {
-      const actionHandlerStub = stub(actionDelegate, 'actionHandler').returns(
-        html`<div class="action-handler-stub"></div>`,
-      );
-      const handleClickStub = stub(actionDelegate, 'handleClickAction').returns(
-        {
-          handleEvent: () => {},
-        },
-      );
-
-      mockConfig.actions = {
-        tap_action: {
-          action: 'navigate',
-          navigation_path: '/dashboard/office',
-        },
-        hold_action: { action: 'more-info' },
-      };
-
-      const sensors: SensorData = {
-        individual: [],
-        averaged: [],
-        problemSensors: [],
-        lightEntities: [],
-        ambientLightEntities: [],
-        thresholdSensors: [],
-      };
-
-      try {
-        info(
-          mockElement,
-          mockHass,
-          mockRoomInformation,
-          mockRoomEntity,
-          mockConfig,
-          sensors,
-        );
-
-        expect(actionHandlerStub.calledOnce).to.be.true;
-        const mergedEntity = actionHandlerStub.firstCall.args[0];
-        expect(mergedEntity.config.entity_id).to.equal('light.living_room');
-        expect(mergedEntity.config.tap_action).to.deep.equal({
-          action: 'navigate',
-          navigation_path: '/dashboard/office',
-        });
-        expect(mergedEntity.config.hold_action).to.deep.equal({
-          action: 'more-info',
-        });
-        expect(mergedEntity.config.double_tap_action).to.deep.equal({
-          action: 'none',
-        });
-
-        expect(handleClickStub.calledOnce).to.be.true;
-        expect(handleClickStub.firstCall.args[0]).to.equal(mockElement);
-        expect(handleClickStub.firstCall.args[1]).to.deep.equal(mergedEntity);
-      } finally {
-        actionHandlerStub.restore();
-        handleClickStub.restore();
-      }
     });
   });
 });
