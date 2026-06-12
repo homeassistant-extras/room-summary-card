@@ -28,6 +28,7 @@
 !e2e/**
 !scripts/
 !scripts/**
+!examples/**
 
 # Ignore folders.
 node_modules

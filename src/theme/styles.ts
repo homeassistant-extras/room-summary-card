@@ -82,15 +82,14 @@ const haCardThemeStyles = css`
   /* When the main icon owns the background, suppress card-level image effects
      and prevent the user-configured opacity from applying to the card.
      --user-opacity still inherits down to room-state-icon, where its
-     own CSS routes it to the icon background instead. */
-  :host:has(room-state-icon[room][icon-bg]) ha-card {
+     own CSS routes it to the icon background instead.
+     Anchored on ha-card (not :host) because :host:has() matching
+     shadow-tree descendants is not interoperable (fails in WebKit). */
+  ha-card:has(room-state-icon[room][icon-bg]) {
     --opacity-theme: unset;
     --text-opacity-theme: unset;
     --opacity-icon-fill-inactive: unset;
     --user-opacity: unset;
-  }
-
-  :host:has(room-state-icon[room][icon-bg]) {
     --user-background-image-overlay: unset;
   }
 
@@ -138,7 +137,7 @@ const cardContainerStyles = css`
     background-size: cover;
   }
 
-  :host:has(room-state-icon[room][icon-bg]) ha-card::before {
+  ha-card:has(room-state-icon[room][icon-bg])::before {
     background-image: none;
   }
 
@@ -245,12 +244,12 @@ const statusEntityStyles = css`
   }
 
   /* scooty on upwards is slider */
-  :host:has(horizontal-slider[variant='bar']) .problems {
+  ha-card:has(horizontal-slider[variant='bar']) .problems {
     margin-bottom: calc(10% + var(--horizontal-slider-height, 6%) + 20px);
   }
 
   /* scooty on upwards is slider */
-  :host:has(horizontal-slider[variant='ha']) .problems {
+  ha-card:has(horizontal-slider[variant='ha']) .problems {
     margin-bottom: calc(10% + var(--horizontal-slider-height, 6%) + 10px);
   }
 

@@ -1,0 +1,209 @@
+# Background / icon_background test dashboard
+#
+# Exercises every combination of `background.image`, `background.image_entity`,
+# `background.options` ('disable' | 'icon_background' | 'hide_icon_only'),
+# `background.opacity`, and the related feature flags — each card's title
+# (area_name) says what it is testing.
+#
+# Usage: Settings → Dashboards → Add Dashboard → ⋮ → Raw configuration editor →
+# paste this file. Swap the areas / person.gina / camera entities for your own
+# if needed, and put any image at /local/img/cats/lagertha-pixar.PNG (config/www/images/).
+#
+# Check each card on BOTH desktop and the mobile companion app — the
+# icon_background suppression of the card-level image is pure CSS and has
+# historically differed between desktop Chrome and mobile WebViews.
+
+title: Room Summary Card Background Test
+views:
+  - title: Room Summary Card Background Test
+    type: sections
+    max_columns: 3
+    sections:
+      #################################################
+      # BASELINE — image on the CARD (no options)
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Card background (baseline)'
+            heading_style: title
+
+          # Image from an entity's entity_picture → card background.
+          # Expect: image fills card, icon renders normally with glyph.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'BG: image_entity (on)'
+            entity: binary_sensor.test_always_on
+            background:
+              image_entity: person.gina
+
+          # Camera entity_picture as the card background (updates with snapshots).
+          - type: custom:room-summary-card
+            area: garage
+            area_name: 'BG: image_entity (camera)'
+            background:
+              image_entity: camera.garage
+
+          # Direct URL → card background.
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'BG: url'
+            background:
+              image: https://picsum.photos/id/1015/600/400
+
+          # Local path (config/www/images/test.jpg) → card background.
+          - type: custom:room-summary-card
+            area: office
+            area_name: 'BG: /local path'
+            background:
+              image: /local/img/cats/lagertha-pixar.PNG
+
+          # No background config at all — falls back to the AREA picture.
+          # Expect: image only if the area has a picture set in HA.
+          - type: custom:room-summary-card
+            area: shed
+            area_name: 'BG: area picture fallback'
+
+          # 'disable' wins over everything — no image anywhere,
+          # even with an image_entity configured and an area picture.
+          - type: custom:room-summary-card
+            area: living_room
+            area_name: 'BG: disable (person)'
+            background:
+              image_entity: person.gina
+              options:
+                - disable
+
+      #################################################
+      # ICON BACKGROUND — image moves to the ICON
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'icon_background (image on icon only)'
+            heading_style: title
+
+          # The original bug repro: image_entity + icon_background.
+          # Expect: image ONLY in the icon circle (glyph on top), card
+          # background clean, title/text NOT washed out.
+          - type: custom:room-summary-card
+            area: guest_bedroom
+            area_name: 'ICON: image_entity'
+            background:
+              image_entity: person.gina
+              options:
+                - icon_background
+
+          # Same plus hide_icon_only — image in the icon, no glyph on top.
+          - type: custom:room-summary-card
+            area: guest_bath
+            area_name: 'ICON: + hide_icon_only'
+            background:
+              image_entity: person.gina
+              options:
+                - icon_background
+                - hide_icon_only
+
+          # URL routed to the icon.
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'ICON: url'
+            background:
+              image: https://picsum.photos/id/1025/600/400
+              options:
+                - icon_background
+
+          # Local path routed to the icon, glyph hidden.
+          - type: custom:room-summary-card
+            area: office
+            area_name: 'ICON: /local + hide_icon_only'
+            background:
+              image: /local/img/cats/lagertha-pixar.PNG
+              options:
+                - icon_background
+                - hide_icon_only
+
+          # icon_background with NO image/image_entity — area picture
+          # fallback should land on the icon, not the card.
+          - type: custom:room-summary-card
+            area: shed
+            area_name: 'ICON: area picture fallback'
+            background:
+              options:
+                - icon_background
+
+      #################################################
+      # EDGE CASES & INTERPLAY
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Edge cases / interplay'
+            heading_style: title
+
+          # hide_icon_only WITHOUT icon_background — image stays on the
+          # card, the icon keeps its colored circle but loses the glyph.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'EDGE: hide_icon_only alone (on)'
+            entity: binary_sensor.test_always_on
+            background:
+              image_entity: person.gina
+              options:
+                - hide_icon_only
+
+          # hide_room_icon feature + icon_background — the room icon is
+          # removed entirely, so the image should not appear anywhere.
+          - type: custom:room-summary-card
+            area: master_bedroom
+            area_name: 'EDGE: hide_room_icon wins (person)'
+            features:
+              - hide_room_icon
+            background:
+              image_entity: person.gina
+              options:
+                - icon_background
+
+          # Static opacity on a CARD background (0–100).
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'EDGE: card opacity 90'
+            background:
+              image_entity: person.gina
+              opacity: 90
+
+          # Static opacity routed to the ICON when icon_background is on —
+          # the card itself should not dim.
+          - type: custom:room-summary-card
+            area: guest_bedroom
+            area_name: 'EDGE: icon opacity 90'
+            background:
+              image_entity: person.gina
+              opacity: 90
+              options:
+                - icon_background
+
+          # Room entity with its own entity_picture (camera) PLUS
+          # icon_background — the entity picture should win on the icon
+          # and the glyph auto-hides.
+          - type: custom:room-summary-card
+            area: patio
+            area_name: 'EDGE: camera entity overrides'
+            entity:
+              entity_id: camera.patio
+              styles:
+                '--opacity-icon-fill-inactive': 1
+            background:
+              image_entity: person.gina
+              options:
+                - icon_background
+
+          # multi_light_background — light color from lights entity
+          - type: custom:room-summary-card
+            area: patio
+            area_name: 'EDGE: multi_light on'
+            features:
+              - multi_light_background
+            lights:
+              - binary_sensor.test_always_on
+              - binary_sensor.test_always_off
