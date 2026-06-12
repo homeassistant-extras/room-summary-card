@@ -101,7 +101,7 @@ describe('background-bits.ts', () => {
       };
 
       expect(
-        getBackgroundOpacity(config, false, s('sensor.x', '1.5'))[
+        getBackgroundOpacity(config, false, s('sensor.x', '150'))[
           '--user-opacity'
         ],
       ).to.equal(1);
@@ -110,6 +110,28 @@ describe('background-bits.ts', () => {
           '--user-opacity'
         ],
       ).to.equal(0);
+    });
+
+    it('should auto-detect 0-100 sensors and treat them as percentages', () => {
+      const config: Config = {
+        area: 'test',
+        background: { opacity: 'sensor.light_level' },
+      };
+
+      // value above 1 -> assumed 0-100
+      expect(
+        getBackgroundOpacity(config, false, s('sensor.light_level', '70'))[
+          '--user-opacity'
+        ],
+      ).to.equal(0.7);
+      // a % unit forces percentage even when the value is <= 1
+      expect(
+        getBackgroundOpacity(
+          config,
+          false,
+          s('sensor.light_level', '0.5', { unit_of_measurement: '%' }),
+        )['--user-opacity'],
+      ).to.equal(0.005);
     });
 
     it('should leave --user-opacity undefined when opacity is a string but no state is passed', () => {

@@ -1,0 +1,271 @@
+# Background opacity test dashboard
+#
+# Exercises every variant of `background.opacity`: static percentages,
+# entity-driven 0..1 sensors, entity-driven 0..100 (%) sensors, and the
+# interplay with `icon_background` and theme auto-opacity — each card's
+# title (area_name) says what it is testing.
+#
+# The two sliders at the top drive the entity-driven cards live:
+#   - input_number.test_fraction   (0..1, step 0.01, no unit  → used as-is)
+#   - input_number.test_percentage (0..100, step 1, unit '%'  → divided by 100)
+#
+# Range auto-detection under test:
+#   - unit_of_measurement '%'  → value / 100
+#   - value > 1                → value / 100
+#   - otherwise                → value used directly as 0..1
+#   - always clamped to [0, 1]
+#
+# Usage: Settings → Dashboards → Add Dashboard → ⋮ → Raw configuration editor →
+# paste this file. Swap the areas / person.gina for your own if needed, and
+# put any image at /local/img/cats/lagertha-pixar.PNG (config/www/images/).
+#
+# Drag each slider and confirm the matching cards fade in/out together —
+# fraction at 0.5 and percentage at 50 should look IDENTICAL.
+
+title: Room Summary Card Opacity Test
+views:
+  - title: Room Summary Card Opacity Test
+    type: sections
+    max_columns: 3
+    sections:
+      #################################################
+      # CONTROLS — drive the entity-driven cards below
+      #################################################
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: 'Opacity controls'
+            heading_style: title
+
+          - type: entities
+            entities:
+              - entity: input_number.test_fraction
+                name: 'Fraction (0..1, no unit)'
+              - entity: input_number.test_percentage
+                name: 'Percentage (0..100, % unit)'
+
+      #################################################
+      # CARD BACKGROUND — opacity on the card image
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Card background opacity'
+            heading_style: title
+
+          # Static number — baseline. Expect a constant subtle image.
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'CARD: static 25'
+            background:
+              image: https://picsum.photos/id/1015/600/400
+              opacity: 25
+
+          # Static number, nearly opaque.
+          - type: custom:room-summary-card
+            area: office
+            area_name: 'CARD: static 90'
+            background:
+              image: https://picsum.photos/id/1015/600/400
+              opacity: 90
+
+          # Entity-driven, 0..1 sensor (no unit) — value used directly.
+          # Slider at 0.5 → 50% opacity.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'CARD: fraction sensor (0..1)'
+            sensors:
+              - input_number.test_fraction
+            styles:
+              sensors:
+                color: white
+            background:
+              image: https://picsum.photos/id/1015/600/400
+              opacity: input_number.test_fraction
+            features:
+              - exclude_default_entities
+
+          # Entity-driven, 0..100 sensor with '%' unit — divided by 100.
+          # Slider at 50 → 50% opacity. Must match the fraction card at 0.5.
+          - type: custom:room-summary-card
+            area: guest_bedroom
+            area_name: 'CARD: percentage sensor (0..100 %)'
+            sensors:
+              - input_number.test_percentage
+            styles:
+              sensors:
+                color: white
+            background:
+              image: https://picsum.photos/id/1015/600/400
+              opacity: input_number.test_percentage
+            features:
+              - exclude_default_entities
+
+          # Entity-driven over an image_entity background.
+          - type: custom:room-summary-card
+            area: living_room
+            area_name: 'CARD: fraction + image_entity'
+            sensors:
+              - input_number.test_fraction
+            styles:
+              sensors:
+                color: white
+            background:
+              image_entity: person.gina
+              opacity: input_number.test_fraction
+            features:
+              - exclude_default_entities
+
+          # Entity-driven with NO image config — opacity applies to the
+          # AREA picture fallback (only visible if the area has a picture).
+          - type: custom:room-summary-card
+            area: shed
+            area_name: 'CARD: percentage + area picture'
+            sensors:
+              - input_number.test_percentage
+            styles:
+              sensors:
+                color: white
+            background:
+              opacity: input_number.test_percentage
+            features:
+              - exclude_default_entities
+
+      #################################################
+      # ICON BACKGROUND — opacity routed to the icon
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Icon background opacity'
+            heading_style: title
+
+          # Static number on the icon — the card itself must not dim.
+          - type: custom:room-summary-card
+            area: guest_bath
+            area_name: 'ICON: static 90'
+            background:
+              image: /local/img/cats/lagertha-pixar.PNG
+              opacity: 90
+              options:
+                - icon_background
+
+          # Fraction sensor routed to the icon.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'ICON: fraction sensor (0..1)'
+            sensors:
+              - input_number.test_fraction
+            styles:
+              sensors:
+                color: white
+            background:
+              image: /local/img/cats/lagertha-pixar.PNG
+              opacity: input_number.test_fraction
+              options:
+                - icon_background
+            features:
+              - exclude_default_entities
+
+          # Percentage sensor routed to the icon, glyph hidden so the
+          # fade is easy to see.
+          - type: custom:room-summary-card
+            area: master_bedroom
+            area_name: 'ICON: percentage + hide_icon_only'
+            sensors:
+              - input_number.test_percentage
+            styles:
+              sensors:
+                color: white
+            background:
+              image: /local/img/cats/lagertha-pixar.PNG
+              opacity: input_number.test_percentage
+              options:
+                - icon_background
+                - hide_icon_only
+            features:
+              - exclude_default_entities
+
+      #################################################
+      # EDGE CASES & INTERPLAY
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Edge cases / interplay'
+            heading_style: title
+
+          # No opacity at all — theme auto-opacity (active/inactive)
+          # still applies. Reference card for comparison.
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'EDGE: no opacity (theme auto)'
+            background:
+              image: https://picsum.photos/id/1015/600/400
+
+          # Clamping: drag the percentage slider to 100 → exactly 1,
+          # fraction to 1 → exactly 1. Both fully opaque, no overshoot.
+          - type: custom:room-summary-card
+            area: office
+            area_name: 'EDGE: fraction at 1 = opaque'
+            sensors:
+              - input_number.test_fraction
+            styles:
+              sensors:
+                color: white
+            background:
+              image: https://picsum.photos/id/1015/600/400
+              opacity: input_number.test_fraction
+            features:
+              - exclude_default_entities
+
+          # Sliders at 0 — both cards must be fully transparent
+          # (background invisible), not falling back to theme opacity.
+          - type: custom:room-summary-card
+            area: guest_bedroom
+            area_name: 'EDGE: percentage at 0 = invisible'
+            sensors:
+              - input_number.test_percentage
+            styles:
+              sensors:
+                color: white
+            background:
+              image: https://picsum.photos/id/1015/600/400
+              opacity: input_number.test_percentage
+            features:
+              - exclude_default_entities
+
+          # skip_entity_styles + entity opacity — the sensor still wins
+          # over the (now inactive-only) theme opacity.
+          - type: custom:room-summary-card
+            area: living_room
+            area_name: 'EDGE: skip_entity_styles + sensor'
+            sensors:
+              - input_number.test_fraction
+            styles:
+              sensors:
+                color: white
+            features:
+              - skip_entity_styles
+              - exclude_default_entities
+            background:
+              image: https://picsum.photos/id/1015/600/400
+              opacity: input_number.test_fraction
+
+          # 'disable' wins — no image anywhere, opacity irrelevant.
+          - type: custom:room-summary-card
+            area: patio
+            area_name: 'EDGE: disable beats opacity'
+            sensors:
+              - input_number.test_percentage
+            styles:
+              sensors:
+                color: white
+            background:
+              image: https://picsum.photos/id/1015/600/400
+              opacity: input_number.test_percentage
+              options:
+                - disable
+            features:
+              - exclude_default_entities

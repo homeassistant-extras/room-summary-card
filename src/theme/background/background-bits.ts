@@ -9,8 +9,10 @@ import type { EntityState } from '@type/room';
  * - When the config value is a number it's interpreted as a percentage (0-100).
  * - When the config value is a string it's treated as an entity_id; the caller
  *   should subscribe to that entity and pass its current `state` here. The
- *   entity's state is expected to already be in the [0, 1] range (e.g. an
- *   occupancy probability sensor) and is clamped defensively.
+ *   sensor's range is auto-detected: states with a `%` unit_of_measurement or
+ *   a value above 1 are treated as 0-100 percentages, otherwise the value is
+ *   used directly as 0-1 (e.g. an occupancy probability sensor). The result
+ *   is clamped defensively.
  *
  * CSS in `src/theme/styles.ts` and the room-state-icon styles routes this value
  * to either the card background or the icon background based on whether the
@@ -30,7 +32,9 @@ export const getBackgroundOpacity = (
   } else if (typeof raw === 'string' && state) {
     const parsed = Number.parseFloat(state.state);
     if (Number.isFinite(parsed)) {
-      opacity = Math.max(0, Math.min(1, parsed));
+      const isPercent =
+        state.attributes.unit_of_measurement === '%' || parsed > 1;
+      opacity = Math.max(0, Math.min(1, isPercent ? parsed / 100 : parsed));
     }
   }
 

@@ -121,8 +121,10 @@ export interface Config {
      * Opacity level for the background.
      *
      * - `number`: static percentage (0–100).
-     * - `string`: an entity_id; state is parsed as **0–1** and applied whenever
-     *   the entity updates (subscription on the card).
+     * - `string`: an entity_id; state is applied whenever the entity updates
+     *   (subscription on the card). The sensor range is auto-detected: a `%`
+     *   unit_of_measurement or a value above 1 is treated as 0–100, otherwise
+     *   the value is used directly as 0–1.
      */
     opacity?: number | string;
 

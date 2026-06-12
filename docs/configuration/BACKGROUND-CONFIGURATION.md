@@ -240,15 +240,32 @@ background:
 
 ### Entity-driven opacity
 
-Instead of a fixed percentage, set `opacity` to an **entity ID**. The card subscribes to that entity and maps its numeric state into background opacity (values are treated as **0–1**, then clamped—ideal for occupancy probability, normalized light level, or similar sensors).
+Instead of a fixed percentage, set `opacity` to an **entity ID**. The card subscribes to that entity and maps its numeric state into background opacity—ideal for occupancy probability, light level, or similar sensors.
+
+The sensor's range is detected automatically:
+
+- States with a `%` unit of measurement are treated as **0–100** percentages.
+- States above `1` are also treated as **0–100**.
+- Otherwise the value is used directly as **0–1** (e.g. probability sensors).
+- The result is always clamped into the valid range.
 
 ```yaml
 type: custom:room-summary-card
 area: living_room
 background:
   image: /local/images/living-room.jpg
-  opacity: sensor.living_room_occupancy_probability
+  opacity: sensor.living_room_occupancy_probability # 0-1 sensor
 ```
+
+```yaml
+type: custom:room-summary-card
+area: office
+background:
+  image: /local/images/office.jpg
+  opacity: sensor.office_light_level # 0-100 sensor, detected via % unit or value
+```
+
+> **Note:** a 0–100 sensor _without_ a `%` unit that happens to read `1` or below is interpreted as 0–1 for that moment (e.g. `0.7` → 70% opacity instead of 0.7%). Give the sensor a `%` unit of measurement to make the range explicit.
 
 When `opacity` is an entity, static percentages in YAML no longer apply; the sensor drives `--user-opacity` until you switch back to a number.
 
