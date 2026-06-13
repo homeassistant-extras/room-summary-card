@@ -277,6 +277,100 @@ describe('card-styles.ts', () => {
       );
     });
 
+    it('should include smoke alarm styles when smoke is detected', () => {
+      const smokeStyles = {
+        '--smoke-card-border': '3px solid var(--error-color)',
+      };
+      getSmokeCssVarsStub.returns(smokeStyles);
+      mockConfig = { ...mockConfig, smoke: { entities: ['binary_sensor.smoke'] } };
+
+      const entity = createEntityInfo('light.test');
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        'smoke',
+        undefined,
+        false,
+      );
+
+      expect(getSmokeCssVarsStub.calledWith(true, mockConfig.smoke)).to.be
+        .true;
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-filter': '',
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+          ...smokeStyles,
+        }),
+      );
+    });
+
+    it('should include gas alarm styles when gas is detected', () => {
+      const gasStyles = {
+        '--gas-card-border': '3px solid var(--warning-color)',
+      };
+      getGasCssVarsStub.returns(gasStyles);
+      mockConfig = { ...mockConfig, gas: { entities: ['binary_sensor.gas'] } };
+
+      const entity = createEntityInfo('light.test');
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        'gas',
+        undefined,
+        false,
+      );
+
+      expect(getGasCssVarsStub.calledWith(true, mockConfig.gas)).to.be.true;
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-filter': '',
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+          ...gasStyles,
+        }),
+      );
+    });
+
+    it('should include water alarm styles when water is detected', () => {
+      const waterStyles = {
+        '--water-card-border': '3px solid var(--info-color)',
+      };
+      getWaterCssVarsStub.returns(waterStyles);
+      mockConfig = {
+        ...mockConfig,
+        water: { entities: ['binary_sensor.water'] },
+      };
+
+      const entity = createEntityInfo('light.test');
+      const styles = renderCardStyles(
+        mockHass,
+        mockConfig,
+        entity,
+        'water',
+        undefined,
+        false,
+      );
+
+      expect(getWaterCssVarsStub.calledWith(true, mockConfig.water)).to.be.true;
+      expect(styles).to.deep.equal(
+        styleMap({
+          '--background-color-card': undefined,
+          '--state-color-card-theme': 'var(--theme-override)',
+          '--background-image': undefined,
+          '--background-filter': '',
+          '--background-opacity-card': 'var(--opacity-background-inactive)',
+          ...waterStyles,
+        }),
+      );
+    });
+
     it('should pass threshold result to getThemeColorOverride', () => {
       const thresholdResult = {
         color: 'rgb(255, 0, 0)',
