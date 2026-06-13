@@ -234,6 +234,56 @@ describe('entity-collection.ts', () => {
     });
   });
 
+  describe('wrap layout', () => {
+    it('should expose the entity count as a host CSS variable', () => {
+      element.hass = mockHass;
+
+      expect(element.style.getPropertyValue('--entity-count')).to.equal(
+        `${mockEntities.length}`,
+      );
+    });
+
+    it('should update the entity count variable when entities change', () => {
+      element.hass = mockHass;
+
+      const newEntities: EntityInformation[] = [
+        {
+          config: { entity_id: 'light.bedroom' } as EntityConfig,
+          state: s('light', 'bedroom', 'off', {
+            friendly_name: 'Bedroom Light',
+          }),
+        },
+      ];
+      getIconEntitiesStub.returns(newEntities);
+      element.hass = mockHass;
+
+      expect(element.style.getPropertyValue('--entity-count')).to.equal('1');
+    });
+
+    it('should derive strip width from entity columns in CSS', () => {
+      const cssText = styles.cssText;
+
+      expect(cssText).to.include('--entity-columns');
+      expect(cssText).to.include('grid-auto-flow: column');
+      expect(cssText).to.include('grid-auto-columns: 1fr');
+      expect(cssText).to.include(
+        'aspect-ratio: calc(0.23 * var(--entity-columns)) / 1',
+      );
+      expect(cssText).to.include('var(--user-entities-wrap, 4)');
+      expect(cssText).to.include('var(--user-entities-max-columns, 99)');
+      expect(cssText).to.include('var(--user-entity-column-width)');
+      expect(cssText).to.include('justify-self: end');
+      expect(cssText).to.include('min-width: 0');
+    });
+
+    it('should wrap columns leftward via rtl grid with ltr content', () => {
+      const cssText = styles.cssText;
+
+      expect(cssText).to.include('direction: rtl');
+      expect(cssText).to.include('direction: ltr');
+    });
+  });
+
   describe('deep equality check', () => {
     it('should not trigger update when entities are deeply equal', () => {
       // Set initial entities

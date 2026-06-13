@@ -170,6 +170,31 @@ The entity area uses a **column-first** grid: icons fill **down** the first colu
 
 By default, up to **four** icons stack in a column before the next column starts. Override **`--user-entities-wrap`** (under `styles.entities`) to set how many **rows** each column uses before wrapping. For example, `3` means three rows per column—six entities appear as two columns of three.
 
+Wrapped icons keep their **full size**: the entity strip is anchored to the card's right edge and **widens left** into the card, one fixed-width lane per column. Columns also fill **right-to-left** — the first entities stay on the card's right edge and each wrapped column appears to their left. The card itself stays the same size; by default the strip **overlaps** the card interior so the room icon keeps its size.
+
+To wrap rightward instead (first column innermost), set `direction: ltr` under `styles.entities`.
+
+Wrapping knobs (all under `styles.entities`):
+
+- **`--user-entities-wrap`** — rows per column before wrapping (default `4`)
+- **`--user-entity-column-width`** — fixed width per lane (e.g. `80px`) instead of the height-derived default
+- **`--user-entities-max-columns`** — cap how far the strip can grow; set `1` to restore the shrink-to-fit look where extra columns split the single-lane width and icons get smaller
+- **`min-width: auto`** — by default the strip overlaps the card interior so the room icon stays full size; set this to let the widening strip grow its column in the card layout instead (the room icon area shrinks)
+
+```yaml
+styles:
+  entities:
+    min-width: auto
+```
+
+Prefer the pre-wrap single-column layout (extra entities clip off the bottom, manual `transform` positioning)? Force row flow:
+
+```yaml
+styles:
+  entities:
+    grid-auto-flow: row !important
+```
+
 ![wrap](../assets/wrap.png)
 
 **Automatic wrapping** (default row count per column is 4):
@@ -207,6 +232,27 @@ features:
 styles:
   entities:
     '--user-entities-wrap': 3
+```
+
+**Compact fixed-width lanes** (5 rows per column, each lane 80px wide):
+
+```yaml
+type: custom:room-summary-card
+area: dining_room
+entities:
+  - light.kitchen_bulb_1
+  - light.kitchen_bulb_2
+  - light.kitchen_bulb_3
+  - light.kitchen_bulb_4
+  - light.kitchen_bulb_5
+  - light.kitchen_bulb_6
+  - light.kitchen_bulb_7
+features:
+  - exclude_default_entities
+styles:
+  entities:
+    '--user-entities-wrap': 5
+    '--user-entity-column-width': 80px
 ```
 
 ### Entity Icon Styles
@@ -424,6 +470,9 @@ Some styles use CSS variables that can be overridden:
 | --------------------------------- | ----------------- | ----------------------------------------------------------------------------------- |
 | `--user-room-icon-size`           | card              | Size of room icon                                                                   |
 | `--user-entity-icon-size`         | entity_icon       | Size of entity icons                                                                |
+| `--user-entities-wrap`            | entities          | Rows per column before entity icons wrap (default: `4`)                             |
+| `--user-entity-column-width`      | entities          | Fixed width per wrapped entity column (e.g. `80px`)                                 |
+| `--user-entities-max-columns`     | entities          | Cap entity strip growth; `1` = shrink-to-fit columns                                |
 | `--user-sensor-icon-size`         | sensors           | Size of sensor icons                                                                |
 | `--user-entity-label-display`     | entity_icon       | Control entity label display (set to `none` to hide)                                |
 | `--user-entity-state-font-size`   | entity_icon       | Font size for entity state text (default: `0.6em`)                                  |

@@ -1,0 +1,400 @@
+# Entity wrap test dashboard — issue #419
+#
+# Exercises every variation of entity-collection column wrapping so the
+# fix for https://github.com/homeassistant-extras/room-summary-card/issues/419
+# can be compared BEFORE and AFTER. Each card's title (area_name) says what
+# it is testing and what to look for.
+#
+# The bug (v0.66, commit 9d2ac1d): the entity strip has a fixed width
+# (aspect-ratio 0.23/1), so when a 5th+ icon wraps to a second column the
+# columns split that fixed width and every icon shrinks.
+#
+# Expected AFTER the fix (per ISSUE-419-entity-wrap-plan.md):
+#   - 1-4 entities: identical to before (single column, full-size icons)
+#   - 5+ entities: icons stay FULL SIZE; the strip grows LEFT into the card
+#     with one fixed-width lane per column (lane width = card height x 0.23)
+#   - '--user-entity-column-width' overrides the lane width (Ltek's 80px)
+#   - '--user-entities-max-columns': 1 restores the current shrink-to-fit look
+#   - min-width: 0 is the default — strip overlaps interior, room icon keeps size
+#   - min-width: auto opts back into grid-track growth (room icon shrinks)
+#
+# Usage: Settings → Dashboards → Add Dashboard → ⋮ → Raw configuration
+# editor → paste this file. Swap light.kitchen_bulb_* / the areas for your
+# own. Duplicate entity ids are intentional — they just pad the icon count.
+#
+# Take a screenshot of the whole dashboard before the fix and after; the
+# BASELINE and WORKAROUND sections should be unchanged, the BUG section
+# should go from tiny icons to full-size icons.
+
+title: Room Summary Entity Wrap Test
+views:
+  - title: Entity Wrap Test
+    type: sections
+    max_columns: 3
+    sections:
+      #################################################
+      # BASELINE — must look IDENTICAL before/after
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Baseline — no wrap (must not change)'
+            heading_style: title
+
+          # Single entity — sanity check.
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'BASE: 1 entity'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+
+          # Three entities — column not yet full.
+          - type: custom:room-summary-card
+            area: office
+            area_name: 'BASE: 3 entities'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+
+          # Exactly four — column full but NOT wrapped. The last card
+          # before the bug kicks in; compare icon size against the
+          # 5-entity cards in the next section.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'BASE: 4 entities (column full)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+
+      #################################################
+      # THE BUG — default wrap (4 rows/column)
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Bug repro — 5+ entities, default wrap'
+            heading_style: title
+
+          # Minimal repro from the issue: 5th icon starts column 2.
+          # BEFORE: all 5 icons shrink to half width.
+          # AFTER: same size as the 4-entity baseline; strip widens left.
+          - type: custom:room-summary-card
+            area: living_room
+            area_name: 'BUG: 5 entities (4+1)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+
+          # Two full columns.
+          - type: custom:room-summary-card
+            area: guest_bedroom
+            area_name: 'BUG: 8 entities (4+4)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+            styles:
+              entities:
+                min-width: auto !important
+
+          # Three columns — stress case. AFTER the fix the strip will
+          # reach well into the card; per the issue consensus that is the
+          # accepted trade-off (warmfire540 / Ltek / guillochon).
+          - type: custom:room-summary-card
+            area: master_bedroom
+            area_name: 'BUG: 9 entities (4+4+1)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+            styles:
+              entities:
+                min-width: auto !important
+
+          # Exact reporter config from #419 (marcosg26), including the
+          # wide grid_options and explicit wrap: 4. The 5th entity keeps
+          # its manual transform hack — BEFORE it lands off-card, AFTER
+          # it should sit wherever the transform puts it at full size.
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'BUG: issue #419 exact repro'
+            features:
+              - hide_area_stats
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - entity_id: light.kitchen_bulb_1
+                features:
+                  - use_entity_icon
+                styles:
+                  transform: scale(1) translateX(-40px) translateY(-180px)
+            grid_options:
+              columns: 6
+              rows: 3
+            styles:
+              entities:
+                '--user-entities-wrap': 4
+
+      #################################################
+      # CUSTOM WRAP VALUES — --user-entities-wrap
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Custom --user-entities-wrap values'
+            heading_style: title
+
+          # Docs example: 3 rows per column → 6 entities = 2 cols of 3.
+          - type: custom:room-summary-card
+            area: office
+            area_name: 'WRAP 3: 6 entities (3+3)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+            styles:
+              entities:
+                '--user-entities-wrap': 3
+                min-width: auto !important
+
+          # Aggressive wrap: 2 rows per column → 6 entities = 3 columns.
+          # BEFORE: thirds-width icons. AFTER: 3 full-size lanes.
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'WRAP 2: 6 entities (2+2+2)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+            styles:
+              entities:
+                '--user-entities-wrap': 2
+                min-width: auto !important
+
+          # Taller column: wrap 5 with 10 entities = 2 cols of 5.
+          # This is Ltek's wrap setting from the issue (without the
+          # width hack — that variant is in the next section).
+          - type: custom:room-summary-card
+            area: living_room
+            area_name: 'WRAP 5: 10 entities (5+5)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+            styles:
+              entities:
+                '--user-entities-wrap': 5
+                min-width: auto !important
+
+      #################################################
+      # POST-FIX KNOBS — no-ops BEFORE, toggles AFTER
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'New knobs (only do something after fix)'
+            heading_style: title
+
+          # Ltek's mockup config: narrow fixed lanes. His original hack
+          # was `width: 80px` on the host; the fix replaces that with a
+          # per-column width variable.
+          # BEFORE: variable unknown → no effect (still tiny icons).
+          # AFTER: two 80px lanes, full-size-ish icons, matches mockup.
+          - type: custom:room-summary-card
+            area: guest_bath
+            area_name: 'KNOB: column-width 80px, wrap 5'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+            styles:
+              entities:
+                '--opacity-icon-fill-inactive': 0
+                '--opacity-icon-fill-active': 0
+                '--user-entities-wrap': 5
+                '--user-entity-column-width': 80px
+
+          # Opt back into shrink-to-fit (today's v0.66 look) by capping
+          # the strip at one column's width.
+          # BEFORE: identical to the plain 8-entity bug card.
+          # AFTER: must STILL look like the before-fix bug card —
+          # this is the escape hatch for people who like the shrink.
+          - type: custom:room-summary-card
+            area: patio
+            area_name: 'KNOB: max-columns 1 (v0.66 look)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+            styles:
+              entities:
+                '--user-entities-max-columns': 1
+
+          # By default the widening strip overlaps the card interior
+          # (min-width: 0) so the room icon keeps its size. min-width: auto
+          # opts back into grid-track growth — the strip squeezes the room
+          # icon instead. Compare against the plain 8-entity bug card above.
+          - type: custom:room-summary-card
+            area: patio
+            area_name: 'KNOB: min-width auto (room icon shrinks)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+            styles:
+              entities:
+                min-width: auto !important
+
+      #################################################
+      # ISSUE WORKAROUNDS — keep working before & after
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Workarounds posted on the issue'
+            heading_style: title
+
+          # v0.65 restore shared by warmfire540: row flow puts everything
+          # back in one column (extra entities clip). Should render the
+          # same before and after the fix.
+          - type: custom:room-summary-card
+            area: master_bath
+            area_name: 'WA: grid-auto-flow row (v0.65)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+            styles:
+              entities:
+                grid-auto-flow: row !important
+
+          # Flex experiment from the thread. Known-flaky: wraps after 3
+          # icons on some browsers, 4 on others (why it was rejected as
+          # the fix). Here to confirm the fix doesn't make it worse.
+          - type: custom:room-summary-card
+            area: garage
+            area_name: 'WA: flex wrap-reverse (flaky)'
+            features:
+              - exclude_default_entities
+            entities:
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_2
+              - light.kitchen_bulb_3
+              - light.kitchen_bulb_4
+              - light.kitchen_bulb_1
+            styles:
+              entities:
+                display: flex !important
+                flex-direction: column
+                flex-wrap: wrap-reverse
+                aspect-ratio: auto !important
+                padding: 8px 10px 0px 0px !important
+
+          # marcosg26's pre-wrap style: per-entity transform hacks with
+          # label/fill tweaks (no wrapping involved — only 3 entities).
+          # Must be untouched by the fix.
+          - type: custom:room-summary-card
+            area: patio
+            area_name: 'WA: manual transforms, 3 entities'
+            features:
+              - exclude_default_entities
+              - hide_area_stats
+            entities:
+              - entity_id: light.kitchen_bulb_1
+                styles:
+                  '--user-entity-label-display': none
+                  '--opacity-icon-fill-inactive': 0
+                  '--opacity-icon-fill-active': 0
+                  opacity: 1
+                  transform: scale(1.3) translateX(0px) translateY(0px)
+              - entity_id: light.kitchen_bulb_2
+                styles:
+                  '--user-entity-label-display': none
+                  '--opacity-icon-fill-inactive': 0
+                  '--opacity-icon-fill-active': 0
+                  opacity: 1
+                  transform: scale(1.2) translateX(0px) translateY(0px)
+              - entity_id: light.kitchen_bulb_3
+                styles:
+                  '--user-entity-label-display': none
+                  '--opacity-icon-fill-inactive': 0
+                  '--opacity-icon-fill-active': 0
+                  opacity: 1
+                  transform: scale(1.2)

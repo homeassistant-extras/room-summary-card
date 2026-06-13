@@ -61,6 +61,8 @@ export class EntityCollection extends HassUpdateMixin(LitElement) {
     // Update entities only if they've changed
     if (!equal(states, this._entities)) {
       this._entities = states;
+      // Drives --entity-columns (strip width) in styles.ts
+      this.style.setProperty('--entity-count', `${states.length}`);
     }
 
     this._hass = hass;
