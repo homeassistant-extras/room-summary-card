@@ -1,8 +1,10 @@
 // problem-entity-list is imported dynamically
 import '@cards/components/problem/list/problem-entity-list';
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
 import type { HassDialog } from '@homeassistant-extras/hass/dialogs/make-dialog-manager';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
+import type { Config } from '@type/config';
 import { d } from '@util/debug';
 import { LitElement, html, nothing, type TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -17,7 +19,9 @@ import type { ProblemDialogParams } from './show-dialog-problem';
  */
 @customElement('problem-dialog')
 export class ProblemDialog
-  extends HassUpdateMixin(LitElement)
+  extends HassUpdateMixin(
+    HassConfigMixin<typeof LitElement, Config>(LitElement),
+  )
   implements HassDialog<ProblemDialogParams>
 {
   /**

@@ -35,11 +35,14 @@
  * @version See package.json
  */
 
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
-import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
 import { setBrightness } from '@delegates/actions/brightness-control';
+import { computeDomain } from '@homeassistant-extras/hass/common/entity/compute_domain';
 import { setValue } from '@homeassistant-extras/hass/data/input_text';
 import { setMediaPlayerVolume } from '@homeassistant-extras/hass/data/media-player';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
+import { SubscribeEntityStateMixin } from '@homeassistant-extras/hass/mixins/subscribe-entity-state-mixin';
+import type { Config } from '@type/config';
 import type { EntityConfig, HorizontalSliderStyle } from '@type/config/entity';
 import { d } from '@util/debug';
 import equal from 'fast-deep-equal';
@@ -55,7 +58,7 @@ import { styles } from './styles';
 
 @customElement('horizontal-slider')
 export class HorizontalSlider extends SubscribeEntityStateMixin(
-  HassUpdateMixin(LitElement),
+  HassUpdateMixin(HassConfigMixin<typeof LitElement, Config>(LitElement)),
 ) {
   /**
    * The entity configuration for the slider.
@@ -95,8 +98,9 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
     if (!hass || !state) return;
 
     const target = ev.target as HTMLInputElement;
+    const domain = computeDomain(state.entity_id);
 
-    if (state.domain === 'media_player') {
+    if (domain === 'media_player') {
       void setMediaPlayerVolume(
         hass,
         state.entity_id,
@@ -105,7 +109,7 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
       return;
     }
 
-    if (state.domain === 'light') {
+    if (domain === 'light') {
       void setBrightness(hass, state.entity_id, Number(target.value));
       return;
     }
@@ -118,19 +122,20 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
     const s = this.state;
     if (!s) return nothing;
 
+    const domain = computeDomain(s.entity_id);
     const rawValue = s ? Number(s.state) : Number.NaN;
     let value = 0;
     let min = Number(s?.attributes.min ?? 0);
     let max = Number(s?.attributes.max ?? 100);
     let step = Number(s?.attributes.step ?? 1);
 
-    if (s.domain === 'media_player') {
+    if (domain === 'media_player') {
       const vol = s.attributes.volume_level;
       value =
         vol == null
           ? 0
           : Math.max(0, Math.min(100, Math.round(Number(vol) * 100)));
-    } else if (s.domain === 'light') {
+    } else if (domain === 'light') {
       // Slider operates on raw brightness (0–255); attributes.brightness
       // is null when the light is off.
       value = Number(s.attributes.brightness ?? 0);

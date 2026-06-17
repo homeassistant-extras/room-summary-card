@@ -1,4 +1,3 @@
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { hasEntityFeature } from '@config/feature';
 import {
   actionHandler,
@@ -6,6 +5,8 @@ import {
 } from '@delegates/action-handler-delegate';
 import { mergeActions } from '@delegates/utils/merge-actions';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderBadgeElements } from '@html/badge-squad';
 import { renderEntityLabel } from '@html/render-label';
@@ -45,7 +46,9 @@ import { styles } from './styles';
  *
  * @version See package.json
  */
-export class RoomStateIcon extends HassUpdateMixin(LitElement) {
+export class RoomStateIcon extends HassUpdateMixin(
+  HassConfigMixin<typeof LitElement, Config>(LitElement),
+) {
   /**
    * Home Assistant instance
    */

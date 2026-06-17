@@ -1,18 +1,7 @@
 import { getDevice } from '@delegates/retrievers/device';
 import { getEntity } from '@delegates/retrievers/entity';
+import type { CustomCardSuggestion } from '@homeassistant-extras/hass/data/lovelace_custom_cards';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
-
-/**
- * A single card-picker suggestion offered for an entity.
- *
- * @see https://developers.home-assistant.io/docs/frontend/custom-ui/custom-card#suggesting-your-card-for-an-entity
- */
-export interface CardSuggestion {
-  /** Short label describing the variant (shown in the picker). */
-  label: string;
-  /** Card configuration applied if the user picks the suggestion. */
-  config: Record<string, unknown>;
-}
 
 /**
  * Suggests the room summary card for an entity in Home Assistant's card picker.
@@ -29,7 +18,7 @@ export interface CardSuggestion {
 export const getEntitySuggestion = (
   hass: HomeAssistant,
   entityId: string,
-): CardSuggestion[] | null => {
+): CustomCardSuggestion[] | null => {
   const entity = getEntity(hass.entities, entityId);
   if (!entity) {
     return null;

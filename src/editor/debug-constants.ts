@@ -17,8 +17,6 @@ export const DEBUG_COMPONENTS = [
   'problem-dialog',
   'problem-entity-list',
   'problem-entity-row',
-  'subscribe-entity-state-mixin',
-  'entity-subscription-manager',
 ] as const;
 
 /** Categories passed to `d()` */
@@ -27,16 +25,9 @@ export const DEBUG_CATEGORIES = [
   'set hass',
   'config',
   'sensors',
-  'unsubscribe',
-  'setupEntitySubscription',
-  'initial creation',
-  'subscribe',
-  'subscribe_entities',
-  'resubscribe',
-  'handleEvent',
 ] as const;
 
-export type DebugPresetId = 'off' | 'renders' | 'subscriptions' | 'all';
+export type DebugPresetId = 'off' | 'renders' | 'all';
 
 export interface DebugPreset {
   id: DebugPresetId;
@@ -57,23 +48,6 @@ export const DEBUG_PRESETS: DebugPreset[] = [
     label: 'Renders',
     description: 'Log every component render',
     debug: { categories: ['render'] },
-  },
-  {
-    id: 'subscriptions',
-    label: 'Subscriptions',
-    description: 'Entity subscription manager and mixin',
-    debug: {
-      scope: ['entity-subscription-manager', 'subscribe-entity-state-mixin'],
-      categories: [
-        'subscribe',
-        'subscribe_entities',
-        'resubscribe',
-        'handleEvent',
-        'initial creation',
-        'setupEntitySubscription',
-        'unsubscribe',
-      ],
-    },
   },
   {
     id: 'all',

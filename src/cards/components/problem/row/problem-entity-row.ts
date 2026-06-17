@@ -1,12 +1,14 @@
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
-import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
 import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
 // more-info-mixin is now compiled
 import { computeEntityName } from '@homeassistant-extras/hass/common/entity/compute_entity_name';
 import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
+import { SubscribeEntityStateMixin } from '@homeassistant-extras/hass/mixins/subscribe-entity-state-mixin';
 import '@homeassistant-extras/hass/state/more-info-mixin';
 import { stateDisplay } from '@html/state-display';
 import { localize } from '@localize/localize';
+import type { Config } from '@type/config';
 import { d } from '@util/debug';
 import {
   LitElement,
@@ -27,7 +29,7 @@ import { styles } from './styles';
  */
 @customElement('problem-entity-row')
 export class ProblemEntityRow extends SubscribeEntityStateMixin(
-  HassUpdateMixin(LitElement),
+  HassUpdateMixin(HassConfigMixin<typeof LitElement, Config>(LitElement)),
 ) {
   /**
    * Handles click on entity row to open more-info dialog

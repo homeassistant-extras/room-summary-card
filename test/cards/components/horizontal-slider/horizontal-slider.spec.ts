@@ -51,6 +51,16 @@ describe('horizontal-slider.ts', () => {
     setBrightnessStub.restore();
   });
 
+  /**
+   * Drive the element's subscribed state. `state` is a getter over the
+   * reactive `states` map (keyed by entity_id), so point `entity` at the
+   * state and register it in the map.
+   */
+  function setSliderState(state: EntityState): void {
+    element['entity'] = state.entity_id;
+    element['states'] = { [state.entity_id]: state };
+  }
+
   describe('slider setter', () => {
     it('should leave entity and style undefined before slider is assigned', () => {
       expect(element['entity']).to.be.undefined;
@@ -90,7 +100,7 @@ describe('horizontal-slider.ts', () => {
   describe('_handleChange', () => {
     beforeEach(() => {
       element.slider = sliderEntity;
-      element['state'] = mockEntityState;
+      setSliderState(mockEntityState);
     });
 
     it('should call setValue with the new value when it differs from current state', () => {
@@ -104,9 +114,11 @@ describe('horizontal-slider.ts', () => {
     });
 
     it('should call setBrightness with raw 0–255 value when domain is light', () => {
-      element['state'] = createStateEntity('light', 'office', 'on', {
-        brightness: 128,
-      });
+      setSliderState(
+        createStateEntity('light', 'office', 'on', {
+          brightness: 128,
+        }),
+      );
 
       element['_handleChange']({
         target: { value: '200' },
@@ -120,11 +132,10 @@ describe('horizontal-slider.ts', () => {
     });
 
     it('should call setMediaPlayerVolume when domain is media_player', () => {
-      element['state'] = createStateEntity(
-        'media_player',
-        'living_room',
-        'playing',
-        { volume_level: 0.5 },
+      setSliderState(
+        createStateEntity('media_player', 'living_room', 'playing', {
+          volume_level: 0.5,
+        }),
       );
 
       element['_handleChange']({

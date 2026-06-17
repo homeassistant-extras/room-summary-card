@@ -19,30 +19,9 @@ import { EntitySlider } from '@cards/components/entity-slider/entity-slider';
 import { RoomStateIcon } from '@cards/components/room-state-icon/room-state-icon';
 import { SensorCollection } from '@cards/components/sensor-collection/sensor-collection';
 import { RoomSummaryCardEditor } from '@cards/editor';
-import {
-  getEntitySuggestion,
-  type CardSuggestion,
-} from '@delegates/utils/entity-suggestion';
-import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { getEntitySuggestion } from '@delegates/utils/entity-suggestion';
+import { customCards } from '@homeassistant-extras/hass/data/lovelace_custom_cards';
 import { version } from '../package.json';
-
-declare global {
-  var customCards: Array<{
-    type: string;
-    name: string;
-    description: string;
-    preview: boolean;
-    documentationURL: string;
-    /**
-     * Optional card-picker entity suggestion hook (Home Assistant 2026.6+).
-     * @see https://developers.home-assistant.io/docs/frontend/custom-ui/custom-card#suggesting-your-card-for-an-entity
-     */
-    getEntitySuggestion?: (
-      hass: HomeAssistant,
-      entityId: string,
-    ) => CardSuggestion[] | null;
-  }>;
-}
 
 // Register the custom element with the browser
 customElements.define('room-summary-card', RoomSummaryCard);
@@ -77,11 +56,8 @@ customElements.define(
   RoomSummarySubElementEditor,
 );
 
-// Ensure the customCards array exists on the window object
-globalThis.customCards = globalThis.customCards || [];
-
 // Register the card with Home Assistant's custom card registry
-globalThis.customCards.push({
+customCards?.push({
   // Unique identifier for the card type
   type: 'room-summary-card',
 

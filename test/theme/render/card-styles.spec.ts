@@ -282,7 +282,10 @@ describe('card-styles.ts', () => {
         '--smoke-card-border': '3px solid var(--error-color)',
       };
       getSmokeCssVarsStub.returns(smokeStyles);
-      mockConfig = { ...mockConfig, smoke: { entities: ['binary_sensor.smoke'] } };
+      mockConfig = {
+        ...mockConfig,
+        smoke: { entities: ['binary_sensor.smoke'] },
+      };
 
       const entity = createEntityInfo('light.test');
       const styles = renderCardStyles(
@@ -294,8 +297,7 @@ describe('card-styles.ts', () => {
         false,
       );
 
-      expect(getSmokeCssVarsStub.calledWith(true, mockConfig.smoke)).to.be
-        .true;
+      expect(getSmokeCssVarsStub.calledWith(true, mockConfig.smoke)).to.be.true;
       expect(styles).to.deep.equal(
         styleMap({
           '--background-color-card': undefined,

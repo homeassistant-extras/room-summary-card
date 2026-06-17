@@ -26,6 +26,9 @@ import type { ClimateThresholds } from '@delegates/checks/thresholds';
 import { mergeActions } from '@delegates/utils/merge-actions';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import type { HassUpdateEvent } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
+import { SubscribeEntityStateMixin } from '@homeassistant-extras/hass/mixins/subscribe-entity-state-mixin';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { info } from '@html/info';
 import { renderHorizontalSlider } from '@html/render-horizontal-slider';
@@ -36,10 +39,10 @@ import type { EntityInformation, RoomInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
 import { d } from '@util/debug';
 import equal from 'fast-deep-equal';
-import type { HassUpdateEvent } from './mixins/hass-update-mixin';
-import { SubscribeEntityStateMixin } from './mixins/subscribe-entity-state-mixin';
 
-export class RoomSummaryCard extends SubscribeEntityStateMixin(LitElement) {
+export class RoomSummaryCard extends SubscribeEntityStateMixin(
+  HassConfigMixin<typeof LitElement, Config>(LitElement),
+) {
   /**
    * Card configuration object
    */

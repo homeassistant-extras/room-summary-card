@@ -73,7 +73,7 @@
     "typescript-eslint": "^8.61.0"
   },
   "dependencies": {
-    "@homeassistant-extras/hass": "^0.5.0",
+    "@homeassistant-extras/hass": "^0.6.0",
     "@lit/task": "^1.0.3",
     "async-memoize-one": "^1.2.1",
     "fast-deep-equal": "^3.1.3",

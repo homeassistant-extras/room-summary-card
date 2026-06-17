@@ -1,5 +1,5 @@
+import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import type { BadgeConfig, StateConfig } from '@type/config/entity';
-import type { EntityState } from '@type/room';
 import { meetsStateCondition } from '@util/comparison-utils';
 
 /**
@@ -10,7 +10,7 @@ import { meetsStateCondition } from '@util/comparison-utils';
  * @returns The matching StateConfig if found, undefined otherwise
  */
 export const getMatchingBadgeState = (
-  state: EntityState,
+  state: HassEntity,
   badge: BadgeConfig,
 ): StateConfig | undefined => {
   if (!badge.states || !state) {

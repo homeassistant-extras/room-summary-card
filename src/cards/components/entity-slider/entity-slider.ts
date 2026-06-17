@@ -1,11 +1,13 @@
 import { renderRoomIcon } from '@/html/icon';
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { setBrightness } from '@delegates/actions/brightness-control';
 import { getIconEntities } from '@delegates/entities/icon-entities';
 import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { getThemeColorOverride } from '@theme/custom-theme';
 import { stylesToHostCss } from '@theme/util/style-converter';
+import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { d } from '@util/debug';
 import equal from 'fast-deep-equal';
@@ -35,7 +37,9 @@ import { styles } from './styles/index';
  *
  * @version See package.json
  */
-export class EntitySlider extends HassUpdateMixin(LitElement) {
+export class EntitySlider extends HassUpdateMixin(
+  HassConfigMixin<typeof LitElement, Config>(LitElement),
+) {
   /**
    * Home Assistant instance
    */

@@ -1,7 +1,9 @@
 // problem-entity-row is imported dynamically
 import '@cards/components/problem/row/problem-entity-row';
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
 import { localize } from '@localize/localize';
+import type { Config } from '@type/config';
 import { d } from '@util/debug';
 import {
   LitElement,
@@ -21,7 +23,9 @@ import { styles } from './styles';
  * Shows empty state when no problems exist.
  */
 @customElement('problem-entity-list')
-export class ProblemEntityList extends HassUpdateMixin(LitElement) {
+export class ProblemEntityList extends HassUpdateMixin(
+  HassConfigMixin<typeof LitElement, Config>(LitElement),
+) {
   /**
    * Array of problem entity states
    */

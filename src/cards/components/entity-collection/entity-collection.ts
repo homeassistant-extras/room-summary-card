@@ -1,8 +1,10 @@
 import { renderRoomIcon } from '@/html/icon';
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { getIconEntities } from '@delegates/entities/icon-entities';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { stylesToHostCss } from '@theme/util/style-converter';
+import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import { d } from '@util/debug';
 import equal from 'fast-deep-equal';
@@ -31,7 +33,9 @@ import { styles } from './styles';
  *
  * @version See package.json
  */
-export class EntityCollection extends HassUpdateMixin(LitElement) {
+export class EntityCollection extends HassUpdateMixin(
+  HassConfigMixin<typeof LitElement, Config>(LitElement),
+) {
   /**
    * Home Assistant instance
    */

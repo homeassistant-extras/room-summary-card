@@ -46,7 +46,7 @@ export const renderCardStyles = (
   isActive: boolean = false,
   thresholds?: ClimateThresholds,
   ambientLightEntities?: EntityState[],
-  opacityState?: EntityState,
+  opacityState?: HassEntity,
 ): ReturnType<typeof styleMap> => {
   const { state } = entity as { state: HassEntity };
   const thresholdResult = getThresholdResult(entity);
