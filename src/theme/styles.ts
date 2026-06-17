@@ -12,6 +12,7 @@ import { occupancyStyles } from './css/occupancy';
 import {
   colorsDark,
   colorsLight,
+  frostedGlassDarkThemeColors,
   frostedGlassThemeColors,
   minimalistThemeColors,
   themeColors,
@@ -30,6 +31,7 @@ const hostThemeStyles = css`
   }
 
   :host([dark]) {
+    ${frostedGlassDarkThemeColors}
     ${colorsDark}
   }
 
@@ -48,18 +50,31 @@ const hostThemeStyles = css`
  * Base theme and color definitions
  */
 const haCardThemeStyles = css`
+  /* hot owns the top + left edges, humid owns the bottom + right edges.
+     Each state writes only the sides it owns, so when both are set the
+     border splits diagonally with no rule fighting another over the same
+     side -- no !important or source-order tricks needed. A single active
+     state still paints all four sides via the catch-all rules below. */
   :host([hot]) ha-card {
-    border-left: 3px solid var(--threshold-hot-color, var(--error-color)) !important;
-    border-top: 3px solid var(--threshold-hot-color, var(--error-color)) !important;
+    border-top: 3px solid var(--threshold-hot-color, var(--error-color));
+    border-left: 3px solid var(--threshold-hot-color, var(--error-color));
     border-right: 3px solid var(--threshold-hot-color, var(--error-color));
     border-bottom: 3px solid var(--threshold-hot-color, var(--error-color));
   }
 
   :host([humid]) ha-card {
-    border-left: 3px solid var(--threshold-humid-color, var(--info-color));
     border-top: 3px solid var(--threshold-humid-color, var(--info-color));
-    border-right: 3px solid var(--threshold-humid-color, var(--info-color)) !important;
-    border-bottom: 3px solid var(--threshold-humid-color, var(--info-color)) !important;
+    border-left: 3px solid var(--threshold-humid-color, var(--info-color));
+    border-right: 3px solid var(--threshold-humid-color, var(--info-color));
+    border-bottom: 3px solid var(--threshold-humid-color, var(--info-color));
+  }
+
+  /* Both active: hot keeps top/left, humid keeps bottom/right. */
+  :host([hot][humid]) ha-card {
+    border-top-color: var(--threshold-hot-color, var(--error-color));
+    border-left-color: var(--threshold-hot-color, var(--error-color));
+    border-right-color: var(--threshold-humid-color, var(--info-color));
+    border-bottom-color: var(--threshold-humid-color, var(--info-color));
   }
 
   :host([image]) ha-card {

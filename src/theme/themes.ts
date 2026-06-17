@@ -57,15 +57,21 @@ export const minimalistThemeColors = css`
  */
 export const frostedGlassThemeColors = css`
   /* Glass effect - uses standard HA card variables set by the theme */
-  --theme-box-shadow-frosted: var(--ha-card-box-shadow);
-  --theme-border-color-frosted: var(--ha-card-border-color);
-  --theme-border-width-frosted: var(--ha-card-border-width);
-  --theme-border-radius-frosted: var(--ha-card-border-radius);
+  --theme-box-shadow-frosted: var(
+    --ha-card-box-shadow,
+    0 12px 20px rgba(0, 0, 0, 0.15)
+  );
+  --theme-border-color-frosted: var(
+    --ha-card-border-color,
+    rgba(255, 255, 255, 0.3)
+  );
+  --theme-border-width-frosted: var(--ha-card-border-width, 0.5px);
+  --theme-border-radius-frosted: var(--ha-card-border-radius, 18px);
 
   /* Frosted Glass sets backdrop-filter via card-mod, but we can pick it up if available */
   --theme-backdrop-filter-frosted: var(
     --ha-card-backdrop-filter,
-    var(--app-header-backdrop-filter, none)
+    var(--app-header-backdrop-filter, blur(8px) saturate(1.2))
   );
 
   /* Tint + sheen (these are used as var() knobs in Frosted Glass' card-mod styles) */
@@ -79,6 +85,29 @@ export const frostedGlassThemeColors = css`
     -2px -2px 0.5px -2px rgba(255, 255, 255, 0.3) inset,
     0 0 8px 1px rgba(255, 255, 255, 0.1) inset,
     0 0 2px 0 rgba(0, 0, 0, 0.1)
+  );
+`;
+
+export const frostedGlassDarkThemeColors = css`
+  --theme-box-shadow-frosted: var(
+    --ha-card-box-shadow,
+    0 12px 20px rgba(0, 0, 0, 0.28)
+  );
+  --theme-border-color-frosted: var(
+    --ha-card-border-color,
+    rgba(234, 235, 238, 0.1)
+  );
+  --theme-backdrop-filter-frosted: var(
+    --ha-card-backdrop-filter,
+    var(--app-header-backdrop-filter, blur(10px) saturate(1.2))
+  );
+  --theme-glass-tint-frosted: var(--ha-card-glass-tint, rgba(28, 29, 33, 0.18));
+  --theme-glass-inset-shadow-frosted: var(
+    --ha-card-glass-inset-shadow,
+    3px 3px 0.5px -3.5px rgba(255, 255, 255, 0.15) inset,
+    -2px -2px 0.5px -2px rgba(255, 255, 255, 0.1) inset,
+    0 0 8px 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 2px 0 rgba(0, 0, 0, 0.18)
   );
 `;
 
