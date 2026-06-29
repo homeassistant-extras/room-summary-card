@@ -57,8 +57,9 @@ describe('badge.ts', () => {
     element = new Badge();
     element.badge = mockBadgeConfig;
     element.hass = mockHass;
-    // Badge gets state from SubscribeEntityStateMixin; set directly for unit tests
-    element['state'] = mockEntityState;
+    // Badge reads state from SubscribeEntityStateMixin's reactive `states` map
+    // (keyed by entity_id); `state` is a derived getter. Drive it for unit tests.
+    element['states'] = { [mockBadgeConfig.entity_id!]: mockEntityState };
   });
 
   afterEach(() => {

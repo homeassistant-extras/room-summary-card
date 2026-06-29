@@ -462,7 +462,9 @@ describe('card.ts', () => {
       const opacityState = e('sensor', 'opacity', '128', {
         unit_of_measurement: '%',
       });
-      card['state'] = opacityState;
+      // `state` is a getter over the reactive `states` map keyed by entity_id.
+      card['entity'] = opacityState.entity_id;
+      card['states'] = { [opacityState.entity_id]: opacityState };
       card.render();
 
       expect(renderCardStylesStub.calledOnce).to.be.true;
@@ -470,7 +472,8 @@ describe('card.ts', () => {
     });
 
     it('should pass undefined to renderCardStyles when mixin state is unset', () => {
-      card['state'] = undefined;
+      card['entity'] = undefined;
+      card['states'] = {};
       card.render();
 
       expect(renderCardStylesStub.calledOnce).to.be.true;

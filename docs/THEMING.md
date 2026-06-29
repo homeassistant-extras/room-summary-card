@@ -43,8 +43,9 @@ The card automatically adapts to these Home Assistant themes:
 
 - **Frosted Glass Aesthetic**: Transparent and blurred card elements create depth and layering
 - **Automatic Detection**: Card automatically detects Frosted Glass themes and applies appropriate styling
-- **Light & Dark Modes**: Supports both Frosted Glass and Frosted Glass Lite variants
+- **Light & Dark Modes**: Supports Frosted Glass Light and Frosted Glass Dark, including view-specific dashboard themes
 - **Backdrop Filter**: Uses theme's backdrop-filter and glass tint variables for seamless integration
+- **Climate Borders**: Temperature and humidity threshold borders remain visible around the full card in glass mode
 
 ![Frosted Light](assets/frosted-light.png) ![Frosted Dark](assets/frosted-dark.png)
 

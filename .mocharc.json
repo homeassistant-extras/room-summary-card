@@ -2,8 +2,7 @@
   "require": [
     "ts-node/register",
     "tsconfig-paths/register",
-    "@homeassistant-extras/config/mocha/setup.card",
-    "./test/setup/subscription-connection-guard.cjs"
+    "@homeassistant-extras/config/mocha/setup.card"
   ],
   "extensions": ["ts"],
   "spec": ["test/**/*.spec.ts"],

@@ -1,4 +1,3 @@
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import {
   actionHandler,
   handleClickAction,
@@ -10,11 +9,14 @@ import {
   type CategoryType,
   type IconResources,
 } from '@homeassistant-extras/hass/data/icon';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderSensorLabel } from '@html/render-label';
 import { processHomeAssistantColors } from '@theme/colors';
 import { getThresholdResult } from '@theme/threshold-color';
 import { stylesToHostCss } from '@theme/util/style-converter';
+import type { Config } from '@type/config';
 import type { SensorConfig } from '@type/config/sensor';
 import type { EntityInformation, EntityState } from '@type/room';
 import type { AveragedSensor, SensorData } from '@type/sensor';
@@ -47,7 +49,9 @@ import { styles } from './styles';
  *
  * @version See package.json
  */
-export class SensorCollection extends HassUpdateMixin(LitElement) {
+export class SensorCollection extends HassUpdateMixin(
+  HassConfigMixin<typeof LitElement, Config>(LitElement),
+) {
   /**
    * Home Assistant instance
    */

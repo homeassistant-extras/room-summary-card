@@ -1,6 +1,6 @@
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import type { Config } from '@type/config';
-import type { EntityState } from '@type/room';
 
 /**
  * Calculates the opacity value for the background.
@@ -21,7 +21,7 @@ import type { EntityState } from '@type/room';
 export const getBackgroundOpacity = (
   config: Config,
   active: boolean,
-  state?: EntityState,
+  state?: HassEntity,
 ) => {
   const skipStyles = hasFeature(config, 'skip_entity_styles');
   const raw = config.background?.opacity;

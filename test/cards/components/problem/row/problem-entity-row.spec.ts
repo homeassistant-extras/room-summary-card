@@ -58,6 +58,16 @@ describe('problem-entity-row.ts', () => {
     fireEventStub.restore();
   });
 
+  /**
+   * Drive the element's subscribed state. `state` is a getter over the
+   * reactive `states` map (keyed by entity_id), so point `entity` at the
+   * state and register it in the map.
+   */
+  function setRowState(state: ReturnType<typeof createStateEntity>): void {
+    element['entity'] = state.entity_id;
+    element['states'] = { [state.entity_id]: state };
+  }
+
   describe('render', () => {
     it('should return nothing when state is not set', () => {
       element.hass = mockHass;
@@ -69,7 +79,7 @@ describe('problem-entity-row.ts', () => {
 
     it('should return nothing when hass is not set', () => {
       element.hass = undefined as any;
-      element['state'] = mockActiveEntity;
+      setRowState(mockActiveEntity);
 
       const result = element.render();
       expect(result).to.equal(nothing);
@@ -77,7 +87,7 @@ describe('problem-entity-row.ts', () => {
 
     it('should render with active class when entity is active', async () => {
       element.hass = mockHass;
-      element['state'] = mockActiveEntity;
+      setRowState(mockActiveEntity);
 
       const result = element.render();
       const el = await fixture(result as any);
@@ -88,7 +98,7 @@ describe('problem-entity-row.ts', () => {
 
     it('should render with inactive class when entity is inactive', async () => {
       element.hass = mockHass;
-      element['state'] = mockInactiveEntity;
+      setRowState(mockInactiveEntity);
 
       const result = element.render();
       const el = await fixture(result as any);
@@ -101,8 +111,7 @@ describe('problem-entity-row.ts', () => {
   describe('_handleClick', () => {
     it('should fire hass-more-info event with entity id', () => {
       element.hass = mockHass;
-      element['entity'] = 'binary_sensor.problem1';
-      element['state'] = mockActiveEntity;
+      setRowState(mockActiveEntity);
       element['_handleClick']();
 
       expect(fireEventStub.calledOnce).to.be.true;

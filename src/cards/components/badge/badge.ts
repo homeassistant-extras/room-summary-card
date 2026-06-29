@@ -1,9 +1,11 @@
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
-import { SubscribeEntityStateMixin } from '@cards/mixins/subscribe-entity-state-mixin';
 import { getMatchingBadgeState } from '@delegates/utils/badge-state';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
+import { SubscribeEntityStateMixin } from '@homeassistant-extras/hass/mixins/subscribe-entity-state-mixin';
 import { renderTileBadge } from '@homeassistant-extras/hass/panels/lovelace/cards/tile/badges/tile-badge';
 import { processHomeAssistantColors } from '@theme/colors';
 import { stylesToHostCss } from '@theme/util/style-converter';
+import type { Config } from '@type/config';
 import type { BadgeConfig } from '@type/config/entity';
 import { d } from '@util/debug';
 import equal from 'fast-deep-equal';
@@ -28,7 +30,7 @@ import { styles } from './styles';
  * configuration.
  */
 export class Badge extends SubscribeEntityStateMixin(
-  HassUpdateMixin(LitElement),
+  HassUpdateMixin(HassConfigMixin<typeof LitElement, Config>(LitElement)),
 ) {
   /**
    * Badge configuration
@@ -63,10 +65,10 @@ export class Badge extends SubscribeEntityStateMixin(
   }
 
   /**
-   * Only update if we have a state
+   * Only update if we have a state.
    */
   override shouldUpdate(changedProperties: PropertyValues) {
-    return changedProperties.has('state');
+    return changedProperties.has('states');
   }
 
   /**
