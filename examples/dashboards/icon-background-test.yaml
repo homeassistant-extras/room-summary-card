@@ -42,7 +42,7 @@ views:
             area: garage
             area_name: 'BG: image_entity (camera)'
             background:
-              image_entity: camera.garage
+              image_entity: camera.living_room
 
           # Direct URL → card background.
           - type: custom:room-summary-card
@@ -132,6 +132,15 @@ views:
               options:
                 - icon_background
 
+          # Camera entity_picture as the icon background.
+          - type: custom:room-summary-card
+            area: garage
+            area_name: 'ICON: image_entity (camera)'
+            background:
+              image_entity: camera.living_room
+              options:
+                - icon_background
+
       #################################################
       # EDGE CASES & INTERPLAY
       #################################################
@@ -190,7 +199,7 @@ views:
             area: patio
             area_name: 'EDGE: camera entity overrides'
             entity:
-              entity_id: camera.patio
+              entity_id: camera.living_room
               styles:
                 '--opacity-icon-fill-inactive': 1
             background:

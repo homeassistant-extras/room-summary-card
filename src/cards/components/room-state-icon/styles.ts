@@ -48,6 +48,15 @@ export const styles = css`
     opacity: var(--user-opacity, var(--background-opacity-icon));
   }
 
+  /* Background image layer (HA hui-image via room-background-image),
+     clipped to the icon circle. Carries the same opacity/filter the image
+     had when it was painted on .icon::before. */
+  room-background-image {
+    border-radius: 50%;
+    opacity: var(--user-opacity, var(--background-opacity-icon));
+    filter: var(--icon-filter, none);
+  }
+
   /* Icon background image styling */
   :host([image]) .icon::before {
     background-image:

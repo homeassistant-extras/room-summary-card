@@ -3,10 +3,12 @@ import {
   deviceClasses,
   entityFeaturesSchema,
   getEntitiesStylesSchema,
+  getMainSchemaRest,
   getOccupancySchema,
   getSensorsSchema,
   getSensorsSchemaRest,
 } from '@editor/editor-schema';
+import { INTERACTIONS } from '@editor/schema-constants';
 import * as sensorModule from '@homeassistant-extras/hass/data/sensor';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as localizeModule from '@localize/localize';
@@ -660,6 +662,226 @@ describe('editor-schema.ts', () => {
                     {
                       label: 'editor.icon.disable_icon_animations',
                       value: 'disable_icon_animation',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ]);
+    });
+  });
+
+  describe('getMainSchemaRest', () => {
+    it('should return schema with main schema rest', () => {
+      const schema = getMainSchemaRest(mockHass);
+      expect(schema).to.deep.equal([
+        {
+          name: 'content',
+          label: 'editor.layout.content',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:text-short',
+          schema: [
+            {
+              name: 'area_name',
+              label: 'editor.area.area_name',
+              required: false,
+              selector: { text: {} },
+            },
+          ],
+        },
+        {
+          name: 'problem',
+          label: 'editor.problem.problem',
+          type: 'expandable',
+          icon: 'mdi:alert-circle',
+          schema: [
+            {
+              name: 'display',
+              label: 'editor.problem.problem_display',
+              required: false,
+              selector: {
+                select: {
+                  mode: 'dropdown' as const,
+                  options: [
+                    {
+                      label: 'editor.problem.problem_display_always',
+                      value: 'always',
+                    },
+                    {
+                      label: 'editor.problem.problem_display_active_only',
+                      value: 'active_only',
+                    },
+                    {
+                      label: 'editor.problem.problem_display_never',
+                      value: 'never',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        INTERACTIONS,
+        {
+          name: 'styles',
+          label: 'editor.styles.styles',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:brush-variant',
+          schema: [
+            {
+              name: 'background',
+              label: 'editor.background.background',
+              type: 'expandable',
+              icon: 'mdi:format-paint',
+              schema: [
+                {
+                  name: 'image',
+                  label: 'editor.background.background_image',
+                  selector: { media: { image_upload: true } },
+                },
+                {
+                  name: 'image_entity',
+                  label: 'editor.background.background_image_entity',
+                  selector: {
+                    entity: {
+                      filter: { domain: ['camera', 'image', 'person'] },
+                    },
+                  },
+                },
+                {
+                  name: 'opacity',
+                  label: 'editor.background.background_opacity',
+                  required: false,
+                  selector: {
+                    number: {
+                      mode: 'slider' as const,
+                      unit_of_measurement: '%',
+                      min: 0,
+                      max: 100,
+                    },
+                  },
+                },
+                {
+                  name: 'options',
+                  label: 'editor.features.options',
+                  selector: {
+                    select: {
+                      multiple: true,
+                      mode: 'list' as const,
+                      options: [
+                        {
+                          label: 'editor.background.disable_background_image',
+                          value: 'disable',
+                        },
+                        {
+                          label: 'editor.icon.icon_background',
+                          value: 'icon_background',
+                        },
+                        {
+                          label: 'editor.icon.hide_icon_only',
+                          value: 'hide_icon_only',
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              name: 'styles',
+              label: 'editor.styles.css_styles',
+              type: 'expandable',
+              icon: 'mdi:spray',
+              schema: [
+                {
+                  name: 'card',
+                  label: 'editor.styles.card_styles',
+                  required: false,
+                  selector: { object: {} },
+                },
+                {
+                  name: 'stats',
+                  label: 'editor.styles.stats_styles',
+                  required: false,
+                  selector: { object: {} },
+                },
+                {
+                  name: 'title',
+                  label: 'editor.styles.title_styles',
+                  required: false,
+                  selector: { object: {} },
+                },
+              ],
+            },
+            {
+              name: 'icon_opacity_preset',
+              label: 'editor.styles.icon_opacity_preset',
+              required: false,
+              selector: {
+                select: {
+                  mode: 'dropdown' as const,
+                  options: [
+                    {
+                      label: 'editor.styles.icon_opacity_default',
+                      value: 'default',
+                    },
+                    {
+                      label: 'editor.styles.icon_opacity_medium',
+                      value: 'medium',
+                    },
+                    {
+                      label: 'editor.styles.icon_opacity_high_visibility',
+                      value: 'high_visibility',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        {
+          name: 'features',
+          label: 'editor.features.features',
+          type: 'expandable' as const,
+          flatten: true,
+          icon: 'mdi:list-box',
+          schema: [
+            {
+              name: 'features',
+              label: 'editor.features.features',
+              required: false,
+              selector: {
+                select: {
+                  multiple: true,
+                  mode: 'list' as const,
+                  options: [
+                    {
+                      label: 'editor.stats.hide_area_stats',
+                      value: 'hide_area_stats',
+                    },
+                    {
+                      label: 'editor.icon.hide_room_icon',
+                      value: 'hide_room_icon',
+                    },
+                    {
+                      label: 'editor.styles.skip_climate_styles',
+                      value: 'skip_climate_styles',
+                    },
+                    {
+                      label: 'editor.card.skip_card_background_styles',
+                      value: 'skip_entity_styles',
+                    },
+                    {
+                      label: 'editor.styles.skip_mold_styles',
+                      value: 'skip_mold_styles',
+                    },
+                    {
+                      label: 'editor.features.full_card_actions',
+                      value: 'full_card_actions',
                     },
                   ],
                 },

@@ -32,6 +32,10 @@ The card uses background images in this priority order:
 2. **image**: Custom image URL or path
 3. **area picture**: Area's picture attribute (automatic fallback)
 
+### Camera and Image Entity Refresh
+
+When `image_entity` points to a camera, the background now refreshes automatically, roughly every 10 seconds, the same way Home Assistant's built-in picture and area cards behave. You do not need to configure anything for this, it just works. Static images (`image`, or an area picture with no `image_entity` set) do not refresh on a timer since they only change when you update the card's configuration.
+
 ### Background Options Explained
 
 #### `disable`

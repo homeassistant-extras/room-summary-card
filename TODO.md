@@ -1,0 +1,4 @@
+- [ ] check the problem dialog not showing on mobile?
+- [ ] room state icon renders static image (on my main dash) - treat certain entiteis and use bg image??
+- [ ] some things seem leftover and not needed now (setting bg image, or opacity, or gradient on the room-state icon, etc.?)
+- [ ] camera entity as entity, use hui-image?

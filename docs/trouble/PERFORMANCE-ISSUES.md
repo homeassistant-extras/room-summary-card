@@ -23,6 +23,8 @@
 3. **Use static images**: Avoid dynamic image entities if performance is critical
 4. **Disable backgrounds**: Use `disable` option if performance is more important
 
+Camera and `image.*` backgrounds now use the same picture-updating behavior as Home Assistant's built-in cards, so there is no longer a performance reason to prefer static images over a dynamic `image_entity`. See [Camera and Image Entity Refresh](../configuration/BACKGROUND-CONFIGURATION.md#camera-and-image-entity-refresh).
+
 ### Frequent Updates
 
 **Symptoms**: Card updates too often, causing lag

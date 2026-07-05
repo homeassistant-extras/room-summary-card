@@ -144,16 +144,16 @@ const cardContainerStyles = css`
       var(--theme-border-color-frosted);
   }
 
-  :host([image]) ha-card::before {
-    background-image:
-      var(--user-background-image-overlay), var(--background-image);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-  }
-
-  ha-card:has(room-state-icon[room][icon-bg])::before {
-    background-image: none;
+  /* Background image layer: HA's hui-image rendered by room-background-image.
+     Sits above the ::before color overlay (tree order) and below .grid /
+     slider / card-overlay (also tree order). It carries the same opacity
+     and state filter the image had when it was painted on ::before. */
+  room-background-image {
+    opacity: var(
+      --user-opacity,
+      var(--opacity-theme, var(--background-opacity-card))
+    );
+    filter: var(--background-filter, none);
   }
 
   ha-card::before {

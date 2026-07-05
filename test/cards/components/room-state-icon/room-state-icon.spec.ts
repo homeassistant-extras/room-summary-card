@@ -281,6 +281,66 @@ describe('room-state-icon.ts', () => {
       expect(stylesToHostCssStub.calledWith({})).to.be.true;
     });
 
+    it('should nest room-background-image when this is the main room entity with icon_background and no entity picture', async () => {
+      element.isMainRoomEntity = true;
+      element.config = {
+        area: 'living_room',
+        background: {
+          options: ['icon_background'],
+          image: '/local/test.jpg',
+        },
+      } as Config;
+      element.hass = mockHass;
+
+      const el = await fixture(element.render() as TemplateResult);
+      expect(el.querySelector('room-background-image')).to.exist;
+    });
+
+    it('should not nest room-background-image when icon_background is not set', async () => {
+      element.isMainRoomEntity = true;
+      element.config = { area: 'living_room' } as Config;
+      element.hass = mockHass;
+
+      const el = await fixture(element.render() as TemplateResult);
+      expect(el.querySelector('room-background-image')).to.not.exist;
+    });
+
+    it('should not nest room-background-image when it is not the main room entity', async () => {
+      element.isMainRoomEntity = false;
+      element.config = {
+        area: 'living_room',
+        background: {
+          options: ['icon_background'],
+          image: '/local/test.jpg',
+        },
+      } as Config;
+      element.hass = mockHass;
+
+      const el = await fixture(element.render() as TemplateResult);
+      expect(el.querySelector('room-background-image')).to.not.exist;
+    });
+
+    it('should not nest room-background-image when the entity already has its own picture', async () => {
+      element.isMainRoomEntity = true;
+      element.config = {
+        area: 'living_room',
+        background: {
+          options: ['icon_background'],
+          image: '/local/test.jpg',
+        },
+      } as Config;
+      element.entity = {
+        config: mockEntityConfig,
+        state: createStateEntity('light', 'living_room', 'on', {
+          entity_picture: '/local/entity-picture.jpg',
+        }),
+      };
+      element.hass = mockHass;
+
+      const el = await fixture(element.render() as TemplateResult);
+      expect(el.querySelector('room-background-image')).to.not.exist;
+    });
+
     it('should call computeEntityIcon with correct parameters', () => {
       const thresholdResult = { icon: 'mdi:threshold-icon' };
       getThresholdResultStub.returns(thresholdResult);

@@ -27,6 +27,7 @@ import {
   type TemplateResult,
 } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import '../room-background-image/room-background-image';
 import './entity-label';
 import { styles } from './styles';
 
@@ -229,6 +230,12 @@ export class RoomStateIcon extends HassUpdateMixin(
         @action=${handleClickAction(this, this.entity)}
         .actionHandler=${actionHandler(this.entity)}
       >
+        ${this.isMainRoomEntity && this.iconBackground && !this._image
+          ? html`<room-background-image
+              .hass=${this._hass}
+              .config=${this._config}
+            ></room-background-image>`
+          : nothing}
         ${this._hideIconContent
           ? nothing
           : html`<ha-state-icon

@@ -6,7 +6,7 @@ import * as getSensorsModule from '@delegates/utils/hide-yo-sensors';
 import { getRoomProperties } from '@delegates/utils/setup-card';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { createState as s } from '@test/test-helpers';
-import * as getBackgroundImageModule from '@theme/image/get-pic';
+import * as backgroundToHuiConfigModule from '@theme/image/background-to-hui-config';
 import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { stub, type SinonStub } from 'sinon';
@@ -17,7 +17,7 @@ describe('setup-card.ts', () => {
   let getSensorsStub: SinonStub;
   let getRoomEntityStub: SinonStub;
   let climateThresholdsStub: SinonStub;
-  let getBackgroundImageUrlStub: SinonStub;
+  let backgroundToHuiConfigStub: SinonStub;
   let getOccupancyStateStub: SinonStub;
   let getSmokeStateStub: SinonStub;
   let getGasStateStub: SinonStub;
@@ -29,9 +29,9 @@ describe('setup-card.ts', () => {
     getSensorsStub = stub(getSensorsModule, 'getSensors');
     getRoomEntityStub = stub(getRoomEntityModule, 'getRoomEntity');
     climateThresholdsStub = stub(climateThresholdsModule, 'climateThresholds');
-    getBackgroundImageUrlStub = stub(
-      getBackgroundImageModule,
-      'getBackgroundImageUrl',
+    backgroundToHuiConfigStub = stub(
+      backgroundToHuiConfigModule,
+      'backgroundToHuiConfig',
     );
     getOccupancyStateStub = stub(occupancyModule, 'getOccupancyState');
     getSmokeStateStub = stub(occupancyModule, 'getSmokeState');
@@ -63,7 +63,10 @@ describe('setup-card.ts', () => {
       hotColor: undefined,
       humidColor: undefined,
     });
-    getBackgroundImageUrlStub.resolves('/local/bg.jpg');
+    backgroundToHuiConfigStub.returns({
+      type: 'image',
+      image: '/local/bg.jpg',
+    });
     getOccupancyStateStub.returns(false);
     getSmokeStateStub.returns(false);
     getGasStateStub.returns(false);
@@ -75,7 +78,7 @@ describe('setup-card.ts', () => {
     getSensorsStub.restore();
     getRoomEntityStub.restore();
     climateThresholdsStub.restore();
-    getBackgroundImageUrlStub.restore();
+    backgroundToHuiConfigStub.restore();
     getOccupancyStateStub.restore();
     getSmokeStateStub.restore();
     getGasStateStub.restore();
@@ -90,7 +93,7 @@ describe('setup-card.ts', () => {
       // Verify all functions were called with correct parameters
       expect(getRoomEntityStub.calledWith(mockHass, config)).to.be.true;
       expect(getSensorsStub.calledWith(mockHass, config)).to.be.true;
-      expect(getBackgroundImageUrlStub.calledWith(mockHass, config)).to.be.true;
+      expect(backgroundToHuiConfigStub.calledWith(mockHass, config)).to.be.true;
       expect(getOccupancyStateStub.calledWith(mockHass, config.occupancy)).to.be
         .true;
       expect(getSmokeStateStub.calledWith(mockHass, config.smoke)).to.be.true;
@@ -118,18 +121,18 @@ describe('setup-card.ts', () => {
         'thresholds',
         'flags',
       ]);
-      expect(result.image).to.be.a('promise');
+      expect(result.image).to.be.true;
       expect(result.flags.dark).to.be.true;
       expect(result.flags.alarm).to.be.undefined;
       expect(result.flags.frostedGlass).to.be.false;
     });
 
-    it('should return image as a promise that resolves to the image URL', async () => {
+    it('should return image as false when no background is configured', () => {
+      backgroundToHuiConfigStub.returns(undefined);
       const config: Config = { area: 'living_room' };
       const result = getRoomProperties(mockHass, config);
 
-      const imageUrl = await result.image;
-      expect(imageUrl).to.equal('/local/bg.jpg');
+      expect(result.image).to.be.false;
     });
 
     it('should use config area_name when provided instead of calling getArea', () => {

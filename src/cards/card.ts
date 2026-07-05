@@ -18,6 +18,7 @@ import {
 import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderRoomIcon } from '@/html/icon';
+import '@cards/components/room-background-image/room-background-image';
 import {
   actionHandler,
   handleClickAction,
@@ -109,7 +110,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
   private frostedGlass: boolean = false;
   @property({ type: String, reflect: true, attribute: 'icon-opacity-preset' })
   private iconOpacityPreset?: string;
-  private _image?: string | null;
 
   /**
    * Home Assistant instance
@@ -178,11 +178,7 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
     this._isActive = isActive;
     this._isIconActive = isIconActive;
     this.iconOpacityPreset = this._config.icon_opacity_preset;
-
-    void image.then((resolvedImage) => {
-      this.image = !!resolvedImage;
-      this._image = resolvedImage;
-    });
+    this.image = image;
 
     // Update states only if they've changed
     let shouldRender = false;
@@ -275,7 +271,7 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
       {
         isMainRoomEntity: true,
         isActive: this._isIconActive,
-        hasImage: !!this._image,
+        hasImage: this.image,
         alarm: this.alarm,
       },
     );
@@ -285,7 +281,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
       this._config,
       this._roomEntity,
       this.alarm,
-      this._image,
       this._isActive,
       this._thresholds,
       this._sensors?.ambientLightEntities,
@@ -301,8 +296,19 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
 
     const actions = mergeActions(this._roomEntity, this._config);
 
+    // The image lifecycle is delegated to HA via <room-background-image>;
+    // in icon_background mode the icon hosts the image instead.
+    const iconBackground =
+      this._config.background?.options?.includes('icon_background') ?? false;
+
     return html`
       <ha-card style="${cardStyle}">
+        ${this.image && !iconBackground
+          ? html`<room-background-image
+              .hass=${this._hass}
+              .config=${this._config}
+            ></room-background-image>`
+          : nothing}
         <div class="grid">
           ${info(
             this,

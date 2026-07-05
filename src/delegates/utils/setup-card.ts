@@ -11,7 +11,7 @@ import {
 import { getArea } from '@delegates/retrievers/area';
 import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
-import { getBackgroundImageUrl } from '@theme/image/get-pic';
+import { backgroundToHuiConfig } from '@theme/image/background-to-hui-config';
 import { getViewTheme } from '@theme/util/get-view-theme';
 import type { Config } from '@type/config';
 import type { EntityInformation, RoomInformation } from '@type/room';
@@ -23,7 +23,8 @@ export interface RoomProperties {
   roomInfo: RoomInformation;
   roomEntity: EntityInformation;
   sensors: SensorData;
-  image: Promise<string | undefined | null>;
+  /** Whether a background image is configured (rendering is delegated to HA) */
+  image: boolean;
   isActive: boolean;
   /** Whether the icon should be styled as active (excludes ambient lights) */
   isIconActive: boolean;
@@ -59,7 +60,7 @@ export const getRoomProperties = (
   const roomEntity = getRoomEntity(hass, config);
   const sensors = getSensors(hass, config);
   const thresholds = climateThresholds(config, sensors);
-  const image = getBackgroundImageUrl(hass, config);
+  const image = backgroundToHuiConfig(hass, config) !== undefined;
   const smokeDetected = getSmokeState(hass, config.smoke);
   const gasDetected = getGasState(hass, config.gas);
   const waterDetected = getWaterState(hass, config.water);
