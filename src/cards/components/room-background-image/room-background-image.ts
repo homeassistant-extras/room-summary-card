@@ -1,8 +1,9 @@
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import { backgroundToHuiConfig } from '@theme/image/background-to-hui-config';
 import type { Config } from '@type/config';
-import { css, html, LitElement, nothing, type TemplateResult } from 'lit';
+import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { styles } from './styles';
 
 /**
  * Room Background Image Component
@@ -45,46 +46,9 @@ export class RoomBackgroundImage extends HassConfigMixin<
   @property({ type: Boolean, reflect: true })
   icon = false;
 
-  static override readonly styles = css`
-    :host {
-      position: absolute;
-      inset: 0;
-      display: block;
-      overflow: hidden;
-      pointer-events: none;
-      border-radius: inherit;
-      opacity: var(
-        --user-opacity,
-        var(--opacity-theme, var(--background-opacity-card))
-      );
-      filter: var(--background-filter, none);
-    }
-
-    /* Icon placement: clipped to the icon circle, icon opacity/filter chain */
-    :host([icon]) {
-      border-radius: 50%;
-      opacity: var(--user-opacity, var(--background-opacity-icon));
-      filter: var(--icon-filter, none);
-    }
-
-    .color,
-    hui-image,
-    .overlay {
-      position: absolute;
-      inset: 0;
-    }
-
-    .color {
-      background-color: var(--background-color-card);
-    }
-
-    .overlay {
-      background-image: var(--user-background-image-overlay, none);
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: cover;
-    }
-  `;
+  static override get styles(): CSSResult {
+    return styles;
+  }
 
   protected override render(): TemplateResult | typeof nothing {
     const mapped =

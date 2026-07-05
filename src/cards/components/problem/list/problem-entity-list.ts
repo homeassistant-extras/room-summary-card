@@ -33,6 +33,13 @@ export class ProblemEntityList extends HassUpdateMixin(
   entities: string[] = [];
 
   /**
+   * Returns the component's styles
+   */
+  static override get styles(): CSSResult {
+    return styles;
+  }
+
+  /**
    * Renders the component
    */
   override render(): TemplateResult | typeof nothing {
@@ -64,9 +71,5 @@ export class ProblemEntityList extends HassUpdateMixin(
         )}
       </div>
     `;
-  }
-
-  static override get styles(): CSSResult {
-    return styles;
   }
 }
