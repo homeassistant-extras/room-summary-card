@@ -294,7 +294,9 @@ describe('card.ts', () => {
       expect(card['image']).to.be.true;
     });
 
-    it('should not render room-background-image on the card when icon_background is set', async () => {
+    it('should still render room-background-image on the card when icon_background is set', async () => {
+      // the component itself skips the image in icon_background mode and
+      // renders only the color layer that replaced ha-card::before
       card.setConfig({
         area: 'living_room',
         background: {
@@ -334,7 +336,7 @@ describe('card.ts', () => {
       card.hass = mockHass;
 
       const el = await fixture(card.render() as TemplateResult);
-      expect(el.querySelector('room-background-image')).to.not.exist;
+      expect(el.querySelector('room-background-image')).to.exist;
     });
 
     it('should render room-background-image on the card when image is set and not icon_background', async () => {

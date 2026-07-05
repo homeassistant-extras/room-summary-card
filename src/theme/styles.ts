@@ -144,33 +144,25 @@ const cardContainerStyles = css`
       var(--theme-border-color-frosted);
   }
 
-  /* Background image layer: HA's hui-image rendered by room-background-image.
-     Sits above the ::before color overlay (tree order) and below .grid /
-     slider / card-overlay (also tree order). It carries the same opacity
-     and state filter the image had when it was painted on ::before. */
-  room-background-image {
-    opacity: var(
-      --user-opacity,
-      var(--opacity-theme, var(--background-opacity-card))
-    );
-    filter: var(--background-filter, none);
-  }
+  /* The background layer (color + image + gradient + opacity/filter) is
+     owned entirely by room-background-image; it sits below .grid / slider /
+     card-overlay via tree order. Frosted glass keeps its own ::before
+     backdrop overlay below. */
 
-  ha-card::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: var(--background-color-card);
-    opacity: var(
-      --user-opacity,
-      var(--opacity-theme, var(--background-opacity-card))
-    );
-    filter: var(--background-filter, none);
+  :host([frosted-glass]) room-background-image {
+    /* The frosted ::before supplies the tint; don't double-paint the
+       theme color, and let the image show at full opacity under it. */
+    --background-color-card: transparent;
+    opacity: 1;
+    filter: none;
   }
 
   :host([frosted-glass]) ha-card::before {
     /* Mimic Frosted Glass card-mod overlay within our shadow DOM */
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
     background-color: var(--theme-glass-tint-frosted);
     opacity: 1;
     filter: none;

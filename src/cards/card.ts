@@ -271,7 +271,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
       {
         isMainRoomEntity: true,
         isActive: this._isIconActive,
-        hasImage: this.image,
         alarm: this.alarm,
       },
     );
@@ -296,19 +295,12 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
 
     const actions = mergeActions(this._roomEntity, this._config);
 
-    // The image lifecycle is delegated to HA via <room-background-image>;
-    // in icon_background mode the icon hosts the image instead.
-    const iconBackground =
-      this._config.background?.options?.includes('icon_background') ?? false;
-
     return html`
       <ha-card style="${cardStyle}">
-        ${this.image && !iconBackground
-          ? html`<room-background-image
-              .hass=${this._hass}
-              .config=${this._config}
-            ></room-background-image>`
-          : nothing}
+        <room-background-image
+          .hass=${this._hass}
+          .config=${this._config}
+        ></room-background-image>
         <div class="grid">
           ${info(
             this,

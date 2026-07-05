@@ -54,7 +54,7 @@ describe('room-background-image.ts', () => {
     Reflect.deleteProperty(globalThis, 'poatCardHelpers');
   });
 
-  it('renders nothing when hass is not set', async () => {
+  it('renders no image when hass is not set', async () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .config=${mockConfig}
@@ -64,7 +64,7 @@ describe('room-background-image.ts', () => {
     expect(el.shadowRoot?.querySelector('hui-image')).to.not.exist;
   });
 
-  it('renders nothing when no background is mapped', async () => {
+  it('renders only the color layer when no background is mapped', async () => {
     backgroundToHuiConfigStub.returns(undefined);
 
     const el = await fixture<RoomBackgroundImage>(
@@ -75,6 +75,95 @@ describe('room-background-image.ts', () => {
     );
 
     expect(el.shadowRoot?.querySelector('hui-image')).to.not.exist;
+    expect(el.shadowRoot?.querySelector('.overlay')).to.not.exist;
+    expect(el.shadowRoot?.querySelector('.color')).to.exist;
+  });
+
+  it('renders the color layer under the image in card placement', async () => {
+    backgroundToHuiConfigStub.returns({
+      type: 'image',
+      image: '/local/room.jpg',
+      tap_action: { action: 'none' },
+    });
+
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .config=${mockConfig}
+      ></room-background-image>`,
+    );
+
+    const color = el.shadowRoot?.querySelector('.color');
+    const huiImage = el.shadowRoot?.querySelector('hui-image');
+    expect(color).to.exist;
+    expect(huiImage).to.exist;
+    // color paints under the image
+    expect(
+      color!.compareDocumentPosition(huiImage!) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).to.not.equal(0);
+  });
+
+  it('skips the image at card level when icon_background is set', async () => {
+    backgroundToHuiConfigStub.returns({
+      type: 'image',
+      image: '/local/room.jpg',
+      tap_action: { action: 'none' },
+    });
+    mockConfig = {
+      area: 'living_room',
+      background: { options: ['icon_background'] },
+    };
+
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .config=${mockConfig}
+      ></room-background-image>`,
+    );
+
+    expect(el.shadowRoot?.querySelector('hui-image')).to.not.exist;
+    expect(el.shadowRoot?.querySelector('.overlay')).to.not.exist;
+    expect(el.shadowRoot?.querySelector('.color')).to.exist;
+  });
+
+  it('renders the image without a color layer in icon placement', async () => {
+    backgroundToHuiConfigStub.returns({
+      type: 'image',
+      image: '/local/room.jpg',
+      tap_action: { action: 'none' },
+    });
+    mockConfig = {
+      area: 'living_room',
+      background: { options: ['icon_background'] },
+    };
+
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        icon
+        .hass=${mockHass}
+        .config=${mockConfig}
+      ></room-background-image>`,
+    );
+
+    expect(el.shadowRoot?.querySelector('hui-image')).to.exist;
+    expect(el.shadowRoot?.querySelector('.overlay')).to.exist;
+    expect(el.shadowRoot?.querySelector('.color')).to.not.exist;
+  });
+
+  it('renders nothing in icon placement when no background is mapped', async () => {
+    backgroundToHuiConfigStub.returns(undefined);
+
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        icon
+        .hass=${mockHass}
+        .config=${mockConfig}
+      ></room-background-image>`,
+    );
+
+    expect(el.shadowRoot?.querySelector('hui-image')).to.not.exist;
+    expect(el.shadowRoot?.querySelector('.color')).to.not.exist;
   });
 
   it('renders hui-image with a plain image source', async () => {

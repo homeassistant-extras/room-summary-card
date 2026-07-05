@@ -48,22 +48,20 @@ export const styles = css`
     opacity: var(--user-opacity, var(--background-opacity-icon));
   }
 
-  /* Background image layer (HA hui-image via room-background-image),
-     clipped to the icon circle. Carries the same opacity/filter the image
-     had when it was painted on .icon::before. */
-  room-background-image {
-    border-radius: 50%;
-    opacity: var(--user-opacity, var(--background-opacity-icon));
-    filter: var(--icon-filter, none);
-  }
-
-  /* Icon background image styling */
+  /* Icon background image styling (entity_picture path via CSS vars) */
   :host([image]) .icon::before {
     background-image:
       var(--user-background-image-overlay), var(--background-image);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
+  }
+
+  /* icon_background mode: room-background-image paints image + gradient
+     itself (with the icon opacity/filter chain on its host), so don't
+     paint the gradient a second time on the color circle. */
+  :host([image]) .icon:has(> room-background-image)::before {
+    background-image: none;
   }
 
   /* State icon styling */

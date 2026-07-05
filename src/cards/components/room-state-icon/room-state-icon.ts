@@ -232,6 +232,7 @@ export class RoomStateIcon extends HassUpdateMixin(
       >
         ${this.isMainRoomEntity && this.iconBackground && !this._image
           ? html`<room-background-image
+              icon
               .hass=${this._hass}
               .config=${this._config}
             ></room-background-image>`

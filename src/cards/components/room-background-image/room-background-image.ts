@@ -2,14 +2,23 @@ import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-m
 import { backgroundToHuiConfig } from '@theme/image/background-to-hui-config';
 import type { Config } from '@type/config';
 import { css, html, LitElement, nothing, type TemplateResult } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  * Room Background Image Component
  *
- * Renders the card (or icon) background image by delegating the image
- * lifecycle to HA's `hui-image`: media-source resolution, `image.*` entity
- * URLs, camera thumbnails with periodic refresh, and load/error states.
+ * Owns the card (or icon) background stack in a single layer:
+ *
+ * 1. `.color` — the theme background color (card placement only; replaces
+ *    the old `ha-card::before` color overlay)
+ * 2. `hui-image` — the image, delegated to HA: media-source resolution,
+ *    `image.*` entity URLs, camera thumbnails with periodic refresh, and
+ *    load/error states
+ * 3. `.overlay` — the user gradient (`--user-background-image-overlay`)
+ *
+ * The host applies one opacity/filter to the composite, so the image paints
+ * over the color inside the layer (color never bleeds through the image) —
+ * the same result the single `::before` used to produce.
  *
  * `hui-image` is rendered directly in this component's template (not via
  * `hui-image-element`) so it lives in our shadow root where we can size it:
@@ -19,17 +28,23 @@ import { customElement } from 'lit/decorators.js';
  * previously loaded image (its ratio mode repaints from a source captured
  * during load events and goes blank between captures).
  *
- * This component only owns:
- * - mapping the card `background` config via `backgroundToHuiConfig`
- * - the fill sizing and the user gradient overlay
- *   (`--user-background-image-overlay`), painted above the image inside
- *   this layer so host opacity applies to both
+ * Placement is signalled by the `icon` attribute (set by `room-state-icon`):
+ * icon placement clips to the icon circle, uses the icon opacity/filter
+ * chain, and skips the color layer (`.icon::before` still owns the circle
+ * color and alarm animations). Card placement skips the image when
+ * `icon_background` routes it to the icon, but keeps the color layer.
  */
 @customElement('room-background-image')
 export class RoomBackgroundImage extends HassConfigMixin<
   typeof LitElement,
   Config
 >(LitElement) {
+  /**
+   * Whether this instance backs the room icon instead of the whole card.
+   */
+  @property({ type: Boolean, reflect: true })
+  icon = false;
+
   static override readonly styles = css`
     :host {
       position: absolute;
@@ -38,12 +53,29 @@ export class RoomBackgroundImage extends HassConfigMixin<
       overflow: hidden;
       pointer-events: none;
       border-radius: inherit;
+      opacity: var(
+        --user-opacity,
+        var(--opacity-theme, var(--background-opacity-card))
+      );
+      filter: var(--background-filter, none);
     }
 
+    /* Icon placement: clipped to the icon circle, icon opacity/filter chain */
+    :host([icon]) {
+      border-radius: 50%;
+      opacity: var(--user-opacity, var(--background-opacity-icon));
+      filter: var(--icon-filter, none);
+    }
+
+    .color,
     hui-image,
     .overlay {
       position: absolute;
       inset: 0;
+    }
+
+    .color {
+      background-color: var(--background-color-card);
     }
 
     .overlay {
@@ -55,25 +87,39 @@ export class RoomBackgroundImage extends HassConfigMixin<
   `;
 
   protected override render(): TemplateResult | typeof nothing {
-    const mapped = backgroundToHuiConfig(this.hass, this.config);
-    if (!mapped) return nothing;
+    const mapped =
+      this.hass && this.config
+        ? backgroundToHuiConfig(this.hass, this.config)
+        : undefined;
+
+    // At card level the image is skipped when the icon owns it
+    const iconBackground =
+      this.config?.background?.options?.includes('icon_background') ?? false;
+    const showImage = mapped !== undefined && (this.icon || !iconBackground);
+
+    if (this.icon && !showImage) return nothing;
 
     // hui-image resolves media-source content ids itself
     const image =
-      typeof mapped.image === 'object'
+      typeof mapped?.image === 'object'
         ? mapped.image.media_content_id
-        : mapped.image;
+        : mapped?.image;
 
     return html`
-      <hui-image
-        .hass=${this.hass}
-        .entity=${mapped.image_entity}
-        .image=${image}
-        .cameraImage=${mapped.camera_image}
-        .cameraView=${mapped.camera_view}
-        fit-mode="cover"
-      ></hui-image>
-      <div class="overlay"></div>
+      ${this.icon ? nothing : html`<div class="color"></div>`}
+      ${showImage && mapped
+        ? html`
+            <hui-image
+              .hass=${this.hass}
+              .entity=${mapped.image_entity}
+              .image=${image}
+              .cameraImage=${mapped.camera_image}
+              .cameraView=${mapped.camera_view}
+              fit-mode="cover"
+            ></hui-image>
+            <div class="overlay"></div>
+          `
+        : nothing}
     `;
   }
 }

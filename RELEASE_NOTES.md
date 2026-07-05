@@ -1,8 +1,8 @@
-# Camera Feeds Update & Backgrounds Revamped :hamster::cake:
+Camera Feeds Update & Backgrounds Revamped 🐹🍰
 
-## Smoother, More Reliable Backgrounds
+# Smoother, More Reliable Backgrounds
 
-### 🖼️ Background Images No Longer Flicker
+## 🖼️ Background Images No Longer Flicker
 
 Background images (including camera feeds, `image.*` entities, and photos) are now handled the same way Home Assistant's own picture and area cards handle them. This should fix a flicker some users saw when the card updated, and camera backgrounds now refresh automatically about every 10 seconds instead of only loading once.
 
@@ -17,12 +17,16 @@ Benefits
 Things I tried not to break... (so many features over the years)
 
 - Backgrounds themselves... my before & after dashboards looked solid
+- Opacity
+- Gradient
+- Icon Background mode
+- other stuff
 
 Things that will probably break
 
 - Custom or unsupported CSS selectors you're using
 - `card_mod` that was doing things to backgrounds
 
-### 📸 Cameras Can Now Be Selected in the Editor
+## 📸 Cameras Can Now Be Selected in the Editor
 
 The visual editor's background image entity picker now includes camera entities, so you no longer need to type the entity ID by hand when using a camera as a background.
