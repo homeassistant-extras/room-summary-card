@@ -36,7 +36,11 @@ export class RoomSummarySubElementEditor extends LitElement {
 
   @state() private _guiMode = true;
 
-  protected override render(): TemplateResult {
+  /**
+   * renders the lit element card
+   * @returns {TemplateResult} The rendered HTML template
+   */
+  override render(): TemplateResult {
     return html`
       <div class="header">
         <div class="back-title">

@@ -25,6 +25,13 @@ export const styles: CSSResult = css`
     filter: var(--icon-filter, none);
   }
 
+  /* Card placement when the icon owns the background: --user-opacity is set
+     inline on ha-card (for the icon) and inherits here, so ignore it and use
+     the theme opacity for the card color layer instead. */
+  :host([icon-bg]:not([icon])) {
+    opacity: var(--opacity-theme, var(--background-opacity-card));
+  }
+
   .color,
   hui-image,
   .overlay {

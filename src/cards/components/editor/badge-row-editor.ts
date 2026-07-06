@@ -76,7 +76,11 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
     fireEvent(this, 'badges-value-changed', { value: newBadges });
   }
 
-  protected override render(): TemplateResult | typeof nothing {
+  /**
+   * renders the lit element card
+   * @returns {TemplateResult} The rendered HTML template
+   */
+  override render(): TemplateResult | typeof nothing {
     if (!this.hass) {
       return nothing;
     }

@@ -52,11 +52,29 @@ export class RoomBackgroundImage extends HassConfigMixin<
   @property({ type: Boolean, reflect: true })
   icon = false;
 
+  /**
+   * Whether `icon_background` routes the image (and its opacity) to the icon.
+   *
+   * Reflected so the card-level host can drop `--user-opacity` in CSS: that
+   * variable is set inline on `ha-card` and inherits here, so a stylesheet
+   * rule on `ha-card` can't override it (inline wins). We instead ignore it
+   * at this host when the icon owns the background.
+   */
+  @property({ type: Boolean, reflect: true, attribute: 'icon-bg' })
+  iconBg = false;
+
+  /**
+   * Returns the component's styles
+   */
   static override get styles(): CSSResult {
     return styles;
   }
 
-  protected override render(): TemplateResult | typeof nothing {
+  /**
+   * renders the lit element card
+   * @returns {TemplateResult} The rendered HTML template
+   */
+  override render(): TemplateResult | typeof nothing {
     const mapped =
       this.hass && this.config
         ? backgroundToHuiConfig(this.hass, this.config)
@@ -65,6 +83,7 @@ export class RoomBackgroundImage extends HassConfigMixin<
     // At card level the image is skipped when the icon owns it
     const options = this.config?.background?.options;
     const iconBackground = options?.includes('icon_background') ?? false;
+    this.iconBg = iconBackground;
     const showImage = mapped !== undefined && (this.icon || !iconBackground);
     const showGradient = showImage && !options?.includes('hide_gradient');
 
