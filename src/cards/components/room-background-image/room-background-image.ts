@@ -1,7 +1,13 @@
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import { backgroundToHuiConfig } from '@theme/image/background-to-hui-config';
 import type { Config } from '@type/config';
-import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
+import {
+  type CSSResult,
+  html,
+  LitElement,
+  nothing,
+  type TemplateResult,
+} from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { styles } from './styles';
 
@@ -57,9 +63,10 @@ export class RoomBackgroundImage extends HassConfigMixin<
         : undefined;
 
     // At card level the image is skipped when the icon owns it
-    const iconBackground =
-      this.config?.background?.options?.includes('icon_background') ?? false;
+    const options = this.config?.background?.options;
+    const iconBackground = options?.includes('icon_background') ?? false;
     const showImage = mapped !== undefined && (this.icon || !iconBackground);
+    const showGradient = showImage && !options?.includes('hide_gradient');
 
     if (this.icon && !showImage) return nothing;
 
@@ -69,9 +76,10 @@ export class RoomBackgroundImage extends HassConfigMixin<
         ? mapped.image.media_content_id
         : mapped?.image;
 
-    return html`
-      ${this.icon ? nothing : html`<div class="color"></div>`}
-      ${showImage && mapped
+    const gradient = showGradient ? html`<div class="overlay"></div>` : nothing;
+    const colorLayer = this.icon ? nothing : html`<div class="color"></div>`;
+    const imageLayer =
+      showImage && mapped
         ? html`
             <hui-image
               .hass=${this.hass}
@@ -81,10 +89,11 @@ export class RoomBackgroundImage extends HassConfigMixin<
               .cameraView=${mapped.camera_view}
               fit-mode="cover"
             ></hui-image>
-            <div class="overlay"></div>
+            ${gradient}
           `
-        : nothing}
-    `;
+        : nothing;
+
+    return html`${colorLayer}${imageLayer}`;
   }
 }
 

@@ -24,7 +24,8 @@
       "disable_background_image": "Disable Background Image",
       "multi_light_background": "Multi-Light Background",
       "light_entities": "Light Entities",
-      "multi_light_background_info": "Configure which light entities should be tracked for the multi-light background feature. When enabled, the card background and room icon will light up when any of these lights are on. The card automatically discovers all lights in the area if no entities are specified."
+      "multi_light_background_info": "Configure which light entities should be tracked for the multi-light background feature. When enabled, the card background and room icon will light up when any of these lights are on. The card automatically discovers all lights in the area if no entities are specified.",
+      "hide_gradient": "Hide Gradient Overlay"
     },
     "entity": {
       "entity_id": "Entity",

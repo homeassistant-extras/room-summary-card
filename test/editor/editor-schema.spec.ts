@@ -785,6 +785,10 @@ describe('editor-schema.ts', () => {
                           label: 'editor.icon.hide_icon_only',
                           value: 'hide_icon_only',
                         },
+                        {
+                          label: 'editor.background.hide_gradient',
+                          value: 'hide_gradient',
+                        },
                       ],
                     },
                   },

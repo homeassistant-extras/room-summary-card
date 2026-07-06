@@ -130,7 +130,12 @@ export interface Config {
     opacity?: number | string;
 
     /** Background options */
-    options?: ('disable' | 'icon_background' | 'hide_icon_only')[];
+    options?: (
+      | 'disable'
+      | 'icon_background'
+      | 'hide_icon_only'
+      | 'hide_gradient'
+    )[];
   };
 
   /** Light entities to track for multi-light background (overrides automatic discovery) */

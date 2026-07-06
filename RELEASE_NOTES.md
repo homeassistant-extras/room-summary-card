@@ -12,7 +12,7 @@ Benefits
 
 - No random flickers (maybe the loat at first only)
 - Less logic during frequent hass updates
-- Camera isn't loading feed while off screen for performance
+- Camera doesn't load off screen for performance (note, the HA engine will show a temporary spinner when scrolling to the card from off screen)
 
 Things I tried not to break... (so many features over the years)
 
@@ -26,6 +26,17 @@ Things that will probably break
 
 - Custom or unsupported CSS selectors you're using
 - `card_mod` that was doing things to backgrounds
+
+## 🌅 New Option: Hide the Gradient Overlay
+
+By default the card paints a dark gradient over background images to keep the room name readable. If you'd rather see your image untouched, add `hide_gradient` to the background options (also available in the visual editor):
+
+```yaml
+background:
+  image: /local/images/living-room.jpg
+  options:
+    - hide_gradient
+```
 
 ## 📸 Cameras Can Now Be Selected in the Editor
 

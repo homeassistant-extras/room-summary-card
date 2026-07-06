@@ -107,6 +107,10 @@ const schemeStyles = (hass: HomeAssistant): LocalizedHaFormSchema => {
                     label: localize(hass, 'editor.icon.hide_icon_only'),
                     value: 'hide_icon_only',
                   },
+                  {
+                    label: localize(hass, 'editor.background.hide_gradient'),
+                    value: 'hide_gradient',
+                  },
                 ],
               },
             },

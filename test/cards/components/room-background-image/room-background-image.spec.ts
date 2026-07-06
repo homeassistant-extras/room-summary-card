@@ -151,6 +151,51 @@ describe('room-background-image.ts', () => {
     expect(el.shadowRoot?.querySelector('.color')).to.not.exist;
   });
 
+  it('skips the gradient overlay when hide_gradient is set', async () => {
+    backgroundToHuiConfigStub.returns({
+      type: 'image',
+      image: '/local/room.jpg',
+      tap_action: { action: 'none' },
+    });
+    mockConfig = {
+      area: 'living_room',
+      background: { options: ['hide_gradient'] },
+    };
+
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .config=${mockConfig}
+      ></room-background-image>`,
+    );
+
+    expect(el.shadowRoot?.querySelector('hui-image')).to.exist;
+    expect(el.shadowRoot?.querySelector('.overlay')).to.not.exist;
+  });
+
+  it('skips the gradient overlay in icon placement when hide_gradient is set', async () => {
+    backgroundToHuiConfigStub.returns({
+      type: 'image',
+      image: '/local/room.jpg',
+      tap_action: { action: 'none' },
+    });
+    mockConfig = {
+      area: 'living_room',
+      background: { options: ['icon_background', 'hide_gradient'] },
+    };
+
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        icon
+        .hass=${mockHass}
+        .config=${mockConfig}
+      ></room-background-image>`,
+    );
+
+    expect(el.shadowRoot?.querySelector('hui-image')).to.exist;
+    expect(el.shadowRoot?.querySelector('.overlay')).to.not.exist;
+  });
+
   it('renders nothing in icon placement when no background is mapped', async () => {
     backgroundToHuiConfigStub.returns(undefined);
 

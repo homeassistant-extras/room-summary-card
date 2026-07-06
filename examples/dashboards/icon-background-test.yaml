@@ -1,7 +1,8 @@
 # Background / icon_background test dashboard
 #
 # Exercises every combination of `background.image`, `background.image_entity`,
-# `background.options` ('disable' | 'icon_background' | 'hide_icon_only'),
+# `background.options`
+# ('disable' | 'icon_background' | 'hide_icon_only' | 'hide_gradient'),
 # `background.opacity`, and the related feature flags — each card's title
 # (area_name) says what it is testing.
 #
@@ -64,6 +65,17 @@ views:
             area: shed
             area_name: 'BG: area picture fallback'
 
+          # hide_gradient — same URL card but WITHOUT the dark gradient
+          # overlay. Expect: image top edge is not darkened; compare
+          # against 'BG: url'.
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'BG: url + hide_gradient'
+            background:
+              image: https://picsum.photos/id/1015/600/400
+              options:
+                - hide_gradient
+
           # 'disable' wins over everything — no image anywhere,
           # even with an image_entity configured and an area picture.
           - type: custom:room-summary-card
@@ -122,6 +134,16 @@ views:
               options:
                 - icon_background
                 - hide_icon_only
+
+          # Icon image without the gradient overlay on the circle.
+          - type: custom:room-summary-card
+            area: guest_bath
+            area_name: 'ICON: + hide_gradient'
+            background:
+              image: https://picsum.photos/id/1025/600/400
+              options:
+                - icon_background
+                - hide_gradient
 
           # icon_background with NO image/image_entity — area picture
           # fallback should land on the icon, not the card.
@@ -192,9 +214,9 @@ views:
               options:
                 - icon_background
 
-          # Room entity with its own entity_picture (camera) PLUS
-          # icon_background — the entity picture should win on the icon
-          # and the glyph auto-hides.
+          # Room entity that is a camera PLUS icon_background — the live
+          # camera feed (hui-image, ~10s refresh) wins on the icon over the
+          # configured background image, and the glyph auto-hides.
           - type: custom:room-summary-card
             area: patio
             area_name: 'EDGE: camera entity overrides'
