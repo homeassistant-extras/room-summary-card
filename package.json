@@ -53,10 +53,10 @@
     "@types/chai": "^5.2.3",
     "@types/jsdom": "^28.0.3",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.1.1",
     "@types/sinon": "^22.0.0",
     "chai": "^6.2.2",
-    "eslint": "^10.6.0",
+    "eslint": "^10.7.0",
     "eslint-plugin-lit": "^2.3.1",
     "eslint-plugin-wc": "^3.1.0",
     "globals": "^17.7.0",
@@ -64,13 +64,13 @@
     "mocha": "^11.7.6",
     "nyc": "^18.0.0",
     "parcel": "^2.16.4",
-    "prettier": "3.9.4",
+    "prettier": "3.9.5",
     "prettier-plugin-organize-imports": "^4.3.0",
     "sinon": "^22.0.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.62.1"
+    "typescript-eslint": "^8.63.0"
   },
   "dependencies": {
     "@homeassistant-extras/hass": "^0.6.0",
