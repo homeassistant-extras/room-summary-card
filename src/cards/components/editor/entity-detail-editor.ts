@@ -326,6 +326,10 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
     },
   );
 
+  /**
+   * renders the lit element card
+   * @returns {TemplateResult} The rendered HTML template
+   */
   override render(): TemplateResult | typeof nothing {
     if (!this.hass || !this._config) {
       return nothing;
