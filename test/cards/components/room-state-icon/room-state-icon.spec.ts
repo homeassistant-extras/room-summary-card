@@ -127,6 +127,7 @@ describe('room-state-icon.ts', () => {
       states: {
         'light.living_room': mockEntityState,
       },
+      areas: {},
       formatEntityState: () => 'formatted state',
     } as any as HomeAssistant;
 

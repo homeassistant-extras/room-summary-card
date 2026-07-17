@@ -71,8 +71,6 @@ export interface RoomIconOptions {
   isMainRoomEntity?: boolean;
   /** Whether the room is considered active (for styling) */
   isActive?: boolean;
-  /** Whether the room has a background image */
-  hasImage?: boolean;
   /** Current alarm state: 'smoke', 'gas', 'water', 'occupied', or undefined */
   alarm?: 'smoke' | 'gas' | 'water' | 'occupied';
 }
@@ -94,7 +92,7 @@ export const renderRoomIcon = (
 ): TemplateResult | typeof nothing => {
   const { state } = entity;
   const stickyEntitiesEnabled = config.features?.includes('sticky_entities');
-  const { isMainRoomEntity = false, isActive, hasImage, alarm } = options;
+  const { isMainRoomEntity = false, isActive, alarm } = options;
 
   // If state is undefined and sticky entities is not enabled, return nothing
   if (!state && !stickyEntitiesEnabled) return nothing;
@@ -109,7 +107,6 @@ export const renderRoomIcon = (
   return html`<room-state-icon
     .isMainRoomEntity=${isMainRoomEntity}
     .isActive=${isActive}
-    .image=${hasImage}
     .alarm=${alarm}
     .entity=${entity}
     .config=${config}

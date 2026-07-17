@@ -37,23 +37,35 @@ export const styles = css`
     filter: var(--background-filter, none);
   }
 
-  /* Image with the user gradient composited on top. One declaration on
-     purpose: user overrides of --user-background-image-overlay keep
-     working, and \`none\` values compose instead of hiding the image. */
+  /* Image layer: hui-image fills the box (object-fit: cover inside),
+     with the user gradient composited on top via ::after. Opacity and
+     filter apply to the wrapper so image + gradient fade as one, matching
+     the old single-declaration CSS background. */
   .image {
     position: absolute;
     inset: 0;
-    background-image:
-      var(--user-background-image-overlay, var(--default-overlay)),
-      var(--background-image);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
+    overflow: hidden;
     opacity: var(
       --user-opacity,
       var(--opacity-theme, var(--background-opacity-card))
     );
     filter: var(--background-filter, none);
+  }
+
+  .image hui-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(
+      --user-background-image-overlay,
+      var(--default-overlay)
+    );
   }
 
   /* Icon placement: the fill circle. Alarm state is routed in by

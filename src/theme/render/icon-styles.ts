@@ -39,7 +39,6 @@ export const renderEntityIconStyles = (
     '--background-color-icon': styleData.cssColor,
     '--background-opacity-icon': opacity,
     '--state-color-icon-theme': styleData.themeOverride,
-    '--background-image': image ? `url(${image})` : undefined,
     '--icon-filter': filter,
   });
 };

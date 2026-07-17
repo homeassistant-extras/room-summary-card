@@ -33,6 +33,7 @@ import { SubscribeEntityStateMixin } from '@homeassistant-extras/hass/mixins/sub
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { info } from '@html/info';
 import { renderHorizontalSlider } from '@html/render-horizontal-slider';
+import { getHuiImageConfig } from '@theme/image/background-to-hui-config';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { styles } from '@theme/styles';
 import type { Config } from '@type/config';
@@ -110,7 +111,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
   private frostedGlass: boolean = false;
   @property({ type: String, reflect: true, attribute: 'icon-opacity-preset' })
   private iconOpacityPreset?: string;
-  private _image?: string | null;
 
   /**
    * Home Assistant instance
@@ -166,7 +166,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
       roomInfo,
       roomEntity,
       sensors,
-      image,
       isActive,
       isIconActive,
       thresholds,
@@ -179,11 +178,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
     this._isActive = isActive;
     this._isIconActive = isIconActive;
     this.iconOpacityPreset = this._config.icon_opacity_preset;
-
-    void image.then((resolvedImage) => {
-      this.image = !!resolvedImage;
-      this._image = resolvedImage;
-    });
 
     // Update states only if they've changed
     let shouldRender = false;
@@ -260,6 +254,16 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
   }
 
   /**
+   * Derives the `[image]` host attribute (drives card-level dimming CSS)
+   * once per render cycle instead of on every `set hass` call.
+   */
+  protected override willUpdate(): void {
+    if (this._hass && this._config) {
+      this.image = !!getHuiImageConfig(this._hass, this._config);
+    }
+  }
+
+  /**
    * renders the lit element card
    * @returns {TemplateResult} The rendered HTML template
    */
@@ -276,7 +280,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
       {
         isMainRoomEntity: true,
         isActive: this._isIconActive,
-        hasImage: !!this._image,
         alarm: this.alarm,
       },
     );
@@ -286,7 +289,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
       this._config,
       this._roomEntity,
       this.alarm,
-      this._image,
       this._isActive,
       this._thresholds,
       this._sensors?.ambientLightEntities,

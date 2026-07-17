@@ -45,7 +45,8 @@ export const describeHa = process.env.PLAYWRIGHT_HA_STORAGE_STATE
 
 /**
  * Asserts a `room-state-icon` shows `entity_picture` styling: reflected `image`,
- * `--background-opacity-icon` resolved to 1, and a `::before` background-image `url(...)`.
+ * `--background-opacity-icon` resolved to 1, and a `hui-image` rendering the
+ * picture inside the icon's `room-background-image` layer.
  */
 export async function expectEntityIconPictureBackground(
   roomStateIcon: Locator,
@@ -58,17 +59,11 @@ export async function expectEntityIconPictureBackground(
         const raw = getComputedStyle(el)
           .getPropertyValue('--background-opacity-icon')
           .trim();
-        const n = Number.parseFloat(raw);
-        if (!Number.isNaN(n)) return n;
-        return Number.parseFloat(getComputedStyle(el, '::before').opacity);
+        return Number.parseFloat(raw);
       });
     })
     .toBeCloseTo(1, 5);
-  await expect
-    .poll(async () => {
-      return await icon.evaluate(
-        (el: HTMLElement) => getComputedStyle(el, '::before').backgroundImage,
-      );
-    })
-    .toMatch(/url\(/);
+  // hui-image loads the picture asynchronously; poll for the rendered img src
+  const img = icon.locator('room-background-image .image hui-image img');
+  await expect(img).toHaveAttribute('src', /./);
 }

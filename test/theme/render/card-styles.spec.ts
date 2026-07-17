@@ -103,7 +103,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         undefined,
-        undefined,
         false,
         undefined,
         [],
@@ -118,7 +117,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--background-filter': '',
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
@@ -130,7 +128,6 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        undefined,
         undefined,
         false,
       );
@@ -151,13 +148,12 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--background-filter': '',
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
     });
 
-    it('should handle background image and active state in dark mode', () => {
+    it('should handle active state in dark mode', () => {
       mockHass.themes.darkMode = true;
       stateActiveStub.returns(true);
       stateColorCssStub.returns('var(--active-color)');
@@ -171,13 +167,11 @@ describe('card-styles.ts', () => {
       };
 
       const entity = createEntityInfo('light.test', 'on');
-      const image = '/local/bedroom.jpg';
       const styles = renderCardStyles(
         mockHass,
         configWithStyles,
         entity,
         undefined,
-        image,
         true,
       );
 
@@ -189,7 +183,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': 'var(--active-color)',
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': 'url(/local/bedroom.jpg)',
           '--background-filter': '',
           '--background-opacity-card': '0.5',
           'border-radius': '8px',
@@ -216,7 +209,6 @@ describe('card-styles.ts', () => {
         configWithSkipStyles,
         entity,
         undefined,
-        undefined,
         true,
       );
 
@@ -228,7 +220,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined, // Should be undefined due to active being false
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-active)',
         }),
@@ -250,7 +241,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         'occupied',
-        undefined,
         false,
       );
 
@@ -269,7 +259,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...occupancyStyles,
@@ -293,7 +282,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         'smoke',
-        undefined,
         false,
       );
 
@@ -302,7 +290,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...smokeStyles,
@@ -323,7 +310,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         'gas',
-        undefined,
         false,
       );
 
@@ -332,7 +318,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...gasStyles,
@@ -356,7 +341,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         'water',
-        undefined,
         false,
       );
 
@@ -365,7 +349,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...waterStyles,
@@ -387,7 +370,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         undefined,
-        undefined,
         false,
       );
 
@@ -404,7 +386,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'rgb(255, 0, 0)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
@@ -417,7 +398,6 @@ describe('card-styles.ts', () => {
         mockHass,
         mockConfig,
         entity,
-        undefined,
         undefined,
         undefined as any,
       );
@@ -434,7 +414,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
@@ -450,7 +429,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         undefined,
-        undefined,
         false,
       );
 
@@ -459,7 +437,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': 'brightness(69%)',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
@@ -475,7 +452,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         undefined,
-        undefined,
         false,
       );
 
@@ -484,7 +460,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
@@ -505,7 +480,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         undefined,
-        undefined,
         false,
         thresholds,
       );
@@ -514,7 +488,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
           '--threshold-hot-color': 'blue',
@@ -536,7 +509,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         undefined,
-        undefined,
         false,
         thresholds,
       );
@@ -545,7 +517,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
           '--threshold-humid-color': 'purple',
@@ -567,7 +538,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         undefined,
-        undefined,
         false,
         thresholds,
       );
@@ -576,7 +546,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
           '--threshold-hot-color': 'red',
@@ -599,7 +568,6 @@ describe('card-styles.ts', () => {
         mockConfig,
         entity,
         undefined,
-        undefined,
         false,
         thresholds,
       );
@@ -608,7 +576,6 @@ describe('card-styles.ts', () => {
         styleMap({
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--background-filter': '',
           '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
@@ -638,7 +605,6 @@ describe('card-styles.ts', () => {
           mockConfig,
           entity,
           undefined,
-          undefined,
           false,
           undefined,
           [ambientLight],
@@ -651,7 +617,6 @@ describe('card-styles.ts', () => {
           styleMap({
             '--background-color-card': undefined,
             '--state-color-card-theme': 'rgb(255, 200, 100)',
-            '--background-image': undefined,
             '--background-filter': '',
             '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
@@ -668,7 +633,6 @@ describe('card-styles.ts', () => {
           mockHass,
           mockConfig,
           entity,
-          undefined,
           undefined,
           false,
           undefined,
@@ -688,7 +652,6 @@ describe('card-styles.ts', () => {
           styleMap({
             '--background-color-card': undefined,
             '--state-color-card-theme': 'var(--theme-override)',
-            '--background-image': undefined,
             '--background-filter': '',
             '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
@@ -698,14 +661,7 @@ describe('card-styles.ts', () => {
       it('should fall back to entity theme color when ambientLightEntities is undefined', () => {
         const entity = createEntityInfo('light.main');
 
-        renderCardStyles(
-          mockHass,
-          mockConfig,
-          entity,
-          undefined,
-          undefined,
-          false,
-        );
+        renderCardStyles(mockHass, mockConfig, entity, undefined, false);
 
         expect(getRgbColorStub.called).to.be.false;
         expect(
@@ -725,7 +681,6 @@ describe('card-styles.ts', () => {
           mockHass,
           mockConfig,
           entity,
-          undefined,
           undefined,
           false,
           undefined,
@@ -755,7 +710,6 @@ describe('card-styles.ts', () => {
           mockConfig,
           entity,
           undefined,
-          undefined,
           false,
           undefined,
           [ambientLight],
@@ -775,7 +729,6 @@ describe('card-styles.ts', () => {
           styleMap({
             '--background-color-card': undefined,
             '--state-color-card-theme': 'var(--theme-override)',
-            '--background-image': undefined,
             '--background-filter': '',
             '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
@@ -804,7 +757,6 @@ describe('card-styles.ts', () => {
           mockConfig,
           entity,
           undefined,
-          undefined,
           false,
           undefined,
           [ambientLight],
@@ -819,7 +771,6 @@ describe('card-styles.ts', () => {
           styleMap({
             '--background-color-card': undefined,
             '--state-color-card-theme': 'rgb(100, 150, 200)',
-            '--background-image': undefined,
             '--background-filter': 'brightness(80%)',
             '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
@@ -848,7 +799,6 @@ describe('card-styles.ts', () => {
           mockConfig,
           entity,
           undefined,
-          undefined,
           false,
           undefined,
           [ambientLight1, ambientLight2, ambientLight3],
@@ -863,7 +813,6 @@ describe('card-styles.ts', () => {
           styleMap({
             '--background-color-card': undefined,
             '--state-color-card-theme': 'rgb(200, 100, 50)',
-            '--background-image': undefined,
             '--background-filter': '',
             '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),

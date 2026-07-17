@@ -30,7 +30,6 @@ import { getRgbColor } from '../get-rgb';
  * @param config - The configuration object for the card.
  * @param entity - The entity information, including its current state.
  * @param alarm - Current alarm state: 'smoke', 'gas', 'water', 'occupied', or undefined.
- * @param image - (Optional) A URL or path to a background image for the card.
  * @param isActive - Whether the room is considered active (for styling).
  * @param thresholds - Climate threshold results containing hot/humid flags and custom colors.
  * @param ambientLightEntities - (Optional) Array of ambient light entity states for background color.
@@ -42,7 +41,6 @@ export const renderCardStyles = (
   config: Config,
   entity: EntityInformation,
   alarm?: 'smoke' | 'gas' | 'water' | 'occupied',
-  image?: string | null,
   isActive: boolean = false,
   thresholds?: ClimateThresholds,
   ambientLightEntities?: EntityState[],
@@ -113,7 +111,6 @@ export const renderCardStyles = (
   return styleMap({
     '--background-color-card': backgroundColorCard,
     '--state-color-card-theme': themeOverride,
-    '--background-image': image ? `url(${image})` : undefined,
     '--background-filter': filter,
     ...opacity,
     ...alarmVars,

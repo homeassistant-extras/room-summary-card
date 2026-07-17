@@ -63,7 +63,6 @@ describe('card.ts', () => {
         ambientLightEntities: [],
         thresholdSensors: [],
       },
-      image: Promise.resolve(null),
       isActive: true,
       isIconActive: true,
       thresholds: {
@@ -191,7 +190,6 @@ describe('card.ts', () => {
           lightEntities: [],
           thresholdSensors: [],
         },
-        image: Promise.resolve(null),
         isActive: false,
         thresholds: {
           hot: false,
@@ -210,48 +208,20 @@ describe('card.ts', () => {
       expect(card['_isActive']).to.be.false;
     });
 
-    it('should handle image promise and update _image when resolved', async () => {
-      getRoomPropertiesStub.returns({
-        roomInfo: { area_name: 'Living Room' },
-        roomEntity: {
-          config: { entity_id: 'light.test' },
-          state: {
-            entity_id: 'light.test',
-            state: 'on',
-            attributes: {},
-            domain: 'light',
-          },
-        },
-        sensors: {
-          individual: [],
-          averaged: [],
-          problemSensors: [],
-          lightEntities: [],
-          thresholdSensors: [],
-        },
-        image: Promise.resolve('/local/test.jpg'),
-        isActive: true,
-        thresholds: {
-          hot: false,
-          humid: false,
-          hotColor: undefined,
-          humidColor: undefined,
-        },
-        flags: {
-          alarm: 'occupied',
-          dark: true,
-          frostedGlass: false,
+    it('should derive image in willUpdate when a background image is configured', () => {
+      card.setConfig({
+        area: 'living_room',
+        background: {
+          image: '/local/test.jpg',
         },
       });
 
       card.hass = mockHass;
-      // Wait for image promise to resolve
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      expect(card['_image']).to.equal('/local/test.jpg');
+      (card as any).willUpdate(new Map());
       expect(card['image']).to.be.true;
     });
 
-    it('should set image property even when icon_background option is set', async () => {
+    it('should derive image even when icon_background option is set', () => {
       card.setConfig({
         area: 'living_room',
         background: {
@@ -260,93 +230,32 @@ describe('card.ts', () => {
         },
       });
 
-      getRoomPropertiesStub.returns({
-        roomInfo: { area_name: 'Living Room' },
-        roomEntity: {
-          config: { entity_id: 'light.test' },
-          state: {
-            entity_id: 'light.test',
-            state: 'on',
-            attributes: {},
-            domain: 'light',
-          },
-        },
-        sensors: {
-          individual: [],
-          averaged: [],
-          problemSensors: [],
-          lightEntities: [],
-          thresholdSensors: [],
-        },
-        image: Promise.resolve('/local/test.jpg'),
-        isActive: true,
-        thresholds: {
-          hot: false,
-          humid: false,
-          hotColor: undefined,
-          humidColor: undefined,
-        },
-        flags: {
-          alarm: 'occupied',
-          dark: true,
-          frostedGlass: false,
-        },
-      });
-
       card.hass = mockHass;
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      expect(card['_image']).to.equal('/local/test.jpg');
+      (card as any).willUpdate(new Map());
       expect(card['image']).to.be.true;
       expect(card.hasAttribute('icon-bg')).to.be.false;
     });
 
-    it('should set image property when icon_background option is not set', async () => {
+    it('should not derive image when no background is configured', () => {
+      card.setConfig({ area: 'living_room' });
+
+      card.hass = mockHass;
+      (card as any).willUpdate(new Map());
+      expect(card['image']).to.be.false;
+    });
+
+    it('should not derive image when background is disabled', () => {
       card.setConfig({
         area: 'living_room',
         background: {
           image: '/local/test.jpg',
-        },
-      });
-
-      getRoomPropertiesStub.returns({
-        roomInfo: { area_name: 'Living Room' },
-        roomEntity: {
-          config: { entity_id: 'light.test' },
-          state: {
-            entity_id: 'light.test',
-            state: 'on',
-            attributes: {},
-            domain: 'light',
-          },
-        },
-        sensors: {
-          individual: [],
-          averaged: [],
-          problemSensors: [],
-          lightEntities: [],
-          thresholdSensors: [],
-        },
-        image: Promise.resolve('/local/test.jpg'),
-        isActive: true,
-        thresholds: {
-          hot: false,
-          humid: false,
-          hotColor: undefined,
-          humidColor: undefined,
-        },
-        flags: {
-          alarm: 'occupied',
-          dark: true,
-          frostedGlass: false,
+          options: ['disable'],
         },
       });
 
       card.hass = mockHass;
-      // Wait for image promise to resolve
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      expect(card['_image']).to.equal('/local/test.jpg');
-      expect(card['image']).to.be.true;
-      expect(card.hasAttribute('icon-bg')).to.be.false;
+      (card as any).willUpdate(new Map());
+      expect(card['image']).to.be.false;
     });
 
     it('should set frostedGlass property from getRoomProperties flags', () => {
@@ -469,7 +378,7 @@ describe('card.ts', () => {
       card.render();
 
       expect(renderCardStylesStub.calledOnce).to.be.true;
-      expect(renderCardStylesStub.lastCall.args[8]).to.equal(opacityState);
+      expect(renderCardStylesStub.lastCall.args[7]).to.equal(opacityState);
     });
 
     it('should pass undefined to renderCardStyles when mixin state is unset', () => {
@@ -478,7 +387,7 @@ describe('card.ts', () => {
       card.render();
 
       expect(renderCardStylesStub.calledOnce).to.be.true;
-      expect(renderCardStylesStub.lastCall.args[8]).to.be.undefined;
+      expect(renderCardStylesStub.lastCall.args[7]).to.be.undefined;
     });
   });
 

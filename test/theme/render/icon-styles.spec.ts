@@ -81,7 +81,6 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': 'var(--primary-color)',
           '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
           '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--icon-filter': '',
         }),
       );
@@ -102,7 +101,6 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': 'var(--disabled-color)',
           '--background-opacity-icon': 'var(--opacity-icon-fill-inactive)',
           '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--icon-filter': '',
         }),
       );
@@ -126,13 +124,12 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': undefined,
           '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
           '--state-color-icon-theme': undefined,
-          '--background-image': undefined,
           '--icon-filter': '',
         }),
       );
     });
 
-    it('should include background image when image parameter is provided', () => {
+    it('should use full fill opacity when an image is present and active', () => {
       getStyleDataStub.returns({
         active: true,
         cssColor: 'var(--primary-color)',
@@ -151,7 +148,6 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': 'var(--primary-color)',
           '--background-opacity-icon': '1',
           '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': `url(${imageUrl})`,
           '--icon-filter': '',
         }),
       );
@@ -179,7 +175,6 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': 'var(--primary-color)',
           '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
           '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--icon-filter': 'brightness(69%)',
         }),
       );
@@ -205,7 +200,6 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': 'var(--primary-color)',
           '--background-opacity-icon': 'var(--opacity-icon-fill-active)',
           '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--icon-filter': '',
         }),
       );
@@ -231,7 +225,6 @@ describe('icon-styles.ts', () => {
           '--background-color-icon': 'var(--disabled-color)',
           '--background-opacity-icon': 'var(--opacity-icon-fill-inactive)',
           '--state-color-icon-theme': 'var(--theme-override)',
-          '--background-image': undefined,
           '--icon-filter': '',
         }),
       );
