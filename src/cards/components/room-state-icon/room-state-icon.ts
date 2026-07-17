@@ -1,3 +1,4 @@
+import '@cards/components/room-background-image/room-background-image';
 import { hasEntityFeature } from '@config/feature';
 import {
   actionHandler,
@@ -229,6 +230,12 @@ export class RoomStateIcon extends HassUpdateMixin(
         @action=${handleClickAction(this, this.entity)}
         .actionHandler=${actionHandler(this.entity)}
       >
+        <room-background-image
+          icon
+          .image=${this.image}
+          .hass=${this._hass}
+          .config=${this._config}
+        ></room-background-image>
         ${this._hideIconContent
           ? nothing
           : html`<ha-state-icon

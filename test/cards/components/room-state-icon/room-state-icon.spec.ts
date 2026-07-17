@@ -269,6 +269,7 @@ describe('room-state-icon.ts', () => {
       // The fixture renders our component's template directly
       expect(el.classList.contains('icon')).to.be.true;
       expect(el.querySelector('ha-state-icon')).to.exist;
+      expect(el.querySelector('room-background-image')).to.exist;
     });
 
     it('should handle config without styles', () => {

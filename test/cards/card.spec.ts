@@ -389,6 +389,7 @@ describe('card.ts', () => {
       const el = await fixture(card.render() as TemplateResult);
       expect(el.tagName).to.equal('HA-CARD');
       expect(el.querySelector('.grid')).to.exist;
+      expect(el.querySelector('room-background-image')).to.exist;
     });
 
     it('should render problem entities correctly', async () => {

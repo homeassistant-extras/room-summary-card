@@ -18,6 +18,7 @@ import {
 import { property, state } from 'lit/decorators.js';
 
 import { renderProblemIndicator, renderRoomIcon } from '@/html/icon';
+import '@cards/components/room-background-image/room-background-image';
 import {
   actionHandler,
   handleClickAction,
@@ -303,6 +304,13 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
 
     return html`
       <ha-card style="${cardStyle}">
+        <room-background-image
+          .image=${this.image &&
+          !this._config?.background?.options?.includes('icon_background')}
+          .hass=${this._hass}
+          .config=${this._config}
+        ></room-background-image>
+
         <div class="grid">
           ${info(
             this,

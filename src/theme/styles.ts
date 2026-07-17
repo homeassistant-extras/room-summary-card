@@ -83,17 +83,6 @@ const haCardThemeStyles = css`
     --opacity-icon-fill-inactive: 0.2;
   }
 
-  :host([image]) {
-    --user-background-image-overlay: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.8),
-      rgba(0, 0, 0, 0.7),
-      rgba(0, 0, 0, 0.3),
-      rgba(0, 0, 0, 0),
-      rgba(0, 0, 0, 0)
-    );
-  }
-
   /* When the main icon owns the background, suppress card-level image effects
      and prevent the user-configured opacity from applying to the card.
      --user-opacity still inherits down to room-state-icon, where its
@@ -105,7 +94,6 @@ const haCardThemeStyles = css`
     --text-opacity-theme: unset;
     --opacity-icon-fill-inactive: unset;
     --user-opacity: unset;
-    --user-background-image-overlay: unset;
   }
 
   :host([icon-opacity-preset='medium']) {
@@ -144,33 +132,17 @@ const cardContainerStyles = css`
       var(--theme-border-color-frosted);
   }
 
-  :host([image]) ha-card::before {
-    background-image:
-      var(--user-background-image-overlay), var(--background-image);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-  }
-
-  ha-card:has(room-state-icon[room][icon-bg])::before {
-    background-image: none;
-  }
-
-  ha-card::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: var(--background-color-card);
-    opacity: var(
-      --user-opacity,
-      var(--opacity-theme, var(--background-opacity-card))
-    );
-    filter: var(--background-filter, none);
+  :host([frosted-glass]) room-background-image {
+    /* Frosted Glass paints its own tint; hide the theme color layer
+       but keep any background image. */
+    --background-color-card: transparent;
   }
 
   :host([frosted-glass]) ha-card::before {
     /* Mimic Frosted Glass card-mod overlay within our shadow DOM */
+    content: '';
+    position: absolute;
+    inset: 0;
     background-color: var(--theme-glass-tint-frosted);
     opacity: 1;
     filter: none;
