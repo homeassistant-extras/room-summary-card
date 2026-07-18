@@ -208,56 +208,6 @@ describe('card.ts', () => {
       expect(card['_isActive']).to.be.false;
     });
 
-    it('should derive image in willUpdate when a background image is configured', () => {
-      card.setConfig({
-        area: 'living_room',
-        background: {
-          image: '/local/test.jpg',
-        },
-      });
-
-      card.hass = mockHass;
-      (card as any).willUpdate(new Map());
-      expect(card['image']).to.be.true;
-    });
-
-    it('should derive image even when icon_background option is set', () => {
-      card.setConfig({
-        area: 'living_room',
-        background: {
-          options: ['icon_background'],
-          image: '/local/test.jpg',
-        },
-      });
-
-      card.hass = mockHass;
-      (card as any).willUpdate(new Map());
-      expect(card['image']).to.be.true;
-      expect(card.hasAttribute('icon-bg')).to.be.false;
-    });
-
-    it('should not derive image when no background is configured', () => {
-      card.setConfig({ area: 'living_room' });
-
-      card.hass = mockHass;
-      (card as any).willUpdate(new Map());
-      expect(card['image']).to.be.false;
-    });
-
-    it('should not derive image when background is disabled', () => {
-      card.setConfig({
-        area: 'living_room',
-        background: {
-          image: '/local/test.jpg',
-          options: ['disable'],
-        },
-      });
-
-      card.hass = mockHass;
-      (card as any).willUpdate(new Map());
-      expect(card['image']).to.be.false;
-    });
-
     it('should set frostedGlass property from getRoomProperties flags', () => {
       expect(card['frostedGlass']).to.equal(
         getRoomPropertiesStub.returnValues[0].flags.frostedGlass,

@@ -42,7 +42,6 @@ const hostThemeStyles = css`
     --icon-color: var(--theme-color-icon);
     --background-color-icon: var(--theme-background-color-icon);
     --background-opacity-icon: var(--opacity-icon-fill-inactive);
-    --background-image: none;
   }
 `;
 
@@ -77,22 +76,23 @@ const haCardThemeStyles = css`
     border-bottom-color: var(--threshold-humid-color, var(--info-color));
   }
 
-  :host([image]) ha-card {
+  /* Card-level dimming when the background image actually renders.
+     room-background-image reflects [image] itself, so the card no
+     longer tracks an image flag; icon_background mode never sets it on
+     the card-level layer. */
+  ha-card:has(> room-background-image[image]) {
     --opacity-theme: 0.3;
     --text-opacity-theme: 0.8;
     --opacity-icon-fill-inactive: 0.2;
   }
 
-  /* When the main icon owns the background, suppress card-level image effects
-     and prevent the user-configured opacity from applying to the card.
-     --user-opacity still inherits down to room-state-icon, where its
-     own CSS routes it to the icon background instead.
-     Anchored on ha-card (not :host) because :host:has() matching
-     shadow-tree descendants is not interoperable (fails in WebKit). */
+  /* When the main icon owns the background, prevent the user-configured
+     opacity from applying to the card. --user-opacity still inherits down
+     to room-state-icon, where its own CSS routes it to the icon
+     background instead. Anchored on ha-card (not :host) because
+     :host:has() matching shadow-tree descendants is not interoperable
+     (fails in WebKit). */
   ha-card:has(room-state-icon[room][icon-bg]) {
-    --opacity-theme: unset;
-    --text-opacity-theme: unset;
-    --opacity-icon-fill-inactive: unset;
     --user-opacity: unset;
   }
 

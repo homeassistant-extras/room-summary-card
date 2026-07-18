@@ -44,8 +44,11 @@ export class RoomBackgroundImage extends HassConfigMixin<
   icon = false;
 
   /**
-   * Whether the parent wants the image layer shown (placement gating,
-   * e.g. the card hides its layer in `icon_background` mode)
+   * Icon placement only: whether the icon should show the image layer.
+   * `room-state-icon` owns this gating (main-room + `icon_background`,
+   * or a per-entity `entity_picture`). Card placement ignores it — the
+   * component gates itself on config (`icon_background` mode hides the
+   * card layer).
    */
   @property({ type: Boolean })
   image = false;
@@ -62,6 +65,14 @@ export class RoomBackgroundImage extends HassConfigMixin<
   @state()
   private _huiConfig?: HuiImageConfig;
 
+  /**
+   * Whether the background is delegated to the main icon
+   * (`icon_background` option). Tracked as state so toggling the option
+   * re-renders even when the mapped image config is unchanged.
+   */
+  @state()
+  private _iconBackground = false;
+
   private _config?: Config;
 
   override set config(config: Config) {
@@ -71,6 +82,8 @@ export class RoomBackgroundImage extends HassConfigMixin<
     if (!equal(mapped, this._huiConfig)) {
       this._huiConfig = mapped;
     }
+    this._iconBackground =
+      config.background?.options?.includes('icon_background') ?? false;
   }
 
   /**
@@ -78,6 +91,28 @@ export class RoomBackgroundImage extends HassConfigMixin<
    */
   static override get styles(): CSSResult {
     return styles;
+  }
+
+  /**
+   * Whether the image layer renders in this placement. Card placement
+   * derives it from config alone (image configured and not delegated to
+   * the icon); icon placement is driven by the `image` property.
+   */
+  private get _showImage(): boolean {
+    if (this.icon) {
+      // this is rendered in a room-state-icon
+      return this.image && (!!this.imageUrl || !!this._huiConfig);
+    }
+    // this is rendered in a room-summary-card
+    return !!this._huiConfig && !this._iconBackground;
+  }
+
+  /**
+   * Reflects `image` so outside CSS (e.g. the card's dimming vars)
+   * can key off whether an image is actually rendered here.
+   */
+  protected override willUpdate(): void {
+    this.toggleAttribute('image', this._showImage);
   }
 
   /**
@@ -91,7 +126,7 @@ export class RoomBackgroundImage extends HassConfigMixin<
 
     return html`
       <div class="color"></div>
-      ${this.image && hui
+      ${this._showImage && hui
         ? html`
             <div class="image">
               <hui-image

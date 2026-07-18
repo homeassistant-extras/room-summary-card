@@ -33,7 +33,6 @@ import { SubscribeEntityStateMixin } from '@homeassistant-extras/hass/mixins/sub
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { info } from '@html/info';
 import { renderHorizontalSlider } from '@html/render-horizontal-slider';
-import { getHuiImageConfig } from '@theme/image/background-to-hui-config';
 import { renderCardStyles } from '@theme/render/card-styles';
 import { styles } from '@theme/styles';
 import type { Config } from '@type/config';
@@ -96,8 +95,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
   private hot!: boolean;
   @property({ type: Boolean, reflect: true })
   private humid!: boolean;
-  @property({ type: Boolean, reflect: true })
-  private image!: boolean;
   @property({ type: String, reflect: true })
   private alarm?: 'smoke' | 'gas' | 'water' | 'occupied';
   @property({ type: Boolean, reflect: true, attribute: 'skip-mold-styles' })
@@ -254,16 +251,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
   }
 
   /**
-   * Derives the `[image]` host attribute (drives card-level dimming CSS)
-   * once per render cycle instead of on every `set hass` call.
-   */
-  protected override willUpdate(): void {
-    if (this._hass && this._config) {
-      this.image = !!getHuiImageConfig(this._hass, this._config);
-    }
-  }
-
-  /**
    * renders the lit element card
    * @returns {TemplateResult} The rendered HTML template
    */
@@ -307,8 +294,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
     return html`
       <ha-card style="${cardStyle}">
         <room-background-image
-          .image=${this.image &&
-          !this._config?.background?.options?.includes('icon_background')}
           .hass=${this._hass}
           .config=${this._config}
         ></room-background-image>
