@@ -142,18 +142,8 @@ describe('room-background-image.ts', () => {
     expect(el.hasAttribute('icon-bg')).to.be.true;
   });
 
-  it('should not reflect icon-bg without the option or in icon placement', async () => {
-    const card = await fixture<RoomBackgroundImage>(
-      html`<room-background-image
-        .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: { image: '/local/bg.jpg' },
-        } as Config}
-      ></room-background-image>`,
-    );
-    expect(card.hasAttribute('icon-bg')).to.be.false;
-
+  it('should reflect icon-bg on the main icon layer in icon_background mode', async () => {
+    // Drives room-state-icon's CSS that routes --user-opacity to the icon fill
     const icon = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         icon
@@ -168,7 +158,70 @@ describe('room-background-image.ts', () => {
         } as Config}
       ></room-background-image>`,
     );
-    expect(icon.hasAttribute('icon-bg')).to.be.false;
+    expect(icon.hasAttribute('icon-bg')).to.be.true;
+  });
+
+  it('should not reflect icon-bg without the option or on non-room icons', async () => {
+    const card = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .config=${{
+          area: 'test',
+          background: { image: '/local/bg.jpg' },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(card.hasAttribute('icon-bg')).to.be.false;
+
+    const entityIcon = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        icon
+        .hass=${mockHass}
+        .config=${{
+          area: 'test',
+          background: {
+            image: '/local/bg.jpg',
+            options: ['icon_background'],
+          },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(entityIcon.hasAttribute('icon-bg')).to.be.false;
+  });
+
+  it('should apply background opacity vars on the host', async () => {
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .isActive=${true}
+        .config=${{
+          area: 'test',
+          background: { image: '/local/bg.jpg', opacity: 42 },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(el.style.getPropertyValue('--user-opacity')).to.equal('0.42');
+    expect(el.style.getPropertyValue('--background-opacity-card')).to.equal(
+      'var(--opacity-background-active)',
+    );
+  });
+
+  it('should derive user opacity from the opacityState entity', async () => {
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .opacityState=${{
+          entity_id: 'sensor.opacity',
+          state: '50',
+          attributes: { unit_of_measurement: '%' },
+        } as any}
+        .config=${{
+          area: 'test',
+          background: { image: '/local/bg.jpg', opacity: 'sensor.opacity' },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(el.style.getPropertyValue('--user-opacity')).to.equal('0.5');
   });
 
   it('should render hui-image above the color layer for a configured background', async () => {

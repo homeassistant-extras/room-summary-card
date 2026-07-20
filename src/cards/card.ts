@@ -268,6 +268,7 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
         isMainRoomEntity: true,
         isActive: this._isIconActive,
         alarm: this.alarm,
+        opacityState: this.state,
       },
     );
 
@@ -279,7 +280,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
       this._isActive,
       this._thresholds,
       this._sensors?.ambientLightEntities,
-      this.state,
     );
 
     const problems = renderProblemIndicator(
@@ -294,6 +294,8 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
     return html`
       <ha-card style="${cardStyle}">
         <room-background-image
+          .isActive=${this._isActive}
+          .opacityState=${this.state}
           .hass=${this._hass}
           .config=${this._config}
         ></room-background-image>

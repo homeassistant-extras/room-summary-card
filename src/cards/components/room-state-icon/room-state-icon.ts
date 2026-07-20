@@ -7,6 +7,7 @@ import { mergeActions } from '@delegates/utils/merge-actions';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
+import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import { renderBadgeElements } from '@html/badge-squad';
 import { renderEntityLabel } from '@html/render-label';
 import { renderStateDisplay } from '@html/render-state-display';
@@ -79,16 +80,21 @@ export class RoomStateIcon extends HassUpdateMixin(
   isMainRoomEntity: boolean = false;
 
   /**
-   * Whether the icon background is enabled
-   */
-  @property({ type: Boolean, reflect: true, attribute: 'icon-bg' })
-  private iconBackground!: boolean;
-
-  /**
    * Whether the room is considered active (for styling)
    */
   @property({ type: Boolean })
   isActive?: boolean;
+
+  /**
+   * State of the `background.opacity` entity, forwarded to
+   * `room-background-image` (transitional — see that component).
+   */
+  @property({
+    attribute: false,
+    hasChanged: (newVal?: HassEntity, oldVal?: HassEntity) =>
+      !equal(newVal, oldVal),
+  })
+  opacityState?: HassEntity;
 
   /**
    * Current alarm state: 'smoke', 'gas', 'water', 'occupied', or undefined
@@ -109,9 +115,6 @@ export class RoomStateIcon extends HassUpdateMixin(
    */
   override set config(config: Config) {
     if (!equal(config, this._config)) {
-      this.iconBackground =
-        config.background?.options?.includes('icon_background') ?? false;
-
       // Calculate hiding logic for main room entity
       if (this.isMainRoomEntity) {
         this._hideRoomIcon = hasFeature(config, 'hide_room_icon');
@@ -192,6 +195,8 @@ export class RoomStateIcon extends HassUpdateMixin(
           icon
           .room=${this.isMainRoomEntity}
           .entity=${this.entity}
+          .isActive=${this.isActive ?? false}
+          .opacityState=${this.opacityState}
           .hass=${this.hass}
           .config=${this._config}
         ></room-background-image>

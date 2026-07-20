@@ -40,7 +40,7 @@ export const styles = css`
   /* icon_background mode: the user-configured opacity belongs to the
      icon's background (room-state-icon routes it there), so the card
      color layer falls back to the theme opacity chain. */
-  :host([icon-bg]) .color {
+  :host([icon-bg]:not([icon])) .color {
     opacity: var(--opacity-theme, var(--background-opacity-card));
   }
 

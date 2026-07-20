@@ -2,6 +2,7 @@ import { showProblemDialog } from '@cards/components/problem/dialog/show-dialog-
 import { shouldShowMoldIndicator } from '@delegates/checks/moldy';
 import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import type { Config } from '@type/config';
 import type { EntityInformation } from '@type/room';
 import type { SensorData } from '@type/sensor';
@@ -73,6 +74,8 @@ export interface RoomIconOptions {
   isActive?: boolean;
   /** Current alarm state: 'smoke', 'gas', 'water', 'occupied', or undefined */
   alarm?: 'smoke' | 'gas' | 'water' | 'occupied';
+  /** State of the `background.opacity` entity, forwarded to the icon's background layer */
+  opacityState?: HassEntity;
 }
 
 /**
@@ -92,7 +95,7 @@ export const renderRoomIcon = (
 ): TemplateResult | typeof nothing => {
   const { state } = entity;
   const stickyEntitiesEnabled = config.features?.includes('sticky_entities');
-  const { isMainRoomEntity = false, isActive, alarm } = options;
+  const { isMainRoomEntity = false, isActive, alarm, opacityState } = options;
 
   // If state is undefined and sticky entities is not enabled, return nothing
   if (!state && !stickyEntitiesEnabled) return nothing;
@@ -108,6 +111,7 @@ export const renderRoomIcon = (
     .isMainRoomEntity=${isMainRoomEntity}
     .isActive=${isActive}
     .alarm=${alarm}
+    .opacityState=${opacityState}
     .entity=${entity}
     .config=${config}
     .hass=${hass}

@@ -7,7 +7,6 @@ import * as occupancyModule from '@delegates/checks/occupancy';
 import * as stateActiveModule from '@homeassistant-extras/hass/common/entity/state_active';
 import * as stateColorModule from '@homeassistant-extras/hass/common/entity/state_color';
 import { createStateEntityForEntityId as s } from '@test/test-helpers';
-import * as backgroundBitsModule from '@theme/background/background-bits';
 import * as customThemeModule from '@theme/custom-theme';
 import * as getRgbColorModule from '@theme/get-rgb';
 import { renderCardStyles } from '@theme/render/card-styles';
@@ -33,7 +32,6 @@ describe('card-styles.ts', () => {
   let stateColorCssStub: sinon.SinonStub;
   let getThemeColorOverrideStub: sinon.SinonStub;
   let getThresholdResultStub: sinon.SinonStub;
-  let getBackgroundOpacityStub: sinon.SinonStub;
   let getOccupancyCssVarsStub: sinon.SinonStub;
   let getSmokeCssVarsStub: sinon.SinonStub;
   let getGasCssVarsStub: sinon.SinonStub;
@@ -58,10 +56,6 @@ describe('card-styles.ts', () => {
       thresholdColorModule,
       'getThresholdResult',
     );
-    getBackgroundOpacityStub = sandbox.stub(
-      backgroundBitsModule,
-      'getBackgroundOpacity',
-    );
     getOccupancyCssVarsStub = sandbox.stub(
       occupancyModule,
       'getOccupancyCssVars',
@@ -77,9 +71,6 @@ describe('card-styles.ts', () => {
     stateColorBrightnessStub.returns('');
     getThresholdResultStub.returns(undefined);
     getThemeColorOverrideStub.returns('var(--theme-override)');
-    getBackgroundOpacityStub.returns({
-      '--background-opacity-card': 'var(--opacity-background-inactive)',
-    });
     getOccupancyCssVarsStub.returns({});
     getSmokeCssVarsStub.returns({});
     getGasCssVarsStub.returns({});
@@ -95,33 +86,6 @@ describe('card-styles.ts', () => {
   });
 
   describe('renderCardStyles', () => {
-    it('should pass opacityState to getBackgroundOpacity when provided', () => {
-      const entity = createEntityInfo('light.test');
-      const opacityState = s('sensor.room_dimmer', '0.42');
-      const styles = renderCardStyles(
-        mockHass,
-        mockConfig,
-        entity,
-        undefined,
-        false,
-        undefined,
-        [],
-        opacityState,
-      );
-
-      expect(
-        getBackgroundOpacityStub.calledWith(mockConfig, false, opacityState),
-      ).to.be.true;
-      expect(styles).to.deep.equal(
-        styleMap({
-          '--background-color-card': undefined,
-          '--background-filter': '',
-          '--state-color-card-theme': 'var(--theme-override)',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
-        }),
-      );
-    });
-
     it('should render basic inactive styles', () => {
       const entity = createEntityInfo('light.test');
       const styles = renderCardStyles(
@@ -141,14 +105,11 @@ describe('card-styles.ts', () => {
           false,
         ),
       ).to.be.true;
-      expect(getBackgroundOpacityStub.calledWith(mockConfig, false, undefined))
-        .to.be.true;
       expect(styles).to.deep.equal(
         styleMap({
           '--background-color-card': undefined,
           '--background-filter': '',
           '--state-color-card-theme': 'var(--theme-override)',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
     });
@@ -157,9 +118,6 @@ describe('card-styles.ts', () => {
       mockHass.themes.darkMode = true;
       stateActiveStub.returns(true);
       stateColorCssStub.returns('var(--active-color)');
-      getBackgroundOpacityStub.returns({
-        '--background-opacity-card': '0.5',
-      });
 
       const configWithStyles = {
         ...mockConfig,
@@ -184,7 +142,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': 'var(--active-color)',
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': '0.5',
           'border-radius': '8px',
           padding: '16px',
         }),
@@ -199,9 +156,6 @@ describe('card-styles.ts', () => {
         ...mockConfig,
         features: ['skip_entity_styles'],
       };
-      getBackgroundOpacityStub.returns({
-        '--background-opacity-card': 'var(--opacity-background-active)',
-      });
 
       const entity = createEntityInfo('light.test', 'on');
       const styles = renderCardStyles(
@@ -221,7 +175,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined, // Should be undefined due to active being false
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-active)',
         }),
       );
     });
@@ -260,7 +213,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...occupancyStyles,
         }),
       );
@@ -291,7 +243,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...smokeStyles,
         }),
       );
@@ -319,7 +270,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...gasStyles,
         }),
       );
@@ -350,7 +300,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
           ...waterStyles,
         }),
       );
@@ -387,7 +336,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'rgb(255, 0, 0)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
     });
@@ -415,7 +363,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
     });
@@ -438,7 +385,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': 'brightness(69%)',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
     });
@@ -461,7 +407,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
     });
@@ -489,7 +434,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
           '--threshold-hot-color': 'blue',
         }),
       );
@@ -518,7 +462,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
           '--threshold-humid-color': 'purple',
         }),
       );
@@ -547,7 +490,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
           '--threshold-hot-color': 'red',
           '--threshold-humid-color': 'green',
         }),
@@ -577,7 +519,6 @@ describe('card-styles.ts', () => {
           '--background-color-card': undefined,
           '--state-color-card-theme': 'var(--theme-override)',
           '--background-filter': '',
-          '--background-opacity-card': 'var(--opacity-background-inactive)',
         }),
       );
     });
@@ -618,7 +559,6 @@ describe('card-styles.ts', () => {
             '--background-color-card': undefined,
             '--state-color-card-theme': 'rgb(255, 200, 100)',
             '--background-filter': '',
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
         );
       });
@@ -653,7 +593,6 @@ describe('card-styles.ts', () => {
             '--background-color-card': undefined,
             '--state-color-card-theme': 'var(--theme-override)',
             '--background-filter': '',
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
         );
       });
@@ -730,7 +669,6 @@ describe('card-styles.ts', () => {
             '--background-color-card': undefined,
             '--state-color-card-theme': 'var(--theme-override)',
             '--background-filter': '',
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
         );
       });
@@ -772,7 +710,6 @@ describe('card-styles.ts', () => {
             '--background-color-card': undefined,
             '--state-color-card-theme': 'rgb(100, 150, 200)',
             '--background-filter': 'brightness(80%)',
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
         );
       });
@@ -814,7 +751,6 @@ describe('card-styles.ts', () => {
             '--background-color-card': undefined,
             '--state-color-card-theme': 'rgb(200, 100, 50)',
             '--background-filter': '',
-            '--background-opacity-card': 'var(--opacity-background-inactive)',
           }),
         );
       });

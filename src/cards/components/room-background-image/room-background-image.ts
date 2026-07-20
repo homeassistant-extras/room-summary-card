@@ -1,4 +1,6 @@
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
+import { getBackgroundOpacity } from '@theme/background/background-bits';
 import {
   getEntityPictureUrl,
   getHuiImageConfig,
@@ -66,6 +68,29 @@ export class RoomBackgroundImage extends HassConfigMixin<
   entity?: EntityInformation;
 
   /**
+   * Whether the room is considered active — selects the active/inactive
+   * theme opacity for the color layer.
+   *
+   * Transitional: fed by the card's delegates for now; once this
+   * component subscribes to state itself (SubscribeEntityStateMixin) it
+   * can derive activity and the opacity entity internally.
+   */
+  @property({ type: Boolean })
+  isActive = false;
+
+  /**
+   * State of the entity referenced by `background.opacity` when it's
+   * configured as an entity_id (see `getBackgroundOpacity`).
+   * Transitional, same as `isActive`.
+   */
+  @property({
+    attribute: false,
+    hasChanged: (newVal?: HassEntity, oldVal?: HassEntity) =>
+      !equal(newVal, oldVal),
+  })
+  opacityState?: HassEntity;
+
+  /**
    * `hui-image` config mapped from `config.background`
    */
   @state()
@@ -125,14 +150,40 @@ export class RoomBackgroundImage extends HassConfigMixin<
   }
 
   /**
-   * Reflects `image` so outside CSS (e.g. the card's dimming vars)
-   * can key off whether an image is actually rendered here, and
-   * `icon-bg` so the card-placement color layer ignores the
-   * user-configured opacity when it belongs to the icon instead.
+   * Reflects `image` so outside CSS (e.g. the card's dimming vars) can
+   * key off whether an image is actually rendered here, and `icon-bg` —
+   * on the card layer so its color ignores the user opacity, and on the
+   * main icon's layer so room-state-icon routes that opacity to the
+   * icon fill instead.
    */
   protected override willUpdate(): void {
     this.toggleAttribute('image', this._showImage);
-    this.toggleAttribute('icon-bg', !this.icon && this._iconBackground);
+    this.toggleAttribute(
+      'icon-bg',
+      this._iconBackground && (!this.icon || this.room),
+    );
+    this._applyOpacity();
+  }
+
+  /**
+   * Sets the background opacity vars on the host, where both this
+   * component's layers and outside routing rules (room-state-icon's
+   * icon fill) resolve them.
+   */
+  private _applyOpacity(): void {
+    if (!this._config) return;
+    const vars = getBackgroundOpacity(
+      this._config,
+      this.isActive,
+      this.opacityState,
+    );
+    for (const [name, value] of Object.entries(vars)) {
+      if (value === undefined) {
+        this.style.removeProperty(name);
+      } else {
+        this.style.setProperty(name, String(value));
+      }
+    }
   }
 
   /**

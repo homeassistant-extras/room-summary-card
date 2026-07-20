@@ -318,26 +318,27 @@ describe('card.ts', () => {
         .to.be.true;
     });
 
-    it('should pass mixin state to renderCardStyles as opacity state', () => {
+    it('should pass mixin state to room-background-image as opacityState', async () => {
       const opacityState = e('sensor', 'opacity', '128', {
         unit_of_measurement: '%',
       });
       // `state` is a getter over the reactive `states` map keyed by entity_id.
       card['entity'] = opacityState.entity_id;
       card['states'] = { [opacityState.entity_id]: opacityState };
-      card.render();
 
-      expect(renderCardStylesStub.calledOnce).to.be.true;
-      expect(renderCardStylesStub.lastCall.args[7]).to.equal(opacityState);
+      const el = await fixture(card.render() as TemplateResult);
+      const bg = el.querySelector('room-background-image') as any;
+      expect(bg.opacityState).to.equal(opacityState);
+      expect(bg.isActive).to.equal(card['_isActive']);
     });
 
-    it('should pass undefined to renderCardStyles when mixin state is unset', () => {
+    it('should pass undefined opacityState when mixin state is unset', async () => {
       card['entity'] = undefined;
       card['states'] = {};
-      card.render();
 
-      expect(renderCardStylesStub.calledOnce).to.be.true;
-      expect(renderCardStylesStub.lastCall.args[7]).to.be.undefined;
+      const el = await fixture(card.render() as TemplateResult);
+      const bg = el.querySelector('room-background-image') as any;
+      expect(bg.opacityState).to.be.undefined;
     });
   });
 

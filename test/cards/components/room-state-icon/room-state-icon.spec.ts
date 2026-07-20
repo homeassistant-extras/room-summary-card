@@ -186,7 +186,6 @@ describe('room-state-icon.ts', () => {
 
       element.config = newConfig;
       expect(element['_config']).to.equal(newConfig);
-      expect(element['iconBackground']).to.be.true;
     });
 
     it('should handle config setter with hide_room_icon feature for main room entity', () => {
@@ -472,18 +471,6 @@ describe('room-state-icon.ts', () => {
   });
 
   describe('background image configuration', () => {
-    it('should set iconBackground property when config has icon_background option', () => {
-      element.config = {
-        area: 'living_room',
-        background: {
-          options: ['icon_background'],
-          image: '/local/test.jpg',
-        },
-      } as Config;
-
-      expect(element['iconBackground']).to.be.true;
-    });
-
     it('should set hideIconContent when entity has entity_picture attribute', () => {
       const entityWithPicture = {
         ...mockEntity,
@@ -499,17 +486,6 @@ describe('room-state-icon.ts', () => {
       element.hass = mockHass;
 
       expect(element['_hideIconContent']).to.be.true;
-    });
-
-    it('should not set iconBackground property when config has no icon_background option', () => {
-      element.config = {
-        area: 'living_room',
-        background: {
-          image: '/local/test.jpg',
-        },
-      } as Config;
-
-      expect(element['iconBackground']).to.be.false;
     });
 
     it('should pass room=false to room-background-image for non-main-room entities', async () => {

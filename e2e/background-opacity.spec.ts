@@ -70,11 +70,11 @@ describeHa('Background & Opacity', () => {
       fullCardBg.locator('room-state-icon[room] room-background-image'),
     ).not.toHaveAttribute('image');
     await expect(
-      fullCardBg.locator('room-state-icon[room]'),
+      fullCardBg.locator('room-state-icon[room] room-background-image'),
     ).not.toHaveAttribute('icon-bg');
-    await expect(iconBgCard.locator('room-state-icon[room]')).toHaveAttribute(
-      'icon-bg',
-    );
+    await expect(
+      iconBgCard.locator('room-state-icon[room] room-background-image'),
+    ).toHaveAttribute('icon-bg');
 
     await expect
       .poll(async () => {

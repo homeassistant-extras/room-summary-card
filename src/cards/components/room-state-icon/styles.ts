@@ -20,9 +20,10 @@ export const styles = css`
     aspect-ratio: 1 / 1;
   }
 
-  /* When this icon is the main room icon AND owns the background,
-     route the card-level --user-opacity here instead of to the card. */
-  :host([room][icon-bg]) .icon room-background-image {
+  /* When the background layer owns the card background (it reflects
+     [icon-bg] only on the main room icon), route the user-configured
+     --user-opacity to the icon fill instead of the card. */
+  .icon room-background-image[icon-bg] {
     --icon-color-opacity: var(--user-opacity, var(--background-opacity-icon));
   }
 
