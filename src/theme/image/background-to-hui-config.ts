@@ -33,6 +33,23 @@ export const getEntityPictureUrl = (
 };
 
 /**
+ * Whether an icon should render without its glyph/state content: the
+ * entity's own picture replaces it, or the main room icon is in
+ * `hide_icon_only` mode.
+ */
+export const shouldHideIconContent = (
+  config: Config | undefined,
+  entity: EntityInformation | undefined,
+  isMainRoomEntity: boolean,
+): boolean => {
+  if (getEntityPictureUrl(entity)) return true;
+  return (
+    isMainRoomEntity &&
+    (config?.background?.options?.includes('hide_icon_only') ?? false)
+  );
+};
+
+/**
  * Maps the card's `background` config (plus area picture fallback) to a
  * `hui-image` configuration.
  *

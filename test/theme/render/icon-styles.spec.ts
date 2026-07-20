@@ -136,10 +136,11 @@ describe('icon-styles.ts', () => {
         themeOverride: 'var(--theme-override)',
         activeClass: 'active',
       });
-      const entity = createEntityInfo('light', 'test', 'on');
-      const imageUrl = '/local/images/test-image.png';
+      const entity = createEntityInfo('light', 'test', 'on', {
+        entity_picture: '/local/images/test-image.png',
+      });
 
-      const result = renderEntityIconStyles(mockHass, entity, true, imageUrl);
+      const result = renderEntityIconStyles(mockHass, entity, true);
 
       expect(result).to.deep.equal(
         styleMap({
@@ -216,7 +217,7 @@ describe('icon-styles.ts', () => {
       });
       const entity = createEntityInfo('light', 'test', 'off');
 
-      const result = renderEntityIconStyles(mockHass, entity, true, undefined);
+      const result = renderEntityIconStyles(mockHass, entity, true);
 
       expect(result).to.deep.equal(
         styleMap({

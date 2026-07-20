@@ -126,10 +126,13 @@ export class RoomBackgroundImage extends HassConfigMixin<
 
   /**
    * Reflects `image` so outside CSS (e.g. the card's dimming vars)
-   * can key off whether an image is actually rendered here.
+   * can key off whether an image is actually rendered here, and
+   * `icon-bg` so the card-placement color layer ignores the
+   * user-configured opacity when it belongs to the icon instead.
    */
   protected override willUpdate(): void {
     this.toggleAttribute('image', this._showImage);
+    this.toggleAttribute('icon-bg', !this.icon && this._iconBackground);
   }
 
   /**

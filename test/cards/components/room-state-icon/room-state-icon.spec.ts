@@ -153,7 +153,7 @@ describe('room-state-icon.ts', () => {
 
   describe('properties', () => {
     it('should have correct property types', () => {
-      expect(element['_hass']).to.equal(mockHass);
+      expect(element.hass).to.equal(mockHass);
       expect(element.entity).to.equal(mockEntity);
       expect(element['_config']).to.equal(mockConfig);
     });
@@ -171,7 +171,7 @@ describe('room-state-icon.ts', () => {
       } as any as HomeAssistant;
 
       element.hass = newHass;
-      expect(element['_hass']).to.equal(newHass);
+      expect(element.hass).to.equal(newHass);
     });
 
     it('should update config setter correctly', () => {
@@ -400,7 +400,7 @@ describe('room-state-icon.ts', () => {
         el.querySelector('ha-state-icon') ||
         el.firstElementChild?.querySelector('ha-state-icon');
       expect(haStateIcon).to.exist;
-      expect((haStateIcon as any).hass).to.equal(element['_hass']);
+      expect((haStateIcon as any).hass).to.equal(element.hass);
     });
 
     it('should pass state object to ha-state-icon', async () => {

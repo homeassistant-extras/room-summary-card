@@ -86,16 +86,6 @@ const haCardThemeStyles = css`
     --opacity-icon-fill-inactive: 0.2;
   }
 
-  /* When the main icon owns the background, prevent the user-configured
-     opacity from applying to the card. --user-opacity still inherits down
-     to room-state-icon, where its own CSS routes it to the icon
-     background instead. Anchored on ha-card (not :host) because
-     :host:has() matching shadow-tree descendants is not interoperable
-     (fails in WebKit). */
-  ha-card:has(room-state-icon[room][icon-bg]) {
-    --user-opacity: unset;
-  }
-
   :host([icon-opacity-preset='medium']) {
     --opacity-icon-inactive: 0.6;
     --opacity-icon-fill-inactive: 0.15;

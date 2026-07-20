@@ -7,11 +7,10 @@ import { mergeActions } from '@delegates/utils/merge-actions';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
-import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderBadgeElements } from '@html/badge-squad';
 import { renderEntityLabel } from '@html/render-label';
 import { renderStateDisplay } from '@html/render-state-display';
-import { getEntityPictureUrl } from '@theme/image/background-to-hui-config';
+import { shouldHideIconContent } from '@theme/image/background-to-hui-config';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { computeEntityIcon } from '@theme/render/loot-box-icon';
 import { getThresholdResult } from '@theme/threshold-color';
@@ -50,11 +49,6 @@ import { styles } from './styles';
 export class RoomStateIcon extends HassUpdateMixin(
   HassConfigMixin<typeof LitElement, Config>(LitElement),
 ) {
-  /**
-   * Home Assistant instance
-   */
-  private _hass!: HomeAssistant;
-
   /**
    * Card configuration object
    */
@@ -129,25 +123,16 @@ export class RoomStateIcon extends HassUpdateMixin(
   }
 
   /**
-   * Updates the card's state when Home Assistant state changes
-   * @param {HomeAssistant} hass - The Home Assistant instance
-   */
-  override set hass(hass: HomeAssistant) {
-    d(this._config, 'room-state-icon', 'set hass');
-    this._hass = hass;
-  }
-
-  /**
    * Whether the icon glyph/state text is replaced by an image:
    * the entity's own picture, or `hide_icon_only` on the main room entity.
    * The picture/gating rules themselves live in `room-background-image`
    * (fixes #333, #383, #404).
    */
   private get _hideIconContent(): boolean {
-    if (getEntityPictureUrl(this.entity)) return true;
-    return (
-      this.isMainRoomEntity &&
-      (this._config?.background?.options?.includes('hide_icon_only') ?? false)
+    return shouldHideIconContent(
+      this._config,
+      this.entity,
+      this.isMainRoomEntity,
     );
   }
 
@@ -170,10 +155,9 @@ export class RoomStateIcon extends HassUpdateMixin(
     const thresholdResult = getThresholdResult(this.entity);
 
     const iconStyle = renderEntityIconStyles(
-      this._hass,
+      this.hass,
       this.entity,
       this.isActive,
-      //getEntityPictureUrl(this.entity),
     );
 
     const iconStyles = {
@@ -192,7 +176,7 @@ export class RoomStateIcon extends HassUpdateMixin(
     // Render badges (max 4)
     const badgeElements = renderBadgeElements(
       this.entity,
-      this._hass,
+      this.hass,
       this._config,
     );
 
@@ -208,24 +192,24 @@ export class RoomStateIcon extends HassUpdateMixin(
           icon
           .room=${this.isMainRoomEntity}
           .entity=${this.entity}
-          .hass=${this._hass}
+          .hass=${this.hass}
           .config=${this._config}
         ></room-background-image>
         ${this._hideIconContent
           ? nothing
           : html`<ha-state-icon
-              .hass=${this._hass}
+              .hass=${this.hass}
               .stateObj=${state}
               .icon=${icon}
             ></ha-state-icon>`}
         ${badgeElements}
         ${renderEntityLabel(
-          this._hass,
+          this.hass,
           this._config,
           this.entity,
           this.isMainRoomEntity,
         )}
-        ${renderStateDisplay(this._hass, this.entity, this._hideIconContent)}
+        ${renderStateDisplay(this.hass, this.entity, this._hideIconContent)}
       </div>
     `;
   }

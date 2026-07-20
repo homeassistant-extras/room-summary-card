@@ -37,6 +37,13 @@ export const styles = css`
     filter: var(--background-filter, none);
   }
 
+  /* icon_background mode: the user-configured opacity belongs to the
+     icon's background (room-state-icon routes it there), so the card
+     color layer falls back to the theme opacity chain. */
+  :host([icon-bg]) .color {
+    opacity: var(--opacity-theme, var(--background-opacity-card));
+  }
+
   /* Image layer: hui-image fills the box (object-fit: cover inside),
      with the user gradient composited on top via ::after. Opacity and
      filter apply to the wrapper so image + gradient fade as one, matching

@@ -124,6 +124,53 @@ describe('room-background-image.ts', () => {
     expect(el.hasAttribute('image')).to.be.false;
   });
 
+  it('should reflect icon-bg on the card layer in icon_background mode', async () => {
+    // Drives CSS that keeps the user-configured opacity off the card
+    // color layer when it belongs to the icon instead.
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .config=${{
+          area: 'test',
+          background: {
+            image: '/local/bg.jpg',
+            options: ['icon_background'],
+          },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(el.hasAttribute('icon-bg')).to.be.true;
+  });
+
+  it('should not reflect icon-bg without the option or in icon placement', async () => {
+    const card = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .config=${{
+          area: 'test',
+          background: { image: '/local/bg.jpg' },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(card.hasAttribute('icon-bg')).to.be.false;
+
+    const icon = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        icon
+        .room=${true}
+        .hass=${mockHass}
+        .config=${{
+          area: 'test',
+          background: {
+            image: '/local/bg.jpg',
+            options: ['icon_background'],
+          },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(icon.hasAttribute('icon-bg')).to.be.false;
+  });
+
   it('should render hui-image above the color layer for a configured background', async () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
