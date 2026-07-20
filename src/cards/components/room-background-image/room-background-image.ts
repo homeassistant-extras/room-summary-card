@@ -1,9 +1,11 @@
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import {
+  getEntityPictureUrl,
   getHuiImageConfig,
   type HuiImageConfig,
 } from '@theme/image/background-to-hui-config';
 import type { Config } from '@type/config';
+import type { EntityInformation } from '@type/room';
 import equal from 'fast-deep-equal';
 import {
   LitElement,
@@ -28,9 +30,9 @@ import { styles } from './styles';
  * 3. `.image::after` — the user gradient (`--user-background-image-overlay`)
  *
  * The image source is mapped from `config.background` (see
- * `getHuiImageConfig`), or overridden with an explicit `imageUrl` (used by
- * `room-state-icon` for per-entity `entity_picture` icons). Layers stack in
- * plain DOM order — no z-index.
+ * `getHuiImageConfig`), or — for icon placement — from the entity's own
+ * `entity_picture` (see `getEntityPictureUrl`). Layers stack in plain DOM
+ * order — no z-index.
  */
 @customElement('room-background-image')
 export class RoomBackgroundImage extends HassConfigMixin<
@@ -44,20 +46,24 @@ export class RoomBackgroundImage extends HassConfigMixin<
   icon = false;
 
   /**
-   * Icon placement only: whether the icon should show the image layer.
-   * `room-state-icon` owns this gating (main-room + `icon_background`,
-   * or a per-entity `entity_picture`). Card placement ignores it — the
-   * component gates itself on config (`icon_background` mode hides the
-   * card layer).
+   * Icon placement only: whether this icon is the main room entity.
+   * Only the main icon may take over the card background in
+   * `icon_background` mode; other icons show only their own
+   * `entity_picture`.
    */
   @property({ type: Boolean })
-  image = false;
+  room = false;
 
   /**
-   * Explicit image URL override; bypasses the background config mapping
+   * Icon placement only: the entity rendered in the icon. Supplies the
+   * `entity_picture` image, which wins over the mapped background config.
    */
-  @property()
-  imageUrl?: string;
+  @property({
+    attribute: false,
+    hasChanged: (newVal: EntityInformation, oldVal: EntityInformation) =>
+      !equal(newVal, oldVal),
+  })
+  entity?: EntityInformation;
 
   /**
    * `hui-image` config mapped from `config.background`
@@ -94,14 +100,25 @@ export class RoomBackgroundImage extends HassConfigMixin<
   }
 
   /**
-   * Whether the image layer renders in this placement. Card placement
-   * derives it from config alone (image configured and not delegated to
-   * the icon); icon placement is driven by the `image` property.
+   * The entity's own picture, used only in icon placement
+   */
+  private get _entityPicture(): string | undefined {
+    return this.icon ? getEntityPictureUrl(this.entity) : undefined;
+  }
+
+  /**
+   * Whether the image layer renders in this placement, derived entirely
+   * from config and the entity. Card placement: image configured and not
+   * delegated to the icon. Icon placement: the entity's own picture, or
+   * the mapped background when the main icon owns it (`icon_background`).
    */
   private get _showImage(): boolean {
     if (this.icon) {
       // this is rendered in a room-state-icon
-      return this.image && (!!this.imageUrl || !!this._huiConfig);
+      return (
+        !!this._entityPicture ||
+        (this.room && this._iconBackground && !!this._huiConfig)
+      );
     }
     // this is rendered in a room-summary-card
     return !!this._huiConfig && !this._iconBackground;
@@ -120,8 +137,9 @@ export class RoomBackgroundImage extends HassConfigMixin<
    * @returns The rendered HTML template
    */
   override render(): TemplateResult {
-    const hui: HuiImageConfig | undefined = this.imageUrl
-      ? { image: this.imageUrl }
+    const picture = this._entityPicture;
+    const hui: HuiImageConfig | undefined = picture
+      ? { image: picture }
       : this._huiConfig;
 
     return html`

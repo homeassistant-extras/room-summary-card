@@ -11,6 +11,17 @@ const mockHass = {
   areas: {},
 } as any as HomeAssistant;
 
+const entityWithPicture = (features: string[] = []) =>
+  ({
+    config: { entity_id: 'person.gina', features },
+    state: {
+      entity_id: 'person.gina',
+      state: 'home',
+      attributes: { entity_picture: '/api/image/serve/abc/512x512' },
+      domain: 'person',
+    },
+  }) as any;
+
 describe('room-background-image.ts', () => {
   it('should be registered as a custom element', () => {
     expect(customElements.get('room-background-image')).to.equal(
@@ -57,15 +68,55 @@ describe('room-background-image.ts', () => {
     expect(el.hasAttribute('image')).to.be.false;
   });
 
-  it('should not render the icon image layer when the parent gate is off', async () => {
+  it('should not render the icon image layer when the card owns the background', async () => {
+    // No icon_background option and no entity picture: the card layer
+    // shows the image, the (main) icon shows nothing.
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         icon
-        .image=${false}
+        .room=${true}
         .hass=${mockHass}
         .config=${{
           area: 'test',
           background: { image: '/local/bg.jpg' },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(el.shadowRoot!.querySelector('.image')).to.not.exist;
+    expect(el.hasAttribute('image')).to.be.false;
+  });
+
+  it('should render the mapped background in the main icon in icon_background mode', async () => {
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        icon
+        .room=${true}
+        .hass=${mockHass}
+        .config=${{
+          area: 'test',
+          background: {
+            image: '/local/bg.jpg',
+            options: ['icon_background'],
+          },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(el.hasAttribute('image')).to.be.true;
+    const huiImage = el.shadowRoot!.querySelector('hui-image') as any;
+    expect(huiImage.image).to.equal('/local/bg.jpg');
+  });
+
+  it('should not render the mapped background in non-room icons in icon_background mode', async () => {
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        icon
+        .hass=${mockHass}
+        .config=${{
+          area: 'test',
+          background: {
+            image: '/local/bg.jpg',
+            options: ['icon_background'],
+          },
         } as Config}
       ></room-background-image>`,
     );
@@ -112,10 +163,11 @@ describe('room-background-image.ts', () => {
     expect(huiImage.cameraView).to.equal('auto');
   });
 
-  it('should prefer an explicit imageUrl over the mapped background config', async () => {
+  it('should prefer the entity picture over the mapped background config', async () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
-        .imageUrl=${'/api/image/serve/abc/512x512'}
+        icon
+        .entity=${entityWithPicture()}
         .hass=${mockHass}
         .config=${{
           area: 'test',
@@ -127,16 +179,38 @@ describe('room-background-image.ts', () => {
     expect(huiImage.image).to.equal('/api/image/serve/abc/512x512');
   });
 
-  it('should render the image layer from imageUrl alone (entity picture icons)', async () => {
+  it('should render the image layer from the entity picture alone', async () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         icon
-        .image=${true}
-        .imageUrl=${'/api/image/serve/abc/512x512'}
+        .entity=${entityWithPicture()}
       ></room-background-image>`,
     );
     expect(el.shadowRoot!.querySelector('.image hui-image')).to.exist;
     expect(el.hasAttribute('image')).to.be.true;
+  });
+
+  it('should ignore the entity picture when use_entity_icon is enabled', async () => {
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        icon
+        .entity=${entityWithPicture(['use_entity_icon'])}
+      ></room-background-image>`,
+    );
+    expect(el.shadowRoot!.querySelector('.image')).to.not.exist;
+    expect(el.hasAttribute('image')).to.be.false;
+  });
+
+  it('should ignore the entity picture in card placement', async () => {
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .entity=${entityWithPicture()}
+        .hass=${mockHass}
+        .config=${{ area: 'test' } as Config}
+      ></room-background-image>`,
+    );
+    expect(el.shadowRoot!.querySelector('.image')).to.not.exist;
+    expect(el.hasAttribute('image')).to.be.false;
   });
 
   it('should default to card placement (no icon attribute)', async () => {

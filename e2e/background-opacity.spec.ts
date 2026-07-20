@@ -67,7 +67,7 @@ describeHa('Background & Opacity', () => {
     ).toHaveAttribute('image');
     // The card owns the background; the main icon has no image of its own
     await expect(
-      fullCardBg.locator('room-state-icon[room]'),
+      fullCardBg.locator('room-state-icon[room] room-background-image'),
     ).not.toHaveAttribute('image');
     await expect(
       fullCardBg.locator('room-state-icon[room]'),

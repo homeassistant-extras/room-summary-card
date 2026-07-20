@@ -1,5 +1,4 @@
 import '@cards/components/room-background-image/room-background-image';
-import { hasEntityFeature } from '@config/feature';
 import {
   actionHandler,
   handleClickAction,
@@ -12,6 +11,7 @@ import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderBadgeElements } from '@html/badge-squad';
 import { renderEntityLabel } from '@html/render-label';
 import { renderStateDisplay } from '@html/render-state-display';
+import { getEntityPictureUrl } from '@theme/image/background-to-hui-config';
 import { renderEntityIconStyles } from '@theme/render/icon-styles';
 import { computeEntityIcon } from '@theme/render/loot-box-icon';
 import { getThresholdResult } from '@theme/threshold-color';
@@ -66,11 +66,6 @@ export class RoomStateIcon extends HassUpdateMixin(
    */
   @state()
   private _hideRoomIcon!: boolean;
-  /**
-   * Whether to hide the icon content
-   */
-  @state()
-  private _hideIconContent!: boolean;
 
   /**
    * Entity information containing state and configuration
@@ -88,13 +83,6 @@ export class RoomStateIcon extends HassUpdateMixin(
    */
   @property({ type: Boolean, reflect: true, attribute: 'room' })
   isMainRoomEntity: boolean = false;
-
-  /**
-   * Whether the room has a background image
-   */
-  @property({ type: Boolean, reflect: true })
-  image!: boolean;
-  private _image?: string | null;
 
   /**
    * Whether the icon background is enabled
@@ -133,8 +121,6 @@ export class RoomStateIcon extends HassUpdateMixin(
       // Calculate hiding logic for main room entity
       if (this.isMainRoomEntity) {
         this._hideRoomIcon = hasFeature(config, 'hide_room_icon');
-        this._hideIconContent =
-          config.background?.options?.includes('hide_icon_only') || false;
       }
 
       // todo super.config?
@@ -148,33 +134,21 @@ export class RoomStateIcon extends HassUpdateMixin(
    */
   override set hass(hass: HomeAssistant) {
     d(this._config, 'room-state-icon', 'set hass');
-    const entityPicture = this.entity?.state?.attributes?.entity_picture;
-    this._image = hasEntityFeature(this.entity, 'use_entity_icon')
-      ? undefined
-      : typeof entityPicture === 'string'
-        ? entityPicture
-        : undefined;
-
-    if (this._image) {
-      this.image = true;
-      this._hideIconContent = true;
-    } else {
-      // Reset hideIconContent when image goes away
-      // If it's a main room entity, use config value, otherwise false
-      this._hideIconContent = this.isMainRoomEntity
-        ? this._config?.background?.options?.includes('hide_icon_only') || false
-        : false;
-
-      // regression fix for #383 - in future handle the image logic internally
-      // but this resets the image to false when the entity_picture is removed for #333 still
-      // icon_background should only affect the main room entity - fixes #404
-      this.image =
-        this.isMainRoomEntity &&
-        (this._config?.background?.options?.includes('icon_background') ??
-          false);
-    }
-
     this._hass = hass;
+  }
+
+  /**
+   * Whether the icon glyph/state text is replaced by an image:
+   * the entity's own picture, or `hide_icon_only` on the main room entity.
+   * The picture/gating rules themselves live in `room-background-image`
+   * (fixes #333, #383, #404).
+   */
+  private get _hideIconContent(): boolean {
+    if (getEntityPictureUrl(this.entity)) return true;
+    return (
+      this.isMainRoomEntity &&
+      (this._config?.background?.options?.includes('hide_icon_only') ?? false)
+    );
   }
 
   public override render(): TemplateResult | typeof nothing {
@@ -199,7 +173,7 @@ export class RoomStateIcon extends HassUpdateMixin(
       this._hass,
       this.entity,
       this.isActive,
-      this._image,
+      //getEntityPictureUrl(this.entity),
     );
 
     const iconStyles = {
@@ -232,8 +206,8 @@ export class RoomStateIcon extends HassUpdateMixin(
       >
         <room-background-image
           icon
-          .image=${this.image}
-          .imageUrl=${this._image ?? undefined}
+          .room=${this.isMainRoomEntity}
+          .entity=${this.entity}
           .hass=${this._hass}
           .config=${this._config}
         ></room-background-image>

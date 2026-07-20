@@ -44,14 +44,16 @@ export const describeHa = process.env.PLAYWRIGHT_HA_STORAGE_STATE
   : test.describe.skip;
 
 /**
- * Asserts a `room-state-icon` shows `entity_picture` styling: reflected `image`,
- * `--background-opacity-icon` resolved to 1, and a `hui-image` rendering the
- * picture inside the icon's `room-background-image` layer.
+ * Asserts a `room-state-icon` shows `entity_picture` styling: `image`
+ * reflected on its `room-background-image` layer, `--background-opacity-icon`
+ * resolved to 1, and a `hui-image` rendering the picture inside that layer.
  */
 export async function expectEntityIconPictureBackground(
   roomStateIcon: Locator,
 ): Promise<void> {
-  await expect(roomStateIcon).toHaveAttribute('image');
+  await expect(roomStateIcon.locator('room-background-image')).toHaveAttribute(
+    'image',
+  );
   const icon = roomStateIcon.locator('.icon');
   await expect
     .poll(async () => {

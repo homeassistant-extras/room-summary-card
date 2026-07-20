@@ -499,7 +499,6 @@ describe('room-state-icon.ts', () => {
       element.hass = mockHass;
 
       expect(element['_hideIconContent']).to.be.true;
-      expect(element['image']).to.be.true;
     });
 
     it('should not set iconBackground property when config has no icon_background option', () => {
@@ -513,7 +512,7 @@ describe('room-state-icon.ts', () => {
       expect(element['iconBackground']).to.be.false;
     });
 
-    it('should not set image for non-main-room entities when icon_background is in config', () => {
+    it('should pass room=false to room-background-image for non-main-room entities', async () => {
       element.isMainRoomEntity = false;
       element.config = {
         area: 'guest_bedroom',
@@ -525,10 +524,13 @@ describe('room-state-icon.ts', () => {
       element.entity = mockEntity;
       element.hass = mockHass;
 
-      expect(element['image']).to.be.false;
+      const el = await fixture(element.render() as TemplateResult);
+      const bg = el.querySelector('room-background-image') as any;
+      expect(bg).to.exist;
+      expect(bg.room).to.be.false;
     });
 
-    it('should set image for main room entity when icon_background is in config', () => {
+    it('should pass room=true and the entity to room-background-image for the main room entity', async () => {
       element.isMainRoomEntity = true;
       element.config = {
         area: 'guest_bedroom',
@@ -540,7 +542,11 @@ describe('room-state-icon.ts', () => {
       element.entity = mockEntity;
       element.hass = mockHass;
 
-      expect(element['image']).to.be.true;
+      const el = await fixture(element.render() as TemplateResult);
+      const bg = el.querySelector('room-background-image') as any;
+      expect(bg).to.exist;
+      expect(bg.room).to.be.true;
+      expect(bg.entity).to.equal(mockEntity);
     });
   });
 
@@ -628,7 +634,7 @@ describe('room-state-icon.ts', () => {
   });
 
   describe('entity_picture handling', () => {
-    it('should set _image from entity_picture when use_entity_icon feature is not enabled', () => {
+    it('should pass the entity to room-background-image and hide icon content for entity_picture', async () => {
       // Create entity without use_entity_icon feature (hasEntityFeature will return false)
       const entityWithoutFeature = {
         ...mockEntity,
@@ -646,14 +652,16 @@ describe('room-state-icon.ts', () => {
       };
       element.entity = entityWithoutFeature;
       element.config = mockConfig;
-
-      // Setting hass should trigger the setter and execute line 148
       element.hass = mockHass;
 
-      // Verify that _image was set from entity_picture (line 148)
-      expect(element['_image']).to.equal('/local/test-picture.jpg');
-      expect(element['image']).to.be.true;
+      // The picture resolution now lives in room-background-image; the
+      // icon just forwards the entity and hides its own content
       expect(element['_hideIconContent']).to.be.true;
+
+      const el = await fixture(element.render() as TemplateResult);
+      const bg = el.querySelector('room-background-image') as any;
+      expect(bg.entity).to.equal(entityWithoutFeature);
+      expect(el.querySelector('ha-state-icon')).to.not.exist;
     });
 
     it('should reset _hideIconContent when entity_picture is removed', () => {
@@ -678,7 +686,6 @@ describe('room-state-icon.ts', () => {
 
       // Verify hideIconContent is set when image exists
       expect(element['_hideIconContent']).to.be.true;
-      expect(element['image']).to.be.true;
 
       // Remove entity_picture from entity state
       const entityWithoutPicture = {
@@ -700,7 +707,6 @@ describe('room-state-icon.ts', () => {
 
       // Verify hideIconContent is reset when image is removed
       expect(element['_hideIconContent']).to.be.false;
-      expect(element['image']).to.be.false;
     });
 
     it('should reset _hideIconContent to config value when entity_picture is removed for main room entity', () => {
@@ -751,7 +757,6 @@ describe('room-state-icon.ts', () => {
 
       // Verify hideIconContent is reset to config value (hide_icon_only is enabled)
       expect(element['_hideIconContent']).to.be.true; // Should be true because config has hide_icon_only
-      expect(element['image']).to.be.false;
     });
   });
 
