@@ -206,21 +206,29 @@ describe('room-background-image.ts', () => {
     );
   });
 
-  it('should derive user opacity from the opacityState entity', async () => {
+  it('should derive user opacity from the subscribed opacity entity state', async () => {
+    // config.background.opacity as an entity_id makes the component
+    // subscribe via SubscribeEntityStateMixin; `states` is its reactive
+    // result map, keyed by entity_id (see that mixin for the live wiring).
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .hass=${mockHass}
-        .opacityState=${{
-          entity_id: 'sensor.opacity',
-          state: '50',
-          attributes: { unit_of_measurement: '%' },
-        } as any}
         .config=${{
           area: 'test',
           background: { image: '/local/bg.jpg', opacity: 'sensor.opacity' },
         } as Config}
       ></room-background-image>`,
     );
+    expect(el.entities).to.deep.equal(['sensor.opacity']);
+
+    (el as any).states = {
+      'sensor.opacity': {
+        entity_id: 'sensor.opacity',
+        state: '50',
+        attributes: { unit_of_measurement: '%' },
+      },
+    };
+    await el.updateComplete;
     expect(el.style.getPropertyValue('--user-opacity')).to.equal('0.5');
   });
 
@@ -267,7 +275,7 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         icon
-        .entity=${entityWithPicture()}
+        .roomEntity=${entityWithPicture()}
         .hass=${mockHass}
         .config=${{
           area: 'test',
@@ -283,7 +291,7 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         icon
-        .entity=${entityWithPicture()}
+        .roomEntity=${entityWithPicture()}
       ></room-background-image>`,
     );
     expect(el.shadowRoot!.querySelector('.image hui-image')).to.exist;
@@ -294,7 +302,7 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         icon
-        .entity=${entityWithPicture(['use_entity_icon'])}
+        .roomEntity=${entityWithPicture(['use_entity_icon'])}
       ></room-background-image>`,
     );
     expect(el.shadowRoot!.querySelector('.image')).to.not.exist;
@@ -304,7 +312,7 @@ describe('room-background-image.ts', () => {
   it('should ignore the entity picture in card placement', async () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
-        .entity=${entityWithPicture()}
+        .roomEntity=${entityWithPicture()}
         .hass=${mockHass}
         .config=${{ area: 'test' } as Config}
       ></room-background-image>`,

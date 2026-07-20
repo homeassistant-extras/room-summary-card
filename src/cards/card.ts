@@ -29,7 +29,6 @@ import { getRoomProperties } from '@delegates/utils/setup-card';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import type { HassUpdateEvent } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
-import { SubscribeEntityStateMixin } from '@homeassistant-extras/hass/mixins/subscribe-entity-state-mixin';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { info } from '@html/info';
 import { renderHorizontalSlider } from '@html/render-horizontal-slider';
@@ -41,8 +40,8 @@ import type { SensorData } from '@type/sensor';
 import { d } from '@util/debug';
 import equal from 'fast-deep-equal';
 
-export class RoomSummaryCard extends SubscribeEntityStateMixin(
-  HassConfigMixin<typeof LitElement, Config>(LitElement),
+export class RoomSummaryCard extends HassConfigMixin<typeof LitElement, Config>(
+  LitElement,
 ) {
   /**
    * Card configuration object
@@ -133,17 +132,12 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
       this.skipMoldStyles = hasFeature(config, 'skip_mold_styles');
 
       this._config = config;
-
-      // When background.opacity is configured as an entity_id, ask the
-      // SubscribeEntityStateMixin to track it so changes re-render the card.
-      const opacity = config.background?.opacity;
-      this.entity = typeof opacity === 'string' ? opacity : undefined;
     }
   }
 
   /**
-   * Expose `_hass` / `_config` to mixins that read `this.hass` / `this.config`
-   * (e.g. SubscribeEntityStateMixin).
+   * Expose `_hass` / `_config` as `this.hass` / `this.config` for
+   * `HassConfigMixin` and anything else that reads them generically.
    */
   override get hass(): HomeAssistant {
     return this._hass;
@@ -268,7 +262,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
         isMainRoomEntity: true,
         isActive: this._isIconActive,
         alarm: this.alarm,
-        opacityState: this.state,
       },
     );
 
@@ -295,7 +288,6 @@ export class RoomSummaryCard extends SubscribeEntityStateMixin(
       <ha-card style="${cardStyle}">
         <room-background-image
           .isActive=${this._isActive}
-          .opacityState=${this.state}
           .hass=${this._hass}
           .config=${this._config}
         ></room-background-image>

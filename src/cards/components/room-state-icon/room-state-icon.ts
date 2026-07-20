@@ -7,7 +7,6 @@ import { mergeActions } from '@delegates/utils/merge-actions';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
-import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import { renderBadgeElements } from '@html/badge-squad';
 import { renderEntityLabel } from '@html/render-label';
 import { renderStateDisplay } from '@html/render-state-display';
@@ -84,17 +83,6 @@ export class RoomStateIcon extends HassUpdateMixin(
    */
   @property({ type: Boolean })
   isActive?: boolean;
-
-  /**
-   * State of the `background.opacity` entity, forwarded to
-   * `room-background-image` (transitional — see that component).
-   */
-  @property({
-    attribute: false,
-    hasChanged: (newVal?: HassEntity, oldVal?: HassEntity) =>
-      !equal(newVal, oldVal),
-  })
-  opacityState?: HassEntity;
 
   /**
    * Current alarm state: 'smoke', 'gas', 'water', 'occupied', or undefined
@@ -194,9 +182,8 @@ export class RoomStateIcon extends HassUpdateMixin(
         <room-background-image
           icon
           .room=${this.isMainRoomEntity}
-          .entity=${this.entity}
+          .roomEntity=${this.entity}
           .isActive=${this.isActive ?? false}
-          .opacityState=${this.opacityState}
           .hass=${this.hass}
           .config=${this._config}
         ></room-background-image>

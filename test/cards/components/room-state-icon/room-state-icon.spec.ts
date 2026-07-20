@@ -522,7 +522,7 @@ describe('room-state-icon.ts', () => {
       const bg = el.querySelector('room-background-image') as any;
       expect(bg).to.exist;
       expect(bg.room).to.be.true;
-      expect(bg.entity).to.equal(mockEntity);
+      expect(bg.roomEntity).to.equal(mockEntity);
     });
   });
 
@@ -636,7 +636,7 @@ describe('room-state-icon.ts', () => {
 
       const el = await fixture(element.render() as TemplateResult);
       const bg = el.querySelector('room-background-image') as any;
-      expect(bg.entity).to.equal(entityWithoutFeature);
+      expect(bg.roomEntity).to.equal(entityWithoutFeature);
       expect(el.querySelector('ha-state-icon')).to.not.exist;
     });
 

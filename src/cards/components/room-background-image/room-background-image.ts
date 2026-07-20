@@ -1,4 +1,5 @@
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { SubscribeEntityStateMixin } from '@homeassistant-extras/hass/mixins/subscribe-entity-state-mixin';
 import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import { getBackgroundOpacity } from '@theme/background/background-bits';
 import {
@@ -37,10 +38,9 @@ import { styles } from './styles';
  * order — no z-index.
  */
 @customElement('room-background-image')
-export class RoomBackgroundImage extends HassConfigMixin<
-  typeof LitElement,
-  Config
->(LitElement) {
+export class RoomBackgroundImage extends SubscribeEntityStateMixin(
+  HassConfigMixin<typeof LitElement, Config>(LitElement),
+) {
   /**
    * Render as an icon-circle background instead of the card body
    */
@@ -59,36 +59,26 @@ export class RoomBackgroundImage extends HassConfigMixin<
   /**
    * Icon placement only: the entity rendered in the icon. Supplies the
    * `entity_picture` image, which wins over the mapped background config.
+   *
+   * Named `roomEntity` (not `entity`) because `SubscribeEntityStateMixin`
+   * already owns `entity` for its own single-entity subscription
+   * convenience (see `_opacityState`).
    */
   @property({
     attribute: false,
     hasChanged: (newVal: EntityInformation, oldVal: EntityInformation) =>
       !equal(newVal, oldVal),
   })
-  entity?: EntityInformation;
+  roomEntity?: EntityInformation;
 
   /**
    * Whether the room is considered active — selects the active/inactive
-   * theme opacity for the color layer.
-   *
-   * Transitional: fed by the card's delegates for now; once this
-   * component subscribes to state itself (SubscribeEntityStateMixin) it
-   * can derive activity and the opacity entity internally.
+   * theme opacity for the color layer. Fed by the card's delegates
+   * (ambient-light-aware room activity is business logic that belongs
+   * there, not in this component).
    */
   @property({ type: Boolean })
   isActive = false;
-
-  /**
-   * State of the entity referenced by `background.opacity` when it's
-   * configured as an entity_id (see `getBackgroundOpacity`).
-   * Transitional, same as `isActive`.
-   */
-  @property({
-    attribute: false,
-    hasChanged: (newVal?: HassEntity, oldVal?: HassEntity) =>
-      !equal(newVal, oldVal),
-  })
-  opacityState?: HassEntity;
 
   /**
    * `hui-image` config mapped from `config.background`
@@ -115,6 +105,20 @@ export class RoomBackgroundImage extends HassConfigMixin<
     }
     this._iconBackground =
       config.background?.options?.includes('icon_background') ?? false;
+
+    // Subscribe to config.background.opacity when it names an entity_id,
+    // so getBackgroundOpacity picks up its state (see SubscribeEntityStateMixin).
+    const opacity = config.background?.opacity;
+    this.entities = typeof opacity === 'string' ? [opacity] : [];
+  }
+
+  /**
+   * State of the entity referenced by `background.opacity`, when
+   * configured as an entity_id (see `getBackgroundOpacity`).
+   */
+  private get _opacityState(): HassEntity | undefined {
+    const opacity = this._config?.background?.opacity;
+    return typeof opacity === 'string' ? this.states[opacity] : undefined;
   }
 
   /**
@@ -128,7 +132,7 @@ export class RoomBackgroundImage extends HassConfigMixin<
    * The entity's own picture, used only in icon placement
    */
   private get _entityPicture(): string | undefined {
-    return this.icon ? getEntityPictureUrl(this.entity) : undefined;
+    return this.icon ? getEntityPictureUrl(this.roomEntity) : undefined;
   }
 
   /**
@@ -175,7 +179,7 @@ export class RoomBackgroundImage extends HassConfigMixin<
     const vars = getBackgroundOpacity(
       this._config,
       this.isActive,
-      this.opacityState,
+      this._opacityState,
     );
     for (const [name, value] of Object.entries(vars)) {
       if (value === undefined) {

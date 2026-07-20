@@ -123,29 +123,6 @@ describe('card.ts', () => {
       card.setConfig(config);
       expect(card['_config']).to.deep.equal(config);
     });
-
-    it('should set entity when background.opacity is an entity id string', () => {
-      const opacityEntity = 'sensor.room_opacity';
-      card.setConfig({
-        area: 'living_room',
-        background: { opacity: opacityEntity },
-      });
-      expect(card['entity']).to.equal(opacityEntity);
-    });
-
-    it('should clear entity when background.opacity is not a string', () => {
-      card.setConfig({
-        area: 'living_room',
-        background: { opacity: 'sensor.was_entity' },
-      });
-      expect(card['entity']).to.equal('sensor.was_entity');
-
-      card.setConfig({
-        area: 'living_room',
-        background: { opacity: 0.5 },
-      });
-      expect(card['entity']).to.be.undefined;
-    });
   });
 
   describe('hass property setter', () => {
@@ -318,27 +295,10 @@ describe('card.ts', () => {
         .to.be.true;
     });
 
-    it('should pass mixin state to room-background-image as opacityState', async () => {
-      const opacityState = e('sensor', 'opacity', '128', {
-        unit_of_measurement: '%',
-      });
-      // `state` is a getter over the reactive `states` map keyed by entity_id.
-      card['entity'] = opacityState.entity_id;
-      card['states'] = { [opacityState.entity_id]: opacityState };
-
+    it('should pass isActive to room-background-image', async () => {
       const el = await fixture(card.render() as TemplateResult);
       const bg = el.querySelector('room-background-image') as any;
-      expect(bg.opacityState).to.equal(opacityState);
       expect(bg.isActive).to.equal(card['_isActive']);
-    });
-
-    it('should pass undefined opacityState when mixin state is unset', async () => {
-      card['entity'] = undefined;
-      card['states'] = {};
-
-      const el = await fixture(card.render() as TemplateResult);
-      const bg = el.querySelector('room-background-image') as any;
-      expect(bg.opacityState).to.be.undefined;
     });
   });
 
