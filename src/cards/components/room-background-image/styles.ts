@@ -1,0 +1,134 @@
+import { css } from 'lit';
+
+/**
+ * Background layer styles
+ */
+export const styles = css`
+  :host {
+    --default-overlay: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.8),
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0.3),
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0)
+    );
+  }
+
+  :host([icon]) {
+    --default-overlay: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.4),
+      rgba(0, 0, 0, 0.3),
+      rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0)
+    );
+  }
+
+  .color {
+    position: absolute;
+    inset: 0;
+    background-color: var(--background-color-card);
+    opacity: var(
+      --user-opacity,
+      var(--opacity-theme, var(--background-opacity-card))
+    );
+    filter: var(--background-filter, none);
+  }
+
+  /* The image covers the box (object-fit: cover), so it fully occludes the
+     color underneath — exactly as the old single ha-card::before did, where
+     background-image painted over background-color. Keeping both visible
+     would composite the state color through the image as a tint. */
+  :host([image]) .color {
+    display: none;
+  }
+
+  /* icon_background mode: the user-configured opacity belongs to the
+     icon's background (room-state-icon routes it there), so the card
+     color layer falls back to the theme opacity chain. */
+  :host([icon-bg]:not([icon])) .color {
+    opacity: var(--opacity-theme, var(--background-opacity-card));
+  }
+
+  /* Image layer: hui-image fills the box (object-fit: cover inside),
+     with the user gradient composited on top via ::after. Opacity and
+     filter apply to the wrapper so image + gradient fade as one, matching
+     the old single-declaration CSS background. */
+  .image {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: var(
+      --user-opacity,
+      var(--opacity-theme, var(--background-opacity-card))
+    );
+    filter: var(--background-filter, none);
+  }
+
+  /* Backgrounds are decoration: never let the <img> become the event
+     target (or a native drag source) for the card / icon action handlers. */
+  .color,
+  .image {
+    pointer-events: none;
+  }
+
+  .image hui-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(
+      --user-background-image-overlay,
+      var(--default-overlay)
+    );
+  }
+
+  /* 'hide_gradient' option — show the image with no darkening overlay. */
+  :host([hide-gradient]) .image::after {
+    display: none;
+  }
+
+  /* Icon placement: the fill circle. Alarm state is routed in by
+     room-state-icon via the --icon-alarm-* variables.
+
+     The layers round themselves (as the old .icon::before did) rather than
+     room-state-icon clipping its whole host — the host box also holds
+     badges (offset -5% outside the circle) and the state label below it,
+     which a host-level circular clip would cut off. */
+  :host([icon]) .color {
+    border-radius: 50%;
+    background-color: var(--icon-alarm-color, var(--background-color-icon));
+    opacity: var(--icon-color-opacity, var(--background-opacity-icon));
+    filter: var(--icon-filter, none);
+    animation: var(--icon-alarm-animation, none);
+    transition: var(--icon-alarm-transition, none);
+  }
+
+  :host([icon]) .image {
+    border-radius: 50%;
+    opacity: var(--icon-color-opacity, var(--background-opacity-icon));
+    filter: var(--icon-filter, none);
+    animation: var(--icon-alarm-animation, none);
+    transition: var(--icon-alarm-transition, none);
+  }
+
+  /* Same keyframes as room-state-icon; animation names don't resolve
+     across shadow trees, so the color layer needs its own copy. */
+  @keyframes icon-breathe {
+    0% {
+      transform: scale(1);
+      opacity: 0.1;
+    }
+    100% {
+      transform: scale(1.1);
+      opacity: 0.4;
+    }
+  }
+`;

@@ -67,7 +67,9 @@ const schemeStyles = (hass: HomeAssistant): LocalizedHaFormSchema => {
           {
             name: 'image_entity',
             label: 'editor.background.background_image_entity',
-            selector: { entity: { filter: { domain: ['image', 'person'] } } },
+            selector: {
+              entity: { filter: { domain: ['camera', 'image', 'person'] } },
+            },
           },
           {
             name: 'opacity',
@@ -104,6 +106,10 @@ const schemeStyles = (hass: HomeAssistant): LocalizedHaFormSchema => {
                   {
                     label: localize(hass, 'editor.icon.hide_icon_only'),
                     value: 'hide_icon_only',
+                  },
+                  {
+                    label: localize(hass, 'editor.background.hide_gradient'),
+                    value: 'hide_gradient',
                   },
                 ],
               },

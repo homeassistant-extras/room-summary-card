@@ -12,7 +12,7 @@ import {
  * Fixture (Lovelace): markdown section titled `Background & Opacity`, then two `room-summary-card`s:
  *
  * 1) Full card background — `opacity: 90` (card overlay, not icon_background)
- * 2) Icon-only background — `icon_background`, `hide_icon_only`, `opacity: 30` (main entity `.icon::before`)
+ * 2) Icon-only background — `icon_background`, `hide_icon_only`, `opacity: 30` (main entity's `room-background-image`)
  *
  * Entity grid: first `entity-collection` icon should be an “on” `media_player` with `entity_picture` (same as basic e2e `expectEntityIconPictureBackground`).
  *
@@ -62,24 +62,26 @@ describeHa('Background & Opacity', () => {
       .first();
     await expectEntityIconPictureBackground(firstEntityIcon);
 
-    await expect(fullCardBg).toHaveAttribute('image');
-    await expect(fullCardBg.locator('room-state-icon[room]')).toHaveAttribute(
-      'image',
-    );
     await expect(
-      fullCardBg.locator('room-state-icon[room]'),
+      fullCardBg.locator('ha-card > room-background-image'),
+    ).toHaveAttribute('image');
+    // The card owns the background; the main icon has no image of its own
+    await expect(
+      fullCardBg.locator('room-state-icon[room] room-background-image'),
+    ).not.toHaveAttribute('image');
+    await expect(
+      fullCardBg.locator('room-state-icon[room] room-background-image'),
     ).not.toHaveAttribute('icon-bg');
-    await expect(iconBgCard.locator('room-state-icon[room]')).toHaveAttribute(
-      'icon-bg',
-    );
+    await expect(
+      iconBgCard.locator('room-state-icon[room] room-background-image'),
+    ).toHaveAttribute('icon-bg');
 
     await expect
       .poll(async () => {
         return await fullCardBg
-          .locator('ha-card')
-          .evaluate((haCard) =>
-            parseFloat(getComputedStyle(haCard, '::before').opacity),
-          );
+          .locator('ha-card > room-background-image')
+          .locator('.image')
+          .evaluate((layer) => parseFloat(getComputedStyle(layer).opacity));
       })
       .toBeCloseTo(0.9, 5);
 

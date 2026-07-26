@@ -8,17 +8,6 @@ export const styles = css`
     width: var(--user-entity-icon-size, 100%);
   }
 
-  :host([image]) {
-    --user-background-image-overlay: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.4),
-      rgba(0, 0, 0, 0.3),
-      rgba(0, 0, 0, 0.1),
-      rgba(0, 0, 0, 0),
-      rgba(0, 0, 0, 0)
-    );
-  }
-
   /* Icon container styling */
   .icon {
     cursor: pointer;
@@ -29,32 +18,11 @@ export const styles = css`
     aspect-ratio: 1 / 1;
   }
 
-  .icon::before {
-    content: '';
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--background-color-icon);
-    opacity: var(--background-opacity-icon);
-    filter: var(--icon-filter, none);
-  }
-
-  /* When this icon is the main room icon AND owns the background,
-     route the card-level --user-opacity here instead of to the card. */
-  :host([room][icon-bg]) .icon::before {
-    opacity: var(--user-opacity, var(--background-opacity-icon));
-  }
-
-  /* Icon background image styling */
-  :host([image]) .icon::before {
-    background-image:
-      var(--user-background-image-overlay), var(--background-image);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
+  /* When the background layer owns the card background (it reflects
+     [icon-bg] only on the main room icon), route the user-configured
+     --user-opacity to the icon fill instead of the card. */
+  .icon room-background-image[icon-bg] {
+    --icon-color-opacity: var(--user-opacity, var(--background-opacity-icon));
   }
 
   /* State icon styling */
@@ -87,43 +55,29 @@ export const styles = css`
     height: 100%;
   }
 
-  /* Smoke styling */
-  :host([room][alarm='smoke']) .icon::before {
-    animation: var(--smoke-icon-animation);
-    background-color: var(--smoke-icon-color, var(--background-color-icon));
-    transition: all 0.3s ease;
+  /* Alarm styling: map the active alarm onto the generic --icon-alarm-*
+     variables consumed by room-background-image's layers. */
+  :host([room][alarm]) .icon {
+    --icon-alarm-transition: all 0.3s ease;
   }
 
-  /* Gas styling */
-  :host([room][alarm='gas']) .icon::before {
-    animation: var(--gas-icon-animation);
-    background-color: var(--gas-icon-color, var(--background-color-icon));
-    transition: all 0.3s ease;
+  :host([room][alarm='smoke']) .icon {
+    --icon-alarm-animation: var(--smoke-icon-animation);
+    --icon-alarm-color: var(--smoke-icon-color);
   }
 
-  /* Water styling */
-  :host([room][alarm='water']) .icon::before {
-    animation: var(--water-icon-animation);
-    background-color: var(--water-icon-color, var(--background-color-icon));
-    transition: all 0.3s ease;
+  :host([room][alarm='gas']) .icon {
+    --icon-alarm-animation: var(--gas-icon-animation);
+    --icon-alarm-color: var(--gas-icon-color);
   }
 
-  /* Occupancy styling */
-  :host([room][alarm='occupied']) .icon::before {
-    animation: var(--occupancy-icon-animation);
-    background-color: var(--occupancy-icon-color, var(--background-color-icon));
-    transition: all 0.3s ease;
+  :host([room][alarm='water']) .icon {
+    --icon-alarm-animation: var(--water-icon-animation);
+    --icon-alarm-color: var(--water-icon-color);
   }
 
-  /* Animation keyframes for occupancy indicator */
-  @keyframes icon-breathe {
-    0% {
-      transform: scale(1);
-      opacity: 0.1;
-    }
-    100% {
-      transform: scale(1.1);
-      opacity: 0.4;
-    }
+  :host([room][alarm='occupied']) .icon {
+    --icon-alarm-animation: var(--occupancy-icon-animation);
+    --icon-alarm-color: var(--occupancy-icon-color);
   }
 `;

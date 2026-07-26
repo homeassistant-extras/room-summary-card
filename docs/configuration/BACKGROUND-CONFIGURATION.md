@@ -11,18 +11,19 @@ background:
     - disable # Disable background images entirely
     - icon_background # Apply background to room icon only
     - hide_icon_only # Hide the room icon to show background clearly
+    - hide_gradient # Show the image without the darkening gradient
 ```
 
 ![Background Image](../assets/background-image.png)
 
 ### Background Options
 
-| Name         | Type             | Default | Description                                                         |
-| ------------ | ---------------- | ------- | ------------------------------------------------------------------- |
-| image        | string           | none    | URL or path to background image                                     |
-| image_entity | string           | none    | Entity ID for dynamic background (image, person, camera)            |
-| opacity      | number or string | auto    | Static percentage **(0–100)**, or an **entity ID**                  |
-| options      | array            | none    | Array of options: 'disable', 'icon_background', or 'hide_icon_only' |
+| Name         | Type             | Default | Description                                                                          |
+| ------------ | ---------------- | ------- | ------------------------------------------------------------------------------------ |
+| image        | string           | none    | URL or path to background image                                                      |
+| image_entity | string           | none    | Entity ID for dynamic background (image, person, camera)                             |
+| opacity      | number or string | auto    | Static percentage **(0–100)**, or an **entity ID**                                   |
+| options      | array            | none    | Array of options: 'disable', 'icon_background', 'hide_icon_only', or 'hide_gradient' |
 
 ### Background Priority
 
@@ -57,6 +58,23 @@ This option is particularly useful for:
 **Note**: This is different from the `hide_room_icon` feature which completely removes the icon container from the DOM.
 
 ![No Icon](../assets/no-icon.png)
+
+#### `hide_gradient`
+
+By default the card paints a dark gradient over the top of the background image so the room name, temperature, and humidity text stays readable. `hide_gradient` removes that overlay and shows the image as-is.
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+background:
+  image: /local/images/living-room.jpg
+  options:
+    - hide_gradient
+```
+
+Use it when your image is already dark or low-contrast at the top, or when you're styling the text colors yourself. It applies to `icon_background` mode too, removing the (lighter) gradient from the icon circle.
+
+**Note**: with the gradient off, light images can make the card text hard to read — pair it with `opacity` or a custom text color if needed.
 
 ### Background Examples
 

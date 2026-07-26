@@ -14,9 +14,10 @@ import type { Config } from '@type/config';
  *   used directly as 0-1 (e.g. an occupancy probability sensor). The result
  *   is clamped defensively.
  *
- * CSS in `src/theme/styles.ts` and the room-state-icon styles routes this value
- * to either the card background or the icon background based on whether the
- * main room icon has the `[icon-bg]` attribute set.
+ * `room-background-image` calls this and sets the vars on its own host;
+ * its CSS (plus room-state-icon's routing rule) then sends the value to
+ * either the card color layer or the icon fill based on which layer
+ * reflects the `[icon-bg]` attribute.
  */
 export const getBackgroundOpacity = (
   config: Config,
