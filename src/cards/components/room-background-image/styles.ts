@@ -37,6 +37,14 @@ export const styles = css`
     filter: var(--background-filter, none);
   }
 
+  /* The image covers the box (object-fit: cover), so it fully occludes the
+     color underneath — exactly as the old single ha-card::before did, where
+     background-image painted over background-color. Keeping both visible
+     would composite the state color through the image as a tint. */
+  :host([image]) .color {
+    display: none;
+  }
+
   /* icon_background mode: the user-configured opacity belongs to the
      icon's background (room-state-icon routes it there), so the card
      color layer falls back to the theme opacity chain. */
@@ -59,6 +67,13 @@ export const styles = css`
     filter: var(--background-filter, none);
   }
 
+  /* Backgrounds are decoration: never let the <img> become the event
+     target (or a native drag source) for the card / icon action handlers. */
+  .color,
+  .image {
+    pointer-events: none;
+  }
+
   .image hui-image {
     display: block;
     width: 100%;
@@ -75,9 +90,20 @@ export const styles = css`
     );
   }
 
+  /* 'hide_gradient' option — show the image with no darkening overlay. */
+  :host([hide-gradient]) .image::after {
+    display: none;
+  }
+
   /* Icon placement: the fill circle. Alarm state is routed in by
-     room-state-icon via the --icon-alarm-* variables. */
+     room-state-icon via the --icon-alarm-* variables.
+
+     The layers round themselves (as the old .icon::before did) rather than
+     room-state-icon clipping its whole host — the host box also holds
+     badges (offset -5% outside the circle) and the state label below it,
+     which a host-level circular clip would cut off. */
   :host([icon]) .color {
+    border-radius: 50%;
     background-color: var(--icon-alarm-color, var(--background-color-icon));
     opacity: var(--icon-color-opacity, var(--background-opacity-icon));
     filter: var(--icon-filter, none);
@@ -86,6 +112,7 @@ export const styles = css`
   }
 
   :host([icon]) .image {
+    border-radius: 50%;
     opacity: var(--icon-color-opacity, var(--background-opacity-icon));
     filter: var(--icon-filter, none);
     animation: var(--icon-alarm-animation, none);

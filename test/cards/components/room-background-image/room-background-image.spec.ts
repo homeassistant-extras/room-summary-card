@@ -336,4 +336,134 @@ describe('room-background-image.ts', () => {
     expect(el.icon).to.be.true;
     expect(el.hasAttribute('icon')).to.be.true;
   });
+
+  it('should reflect hide-gradient for the hide_gradient option', async () => {
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .config=${{
+          area: 'test',
+          background: {
+            image: '/local/bg.jpg',
+            options: ['hide_gradient'],
+          },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(el.hasAttribute('hide-gradient')).to.be.true;
+  });
+
+  it('should not reflect hide-gradient without the option', async () => {
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        .hass=${mockHass}
+        .config=${{
+          area: 'test',
+          background: { image: '/local/bg.jpg' },
+        } as Config}
+      ></room-background-image>`,
+    );
+    expect(el.hasAttribute('hide-gradient')).to.be.false;
+  });
+
+  describe('opacity entity subscription scope', () => {
+    // A card renders one background layer per entity icon plus one for
+    // itself. Only the layer that actually consumes --user-opacity may
+    // subscribe, otherwise every icon duplicates the same watcher.
+    const opacityConfig = (options?: string[]) =>
+      ({
+        area: 'test',
+        background: {
+          image: '/local/bg.jpg',
+          opacity: 'sensor.opacity',
+          ...(options ? { options } : {}),
+        },
+      }) as Config;
+
+    it('should subscribe on the card layer by default', async () => {
+      const el = await fixture<RoomBackgroundImage>(
+        html`<room-background-image
+          .hass=${mockHass}
+          .config=${opacityConfig()}
+        ></room-background-image>`,
+      );
+      expect(el.entities).to.deep.equal(['sensor.opacity']);
+    });
+
+    it('should not subscribe on entity icons', async () => {
+      const el = await fixture<RoomBackgroundImage>(
+        html`<room-background-image
+          icon
+          .hass=${mockHass}
+          .config=${opacityConfig()}
+        ></room-background-image>`,
+      );
+      expect(el.entities).to.deep.equal([]);
+    });
+
+    it('should not subscribe on the main icon unless it owns the background', async () => {
+      const el = await fixture<RoomBackgroundImage>(
+        html`<room-background-image
+          icon
+          .room=${true}
+          .hass=${mockHass}
+          .config=${opacityConfig()}
+        ></room-background-image>`,
+      );
+      expect(el.entities).to.deep.equal([]);
+    });
+
+    it('should move the subscription to the main icon in icon_background mode', async () => {
+      const card = await fixture<RoomBackgroundImage>(
+        html`<room-background-image
+          .hass=${mockHass}
+          .config=${opacityConfig(['icon_background'])}
+        ></room-background-image>`,
+      );
+      expect(card.entities).to.deep.equal([]);
+
+      const mainIcon = await fixture<RoomBackgroundImage>(
+        html`<room-background-image
+          icon
+          .room=${true}
+          .hass=${mockHass}
+          .config=${opacityConfig(['icon_background'])}
+        ></room-background-image>`,
+      );
+      expect(mainIcon.entities).to.deep.equal(['sensor.opacity']);
+    });
+
+    it('should not emit --user-opacity on layers that do not own it', async () => {
+      const el = await fixture<RoomBackgroundImage>(
+        html`<room-background-image
+          icon
+          .hass=${mockHass}
+          .config=${{
+            area: 'test',
+            background: { image: '/local/bg.jpg', opacity: 42 },
+          } as Config}
+        ></room-background-image>`,
+      );
+      expect(el.style.getPropertyValue('--user-opacity')).to.equal('');
+      // the theme chain still resolves for the layer's own fill
+      expect(el.style.getPropertyValue('--background-opacity-card')).to.equal(
+        'var(--opacity-background-inactive)',
+      );
+    });
+
+    it('should keep the same entities array across re-renders', async () => {
+      const config = opacityConfig();
+      const el = await fixture<RoomBackgroundImage>(
+        html`<room-background-image
+          .hass=${mockHass}
+          .config=${config}
+        ></room-background-image>`,
+      );
+      const first = el.entities;
+      // lit re-sets object-valued properties on every parent render
+      el.config = config;
+      await el.updateComplete;
+      expect(el.entities).to.equal(first);
+    });
+  });
 });

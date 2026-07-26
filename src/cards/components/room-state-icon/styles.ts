@@ -6,8 +6,6 @@ import { css } from 'lit';
 export const styles = css`
   :host {
     width: var(--user-entity-icon-size, 100%);
-    border-radius: 50%;
-    overflow: hidden;
   }
 
   /* Icon container styling */

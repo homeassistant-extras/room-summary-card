@@ -94,22 +94,54 @@ export class RoomBackgroundImage extends SubscribeEntityStateMixin(
   @state()
   private _iconBackground = false;
 
+  /**
+   * Whether the user gradient overlay is suppressed (`hide_gradient`).
+   */
+  @state()
+  private _hideGradient = false;
+
   private _config?: Config;
 
   override set config(config: Config) {
     this._config = config;
 
+    this._iconBackground =
+      config.background?.options?.includes('icon_background') ?? false;
+    this._hideGradient =
+      config.background?.options?.includes('hide_gradient') ?? false;
+
     const mapped = getHuiImageConfig(this.hass, this._config);
     if (!equal(mapped, this._huiConfig)) {
       this._huiConfig = mapped;
     }
-    this._iconBackground =
-      config.background?.options?.includes('icon_background') ?? false;
 
-    // Subscribe to config.background.opacity when it names an entity_id,
-    // so getBackgroundOpacity picks up its state (see SubscribeEntityStateMixin).
+    // Subscribe to config.background.opacity when it names an entity_id, so
+    // getBackgroundOpacity picks up its state (see SubscribeEntityStateMixin).
+    // Only the instance that actually consumes --user-opacity subscribes: a
+    // card renders one background layer per entity icon plus one for itself,
+    // and subscribing from all of them would register N duplicate watchers
+    // for the same entity.
     const opacity = config.background?.opacity;
-    this.entities = typeof opacity === 'string' ? [opacity] : [];
+    const wanted =
+      this._ownsUserOpacity && typeof opacity === 'string' ? [opacity] : [];
+    // Reassign only on a real change — `config` is re-set on every parent
+    // render, and a fresh array each time would schedule a wasted update.
+    if (!equal(wanted, this.entities)) {
+      this.entities = wanted;
+    }
+  }
+
+  /**
+   * Whether this layer is the one the user-configured `background.opacity`
+   * applies to. The card owns it normally; in `icon_background` mode it
+   * moves to the main room icon (see the routing rule in
+   * room-state-icon's styles). Every other layer ignores it, so they
+   * neither subscribe to nor emit `--user-opacity`.
+   */
+  private get _ownsUserOpacity(): boolean {
+    return this.icon
+      ? this.room && this._iconBackground
+      : !this._iconBackground;
   }
 
   /**
@@ -166,6 +198,7 @@ export class RoomBackgroundImage extends SubscribeEntityStateMixin(
       'icon-bg',
       this._iconBackground && (!this.icon || this.room),
     );
+    this.toggleAttribute('hide-gradient', this._hideGradient);
     this._applyOpacity();
   }
 
@@ -176,11 +209,15 @@ export class RoomBackgroundImage extends SubscribeEntityStateMixin(
    */
   private _applyOpacity(): void {
     if (!this._config) return;
-    const vars = getBackgroundOpacity(
-      this._config,
-      this.isActive,
-      this._opacityState,
-    );
+    const vars: Record<string, string | number | undefined> =
+      getBackgroundOpacity(this._config, this.isActive, this._opacityState);
+
+    // Layers that don't own the user opacity leave the var unset so their
+    // fill falls through to the theme chain.
+    if (!this._ownsUserOpacity) {
+      vars['--user-opacity'] = undefined;
+    }
+
     for (const [name, value] of Object.entries(vars)) {
       if (value === undefined) {
         this.style.removeProperty(name);
