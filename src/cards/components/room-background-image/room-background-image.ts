@@ -3,7 +3,7 @@ import { SubscribeEntityStateMixin } from '@homeassistant-extras/hass/mixins/sub
 import type { HassEntity } from '@homeassistant-extras/hass/ws/types';
 import { getBackgroundOpacity } from '@theme/background/background-bits';
 import {
-  getEntityPictureUrl,
+  getEntityHuiImageConfig,
   getHuiImageConfig,
   type HuiImageConfig,
 } from '@theme/image/background-to-hui-config';
@@ -33,8 +33,8 @@ import { styles } from './styles';
  * 3. `.image::after` — the user gradient (`--user-background-image-overlay`)
  *
  * The image source is mapped from `config.background` (see
- * `getHuiImageConfig`), or — for icon placement — from the entity's own
- * `entity_picture` (see `getEntityPictureUrl`). Layers stack in plain DOM
+ * `getHuiImageConfig`), or — for icon placement — from the icon's own
+ * entity (see `getEntityHuiImageConfig`). Layers stack in plain DOM
  * order — no z-index.
  */
 @customElement('room-background-image')
@@ -57,8 +57,9 @@ export class RoomBackgroundImage extends SubscribeEntityStateMixin(
   room = false;
 
   /**
-   * Icon placement only: the entity rendered in the icon. Supplies the
-   * `entity_picture` image, which wins over the mapped background config.
+   * Icon placement only: the entity rendered in the icon. Supplies its own
+   * image (camera feed or `entity_picture`), which wins over the mapped
+   * background config.
    *
    * Named `roomEntity` (not `entity`) because `SubscribeEntityStateMixin`
    * already owns `entity` for its own single-entity subscription
@@ -161,10 +162,12 @@ export class RoomBackgroundImage extends SubscribeEntityStateMixin(
   }
 
   /**
-   * The entity's own picture, used only in icon placement
+   * The entity's own image, used only in icon placement. Cameras map to
+   * `camera_image` so the icon refreshes; everything else to its
+   * `entity_picture` (see `getEntityHuiImageConfig`).
    */
-  private get _entityPicture(): string | undefined {
-    return this.icon ? getEntityPictureUrl(this.roomEntity) : undefined;
+  private get _entityHuiConfig(): HuiImageConfig | undefined {
+    return this.icon ? getEntityHuiImageConfig(this.roomEntity) : undefined;
   }
 
   /**
@@ -177,7 +180,7 @@ export class RoomBackgroundImage extends SubscribeEntityStateMixin(
     if (this.icon) {
       // this is rendered in a room-state-icon
       return (
-        !!this._entityPicture ||
+        !!this._entityHuiConfig ||
         (this.room && this._iconBackground && !!this._huiConfig)
       );
     }
@@ -232,10 +235,9 @@ export class RoomBackgroundImage extends SubscribeEntityStateMixin(
    * @returns The rendered HTML template
    */
   override render(): TemplateResult {
-    const picture = this._entityPicture;
-    const hui: HuiImageConfig | undefined = picture
-      ? { image: picture }
-      : this._huiConfig;
+    // The icon's own entity wins over the mapped background config.
+    const hui: HuiImageConfig | undefined =
+      this._entityHuiConfig ?? this._huiConfig;
 
     return html`
       <div class="color"></div>

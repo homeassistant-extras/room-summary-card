@@ -1,5 +1,8 @@
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
-import { getHuiImageConfig } from '@theme/image/background-to-hui-config';
+import {
+  getEntityHuiImageConfig,
+  getHuiImageConfig,
+} from '@theme/image/background-to-hui-config';
 import type { Config } from '@type/config';
 import { expect } from 'chai';
 
@@ -146,6 +149,73 @@ describe('background-to-hui-config.ts', () => {
     it('should return undefined for an unknown area', () => {
       const config: Config = { area: 'garage' };
       expect(getHuiImageConfig(mockHass, config)).to.be.undefined;
+    });
+  });
+
+  describe('getEntityHuiImageConfig', () => {
+    const entity = (
+      entityId: string,
+      attributes: Record<string, unknown>,
+      features: string[] = [],
+    ) =>
+      ({
+        config: { entity_id: entityId, features },
+        state: {
+          entity_id: entityId,
+          state: 'on',
+          attributes,
+          domain: entityId.split('.')[0],
+        },
+      }) as any;
+
+    it('should map a camera entity to camera_image so the icon refreshes', () => {
+      // An entity_picture snapshot URL resolves once and never updates;
+      // camera_image gets hui-image's thumbnail polling instead.
+      expect(
+        getEntityHuiImageConfig(
+          entity('camera.patio', {
+            entity_picture: '/api/camera_proxy/camera.patio?token=abc',
+          }),
+        ),
+      ).to.deep.equal({ camera_image: 'camera.patio', camera_view: 'auto' });
+    });
+
+    it('should map a non-camera entity to its entity picture', () => {
+      expect(
+        getEntityHuiImageConfig(
+          entity('person.gina', {
+            entity_picture: '/api/image/serve/gina/512x512',
+          }),
+        ),
+      ).to.deep.equal({ image: '/api/image/serve/gina/512x512' });
+    });
+
+    it('should map media player art to its entity picture', () => {
+      expect(
+        getEntityHuiImageConfig(
+          entity('media_player.den', { entity_picture: '/api/media/art.png' }),
+        ),
+      ).to.deep.equal({ image: '/api/media/art.png' });
+    });
+
+    it('should return undefined without an entity picture', () => {
+      expect(getEntityHuiImageConfig(entity('light.lamp', {}))).to.be.undefined;
+    });
+
+    it('should return undefined for a camera opted out via use_entity_icon', () => {
+      expect(
+        getEntityHuiImageConfig(
+          entity(
+            'camera.patio',
+            { entity_picture: '/api/camera_proxy/camera.patio' },
+            ['use_entity_icon'],
+          ),
+        ),
+      ).to.be.undefined;
+    });
+
+    it('should return undefined without an entity', () => {
+      expect(getEntityHuiImageConfig(undefined)).to.be.undefined;
     });
   });
 });

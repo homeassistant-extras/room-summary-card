@@ -287,6 +287,33 @@ describe('room-background-image.ts', () => {
     expect(huiImage.image).to.equal('/api/image/serve/abc/512x512');
   });
 
+  it('should render a camera icon entity as a camera feed, not a snapshot', async () => {
+    const camera = {
+      config: { entity_id: 'camera.patio', features: [] },
+      state: {
+        entity_id: 'camera.patio',
+        state: 'idle',
+        attributes: {
+          entity_picture: '/api/camera_proxy/camera.patio?token=abc',
+        },
+        domain: 'camera',
+      },
+    } as any;
+
+    const el = await fixture<RoomBackgroundImage>(
+      html`<room-background-image
+        icon
+        .roomEntity=${camera}
+        .hass=${mockHass}
+        .config=${{ area: 'test' } as Config}
+      ></room-background-image>`,
+    );
+    const huiImage = el.shadowRoot!.querySelector('hui-image') as any;
+    expect(huiImage.cameraImage).to.equal('camera.patio');
+    expect(huiImage.cameraView).to.equal('auto');
+    expect(huiImage.image).to.be.undefined;
+  });
+
   it('should render the image layer from the entity picture alone', async () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image

@@ -33,6 +33,31 @@ export const getEntityPictureUrl = (
 };
 
 /**
+ * Maps an icon's own entity to a `hui-image` configuration.
+ *
+ * Cameras route through `camera_image` rather than their `entity_picture`
+ * so the icon gets the same thumbnail refresh (and off-screen pausing) that
+ * a camera card background gets — an `entity_picture` snapshot URL is
+ * resolved once and never updates. Everything else (person, media_player
+ * art, image entities) renders its `entity_picture` directly.
+ */
+export const getEntityHuiImageConfig = (
+  entity?: EntityInformation,
+): HuiImageConfig | undefined => {
+  // Gate on the picture so `use_entity_icon` and picture-less entities opt
+  // out here exactly as they do everywhere else that reads this.
+  const picture = getEntityPictureUrl(entity);
+  if (!picture) return undefined;
+
+  const entityId = entity?.state?.entity_id;
+  if (entityId && entity?.state?.domain === 'camera') {
+    return { camera_image: entityId, camera_view: 'auto' };
+  }
+
+  return { image: picture };
+};
+
+/**
  * Whether an icon should render without its glyph/state content: the
  * entity's own picture replaces it, or the main room icon is in
  * `hide_icon_only` mode.
