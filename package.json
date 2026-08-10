@@ -59,9 +59,9 @@
     "eslint": "^10.8.0",
     "eslint-plugin-lit": "^2.3.1",
     "eslint-plugin-wc": "^3.1.0",
-    "globals": "^17.8.0",
+    "globals": "^17.9.0",
     "jsdom": "^30.0.1",
-    "mocha": "^11.7.6",
+    "mocha": "^11.8.0",
     "nyc": "^18.0.0",
     "parcel": "^2.16.4",
     "prettier": "3.9.6",
@@ -70,7 +70,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.66.0"
   },
   "dependencies": {
     "@homeassistant-extras/hass": "^0.6.0",
