@@ -1741,15 +1741,15 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jsdom@^28.0.3":
-  version "28.0.3"
-  resolved "https://registry.yarnpkg.com/@types/jsdom/-/jsdom-28.0.3.tgz#a5a900ae4d5bb1d874dee24a89afc06b34d3c1a0"
-  integrity sha512-/HQ2uFoetFTXuye8vzIcHw2z6Fwi7Hi/qcgC+RoS9NCyewiqxhVGqlG+ViGB6lkax481R6dmhf1I7lIGlzJStQ==
+"@types/jsdom@^30.0.0":
+  version "30.0.0"
+  resolved "https://registry.yarnpkg.com/@types/jsdom/-/jsdom-30.0.0.tgz#40950b6b36e826e3cf0b155c452cb5ed1741443f"
+  integrity sha512-uAHGxujGE0cDaKGdK28zgDotFtNA7MKq5DXl8LrfdxdCI8VHcg15oJz+amHTChPNI5JpgEPQWc2xFdrw3em/nQ==
   dependencies:
     "@types/node" "*"
     "@types/tough-cookie" "*"
     parse5 "^8.0.0"
-    undici-types "^7.21.0"
+    undici-types "^8.9.0"
 
 "@types/json-schema@^7.0.15":
   version "7.0.15"
@@ -4929,10 +4929,10 @@ typescript@^6.0.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-6.0.3.tgz#90251dc007916e972786cb94d74d15b185577d21"
   integrity sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==
 
-undici-types@^7.21.0:
-  version "7.24.6"
-  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-7.24.6.tgz#61275b485d7fd4e9d269c7cf04ec2873c9cc0f91"
-  integrity sha512-WRNW+sJgj5OBN4/0JpHFqtqzhpbnV0GuB+OozA9gCL7a993SmU+1JBZCzLNxYsbMfIeDL+lTsphD5jN5N+n0zg==
+undici-types@^8.9.0:
+  version "8.10.0"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-8.10.0.tgz#345466f95636cce5b526e319c1e61a837c82af0b"
+  integrity sha512-ibvdovq3nCFs8Msrd95BW+zUOq+aOVbT+wpHUoPWhztbHEoPc6oof51iFDB6Es8lTKvNvVW9jNSAB8dwrKTMGg==
 
 undici-types@~8.3.0:
   version "8.3.0"
