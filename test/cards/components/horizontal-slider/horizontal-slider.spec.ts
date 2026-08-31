@@ -101,6 +101,19 @@ describe('horizontal-slider.ts', () => {
       expect(element.render()).to.equal(nothing);
     });
 
+    it('should render nothing when the entity state is in hide_when', () => {
+      element.slider = {
+        entity_id: 'media_player.amp',
+        slider: { hide_when: ['off', 'idle', 'unavailable'] },
+      };
+      setSliderState(createStateEntity('media_player', 'amp', 'off', {}));
+
+      expect(element.render()).to.equal(nothing);
+
+      setSliderState(createStateEntity('media_player', 'amp', 'playing', {}));
+      expect(element.render()).to.not.equal(nothing);
+    });
+
     /** Render into a fixture so the ha-slider properties can be read back. */
     async function renderSlider(): Promise<any> {
       const el = await fixture(element.render() as TemplateResult);

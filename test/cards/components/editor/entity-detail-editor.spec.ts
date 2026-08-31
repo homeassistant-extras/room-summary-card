@@ -303,6 +303,25 @@ describe('entity-detail-editor.ts', () => {
               required: false,
               selector: { boolean: {} },
             },
+            {
+              name: 'hide_when',
+              label: 'editor.entity.slider_hide_when',
+              required: false,
+              selector: {
+                select: {
+                  multiple: true,
+                  custom_value: true,
+                  options: [
+                    'off',
+                    'idle',
+                    'unavailable',
+                    'unknown',
+                    'standby',
+                    'paused',
+                  ],
+                },
+              },
+            },
           ],
         },
       ];

@@ -12,6 +12,11 @@
  *  - `'ha'`           : the standard HA slider look (thin track + thumb).
  *  - `'bar'` (default): ha-slider re-styled as a chunky full-height bar.
  *
+ * `slider.hide_when` is a list of entity states that omit the strip
+ * (e.g. media_player `off` / `idle` / `unavailable`). The host reflects
+ * `[hide]` so parent card CSS can drop the extra problem-indicator
+ * margin while the slider is gone.
+ *
  * Entity wiring
  * -------------
  * Extends `SubscribeEntityStateMixin(HassUpdateMixin(LitElement))`, so
@@ -40,6 +45,7 @@
 
 import { setBrightness } from '@delegates/actions/brightness-control';
 import { setCoverPosition } from '@delegates/actions/cover-position';
+import { shouldHideSlider } from '@delegates/entities/slider-entity';
 import { computeDomain } from '@homeassistant-extras/hass/common/entity/compute_domain';
 import { setValue } from '@homeassistant-extras/hass/data/input_text';
 import { setMediaPlayerVolume } from '@homeassistant-extras/hass/data/media-player';
@@ -55,6 +61,7 @@ import {
   html,
   nothing,
   type CSSResult,
+  type PropertyValues,
   type TemplateResult,
 } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -126,10 +133,19 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
     void setValue(hass, state.entity_id, target.value);
   };
 
+  /**
+   * Reflect `[hide]` so parent card CSS (`:has(horizontal-slider)`) can
+   * drop the extra problem-indicator margin while the strip is gone.
+   */
+  protected override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+    this.toggleAttribute('hide', shouldHideSlider(this._slider, this.state));
+  }
+
   public override render(): TemplateResult | typeof nothing {
     d(this.config, 'horizontal-slider', 'render');
     const s = this.state;
-    if (!s) return nothing;
+    if (!s || shouldHideSlider(this._slider, s)) return nothing;
 
     const domain = computeDomain(s.entity_id);
     const rawValue = s ? Number(s.state) : Number.NaN;

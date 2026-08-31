@@ -221,12 +221,12 @@ const statusEntityStyles = css`
   }
 
   /* scooty on upwards is slider */
-  ha-card:has(horizontal-slider[variant='bar']) .problems {
+  ha-card:has(horizontal-slider[variant='bar']:not([hide])) .problems {
     margin-bottom: calc(10% + var(--horizontal-slider-height, 6%) + 20px);
   }
 
   /* scooty on upwards is slider */
-  ha-card:has(horizontal-slider[variant='ha']) .problems {
+  ha-card:has(horizontal-slider[variant='ha']:not([hide])) .problems {
     margin-bottom: calc(10% + var(--horizontal-slider-height, 6%) + 10px);
   }
 

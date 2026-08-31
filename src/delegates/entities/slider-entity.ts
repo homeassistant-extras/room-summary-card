@@ -12,6 +12,26 @@ import type { Config } from '@type/config';
 import type { EntityConfig } from '@type/config/entity';
 
 /**
+ * Returns true when the slider should be omitted because the bound
+ * entity's current state is listed in `slider.hide_when`.
+ *
+ * A single string is treated as a one-item list so YAML
+ * `hide_when: off` still works.
+ */
+export const shouldHideSlider = (
+  slider: EntityConfig | undefined,
+  state: { state: string } | undefined,
+): boolean => {
+  const hideWhen = slider?.slider?.hide_when;
+  if (hideWhen == null) return false;
+
+  const states = typeof hideWhen === 'string' ? [hideWhen] : hideWhen;
+  if (states.length === 0) return false;
+
+  return state?.state != null && states.includes(state.state);
+};
+
+/**
  * Returns the first entity in the card config that has a `slider` block,
  * or `undefined` if none qualify.
  */

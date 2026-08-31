@@ -36,6 +36,10 @@ export const styles = css`
     bottom: 0;
   }
 
+  :host([hide]) {
+    display: none;
+  }
+
   ha-slider {
     width: 100%;
 

@@ -70,7 +70,8 @@
       "slider_style": "Slider Style",
       "slider_style_bar": "Bar (full-width strip)",
       "slider_style_ha": "Standard HA Slider",
-      "slider_hide_icon": "Hide Icon (entity is shown only as the slider)"
+      "slider_hide_icon": "Hide Icon (entity is shown only as the slider)",
+      "slider_hide_when": "Hide When (list of entity states)"
     },
     "badge": {
       "position": {

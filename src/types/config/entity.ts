@@ -35,8 +35,8 @@ export type HorizontalSliderStyle = 'ha' | 'bar';
 
 /**
  * Per-entity configuration for the horizontal slider. Reserved for
- * options that are scoped to a single slider instance (currently just
- * the visual style; future candidates: min/max overrides, color, etc.).
+ * options that are scoped to a single slider instance (visual style,
+ * hide-when states; future candidates: min/max overrides, color, etc.).
  */
 export interface SliderConfig {
   /** Visual variant of the rendered slider. Defaults to `'bar'`. */
@@ -49,6 +49,12 @@ export interface SliderConfig {
    * represented only by the bottom slider strip, not by a room-state-icon.
    */
   hide_icon?: boolean;
+
+  /**
+   * Entity states that hide the slider strip. Compared against the
+   * slider entity's current state. Omit or leave empty to always show.
+   */
+  hide_when?: string[];
 }
 
 /**

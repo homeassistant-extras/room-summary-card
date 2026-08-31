@@ -1,5 +1,9 @@
-import { getSliderEntity } from '@delegates/entities/slider-entity';
+import {
+  getSliderEntity,
+  shouldHideSlider,
+} from '@delegates/entities/slider-entity';
 import type { Config } from '@type/config';
+import type { EntityConfig } from '@type/config/entity';
 import { expect } from 'chai';
 
 describe('slider-entity.ts', () => {
@@ -105,6 +109,41 @@ describe('slider-entity.ts', () => {
       const result = getSliderEntity(config);
       expect(result?.entity_id).to.equal('input_number.x');
       expect(result?.slider?.style).to.equal('ha');
+    });
+  });
+
+  describe('shouldHideSlider', () => {
+    const slider: EntityConfig = {
+      entity_id: 'media_player.amp',
+      slider: { hide_when: ['off', 'idle', 'unavailable'] },
+    };
+
+    it('should return false when hide_when is omitted or empty', () => {
+      expect(
+        shouldHideSlider(
+          { entity_id: 'media_player.amp', slider: {} },
+          { state: 'off' },
+        ),
+      ).to.be.false;
+      expect(
+        shouldHideSlider(
+          { entity_id: 'media_player.amp', slider: { hide_when: [] } },
+          { state: 'off' },
+        ),
+      ).to.be.false;
+    });
+
+    it('should hide when the current state is listed and show otherwise', () => {
+      expect(shouldHideSlider(slider, { state: 'off' })).to.be.true;
+      expect(shouldHideSlider(slider, { state: 'playing' })).to.be.false;
+      expect(shouldHideSlider(slider, undefined)).to.be.false;
+
+      const single = {
+        entity_id: 'media_player.amp',
+        slider: { hide_when: 'off' as unknown as string[] },
+      };
+      expect(shouldHideSlider(single, { state: 'off' })).to.be.true;
+      expect(shouldHideSlider(single, { state: 'idle' })).to.be.false;
     });
   });
 });

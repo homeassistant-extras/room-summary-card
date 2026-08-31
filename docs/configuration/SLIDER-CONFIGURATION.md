@@ -56,10 +56,11 @@ merge.
 
 The `slider` block lives on an entity:
 
-| Option      | Type             | Default | Description                                                                                 |
-| ----------- | ---------------- | ------- | ------------------------------------------------------------------------------------------- |
-| `style`     | `'bar'` / `'ha'` | `'bar'` | Visual variant. `bar` is a chunky full-width strip; `ha` is the standard HA slider.         |
-| `hide_icon` | boolean          | `false` | When `true`, the entity is omitted from the icon grid — useful when it lives in `entities`. |
+| Option      | Type             | Default | Description                                                                                           |
+| ----------- | ---------------- | ------- | ----------------------------------------------------------------------------------------------------- |
+| `style`     | `'bar'` / `'ha'` | `'bar'` | Visual variant. `bar` is a chunky full-width strip; `ha` is the standard HA slider.                   |
+| `hide_icon` | boolean          | `false` | When `true`, the entity is omitted from the icon grid — useful when it lives in `entities`.           |
+| `hide_when` | list of strings  | none    | Hide the slider while the bound entity is in any of these states (e.g. `off`, `idle`, `unavailable`). |
 
 ### Hide the icon
 
@@ -113,8 +114,30 @@ entities:
     slider:
       style: bar
       hide_icon: true
+      hide_when:
+        - off
+        - idle
+        - unavailable
   - switch.living_room_lamp
   - switch.living_room_fan
+```
+
+### Hide when
+
+`hide_when` is a list of entity states compared against the **slider
+entity itself**. The strip is omitted while the state matches, and
+problem indicators settle back to their normal bottom margin:
+
+```yaml
+entities:
+  - entity_id: media_player.poolhouse_amp
+    slider:
+      style: bar
+      hide_icon: true
+      hide_when:
+        - off
+        - idle
+        - unavailable
 ```
 
 ### Cover position
@@ -165,8 +188,8 @@ styles:
 ### Editor
 
 The visual editor exposes the `slider` block as an expandable
-"Slider" section under each entity, with `style` and `hide_icon`
-fields.
+"Slider" section under each entity, with `style`, `hide_icon`, and
+`hide_when` fields.
 
 ---
 
