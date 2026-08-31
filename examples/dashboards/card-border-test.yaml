@@ -1,0 +1,388 @@
+# Card border test dashboard — issue #442
+#
+# Exercises every card-border source:
+#   - occupancy / smoke / gas / water alarms
+#   - alarm priority (smoke > gas > water > occupancy)
+#   - state-based `card_border_color` (toggle + HVAC hvac_action)
+#   - climate hot / humid / both thresholds
+#
+# Demo helpers (same as the other dashboards):
+#   - binary_sensor.test_always_on / test_always_off
+#   - input_boolean.test_toggle
+#   - climate.living_room (for hvac_action states — swap if needed)
+#
+# Usage: Settings → Dashboards → Add Dashboard → ⋮ → Raw configuration editor →
+# paste this file. Swap areas / climate.living_room for your own if needed.
+#
+# Flip `input_boolean.test_toggle` and change the climate HVAC action to see
+# borders update live. Alarm cards use always-on sensors so they stay visible.
+
+title: Room Summary Card Border Test
+views:
+  - title: Room Summary Card Border Test
+    type: sections
+    max_columns: 3
+    sections:
+      #################################################
+      # CONTROLS — drive interactive cards below
+      #################################################
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: 'Border controls'
+            heading_style: title
+
+          - type: entities
+            entities:
+              - entity: input_boolean.test_toggle
+                name: 'Toggle (occupancy + state border)'
+              - entity: climate.living_room
+                name: 'Climate (hvac_action → state border)'
+              - entity: binary_sensor.test_always_on
+                name: 'Always on (fixed alarm demos)'
+              - entity: binary_sensor.test_always_off
+                name: 'Always off (inactive baseline)'
+
+      #################################################
+      # ALARM BORDERS — occupancy / smoke / gas / water
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Alarm borders (always on)'
+            heading_style: title
+
+          # Occupancy — green border + pulse
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'ALARM: occupancy (green)'
+            features:
+              - skip_climate_styles
+            occupancy:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#4CAF50'
+              icon_color: '#8BC34A'
+
+          # Smoke — red border + pulse (highest priority)
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'ALARM: smoke (red)'
+            features:
+              - skip_climate_styles
+            smoke:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#F44336'
+              icon_color: '#FF1744'
+
+          # Gas — orange border + pulse
+          - type: custom:room-summary-card
+            area: garage
+            area_name: 'ALARM: gas (orange)'
+            features:
+              - skip_climate_styles
+            gas:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#FF9800'
+              icon_color: '#FF5722'
+
+          # Water — blue border + pulse
+          - type: custom:room-summary-card
+            area: guest_bath
+            area_name: 'ALARM: water (blue)'
+            features:
+              - skip_climate_styles
+            water:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#2196F3'
+              icon_color: '#03A9F4'
+
+          # Baseline — always-off sensor, no border
+          - type: custom:room-summary-card
+            area: office
+            area_name: 'ALARM: off (no border)'
+            features:
+              - skip_climate_styles
+            occupancy:
+              entities:
+                - binary_sensor.test_always_off
+              card_border_color: '#4CAF50'
+
+      #################################################
+      # ALARM PRIORITY — smoke wins over occupancy
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Alarm priority'
+            heading_style: title
+
+          # Both smoke + occupancy on → expect RED smoke border (not green)
+          - type: custom:room-summary-card
+            area: living_room
+            area_name: 'PRIORITY: smoke > occupancy → red'
+            features:
+              - skip_climate_styles
+            occupancy:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#4CAF50'
+              icon_color: '#8BC34A'
+            smoke:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#F44336'
+              icon_color: '#FF1744'
+
+          # Gas + water + occupancy → expect ORANGE gas (smoke off)
+          - type: custom:room-summary-card
+            area: shed
+            area_name: 'PRIORITY: gas > water > occ → orange'
+            features:
+              - skip_climate_styles
+            occupancy:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#4CAF50'
+            gas:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#FF9800'
+            water:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#2196F3'
+
+          # Water + occupancy only → expect BLUE water
+          - type: custom:room-summary-card
+            area: patio
+            area_name: 'PRIORITY: water > occupancy → blue'
+            features:
+              - skip_climate_styles
+            occupancy:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#4CAF50'
+            water:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#2196F3'
+
+      #################################################
+      # INTERACTIVE — toggle drives occupancy / state
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Interactive (flip the toggle)'
+            heading_style: title
+
+          # Occupancy tied to input_boolean.test_toggle
+          - type: custom:room-summary-card
+            area: guest_bedroom
+            area_name: 'TOGGLE: occupancy border'
+            features:
+              - skip_climate_styles
+            occupancy:
+              entities:
+                - input_boolean.test_toggle
+              card_border_color: '#4CAF50'
+              icon_color: '#8BC34A'
+
+          # State card_border_color on the room entity (on=magenta, off=none)
+          - type: custom:room-summary-card
+            area: master_bedroom
+            area_name: 'TOGGLE: state border (on=magenta)'
+            features:
+              - skip_climate_styles
+            entity:
+              entity_id: input_boolean.test_toggle
+              states:
+                - state: 'on'
+                  icon: mdi:border-all-variant
+                  icon_color: pink
+                  card_border_color: '#E91E63'
+                - state: 'off'
+                  icon: mdi:border-none-variant
+                  icon_color: grey
+
+          # Alarm wins over state border — toggle on, smoke always on → red not magenta
+          - type: custom:room-summary-card
+            area: dining_room
+            area_name: 'TOGGLE: alarm wins over state'
+            features:
+              - skip_climate_styles
+            entity:
+              entity_id: input_boolean.test_toggle
+              states:
+                - state: 'on'
+                  icon_color: pink
+                  card_border_color: '#E91E63'
+            smoke:
+              entities:
+                - binary_sensor.test_always_on
+              card_border_color: '#F44336'
+              icon_color: '#FF1744'
+
+      #################################################
+      # STATE / HVAC — card_border_color on states (#442)
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'State card_border_color (#442)'
+            heading_style: title
+
+          # HVAC action on climate.living_room — heating/cooling/fan/idle
+          - type: custom:room-summary-card
+            area: living_room
+            area_name: 'HVAC: hvac_action → border'
+            features:
+              - skip_climate_styles
+            entity:
+              entity_id: climate.living_room
+              states:
+                - state: heating
+                  attribute: hvac_action
+                  icon: mdi:fire
+                  icon_color: red
+                  card_border_color: red
+                - state: cooling
+                  attribute: hvac_action
+                  icon: mdi:snowflake
+                  icon_color: blue
+                  card_border_color: blue
+                - state: drying
+                  attribute: hvac_action
+                  icon: mdi:water-percent
+                  icon_color: cyan
+                  card_border_color: cyan
+                - state: fan
+                  attribute: hvac_action
+                  icon: mdi:fan
+                  icon_color: teal
+                  card_border_color: teal
+                - state: idle
+                  attribute: hvac_action
+                  icon: mdi:clock-time-four-outline
+                - state: 'off'
+                  attribute: hvac_action
+                  icon: mdi:power
+                  icon_color: grey
+
+          # Sensor-driven border (entity in sensors list, not room entity)
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'SENSOR: test_toggle → border'
+            features:
+              - skip_climate_styles
+            sensors:
+              - entity_id: input_boolean.test_toggle
+                label: 'Border driver'
+                states:
+                  - state: 'on'
+                    icon: mdi:alert-circle
+                    icon_color: deep-orange
+                    card_border_color: '#FF5722'
+                  - state: 'off'
+                    icon: mdi:check-circle
+                    icon_color: grey
+
+          # Icon-entity driven border (entities list)
+          - type: custom:room-summary-card
+            area: office
+            area_name: 'ENTITY: always_on → amber border'
+            features:
+              - skip_climate_styles
+              - exclude_default_entities
+            entities:
+              - entity_id: binary_sensor.test_always_on
+                label: 'Border'
+                states:
+                  - state: 'on'
+                    icon: mdi:border-color
+                    icon_color: amber
+                    card_border_color: amber
+                  - state: 'off'
+                    icon_color: grey
+
+      #################################################
+      # CLIMATE THRESHOLDS — hot / humid / both
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Climate threshold borders'
+            heading_style: title
+
+          # Hot — very low threshold so any real temp sensor trips it
+          - type: custom:room-summary-card
+            area: kitchen
+            area_name: 'CLIMATE: hot (red)'
+            thresholds:
+              temperature:
+                - value: -100
+                  operator: gt
+                  color: '#F44336'
+              humidity:
+                - value: 999
+                  operator: gt
+
+          # Humid — very low humidity threshold
+          - type: custom:room-summary-card
+            area: guest_bath
+            area_name: 'CLIMATE: humid (blue)'
+            thresholds:
+              temperature:
+                - value: 999
+                  operator: gt
+              humidity:
+                - value: -100
+                  operator: gt
+                  color: '#2196F3'
+
+          # Both — split border (hot top/left, humid bottom/right)
+          - type: custom:room-summary-card
+            area: living_room
+            area_name: 'CLIMATE: hot + humid (split)'
+            thresholds:
+              temperature:
+                - value: -100
+                  operator: gt
+                  color: '#F44336'
+              humidity:
+                - value: -100
+                  operator: gt
+                  color: '#2196F3'
+
+          # Neither — high thresholds so borders stay off (if sensors exist)
+          - type: custom:room-summary-card
+            area: office
+            area_name: 'CLIMATE: neither (no border)'
+            thresholds:
+              temperature:
+                - value: 999
+                  operator: gt
+              humidity:
+                - value: 999
+                  operator: gt
+
+          # State border overrides climate when both would apply
+          - type: custom:room-summary-card
+            area: patio
+            area_name: 'CLIMATE: state border overrides hot'
+            entity:
+              entity_id: binary_sensor.test_always_on
+              states:
+                - state: 'on'
+                  icon_color: purple
+                  card_border_color: '#9C27B0'
+            thresholds:
+              temperature:
+                - value: -100
+                  operator: gt
+                  color: '#F44336'

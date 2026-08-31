@@ -29,6 +29,9 @@
  *  - `light`        : slider exposes 0–255; reads `brightness` and
  *                     writes via `setBrightness` (which itself turns
  *                     the light off when value is 0).
+ *  - `cover`        : slider exposes 0–100; reads `current_position`
+ *                     and writes via `setCoverPosition` (0 = closed,
+ *                     100 = open).
  *
  * @see https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/entity-rows/hui-input-number-entity-row.ts
  *
@@ -36,6 +39,7 @@
  */
 
 import { setBrightness } from '@delegates/actions/brightness-control';
+import { setCoverPosition } from '@delegates/actions/cover-position';
 import { computeDomain } from '@homeassistant-extras/hass/common/entity/compute_domain';
 import { setValue } from '@homeassistant-extras/hass/data/input_text';
 import { setMediaPlayerVolume } from '@homeassistant-extras/hass/data/media-player';
@@ -90,7 +94,7 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
 
   /**
    * `media_player` → `volume_set`, `light` → `setBrightness`,
-   * everything else → `{domain}.set_value`.
+   * `cover` → `setCoverPosition`, everything else → `{domain}.set_value`.
    */
   private readonly _handleChange = (ev: Event): void => {
     const hass = this.hass;
@@ -111,6 +115,11 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
 
     if (domain === 'light') {
       void setBrightness(hass, state.entity_id, Number(target.value));
+      return;
+    }
+
+    if (domain === 'cover') {
+      void setCoverPosition(hass, state.entity_id, Number(target.value));
       return;
     }
 
@@ -141,6 +150,12 @@ export class HorizontalSlider extends SubscribeEntityStateMixin(
       value = Number(s.attributes.brightness ?? 0);
       min = 0;
       max = 255;
+      step = 1;
+    } else if (domain === 'cover') {
+      // current_position is null when the cover is closed / unknown.
+      value = Number(s.attributes.current_position ?? 0);
+      min = 0;
+      max = 100;
       step = 1;
     } else if (Number.isFinite(rawValue)) {
       value = rawValue;

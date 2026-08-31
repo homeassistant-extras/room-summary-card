@@ -35,3 +35,10 @@ lovelace:
       icon: mdi:wrap
       show_in_sidebar: false
       filename: dashboards/room-summary-card/entity-wrap-test.yaml
+
+    rsc-card-border-test:
+      mode: yaml
+      title: Room Summary Card - Card Border Test
+      icon: mdi:border-color
+      show_in_sidebar: false
+      filename: dashboards/room-summary-card/card-border-test.yaml

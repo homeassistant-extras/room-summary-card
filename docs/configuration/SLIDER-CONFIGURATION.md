@@ -39,15 +39,18 @@ block becomes the bound entity. Only one slider renders per card.
 | `number`       | `state` + min/max/step         | `number.set_value`                                    |
 | `media_player` | `volume_level` (0–1 → 0–100)   | `media_player.volume_set` (0–1)                       |
 | `light`        | `brightness` attribute (0–255) | `light.turn_on` (`brightness`); `light.turn_off` at 0 |
+| `cover`        | `current_position` (0–100)     | `cover.set_cover_position` (`position`)               |
 
 For `counter` / `input_number` / `number`, the slider's range and step
 are read straight from the entity's attributes. For `media_player`,
 the slider is fixed to 0–100 and converted to/from `volume_level`. For
 `light`, the slider is fixed to 0–255 and dragging to 0 turns the
-light off.
+light off. For `cover`, the slider is fixed to 0–100 (0 = closed,
+100 = open) and writes `cover.set_cover_position`. The cover must
+support setting a position.
 
-Other domains (fans, covers, etc.) will be added as the two slider
-concepts merge.
+Other domains (fans, etc.) will be added as the two slider concepts
+merge.
 
 ### Options
 
@@ -107,6 +110,24 @@ area: living_room
 entity: light.living_room
 entities:
   - entity_id: media_player.living_room_speaker
+    slider:
+      style: bar
+      hide_icon: true
+  - switch.living_room_lamp
+  - switch.living_room_fan
+```
+
+### Cover position
+
+Bind the slider to a cover's `current_position`. The slider exposes
+0–100 (0 = closed, 100 = open) and writes via
+`cover.set_cover_position`. The cover must support setting a position:
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+entities:
+  - entity_id: cover.living_room_blinds
     slider:
       style: bar
       hide_icon: true
