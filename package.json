@@ -47,16 +47,16 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@open-wc/testing": "^4.0.0",
     "@parcel/transformer-inline-string": "^2.16.4",
-    "@playwright/test": "^1.62.1",
+    "@playwright/test": "^1.63.0",
     "@testing-library/dom": "^10.4.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/chai": "^5.2.3",
     "@types/jsdom": "^30.0.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.5.1",
     "@types/sinon": "^22.0.0",
     "chai": "^6.2.2",
-    "eslint": "^10.9.1",
+    "eslint": "^10.10.0",
     "eslint-plugin-lit": "^2.3.1",
     "eslint-plugin-wc": "^3.1.0",
     "globals": "^17.12.0",
@@ -70,7 +70,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.69.0"
+    "typescript-eslint": "^8.70.0"
   },
   "dependencies": {
     "@homeassistant-extras/hass": "^0.6.0",
