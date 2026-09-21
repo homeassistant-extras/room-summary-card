@@ -37,6 +37,7 @@ entities:
 | position  | string | `top_right` | Badge position: `top_right`, `top_left`, `bottom_right`, or `bottom_left`                                                                                                |
 | mode      | string | none        | Display mode: `show_always` (always show), `if_match` (show when a configured state matches), or `homeassistant` (use HA's native badge rendering for supported domains) |
 | states    | array  | none        | State-based configuration (when mode is not specified) - uses same format as entity `states`                                                                             |
+| styles    | object | none        | Custom CSS styles for this badge (for example `--user-badge-size`). Matching state `styles` override these                                                               |
 
 ### Position Options
 
@@ -342,7 +343,87 @@ entities:
 
 ## Badge Styling
 
-Badges support custom CSS styles through the `styles` property in state configurations:
+Native Home Assistant tile badges are **16px** with a **12px** icon, which can be hard to read on some devices. Use `--user-badge-size` to enlarge them. CSS variables inherit, so you can set size on the whole card, one entity, one badge, or only when a state matches.
+
+See [Custom Styles — CSS Variables](CUSTOM-STYLES.md#css-variables) for the full variable table.
+
+| Variable                 | Default   | Description                                      |
+| ------------------------ | --------- | ------------------------------------------------ |
+| `--user-badge-size`      | `16px`    | Overall badge size (scales the native 16px tile) |
+| `--user-badge-icon-size` | `12px`    | Icon size inside the badge                       |
+| `--user-badge-font-size` | `0.65rem` | Font size for text (`label`) badges              |
+
+### All badges on the card
+
+```yaml
+type: custom:room-summary-card
+area: living_room
+styles:
+  entity_icon:
+    '--user-badge-size': 24px
+```
+
+`styles.card` also works because CSS variables inherit down the card.
+
+### One entity's badges
+
+```yaml
+entities:
+  - entity_id: climate.living_room
+    styles:
+      '--user-badge-size': 24px
+    badges:
+      - position: top_right
+        mode: show_always
+```
+
+### One badge
+
+Use `styles` on the badge itself so `show_always` and `homeassistant` badges can be sized without a dummy state:
+
+```yaml
+entities:
+  - entity_id: light.living_room
+    badges:
+      - position: top_right
+        mode: show_always
+        styles:
+          '--user-badge-size': 28px
+```
+
+### When a state matches
+
+Matching state `styles` override badge-level `styles`:
+
+```yaml
+entities:
+  - entity_id: climate.living_room
+    badges:
+      - position: top_right
+        states:
+          - state: heating
+            attribute: hvac_action
+            icon: mdi:radiator
+            icon_color: red
+            styles:
+              '--user-badge-size': 28px
+```
+
+### Icon and text size
+
+Fine-tune the icon or label independently of overall badge size:
+
+```yaml
+styles:
+  entity_icon:
+    '--user-badge-size': 24px
+    '--user-badge-icon-size': 18px
+    '--user-badge-font-size': 0.8rem
+```
+
+### Animations and other CSS
+
+Badges also support custom CSS through `styles` on a matching state (or on the badge itself):
 
 ```yaml
 entities:
@@ -443,6 +524,7 @@ entities:
 
 ## Related Documentation
 
+- [Custom Styles](CUSTOM-STYLES.md#css-variables) - CSS variables including badge size
 - [Entity Configuration](ENTITY-CONFIGURATION.md) - Complete entity configuration options
 - [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md) - Color customization options
 - [Entity Attributes](ENTITY-ATTRIBUTES.md) - Working with entity attributes

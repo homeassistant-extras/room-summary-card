@@ -115,4 +115,7 @@ export interface BadgeConfig {
 
   /** Badge display mode */
   mode?: 'show_always' | 'if_match' | 'homeassistant';
+
+  /** CSS properties to apply to this badge (e.g. `--user-badge-size`) */
+  styles?: Record<string, string>;
 }

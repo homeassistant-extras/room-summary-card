@@ -27,7 +27,7 @@ export class RoomBadgeLabel extends HassConfigMixin<typeof LitElement, Config>(
       justify-content: center;
       padding: 0 2px;
       overflow: hidden;
-      font-size: 0.65rem;
+      font-size: var(--user-badge-font-size, 0.65rem);
       line-height: 1;
       white-space: nowrap;
     }

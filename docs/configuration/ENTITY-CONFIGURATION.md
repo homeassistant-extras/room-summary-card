@@ -79,7 +79,7 @@ Badges are small overlay icons that appear on entity icons to provide additional
 
 ![Entity Badges](../assets/badges.png)
 
-📖 **See [Badge Configuration](BADGE-CONFIGURATION.md) for complete badge documentation.**
+📖 **See [Badge Configuration](BADGE-CONFIGURATION.md) for complete badge documentation**, including [badge size styles](BADGE-CONFIGURATION.md#badge-styling).
 
 Quick example:
 

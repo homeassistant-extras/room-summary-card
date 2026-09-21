@@ -85,7 +85,10 @@ export class Badge extends SubscribeEntityStateMixin(
     // For homeassistant mode, use renderTileBadge (HA's native badge helper)
     const badge = this._badge;
     if (badge.mode === 'homeassistant') {
-      return renderTileBadge(state, hass) as TemplateResult;
+      return html`
+        ${stylesToHostCss(badge.styles)}
+        ${renderTileBadge(state, hass) as TemplateResult}
+      `;
     }
 
     const matchingState = getMatchingBadgeState(state, badge);
@@ -96,9 +99,12 @@ export class Badge extends SubscribeEntityStateMixin(
     }
 
     const label = matchingState?.label ?? badge.label;
+    const hostStyles = matchingState?.styles
+      ? { ...badge.styles, ...matchingState.styles }
+      : badge.styles;
 
     return html`
-      ${matchingState?.styles ? stylesToHostCss(matchingState.styles) : nothing}
+      ${stylesToHostCss(hostStyles)}
       <ha-tile-badge
         style=${styleMap({
           '--tile-badge-background-color': processHomeAssistantColors(

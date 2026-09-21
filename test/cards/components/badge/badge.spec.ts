@@ -76,6 +76,8 @@ describe('badge.ts', () => {
 
     it('should have static styles', () => {
       expect(Badge.styles).to.equal(styles);
+      expect(styles.cssText).to.include('--user-badge-size');
+      expect(styles.cssText).to.include('--user-badge-icon-size');
     });
 
     it('should default position to top-right', () => {
@@ -271,32 +273,44 @@ describe('badge.ts', () => {
     });
 
     describe('styles handling', () => {
-      it('should call stylesToHostCss when matching state has styles', () => {
+      it('should merge badge styles with matching state styles, letting the state win', () => {
         const matchingState: StateConfig = {
           state: 'on',
           icon_color: 'yellow',
           icon: 'mdi:light-on',
-          styles: { '--custom-property': 'value' },
+          styles: { '--custom-property': 'state' },
         };
         getMatchingBadgeStateStub.returns(matchingState);
-        element.badge = { ...mockBadgeConfig, mode: 'show_always' };
+        element.badge = {
+          ...mockBadgeConfig,
+          mode: 'show_always',
+          styles: {
+            '--user-badge-size': '24px',
+            '--custom-property': 'badge',
+          },
+        };
 
         element.render();
 
-        expect(stylesToHostCssStub.calledWith(matchingState.styles)).to.be.true;
+        expect(stylesToHostCssStub.firstCall.args[0]).to.deep.equal({
+          '--user-badge-size': '24px',
+          '--custom-property': 'state',
+        });
       });
 
-      it('should not call stylesToHostCss when matching state has no styles', () => {
-        const matchingState: StateConfig = {
-          state: 'on',
-          icon_color: 'yellow',
+      it('should apply badge-level styles in homeassistant mode', () => {
+        element.badge = {
+          ...mockBadgeConfig,
+          mode: 'homeassistant',
+          styles: { '--user-badge-size': '28px' },
         };
-        getMatchingBadgeStateStub.returns(matchingState);
-        element.badge = { ...mockBadgeConfig, mode: 'show_always' };
 
         element.render();
 
-        expect(stylesToHostCssStub.called).to.be.false;
+        expect(stylesToHostCssStub.calledWith({ '--user-badge-size': '28px' }))
+          .to.be.true;
+        expect(renderTileBadgeStub.calledWith(mockEntityState, mockHass)).to.be
+          .true;
       });
     });
   });

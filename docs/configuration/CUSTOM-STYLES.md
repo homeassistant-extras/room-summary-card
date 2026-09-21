@@ -474,6 +474,9 @@ Some styles use CSS variables that can be overridden:
 | `--user-entity-column-width`      | entities          | Fixed width per wrapped entity column (e.g. `80px`)                                 |
 | `--user-entities-max-columns`     | entities          | Cap entity strip growth; `1` = shrink-to-fit columns                                |
 | `--user-sensor-icon-size`         | sensors           | Size of sensor icons                                                                |
+| `--user-badge-size`               | entity_icon       | Size of entity icon badges (default: `16px`)                                        |
+| `--user-badge-icon-size`          | entity_icon       | Icon size inside entity badges (default: `12px`)                                    |
+| `--user-badge-font-size`          | entity_icon       | Font size for text badges (default: `0.65rem`)                                      |
 | `--user-entity-label-display`     | entity_icon       | Control entity label display (set to `none` to hide)                                |
 | `--user-entity-state-font-size`   | entity_icon       | Font size for entity state text (default: `0.6em`)                                  |
 | `--user-entity-state-color`       | entity_icon       | Text color for entity state (default: `var(--secondary-text-color)`)                |
@@ -496,6 +499,7 @@ styles:
   entity_icon:
     '--user-entity-icon-size': 28px # Entity icon size
     '--mdc-icon-size': 28px # Individual icon size
+    '--user-badge-size': 24px # Entity icon badge size
     '--user-entity-label-display': none # Hide all entity labels
 ```
 

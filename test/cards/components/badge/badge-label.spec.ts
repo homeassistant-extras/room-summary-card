@@ -18,6 +18,7 @@ describe('badge-label.ts', () => {
     const el = await fixture(html`<span>${result}</span>`);
 
     expect(el.textContent).to.equal('72F');
+    expect(RoomBadgeLabel.styles.cssText).to.include('--user-badge-font-size');
   });
 
   it('should render nothing when no label is configured', () => {
