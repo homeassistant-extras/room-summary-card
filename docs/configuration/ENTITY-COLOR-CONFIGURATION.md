@@ -215,6 +215,10 @@ Colors are applied in this priority order:
 6. **Theme colors** (automatic theme-based colors)
 7. **Domain colors** (default colors by entity domain)
 
+> **Note:** State and threshold colors also take priority over Home Assistant's
+> built-in color for `unavailable` entities, so you can style unavailable states
+> however you like.
+
 ## Examples
 
 ### Netflix Theme

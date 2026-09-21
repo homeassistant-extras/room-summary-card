@@ -48,6 +48,8 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
 
   @property({ attribute: false }) public availableEntities?: string[];
 
+  @property({ attribute: false }) public includeDomains?: string[];
+
   private _getKey(item: EntityRowItem | LightRowItem, index: number): string {
     // Generate a stable key based on entity_id and index
     const entityId = this._getEntityId(item);
@@ -99,6 +101,7 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
                       .value=${this._getEntityId(item)}
                       .index=${index}
                       .includeEntities=${this.availableEntities}
+                      .includeDomains=${this.includeDomains}
                       @value-changed=${this._valueChanged}
                     ></ha-entity-picker>
                     <ha-icon-button
@@ -147,6 +150,7 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
                         .value=${this._getEntityId(item)}
                         .index=${index}
                         .includeEntities=${this.availableEntities}
+                        .includeDomains=${this.includeDomains}
                         @value-changed=${this._valueChanged}
                       ></ha-entity-picker>
                       <ha-icon-button
@@ -179,9 +183,11 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
         ? nothing
         : html`
             <ha-entity-picker
+              allow-custom-entity
               class=${addEntityClass}
               .hass=${this.hass}
               .includeEntities=${this.availableEntities}
+              .includeDomains=${this.includeDomains}
               @value-changed=${this._addEntity}
             ></ha-entity-picker>
           `}

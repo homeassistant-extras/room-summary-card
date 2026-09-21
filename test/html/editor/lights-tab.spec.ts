@@ -116,6 +116,8 @@ describe('lights-tab.ts', () => {
       'lights',
     );
     expect(rowEditor.availableEntities).to.deep.equal(['light.living_room']);
+    // the picker must only offer light/switch domains - fixes #478
+    expect(rowEditor.includeDomains).to.deep.equal(['light', 'switch']);
   });
 
   it('should render ha-form element for features', async () => {

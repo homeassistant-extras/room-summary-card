@@ -5,6 +5,12 @@ import { localize, type LocalizedHaFormSchema } from '@localize/localize';
 import type { Config } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
 
+/**
+ * Domains offered by the light entity picker. Matches the domains accepted by
+ * the light sub-element editor so both pickers agree.
+ */
+const LIGHT_DOMAINS = ['light', 'switch'];
+
 export interface LightsTabParams {
   hass: HomeAssistant;
   config: Config;
@@ -40,6 +46,7 @@ export function renderLightsTab(params: LightsTabParams): TemplateResult {
         .hass=${hass}
         .lights=${config.lights}
         .availableEntities=${entities}
+        .includeDomains=${LIGHT_DOMAINS}
         field="lights"
         label=${hass.localize('editor.background.light_entities') ||
         'Light entities'}

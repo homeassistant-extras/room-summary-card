@@ -1,9 +1,10 @@
 import { RoomSummaryEntitiesRowEditor } from '@cards/components/editor/entities-row-editor';
 import * as fireEventModule from '@homeassistant-extras/hass/common/dom/fire_event';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
+import { fixture } from '@open-wc/testing-helpers';
 import type { EntityConfig } from '@type/config/entity';
 import { expect } from 'chai';
-import { nothing, type TemplateResult } from 'lit';
+import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
 
 if (!customElements.get('room-summary-entities-row-editor')) {
@@ -72,6 +73,49 @@ describe('entities-row-editor.ts', () => {
       const available = ['light.one', 'light.two'];
       element.availableEntities = available;
       expect(element.availableEntities).to.deep.equal(available);
+    });
+
+    it('should set includeDomains property', () => {
+      element.includeDomains = ['light', 'switch'];
+      expect(element.includeDomains).to.deep.equal(['light', 'switch']);
+    });
+  });
+
+  describe('entity pickers', () => {
+    const renderPickers = async (): Promise<Element[]> => {
+      const result = element['render']() as TemplateResult;
+      const el = await fixture(html`<div>${result}</div>`);
+      return [...el.querySelectorAll('ha-entity-picker')];
+    };
+
+    it('should pass includeDomains to every picker', async () => {
+      element.field = 'lights';
+      element.lights = mockLights;
+      element.availableEntities = ['light.bedroom'];
+      element.includeDomains = ['light', 'switch'];
+
+      const pickers = await renderPickers();
+
+      // one picker per configured light, plus the "add" picker
+      expect(pickers).to.have.lengthOf(mockLights.length + 1);
+      for (const picker of pickers) {
+        expect((picker as any).includeDomains).to.deep.equal([
+          'light',
+          'switch',
+        ]);
+      }
+    });
+
+    it('should allow custom entities on every picker, including the add row', async () => {
+      element.field = 'entities';
+      element.entities = mockEntityConfigs;
+
+      const pickers = await renderPickers();
+
+      expect(pickers).to.have.lengthOf(mockEntityConfigs.length + 1);
+      for (const picker of pickers) {
+        expect(picker.hasAttribute('allow-custom-entity')).to.be.true;
+      }
     });
   });
 

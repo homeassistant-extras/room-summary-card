@@ -8,7 +8,8 @@
       "Bash(yarn test:*)",
       "Bash(find:*)",
       "Bash(yarn test:coverage:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(gh issue *)"
     ],
     "deny": [],
     "ask": []
