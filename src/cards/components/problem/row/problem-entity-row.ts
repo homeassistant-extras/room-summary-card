@@ -64,13 +64,15 @@ export class ProblemEntityRow extends SubscribeEntityStateMixin(
           <div class="entity-state">${stateDisplay(this.hass, s)}</div>
         </div>
         <div class="status-indicator">
-          ${isActive
-            ? html`<span class="active-badge"
-                >${localize(this.hass, 'card.component.problem.active')}</span
-              >`
-            : html`<span class="inactive-badge"
-                >${localize(this.hass, 'card.component.problem.inactive')}</span
-              >`}
+          ${
+            isActive
+              ? html`<span class="active-badge"
+                  >${localize(this.hass, 'card.component.problem.active')}</span
+                >`
+              : html`<span class="inactive-badge"
+                  >${localize(this.hass, 'card.component.problem.inactive')}</span
+                >`
+          }
         </div>
       </div>
     `;

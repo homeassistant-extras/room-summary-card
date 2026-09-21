@@ -39,9 +39,9 @@ export function renderTabBar(params: TabBarParams): TemplateResult {
     <div class="card-config">
       <div class="tab-bar-wrapper">
         <div
-          class="scroll-indicator scroll-indicator-left ${showLeftScroll
-            ? 'visible'
-            : ''}"
+          class="scroll-indicator scroll-indicator-left ${
+            showLeftScroll ? 'visible' : ''
+          }"
         >
           <svg class="scroll-arrow" viewBox="0 0 24 24">
             <path
@@ -96,9 +96,9 @@ export function renderTabBar(params: TabBarParams): TemplateResult {
           </div>
         </div>
         <div
-          class="scroll-indicator scroll-indicator-right ${showRightScroll
-            ? 'visible'
-            : ''}"
+          class="scroll-indicator scroll-indicator-right ${
+            showRightScroll ? 'visible' : ''
+          }"
         >
           <svg class="scroll-arrow" viewBox="0 0 24 24">
             <path

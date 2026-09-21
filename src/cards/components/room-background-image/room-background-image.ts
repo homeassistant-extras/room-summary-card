@@ -241,19 +241,21 @@ export class RoomBackgroundImage extends SubscribeEntityStateMixin(
 
     return html`
       <div class="color"></div>
-      ${this._showImage && hui
-        ? html`
-            <div class="image">
-              <hui-image
-                .hass=${this.hass}
-                .image=${hui.image}
-                .cameraImage=${hui.camera_image}
-                .cameraView=${hui.camera_view}
-                .fitMode=${'cover'}
-              ></hui-image>
-            </div>
-          `
-        : nothing}
+      ${
+        this._showImage && hui
+          ? html`
+              <div class="image">
+                <hui-image
+                  .hass=${this.hass}
+                  .image=${hui.image}
+                  .cameraImage=${hui.camera_image}
+                  .cameraView=${hui.camera_view}
+                  .fitMode=${'cover'}
+                ></hui-image>
+              </div>
+            `
+          : nothing
+      }
     `;
   }
 }

@@ -38,28 +38,32 @@ export const renderProblemIndicator = (
   }
 
   return html`<div class="problems">
-    ${shouldShowIndicator
-      ? html`<span
-          class="status-entities"
-          ?has-problems=${problemExists}
-          @click=${() =>
-            showProblemDialog(element, {
-              entities: ids,
-              config,
-              ownerHost: element,
-            })}
-          >${problemSensors.length}</span
-        >`
-      : nothing}
-    ${sensors.mold && shouldShowMoldIndicator(sensors.mold, config)
-      ? html`<div class="mold-indicator">
-          <ha-state-icon
-            .hass=${hass}
-            .stateObj=${sensors.mold}
-          ></ha-state-icon>
-          <span class="mold-text">${stateDisplay(hass, sensors.mold)}</span>
-        </div>`
-      : nothing}
+    ${
+      shouldShowIndicator
+        ? html`<span
+            class="status-entities"
+            ?has-problems=${problemExists}
+            @click=${() =>
+              showProblemDialog(element, {
+                entities: ids,
+                config,
+                ownerHost: element,
+              })}
+            >${problemSensors.length}</span
+          >`
+        : nothing
+    }
+    ${
+      sensors.mold && shouldShowMoldIndicator(sensors.mold, config)
+        ? html`<div class="mold-indicator">
+            <ha-state-icon
+              .hass=${hass}
+              .stateObj=${sensors.mold}
+            ></ha-state-icon>
+            <span class="mold-text">${stateDisplay(hass, sensors.mold)}</span>
+          </div>`
+        : nothing
+    }
   </div>`;
 };
 

@@ -106,22 +106,24 @@ export class Badge extends SubscribeEntityStateMixin(
           ),
         })}
       >
-        ${label
-          ? html`
-              <room-badge-label
-                .hass=${hass}
-                .config=${config}
-                .entityId=${id ?? ''}
-                .label=${label}
-              ></room-badge-label>
-            `
-          : html`
-              <ha-state-icon
-                .hass=${hass}
-                .stateObj=${state}
-                .icon=${matchingState?.icon}
-              ></ha-state-icon>
-            `}
+        ${
+          label
+            ? html`
+                <room-badge-label
+                  .hass=${hass}
+                  .config=${config}
+                  .entityId=${id ?? ''}
+                  .label=${label}
+                ></room-badge-label>
+              `
+            : html`
+                <ha-state-icon
+                  .hass=${hass}
+                  .stateObj=${state}
+                  .icon=${matchingState?.icon}
+                ></ha-state-icon>
+              `
+        }
       </ha-tile-badge>
     `;
   }

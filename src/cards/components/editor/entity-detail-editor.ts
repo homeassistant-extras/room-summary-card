@@ -418,21 +418,23 @@ export class RoomSummaryEntityDetailEditor extends LitElement {
           computeLabel(schema, this.hass!)}
         @value-changed=${this._valueChanged}
       ></ha-form>
-      ${this._config.entity_id && this.type !== 'light'
-        ? html`
-            <room-summary-states-row-editor
-              .hass=${this.hass}
-              .states=${states}
-              .entityId=${this._config.entity_id}
-              .mode=${'states'}
-              .isSensor=${this.type === 'sensor'}
-              .isMainEntity=${this.isMainEntity}
-              label=${localize(this.hass, 'editor.entity.states')}
-              @states-value-changed=${this._statesValueChanged}
-            ></room-summary-states-row-editor>
-            ${thresholdsEditor} ${badgesEditor}
-          `
-        : nothing}
+      ${
+        this._config.entity_id && this.type !== 'light'
+          ? html`
+              <room-summary-states-row-editor
+                .hass=${this.hass}
+                .states=${states}
+                .entityId=${this._config.entity_id}
+                .mode=${'states'}
+                .isSensor=${this.type === 'sensor'}
+                .isMainEntity=${this.isMainEntity}
+                label=${localize(this.hass, 'editor.entity.states')}
+                @states-value-changed=${this._statesValueChanged}
+              ></room-summary-states-row-editor>
+              ${thresholdsEditor} ${badgesEditor}
+            `
+          : nothing
+      }
     `;
   }
 

@@ -307,19 +307,21 @@ export class RoomSummaryCard extends HassConfigMixin<typeof LitElement, Config>(
           ${roomEntity}
 
           <!-- Entities Container -->
-          ${hasFeature(this._config, 'slider')
-            ? html`
-                <entity-slider
-                  .config=${this._config}
-                  .hass=${this._hass}
-                ></entity-slider>
-              `
-            : html`
-                <entity-collection
-                  .config=${this._config}
-                  .hass=${this._hass}
-                ></entity-collection>
-              `}
+          ${
+            hasFeature(this._config, 'slider')
+              ? html`
+                  <entity-slider
+                    .config=${this._config}
+                    .hass=${this._hass}
+                  ></entity-slider>
+                `
+              : html`
+                  <entity-collection
+                    .config=${this._config}
+                    .hass=${this._hass}
+                  ></entity-collection>
+                `
+          }
 
           <!-- Problem Indicator -->
           ${problems}
@@ -328,15 +330,17 @@ export class RoomSummaryCard extends HassConfigMixin<typeof LitElement, Config>(
         ${renderHorizontalSlider(this._hass, this._config)}
 
         <!-- Full Card Action Overlay -->
-        ${hasFeature(this._config, 'full_card_actions')
-          ? html`
-              <div
-                class="card-overlay"
-                @action=${handleClickAction(this, actions)}
-                .actionHandler=${actionHandler(actions)}
-              ></div>
-            `
-          : nothing}
+        ${
+          hasFeature(this._config, 'full_card_actions')
+            ? html`
+                <div
+                  class="card-overlay"
+                  @action=${handleClickAction(this, actions)}
+                  .actionHandler=${actionHandler(actions)}
+                ></div>
+              `
+            : nothing
+        }
       </ha-card>
     `;
   }

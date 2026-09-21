@@ -46,8 +46,10 @@ export function renderSensorsTab(params: SensorsTabParams): TemplateResult {
         .entities=${config.sensors}
         .availableEntities=${entities}
         field="entities"
-        label=${hass.localize('editor.sensor.individual_sensor_entities') ||
-        'Individual sensor entities'}
+        label=${
+          hass.localize('editor.sensor.individual_sensor_entities') ||
+          'Individual sensor entities'
+        }
         @value-changed=${onSensorsRowChanged}
         @edit-detail-element=${onEditDetailElement}
       ></room-summary-entities-row-editor>

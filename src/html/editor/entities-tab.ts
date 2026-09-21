@@ -42,9 +42,10 @@ export function renderEntitiesTab(params: EntitiesTabParams): TemplateResult {
         .entities=${config.entities}
         .availableEntities=${entities}
         field="entities"
-        label=${hass.localize(
-          'ui.panel.lovelace.editor.card.generic.entities',
-        ) || 'Entities'}
+        label=${
+          hass.localize('ui.panel.lovelace.editor.card.generic.entities') ||
+          'Entities'
+        }
         @value-changed=${onEntitiesRowChanged}
         @edit-detail-element=${onEditDetailElement}
       ></room-summary-entities-row-editor>

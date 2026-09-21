@@ -100,9 +100,11 @@ export function renderOccupancyTab(params: OccupancyTabParams): TemplateResult {
   };
 
   return html`
-    ${infoText
-      ? html` <div class="info-header">${localize(hass, infoText)}</div> `
-      : nothing}
+    ${
+      infoText
+        ? html` <div class="info-header">${localize(hass, infoText)}</div> `
+        : nothing
+    }
     <ha-form
       .hass=${hass}
       .data=${config}

@@ -283,9 +283,11 @@ export class EntitySlider extends HassUpdateMixin(
         @mousedown=${this._handleDragStart}
         @touchstart=${this._handleTouchStart}
       >
-        ${isBarStyle
-          ? nothing
-          : renderRoomIcon(this._hass, this._entity, this.config)}
+        ${
+          isBarStyle
+            ? nothing
+            : renderRoomIcon(this._hass, this._entity, this.config)
+        }
       </div>
     `;
   }

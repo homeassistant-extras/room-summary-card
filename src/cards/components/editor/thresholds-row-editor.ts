@@ -290,13 +290,15 @@ export class RoomSummaryThresholdsRowEditor extends LitElement {
                   <ha-form
                     .hass=${this.hass}
                     .data=${item}
-                    .schema=${this.hass
-                      ? this._getThresholdSchema(
-                          this.hass,
-                          this.thresholdType,
-                          this.availableEntities || [],
-                        )
-                      : []}
+                    .schema=${
+                      this.hass
+                        ? this._getThresholdSchema(
+                            this.hass,
+                            this.thresholdType,
+                            this.availableEntities || [],
+                          )
+                        : []
+                    }
                     .computeLabel=${(schema: LocalizedHaFormSchema) =>
                       computeLabel(schema, this.hass!)}
                     @value-changed=${(ev: CustomEvent) =>

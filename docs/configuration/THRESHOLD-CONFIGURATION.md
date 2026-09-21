@@ -116,17 +116,17 @@ To reduce CPU usage on low-power devices (e.g. when many cards show mold warning
 # Celsius threshold
 thresholds:
   temperature:
-    - value: 24  # 24°C
+    - value: 24 # 24°C
 
 # Fahrenheit threshold
 thresholds:
   temperature:
-    - value: 75  # 75°F
+    - value: 75 # 75°F
 
 # Custom humidity threshold
 thresholds:
   humidity:
-    - value: 50  # 50%
+    - value: 50 # 50%
 
 # All thresholds together (simple form)
 thresholds:
@@ -139,7 +139,7 @@ thresholds:
 # Specific entity threshold - when you need to check a particular sensor
 thresholds:
   temperature:
-    - entity_id: sensor.living_room_temp  # Check this specific sensor
+    - entity_id: sensor.living_room_temp # Check this specific sensor
       value: 75
       operator: gt
 
@@ -196,9 +196,9 @@ thresholds:
 # Mix of averaged and specific sensors
 thresholds:
   temperature:
-    - value: 75  # Uses averaged temperature sensor
+    - value: 75 # Uses averaged temperature sensor
       operator: gt
-    - entity_id: sensor.bedroom_temp  # Also check specific sensor
+    - entity_id: sensor.bedroom_temp # Also check specific sensor
       value: 70
       operator: gt
 
@@ -207,27 +207,27 @@ thresholds:
   temperature:
     - value: 70
       operator: lt
-      color: blue  # Blue border when temp < 70°F (too cold)
+      color: blue # Blue border when temp < 70°F (too cold)
     - value: 85
       operator: gt
-      color: red  # Red border when temp > 85°F (too hot)
+      color: red # Red border when temp > 85°F (too hot)
   humidity:
     - value: 30
       operator: lt
-      color: orange  # Orange border when humidity < 30% (too dry)
+      color: orange # Orange border when humidity < 30% (too dry)
     - value: 70
       operator: gt
-      color: purple  # Purple border when humidity > 70% (too humid)
+      color: purple # Purple border when humidity > 70% (too humid)
 
 # Basement example with custom colors
 thresholds:
   temperature:
     - value: 70
       operator: lt
-      color: blue  # Blue alarm when basement is too cold
+      color: blue # Blue alarm when basement is too cold
     - value: 85
       operator: gt
-      color: red  # Red alarm when basement is too hot
+      color: red # Red alarm when basement is too hot
 ```
 
 **Default values**: 80°F (26.7°C) for temperature, 60% for humidity, no default for mold (indicator shows whenever mold sensor is present)

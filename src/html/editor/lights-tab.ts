@@ -39,17 +39,20 @@ export function renderLightsTab(params: LightsTabParams): TemplateResult {
 
   return html`
     <div class="entities-tab">
-      ${infoText
-        ? html` <div class="info-header">${localize(hass, infoText)}</div> `
-        : nothing}
+      ${
+        infoText
+          ? html` <div class="info-header">${localize(hass, infoText)}</div> `
+          : nothing
+      }
       <room-summary-entities-row-editor
         .hass=${hass}
         .lights=${config.lights}
         .availableEntities=${entities}
         .includeDomains=${LIGHT_DOMAINS}
         field="lights"
-        label=${hass.localize('editor.background.light_entities') ||
-        'Light entities'}
+        label=${
+          hass.localize('editor.background.light_entities') || 'Light entities'
+        }
         @value-changed=${onLightsRowChanged}
         @edit-detail-element=${onEditDetailElement}
       ></room-summary-entities-row-editor>

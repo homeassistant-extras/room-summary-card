@@ -140,19 +140,21 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
                   </ha-icon-button>
                 </div>
                 <div class="badge-content">
-                  ${this.hass
-                    ? html`
-                        <ha-form
-                          .hass=${this.hass}
-                          .data=${item}
-                          .schema=${getBadgeSchema(this.hass)}
-                          .computeLabel=${(schema: LocalizedHaFormSchema) =>
-                            computeLabel(schema, this.hass!)}
-                          @value-changed=${(ev: CustomEvent) =>
-                            this._badgeValueChanged(index, ev)}
-                        ></ha-form>
-                      `
-                    : nothing}
+                  ${
+                    this.hass
+                      ? html`
+                          <ha-form
+                            .hass=${this.hass}
+                            .data=${item}
+                            .schema=${getBadgeSchema(this.hass)}
+                            .computeLabel=${(schema: LocalizedHaFormSchema) =>
+                              computeLabel(schema, this.hass!)}
+                            @value-changed=${(ev: CustomEvent) =>
+                              this._badgeValueChanged(index, ev)}
+                          ></ha-form>
+                        `
+                      : nothing
+                  }
                   ${(() => {
                     if (!item.mode) {
                       const statesEditor = this.hass
@@ -183,19 +185,23 @@ export class RoomSummaryBadgeRowEditor extends LitElement {
           },
         )}
       </div>
-      ${canAddMore
-        ? html`
-            <mwc-button class="add-badge" outlined @click=${this._addBadge}>
-              <ha-icon icon="mdi:plus" slot="icon"></ha-icon>
-              ${addButtonLabel}
-            </mwc-button>
-          `
-        : html`
-            <div class="max-badges-message">
-              ${localize(this.hass, 'editor.badge.max_badges') ||
-              `Maximum ${maxBadges} badges allowed`}
-            </div>
-          `}
+      ${
+        canAddMore
+          ? html`
+              <mwc-button class="add-badge" outlined @click=${this._addBadge}>
+                <ha-icon icon="mdi:plus" slot="icon"></ha-icon>
+                ${addButtonLabel}
+              </mwc-button>
+            `
+          : html`
+              <div class="max-badges-message">
+                ${
+                  localize(this.hass, 'editor.badge.max_badges') ||
+                  `Maximum ${maxBadges} badges allowed`
+                }
+              </div>
+            `
+      }
     `;
   }
 

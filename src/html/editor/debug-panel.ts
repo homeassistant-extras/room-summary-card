@@ -121,9 +121,9 @@ export function renderDebugPanel(params: DebugPanelParams): TemplateResult {
             (preset) => html`
               <button
                 type="button"
-                class="debug-preset ${activePresetId === preset.id
-                  ? 'active'
-                  : ''}"
+                class="debug-preset ${
+                  activePresetId === preset.id ? 'active' : ''
+                }"
                 @click=${() => onPresetClick(preset.id)}
                 title=${preset.description}
                 aria-pressed=${activePresetId === preset.id}

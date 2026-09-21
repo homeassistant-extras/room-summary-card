@@ -131,10 +131,7 @@ export interface Config {
 
     /** Background options */
     options?: (
-      | 'disable'
-      | 'icon_background'
-      | 'hide_icon_only'
-      | 'hide_gradient'
+      'disable' | 'icon_background' | 'hide_icon_only' | 'hide_gradient'
     )[];
   };
 

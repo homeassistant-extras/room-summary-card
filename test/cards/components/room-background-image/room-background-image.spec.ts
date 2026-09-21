@@ -55,13 +55,15 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: {
-            image: '/local/bg.jpg',
-            options: ['icon_background'],
-          },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: {
+              image: '/local/bg.jpg',
+              options: ['icon_background'],
+            },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.shadowRoot!.querySelector('.image')).to.not.exist;
@@ -76,10 +78,12 @@ describe('room-background-image.ts', () => {
         icon
         .room=${true}
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: { image: '/local/bg.jpg' },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: { image: '/local/bg.jpg' },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.shadowRoot!.querySelector('.image')).to.not.exist;
@@ -92,13 +96,15 @@ describe('room-background-image.ts', () => {
         icon
         .room=${true}
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: {
-            image: '/local/bg.jpg',
-            options: ['icon_background'],
-          },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: {
+              image: '/local/bg.jpg',
+              options: ['icon_background'],
+            },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.hasAttribute('image')).to.be.true;
@@ -111,13 +117,15 @@ describe('room-background-image.ts', () => {
       html`<room-background-image
         icon
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: {
-            image: '/local/bg.jpg',
-            options: ['icon_background'],
-          },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: {
+              image: '/local/bg.jpg',
+              options: ['icon_background'],
+            },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.shadowRoot!.querySelector('.image')).to.not.exist;
@@ -130,13 +138,15 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: {
-            image: '/local/bg.jpg',
-            options: ['icon_background'],
-          },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: {
+              image: '/local/bg.jpg',
+              options: ['icon_background'],
+            },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.hasAttribute('icon-bg')).to.be.true;
@@ -149,13 +159,15 @@ describe('room-background-image.ts', () => {
         icon
         .room=${true}
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: {
-            image: '/local/bg.jpg',
-            options: ['icon_background'],
-          },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: {
+              image: '/local/bg.jpg',
+              options: ['icon_background'],
+            },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(icon.hasAttribute('icon-bg')).to.be.true;
@@ -165,10 +177,12 @@ describe('room-background-image.ts', () => {
     const card = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: { image: '/local/bg.jpg' },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: { image: '/local/bg.jpg' },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(card.hasAttribute('icon-bg')).to.be.false;
@@ -177,13 +191,15 @@ describe('room-background-image.ts', () => {
       html`<room-background-image
         icon
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: {
-            image: '/local/bg.jpg',
-            options: ['icon_background'],
-          },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: {
+              image: '/local/bg.jpg',
+              options: ['icon_background'],
+            },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(entityIcon.hasAttribute('icon-bg')).to.be.false;
@@ -194,10 +210,12 @@ describe('room-background-image.ts', () => {
       html`<room-background-image
         .hass=${mockHass}
         .isActive=${true}
-        .config=${{
-          area: 'test',
-          background: { image: '/local/bg.jpg', opacity: 42 },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: { image: '/local/bg.jpg', opacity: 42 },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.style.getPropertyValue('--user-opacity')).to.equal('0.42');
@@ -213,10 +231,12 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: { image: '/local/bg.jpg', opacity: 'sensor.opacity' },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: { image: '/local/bg.jpg', opacity: 'sensor.opacity' },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.entities).to.deep.equal(['sensor.opacity']);
@@ -236,10 +256,12 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: { image: '/local/bg.jpg' },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: { image: '/local/bg.jpg' },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.hasAttribute('image')).to.be.true;
@@ -258,10 +280,12 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: { image_entity: 'camera.front_door' },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: { image_entity: 'camera.front_door' },
+          } as Config
+        }
       ></room-background-image>`,
     );
     const huiImage = el.shadowRoot!.querySelector('hui-image') as any;
@@ -277,10 +301,12 @@ describe('room-background-image.ts', () => {
         icon
         .roomEntity=${entityWithPicture()}
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: { image: '/local/bg.jpg' },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: { image: '/local/bg.jpg' },
+          } as Config
+        }
       ></room-background-image>`,
     );
     const huiImage = el.shadowRoot!.querySelector('hui-image') as any;
@@ -368,13 +394,15 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: {
-            image: '/local/bg.jpg',
-            options: ['hide_gradient'],
-          },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: {
+              image: '/local/bg.jpg',
+              options: ['hide_gradient'],
+            },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.hasAttribute('hide-gradient')).to.be.true;
@@ -384,10 +412,12 @@ describe('room-background-image.ts', () => {
     const el = await fixture<RoomBackgroundImage>(
       html`<room-background-image
         .hass=${mockHass}
-        .config=${{
-          area: 'test',
-          background: { image: '/local/bg.jpg' },
-        } as Config}
+        .config=${
+          {
+            area: 'test',
+            background: { image: '/local/bg.jpg' },
+          } as Config
+        }
       ></room-background-image>`,
     );
     expect(el.hasAttribute('hide-gradient')).to.be.false;
@@ -465,10 +495,12 @@ describe('room-background-image.ts', () => {
         html`<room-background-image
           icon
           .hass=${mockHass}
-          .config=${{
-            area: 'test',
-            background: { image: '/local/bg.jpg', opacity: 42 },
-          } as Config}
+          .config=${
+            {
+              area: 'test',
+              background: { image: '/local/bg.jpg', opacity: 42 },
+            } as Config
+          }
         ></room-background-image>`,
       );
       expect(el.style.getPropertyValue('--user-opacity')).to.equal('');

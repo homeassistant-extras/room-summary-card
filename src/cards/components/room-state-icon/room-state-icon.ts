@@ -187,13 +187,15 @@ export class RoomStateIcon extends HassUpdateMixin(
           .hass=${this.hass}
           .config=${this._config}
         ></room-background-image>
-        ${this._hideIconContent
-          ? nothing
-          : html`<ha-state-icon
-              .hass=${this.hass}
-              .stateObj=${state}
-              .icon=${icon}
-            ></ha-state-icon>`}
+        ${
+          this._hideIconContent
+            ? nothing
+            : html`<ha-state-icon
+                .hass=${this.hass}
+                .stateObj=${state}
+                .icon=${icon}
+              ></ha-state-icon>`
+        }
         ${badgeElements}
         ${renderEntityLabel(
           this.hass,

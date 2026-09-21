@@ -79,70 +79,24 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
 
     return html`
       <label>
-        ${this.label ||
-        `${this.hass.localize(
-          'ui.panel.lovelace.editor.card.generic.entities',
-        )} (${this.hass.localize(
-          'ui.panel.lovelace.editor.card.config.optional',
-        )})`}
+        ${
+          this.label ||
+          `${this.hass.localize(
+            'ui.panel.lovelace.editor.card.generic.entities',
+          )} (${this.hass.localize(
+            'ui.panel.lovelace.editor.card.config.optional',
+          )})`
+        }
       </label>
-      ${this.single
-        ? html`
-            <div class="entities">
-              ${repeat(
-                items,
-                (item, index) => this._getKey(item, index),
-                (item, index) => html`
-                  <div class="entity">
-                    <ha-entity-picker
-                      allow-custom-entity
-                      hide-clear-icon
-                      .hass=${this.hass}
-                      .value=${this._getEntityId(item)}
-                      .index=${index}
-                      .includeEntities=${this.availableEntities}
-                      .includeDomains=${this.includeDomains}
-                      @value-changed=${this._valueChanged}
-                    ></ha-entity-picker>
-                    <ha-icon-button
-                      .label=${this.hass!.localize(
-                        'ui.components.entity.entity-picker.clear',
-                      )}
-                      class="remove-icon"
-                      .index=${index}
-                      @click=${this._removeRow}
-                    >
-                      <ha-icon icon="mdi:close"></ha-icon>
-                    </ha-icon-button>
-                    <ha-icon-button
-                      .label=${this.hass!.localize(
-                        'ui.components.entity.entity-picker.edit',
-                      )}
-                      class="edit-icon"
-                      .index=${index}
-                      @click=${this._editRow}
-                    >
-                      <ha-icon icon="mdi:pencil"></ha-icon>
-                    </ha-icon-button>
-                  </div>
-                `,
-              )}
-            </div>
-          `
-        : html`
-            <ha-sortable
-              handle-selector=".handle"
-              @item-moved=${this._rowMoved}
-            >
+      ${
+        this.single
+          ? html`
               <div class="entities">
                 ${repeat(
                   items,
                   (item, index) => this._getKey(item, index),
                   (item, index) => html`
                     <div class="entity">
-                      <div class="handle">
-                        <ha-icon icon="mdi:drag"></ha-icon>
-                      </div>
                       <ha-entity-picker
                         allow-custom-entity
                         hide-clear-icon
@@ -177,20 +131,72 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
                   `,
                 )}
               </div>
-            </ha-sortable>
-          `}
-      ${this.single && items.length > 0
-        ? nothing
-        : html`
-            <ha-entity-picker
-              allow-custom-entity
-              class=${addEntityClass}
-              .hass=${this.hass}
-              .includeEntities=${this.availableEntities}
-              .includeDomains=${this.includeDomains}
-              @value-changed=${this._addEntity}
-            ></ha-entity-picker>
-          `}
+            `
+          : html`
+              <ha-sortable
+                handle-selector=".handle"
+                @item-moved=${this._rowMoved}
+              >
+                <div class="entities">
+                  ${repeat(
+                    items,
+                    (item, index) => this._getKey(item, index),
+                    (item, index) => html`
+                      <div class="entity">
+                        <div class="handle">
+                          <ha-icon icon="mdi:drag"></ha-icon>
+                        </div>
+                        <ha-entity-picker
+                          allow-custom-entity
+                          hide-clear-icon
+                          .hass=${this.hass}
+                          .value=${this._getEntityId(item)}
+                          .index=${index}
+                          .includeEntities=${this.availableEntities}
+                          .includeDomains=${this.includeDomains}
+                          @value-changed=${this._valueChanged}
+                        ></ha-entity-picker>
+                        <ha-icon-button
+                          .label=${this.hass!.localize(
+                            'ui.components.entity.entity-picker.clear',
+                          )}
+                          class="remove-icon"
+                          .index=${index}
+                          @click=${this._removeRow}
+                        >
+                          <ha-icon icon="mdi:close"></ha-icon>
+                        </ha-icon-button>
+                        <ha-icon-button
+                          .label=${this.hass!.localize(
+                            'ui.components.entity.entity-picker.edit',
+                          )}
+                          class="edit-icon"
+                          .index=${index}
+                          @click=${this._editRow}
+                        >
+                          <ha-icon icon="mdi:pencil"></ha-icon>
+                        </ha-icon-button>
+                      </div>
+                    `,
+                  )}
+                </div>
+              </ha-sortable>
+            `
+      }
+      ${
+        this.single && items.length > 0
+          ? nothing
+          : html`
+              <ha-entity-picker
+                allow-custom-entity
+                class=${addEntityClass}
+                .hass=${this.hass}
+                .includeEntities=${this.availableEntities}
+                .includeDomains=${this.includeDomains}
+                @value-changed=${this._addEntity}
+              ></ha-entity-picker>
+            `
+      }
     `;
   }
 
@@ -289,9 +295,7 @@ export class RoomSummaryEntitiesRowEditor extends LitElement {
     const items =
       this.field === 'entities' ? this.entities || [] : this.lights || [];
     const elementConfig = items[index] as
-      | EntityConfig
-      | LightConfigObject
-      | string;
+      EntityConfig | LightConfigObject | string;
 
     // Determine the type based on field
     let elementType: 'entity' | 'sensor' | 'light' = 'entity';

@@ -26,9 +26,7 @@ export interface EntityConfig extends BaseEntityConfig {
 
 /** Features to enable or disable for the entity */
 export type EntityFeatures =
-  | 'use_entity_icon'
-  | 'show_state'
-  | 'hide_zero_attribute_domains';
+  'use_entity_icon' | 'show_state' | 'hide_zero_attribute_domains';
 
 /** Visual style of the horizontal slider. */
 export type HorizontalSliderStyle = 'ha' | 'bar';
