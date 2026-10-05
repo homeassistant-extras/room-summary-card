@@ -258,6 +258,34 @@ describe('entity-collection.ts', () => {
       element.hass = mockHass;
 
       expect(element.style.getPropertyValue('--entity-count')).to.equal('1');
+      expect(
+        element.style.getPropertyValue('--entity-columns-fallback'),
+      ).to.equal('1');
+    });
+
+    it('should precompute fallback columns for browsers without CSS round()', () => {
+      getIconEntitiesStub.returns(
+        Array.from({ length: 5 }, (_, i) => ({
+          config: { entity_id: `light.l${i}` } as EntityConfig,
+          state: s('light', `l${i}`, 'on'),
+        })),
+      );
+      element.hass = mockHass;
+
+      expect(
+        element.style.getPropertyValue('--entity-columns-fallback'),
+      ).to.equal('2');
+    });
+
+    it('should gate round() behind @supports with a fallback', () => {
+      const cssText = styles.cssText;
+
+      expect(cssText).to.include(
+        '--entity-columns: var(--entity-columns-fallback, 1)',
+      );
+      expect(cssText).to.include(
+        '@supports (width: calc(round(up, 1.5) * 1px))',
+      );
     });
 
     it('should derive strip width from entity columns in CSS', () => {

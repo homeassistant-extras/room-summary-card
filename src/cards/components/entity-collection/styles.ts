@@ -17,14 +17,11 @@ import { css } from 'lit';
  */
 export const styles = css`
   :host {
-    /* Lanes needed for the current entity count, capped by the user max.
-       --entity-count is set inline by the component; doing the division in
-       CSS keeps --user-entities-wrap overridable from themes/card-mod. */
-    --entity-columns: clamp(
-      1,
-      round(up, calc(var(--entity-count, 1) / var(--user-entities-wrap, 4))),
-      var(--user-entities-max-columns, 99)
-    );
+    /* Fallback for engines without CSS round() (older Android WebViews in the
+       Companion app). Without it --entity-columns is invalid, aspect-ratio
+       drops to auto and the strip shrinks to its content, so icon sizes vary
+       per card (#484). Precomputed by the component at the default wrap of 4. */
+    --entity-columns: var(--entity-columns-fallback, 1);
     height: 100%;
     display: grid;
     grid-auto-flow: column;
@@ -54,6 +51,19 @@ export const styles = css`
        right edge and wrapped columns appear to its LEFT. Override with
        direction: ltr under styles.entities to wrap rightward instead. */
     direction: rtl;
+  }
+
+  /* Lanes needed for the current entity count, capped by the user max.
+     --entity-count is set inline by the component; doing the division in
+     CSS keeps --user-entities-wrap overridable from themes/card-mod. */
+  @supports (width: calc(round(up, 1.5) * 1px)) {
+    :host {
+      --entity-columns: clamp(
+        1,
+        round(up, calc(var(--entity-count, 1) / var(--user-entities-wrap, 4))),
+        var(--user-entities-max-columns, 99)
+      );
+    }
   }
 
   /* Keep icon labels/state text left-to-right despite the rtl grid. */
