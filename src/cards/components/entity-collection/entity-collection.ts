@@ -67,6 +67,11 @@ export class EntityCollection extends HassUpdateMixin(
       this._entities = states;
       // Drives --entity-columns (strip width) in styles.ts
       this.style.setProperty('--entity-count', `${states.length}`);
+      // Used when the browser lacks CSS round() (see styles.ts)
+      this.style.setProperty(
+        '--entity-columns-fallback',
+        `${Math.max(1, Math.ceil(states.length / 4))}`,
+      );
     }
 
     this._hass = hass;
