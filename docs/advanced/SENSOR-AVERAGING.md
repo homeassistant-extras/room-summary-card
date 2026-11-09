@@ -40,7 +40,7 @@ sensor_classes:
 # Other temperature/humidity sensors in the area will be ignored
 ```
 
-![Area Sensors](../assets/area-sensors.png)
+![Area Sensors](../assets/area-sensors.webp)
 
 ### Averaging Examples
 

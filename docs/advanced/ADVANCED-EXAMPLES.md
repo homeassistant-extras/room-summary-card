@@ -946,7 +946,7 @@ background:
   opacity: 25
 ```
 
-![Sensor Layouts](../assets/sensors-styles.png)
+![Sensor Layouts](../assets/sensors-styles.webp)
 
 ### Skip Styling Features
 
@@ -984,7 +984,7 @@ styles:
     font-size: 24px # Larger icons
 ```
 
-![Sensor Icons](../assets/sensor-icons.png)
+![Sensor Icons](../assets/sensor-icons.webp)
 
 ### Custom Thresholds
 

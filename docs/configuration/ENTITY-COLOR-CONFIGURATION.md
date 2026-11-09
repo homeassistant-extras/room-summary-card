@@ -114,7 +114,7 @@ This is particularly useful for entities with enum states where you want to matc
 
 **State-based custom CSS styles:**
 
-![Entity Styles](../assets/entity-styles.gif)
+![Entity Styles](../assets/entity-styles.webp)
 
 📖 **See [State based CSS styling for entities](../advanced/README-EXAMPLES.md#state-based-css-styling-for-entities) for configuration details.**
 
@@ -148,7 +148,7 @@ The `styles` property accepts any CSS property-value pairs and applies them dire
 
 ### 4. Threshold-Based Colors and Icons
 
-![Thresholds](../assets/thresholds.gif)
+![Thresholds](../assets/thresholds.webp)
 
 Configure dynamic colors, icons, and labels based on numeric sensor values. Threshold `label` fields also support [Jinja templates](LABEL-TEMPLATES.md):
 
@@ -367,7 +367,7 @@ entities:
           opacity: '0.6'
 ```
 
-![States](../assets/states.gif)
+![States](../assets/states.webp)
 
 **Person Location Tracking:**
 

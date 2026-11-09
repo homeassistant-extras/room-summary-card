@@ -13,7 +13,7 @@
 A thin draggable strip that sits flush with the bottom edge of the
 card. Opt-in **at entity level** with a `slider` config block — handy for `input_number`, `number`, and any other domain that supports `set_value`.
 
-![horizontal-slider](../assets/horizontal-slider.png)
+![horizontal-slider](../assets/horizontal-slider.webp)
 
 ### Basic setup
 
@@ -197,7 +197,7 @@ The visual editor exposes the `slider` block as an expandable
 
 The slider feature displays the first entity as a draggable vertical slider, allowing you to control brightness by dragging the entity icon up and down. This is particularly useful for light entities where you want quick brightness adjustment without opening a more-info dialog.
 
-![slider](../assets/slider.gif)
+![slider](../assets/slider.webp)
 
 ## Basic Setup
 

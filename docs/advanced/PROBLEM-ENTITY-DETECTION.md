@@ -22,7 +22,7 @@ You can use either method (or both) to mark entities as problems:
    - Directly assigned to the area
    - Belong to a device assigned to the area
 
-![Problem Label Setup](../assets/problem-label.png)
+![Problem Label Setup](../assets/problem-label.webp)
 
 ### How It Works
 
@@ -36,11 +36,11 @@ The card automatically:
 - **Mold Detection**: Displays an animated mold indicator when mold levels exceed configured thresholds
 - **Clickable Indicator**: Click the problem indicator (numbered badge) to open a dialog showing all problem entities with their names, states, and active/inactive status. Each entity in the dialog can be clicked to open its more-info dialog for detailed information.
 
-![Problem Indicator](../assets/problems.png)
+![Problem Indicator](../assets/problems.webp)
 
-![Problem Dialog](assets/problem-dialog.gif)
+![Problem Dialog](assets/problem-dialog.webp)
 
-![Problem Dialog Mobile](assets/problem-dialog-mobile.gif)
+![Problem Dialog Mobile](assets/problem-dialog-mobile.webp)
 
 ### Problem Indicator Display Options
 
@@ -101,7 +101,7 @@ The mold indicator appears in the bottom left area near problem entities and pro
 - **Hover Effects**: Scales up and intensifies animations on hover
 - **Dark Theme Support**: Automatically adjusts colors for dark themes
 
-![Moldy](../assets/moldy.png)
+![Moldy](../assets/moldy.webp)
 
 ### Example Problem Entities
 

@@ -14,7 +14,7 @@ background:
     - hide_gradient # Show the image without the darkening gradient
 ```
 
-![Background Image](../assets/background-image.png)
+![Background Image](../assets/background-image.webp)
 
 ### Background Options
 
@@ -43,7 +43,7 @@ Completely disables background images for the card, regardless of other configur
 
 When enabled, the background image is applied only to the room icon area instead of the entire card. This creates a more subtle effect where the background image appears behind the room icon while keeping the rest of the card clean.
 
-![Icon BG](../assets/icon-bg.png)
+![Icon BG](../assets/icon-bg.webp)
 
 #### `hide_icon_only`
 
@@ -57,7 +57,7 @@ This option is particularly useful for:
 
 **Note**: This is different from the `hide_room_icon` feature which completely removes the icon container from the DOM.
 
-![No Icon](../assets/no-icon.png)
+![No Icon](../assets/no-icon.webp)
 
 #### `hide_gradient`
 

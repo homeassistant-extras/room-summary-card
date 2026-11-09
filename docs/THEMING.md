@@ -21,7 +21,7 @@ The card automatically adapts to these Home Assistant themes:
 - **Dark Mode**: Dark background with appropriate contrast
 - Uses standard HA color variables
 
-![Default HA Light](assets/default-light.png) ![Default HA Dark](assets/default-dark.png)
+![Default HA Light](assets/default-light.webp) ![Default HA Dark](assets/default-dark.webp)
 
 ### UI Minimalist
 
@@ -29,7 +29,7 @@ The card automatically adapts to these Home Assistant themes:
 - **Custom Color Palette**: Uses `--color-*` variables
 - **Enhanced Opacity**: Subtle background effects
 
-![Minimalist Light](assets/minimalist-light.png) ![Minimalist Dark](assets/minimalist-dark.png)
+![Minimalist Light](assets/minimalist-light.webp) ![Minimalist Dark](assets/minimalist-dark.webp)
 
 ### iOS Themes
 
@@ -47,7 +47,7 @@ The card automatically adapts to these Home Assistant themes:
 - **Backdrop Filter**: Uses theme's backdrop-filter and glass tint variables for seamless integration
 - **Climate Borders**: Temperature and humidity threshold borders remain visible around the full card in glass mode
 
-![Frosted Light](assets/frosted-light.png) ![Frosted Dark](assets/frosted-dark.png)
+![Frosted Light](assets/frosted-light.webp) ![Frosted Dark](assets/frosted-dark.webp)
 
 ## Color System
 
@@ -147,7 +147,7 @@ off: grey
 # or fall back to state value if action is not available
 ```
 
-![Climate Icons](assets/icons.png)
+![Climate Icons](assets/icons.webp)
 
 ## RGB Color Support
 
@@ -159,7 +159,7 @@ light.color_bulb:
   rgb_color: [255, 120, 50] # Orange color
 ```
 
-![RGB Light Example](assets/light-rgb.png)
+![RGB Light Example](assets/light-rgb.webp)
 
 ### RGB Priority Rules
 
@@ -183,7 +183,7 @@ customize:
     icon: mdi:plex
 ```
 
-![Custom Icon Color](assets/icon-color.png)
+![Custom Icon Color](assets/icon-color.webp)
 
 ### Hex Colors
 
@@ -254,7 +254,7 @@ sensor.humidity:
   device_class: humidity
 ```
 
-![Climate Borders](assets/climate.png)
+![Climate Borders](assets/climate.webp)
 
 ## Theme Mode Adaptations
 
@@ -271,7 +271,7 @@ The card automatically adapts to both light and dark modes with:
 
 The card automatically applies brightness filters to provide visual feedback that matches entity brightness levels. This feature is particularly useful for dimmable lights, where the card, icon, and text brightness automatically adjust to reflect the current brightness setting.
 
-![Brightness Filters](assets/brightness.gif)
+![Brightness Filters](assets/brightness.webp)
 
 **Brightness Filter Behavior:**
 

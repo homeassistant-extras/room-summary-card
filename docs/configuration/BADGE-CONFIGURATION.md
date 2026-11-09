@@ -2,7 +2,7 @@
 
 Badges are small overlays that appear on entity icons to provide additional visual information. Each entity can have up to 4 badges configured, positioned at the corners of the entity icon.
 
-![Entity Badges](../assets/badges.png)
+![Entity Badges](../assets/badges.webp)
 
 ## Overview
 

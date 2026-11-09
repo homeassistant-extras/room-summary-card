@@ -35,7 +35,7 @@ The card shows colored borders based on sensor thresholds:
 - **Blue border** (default): Humidity above threshold
 - **Custom colors**: You can customize border colors for each threshold entry
 
-![Climate Borders](../assets/climate.png)
+![Climate Borders](../assets/climate.webp)
 
 ### Requirements for Climate Styling
 

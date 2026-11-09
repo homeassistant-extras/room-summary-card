@@ -2,7 +2,7 @@
 
 The card supports multiple background image sources with automatic fallbacks and full customization control.
 
-![Background Image](../assets/background-image.png)
+![Background Image](../assets/background-image.webp)
 
 ### Automatic Area Pictures
 
@@ -103,7 +103,7 @@ background:
     - icon_background
 ```
 
-![Icon BG](../assets/icon-bg.png)
+![Icon BG](../assets/icon-bg.webp)
 
 This creates a focused background effect where the image appears behind the room icon while keeping the rest of the card clean and readable.
 

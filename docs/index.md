@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="assets/room-cards.png" align="center" width="50%">
+    <img src="assets/room-cards.webp" align="center" width="50%">
 </p>
 <p align="center"><h1 align="center">Room Summary Card</h1></p>
 <p align="center">
@@ -111,7 +111,7 @@ In this example, the card will trigger the hot border if either the averaged tem
 - Climate entity colors with automatic state detection
 - RGB color support for accurate light representation
 
-![Entity Icons](assets/icons.png)
+![Entity Icons](assets/icons.webp)
 
 📖 **See [Entity Icons Example](advanced/README-EXAMPLES.md#entity-icons) for configuration details.**
 
@@ -125,7 +125,7 @@ Small overlay icons that appear on entity icons to provide additional visual inf
 - **Related Entities**: Badges can display information from different entities
 - **State Matching**: Supports attribute-based matching for advanced use cases
 
-![Entity Badges](assets/badges.png)
+![Entity Badges](assets/badges.webp)
 
 📖 **See [Badge Configuration](configuration/BADGE-CONFIGURATION.md) for complete documentation.**
 
@@ -148,11 +148,11 @@ Optional captions under entity icons (`show_entity_labels`) or beside climate se
 - **Entity Details**: Click any entity in the dialog to open its more-info dialog for detailed information
 - **Mold Indicator**: Animated warning appears in the bottom left area when mold levels exceed thresholds
 
-![Problem Detection](assets/problems.png)
+![Problem Detection](assets/problems.webp)
 
-![Problem Dialog](assets/problem-dialog.gif)
+![Problem Dialog](assets/problem-dialog.webp)
 
-![Problem Dialog Mobile](assets/problem-dialog-mobile.gif)
+![Problem Dialog Mobile](assets/problem-dialog-mobile.webp)
 
 📖 **See [Problem Detection Example](advanced/README-EXAMPLES.md#problem-detection) for configuration details.**
 
@@ -168,7 +168,7 @@ Optional captions under entity icons (`show_entity_labels`) or beside climate se
 - Granular control over which visual effects are applied
 - **Priority System**: Smoke > Gas > Water > Occupancy (higher priority alarms suppress lower priority ones)
 
-![Occupancy](assets/occupancy.png)
+![Occupancy](assets/occupancy.webp)
 
 📖 **See [Alarm Detection Example](advanced/README-EXAMPLES.md#occupancy-detection) for configuration details.**
 
@@ -186,7 +186,7 @@ Choose from different sensor display options:
 - **Stacked**: Vertically stacked in the label area
 - **Bottom**: At the bottom of the card for maximum visibility
 
-![Sensor Layouts](assets/sensors-styles.png)
+![Sensor Layouts](assets/sensors-styles.webp)
 
 📖 **See [Sensor Layouts Examples](advanced/README-EXAMPLES.md#sensor-layouts) for configuration details.**
 
@@ -203,7 +203,7 @@ Multiple background image sources with automatic fallbacks:
 
 | area picture                     | entity picture                       | background picture                         |
 | -------------------------------- | ------------------------------------ | ------------------------------------------ |
-| ![area](assets/area-picture.png) | ![entity](assets/entity-picture.png) | ![background](assets/background-image.png) |
+| ![area](assets/area-picture.webp) | ![entity](assets/entity-picture.webp) | ![background](assets/background-image.webp) |
 
 📖 **See [Background Images Examples](advanced/README-EXAMPLES.md#background-images) for configuration details.**
 
@@ -213,7 +213,7 @@ Multiple background image sources with automatic fallbacks:
 
 Direct RGB color values from entities with `rgb_color` attributes for accurate color representation.
 
-![RGB Light Colors](assets/light-rgb.png)
+![RGB Light Colors](assets/light-rgb.webp)
 
 📖 **See [RGB Color Support Example](advanced/README-EXAMPLES.md#rgb-color-support) for configuration details.**
 
@@ -226,7 +226,7 @@ Support for the [custom-icon-color integration](https://github.com/Mariusthvdb/c
 - **Color Priority**: Intelligent color precedence system
 - **Cross-Theme Support**: Works with multiple theme systems
 
-![Custom Icon Colors](assets/icon-color.png)
+![Custom Icon Colors](assets/icon-color.webp)
 
 📖 **See [Custom Icon Colors Example](advanced/README-EXAMPLES.md#custom-icon-colors) for configuration details.**
 
@@ -258,7 +258,7 @@ Customize the appearance with CSS styles the way you like.
 - **CSS Variables**: Support for CSS custom properties for advanced customization
 - **Theme Integration**: Works alongside existing themes while allowing complete visual override
 
-![styles](assets/custom-styles.png)
+![styles](assets/custom-styles.webp)
 
 📖 **See [Custom Styling Example](advanced/README-EXAMPLES.md#custom-styling) for configuration details.**
 
@@ -271,7 +271,7 @@ Visual configuration interface:
 - **Schema Validation**: Built-in configuration validation
 - **Auto-Discovery**: Automatic sensor and entity detection
 
-![Card Editor](assets/editor.png)
+![Card Editor](assets/editor.webp)
 
 ## Installation
 
@@ -311,7 +311,7 @@ area: living_room
 
 Use the visual editor for easy configuration:
 
-![Card Editor Interface](assets/editor.png)
+![Card Editor Interface](assets/editor.webp)
 
 The card automatically discovers and displays:
 
@@ -346,9 +346,9 @@ The card supports multiple themes out of the box:
 
 | Theme         | Light                                            | Dark                                           |
 | ------------- | ------------------------------------------------ | ---------------------------------------------- |
-| Default HA    | ![HA Light](assets/default-light.png)            | ![HA Dark](assets/default-dark.png)            |
-| UI Minimalist | ![Minimalist Light](assets/minimalist-light.png) | ![Minimalist Dark](assets/minimalist-dark.png) |
-| Frosted Glass | ![Frosted Light](assets/frosted-light.png)       | ![Frosted Dark](assets/frosted-dark.png)       |
+| Default HA    | ![HA Light](assets/default-light.webp)            | ![HA Dark](assets/default-dark.webp)            |
+| UI Minimalist | ![Minimalist Light](assets/minimalist-light.webp) | ![Minimalist Dark](assets/minimalist-dark.webp) |
+| Frosted Glass | ![Frosted Light](assets/frosted-light.webp)       | ![Frosted Dark](assets/frosted-dark.webp)       |
 
 See the [Theming Guide](THEMING.md) for detailed color configuration and custom theme support.
 

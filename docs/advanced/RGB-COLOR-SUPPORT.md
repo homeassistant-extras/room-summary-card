@@ -16,7 +16,7 @@ The card will use this RGB value for:
 - Background effects
 - Theme overrides
 
-![RGB Light](../assets/light-rgb.png)
+![RGB Light](../assets/light-rgb.webp)
 
 ### RGB Priority Rules
 

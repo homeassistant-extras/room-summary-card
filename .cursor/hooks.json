@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/block-docs-raster.sh",
+        "matcher": "git\\s+(add|commit|rm|mv)",
+        "failClosed": false
+      }
+    ]
+  }
+}

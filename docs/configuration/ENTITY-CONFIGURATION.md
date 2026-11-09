@@ -77,7 +77,7 @@ entities:
 
 Badges are small overlay icons that appear on entity icons to provide additional visual information. Each entity can have up to 4 badges configured.
 
-![Entity Badges](../assets/badges.png)
+![Entity Badges](../assets/badges.webp)
 
 📖 **See [Badge Configuration](BADGE-CONFIGURATION.md) for complete badge documentation**, including [badge size styles](BADGE-CONFIGURATION.md#badge-styling).
 
@@ -117,7 +117,7 @@ For `tap_action`, `hold_action`, and `double_tap_action` configuration options, 
 
 By default, entities will display their `entity_picture` attribute (if available) instead of an icon. This is particularly useful for media players that have service-specific icons (Netflix, Hulu, Spotify, etc.).
 
-![Entity Styles](../assets/entity-picture-attributes.png)
+![Entity Styles](../assets/entity-picture-attributes.webp)
 
 📖 **See [Entity Picture Attributes](../advanced/README-EXAMPLES.md#entity-picture-attributes) for configuration details.**
 
@@ -155,7 +155,7 @@ entities:
       - show_state
 ```
 
-![Entity States](../assets/state-display.png)
+![Entity States](../assets/state-display.webp)
 
 See [Custom Styles Configuration](CUSTOM-STYLES.md#styling-entity-state-display) for all available CSS variables.
 
@@ -450,9 +450,9 @@ entities:
 
 For theme color names and advanced customization, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md).
 
-![States](../assets/states.gif)
+![States](../assets/states.webp)
 
-![Entity Styles](../assets/entity-styles.gif)
+![Entity Styles](../assets/entity-styles.webp)
 
 📖 **See [State based CSS styling for entities](../advanced/README-EXAMPLES.md#state-based-css-styling-for-entities) for configuration details.**
 

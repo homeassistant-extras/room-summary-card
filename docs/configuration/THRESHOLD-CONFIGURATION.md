@@ -2,7 +2,7 @@
 
 Configure climate-based border styling thresholds and mold detection:
 
-![Climate Borders](../assets/climate.png)
+![Climate Borders](../assets/climate.webp)
 
 > **Note:** This covers **climate thresholds** for card styling. For **entity threshold colors** based on individual sensor values, see [Entity Color Configuration](ENTITY-COLOR-CONFIGURATION.md#4-threshold-based-colors-and-icons).
 
@@ -95,7 +95,7 @@ The mold indicator provides a prominent visual warning when mold levels exceed y
 
 To reduce CPU usage on low-power devices (e.g. when many cards show mold warnings), add `skip_mold_styles` to your card's features. The indicator will still appear but without animations.
 
-![Moldy](../assets/moldy.png)
+![Moldy](../assets/moldy.webp)
 
 **Mold Sensor Requirements**:
 
@@ -104,7 +104,7 @@ To reduce CPU usage on low-power devices (e.g. when many cards show mold warning
 - Will only display when the sensor value is at or above the configured threshold
 - If no threshold is configured, the indicator will always show when a mold sensor is present
 
-![Moldy](../assets/moldy-editor.png)
+![Moldy](../assets/moldy-editor.webp)
 
 **Examples**:
 

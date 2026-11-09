@@ -1,0 +1,13 @@
+---
+description: Marketing/docs images must be WebP; never commit PNG/GIF under assets or docs/assets
+alwaysApply: true
+---
+
+# Docs images must be WebP
+
+Marketing and documentation screenshots live under `assets/` and `docs/assets/`.
+
+- Store new docs/marketing images as **`.webp` only** (animated WebP for former GIFs).
+- Do **not** add or commit `.png`, `.jpg`, `.jpeg`, or `.gif` under `assets/` or `docs/assets/`.
+- When replacing an existing raster, convert with `scripts/convert-docs-images.sh` (see the `convert-docs-images` skill) and update all markdown/yml/html refs.
+- **Exempt:** runtime card art under `src/assets/` (e.g. Whisker AVIF litter robots) and generated junk (`coverage/`, `test-results/`, `node_modules/`, `dist/`).

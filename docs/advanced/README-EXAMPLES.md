@@ -4,7 +4,7 @@ Example YAML configurations to replicate each screenshot shown below. See my per
 
 ## Entity Icons
 
-![Entity Icons](../assets/icons.png)
+![Entity Icons](../assets/icons.webp)
 
 ```yaml
 # Most entities are not configured since it's pulling default entities and sensors by convention.
@@ -50,7 +50,7 @@ Example YAML configurations to replicate each screenshot shown below. See my per
 
 ## Problem Detection
 
-![Problem Detection](../assets/problems.png)
+![Problem Detection](../assets/problems.webp)
 
 **Interactive Feature**: Click the problem indicator (numbered badge) to open a dialog showing all problem entities with their details. Each entity can be clicked to open its more-info dialog.
 
@@ -73,7 +73,7 @@ area: dining_room
 
 ## Occupancy Detection
 
-![Occupancy](../assets/occupancy.png)
+![Occupancy](../assets/occupancy.webp)
 
 ```yaml
 type: custom:room-summary-card
@@ -86,7 +86,7 @@ occupancy:
 
 ## Sensor Layouts
 
-![Sensor Layouts](../assets/sensors-styles.png)
+![Sensor Layouts](../assets/sensors-styles.webp)
 
 ### Default Layout
 
@@ -134,7 +134,7 @@ occupancy:
 
 ### Area Picture (Automatic)
 
-![Area Picture](../assets/area-picture.png)
+![Area Picture](../assets/area-picture.webp)
 
 ```yaml
 type: custom:room-summary-card
@@ -144,7 +144,7 @@ area: living_room
 
 ### Entity Picture
 
-![Entity Picture](../assets/entity-picture.png)
+![Entity Picture](../assets/entity-picture.webp)
 
 ```yaml
 type: custom:room-summary-card
@@ -156,7 +156,7 @@ background:
 
 ### Custom Background
 
-![Background Image](../assets/background-image.png)
+![Background Image](../assets/background-image.webp)
 
 ```yaml
 type: custom:room-summary-card
@@ -168,7 +168,7 @@ background:
 
 ## RGB Color Support
 
-![RGB Light Colors](../assets/light-rgb.png)
+![RGB Light Colors](../assets/light-rgb.webp)
 
 ```yaml
 type: custom:room-summary-card
@@ -182,7 +182,7 @@ entities:
 
 ## Custom Icon Colors
 
-![Custom Icon Colors](../assets/icon-color.png)
+![Custom Icon Colors](../assets/icon-color.webp)
 
 ```yaml
 # In customize.yaml
@@ -205,7 +205,7 @@ entities:
 
 ## Multi-Light Background
 
-![Multi-Light](../assets/multi-light.gif)
+![Multi-Light](../assets/multi-light.webp)
 
 The above demonstration shows three different multi-light configurations:
 
@@ -245,7 +245,7 @@ The above demonstration shows three different multi-light configurations:
 
 ## Custom Styling
 
-![Custom Styles](../assets/custom-styles.png)
+![Custom Styles](../assets/custom-styles.webp)
 
 ```yaml
 - type: heading
@@ -321,7 +321,7 @@ The above demonstration shows three different multi-light configurations:
 
 ## State based CSS styling for entities
 
-![Entity Styles](../assets/entity-styles.gif)
+![Entity Styles](../assets/entity-styles.webp)
 
 ```yaml
 type: custom:room-summary-card
@@ -368,7 +368,7 @@ entities:
 
 ## Entity Picture Attributes
 
-![Entity Styles](../assets/entity-picture-attributes.png)
+![Entity Styles](../assets/entity-picture-attributes.webp)
 
 ```yaml
 type: grid

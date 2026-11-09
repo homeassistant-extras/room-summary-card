@@ -24,7 +24,7 @@ customize:
     icon: mdi:plex
 ```
 
-![Custom Icon Color](../assets/icon-color.png)
+![Custom Icon Color](../assets/icon-color.webp)
 
 ### Available Color Names
 

@@ -33,8 +33,8 @@ theme:
     - content.code.copy
   icon:
     repo: fontawesome/brands/github
-  logo: assets/room-cards.png
-  favicon: assets/room-cards.png
+  logo: assets/room-cards.webp
+  favicon: assets/room-cards.webp
 
 plugins:
   - search

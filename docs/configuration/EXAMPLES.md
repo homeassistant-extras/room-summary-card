@@ -210,7 +210,7 @@ entities:
   - switch.living_room_speakers
 ```
 
-![sticky](../assets/sticky.png)
+![sticky](../assets/sticky.webp)
 
 **Benefits:**
 
@@ -222,7 +222,7 @@ entities:
 
 Badges are small overlay icons that appear on entity icons to provide additional visual information. Each entity can have up to 4 badges configured.
 
-![Entity Badges](../assets/badges.png)
+![Entity Badges](../assets/badges.webp)
 
 #### Basic Badge Examples
 
@@ -536,7 +536,7 @@ To use problem detection, label entities with "problem":
 3. Add "problem" label to relevant entities
 4. The card will automatically detect and count them
 
-![Problem Label Setup](../assets/problem-label.png)
+![Problem Label Setup](../assets/problem-label.webp)
 
 ### Climate Thresholds
 
@@ -699,7 +699,7 @@ This example uses automatic light discovery while still displaying specific enti
 
 ## Slider Control Examples
 
-![slider](../assets/slider.gif)
+![slider](../assets/slider.webp)
 
 ### Basic Slider
 

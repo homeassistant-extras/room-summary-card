@@ -2,7 +2,7 @@
 
 _Room Data at Your Fingertips_
 
-![Room Summary Card](docs/assets/room-cards.png)
+![Room Summary Card](docs/assets/room-cards.webp)
 
 ![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)

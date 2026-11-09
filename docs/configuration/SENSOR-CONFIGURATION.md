@@ -339,7 +339,7 @@ Sensors are displayed in this order:
 - **`stacked`**: Displays sensors vertically stacked in the label area
 - **`bottom`**: Displays sensors at the bottom of the card for maximum visibility
 
-![Sensor Layouts](../assets/sensors-styles.png)
+![Sensor Layouts](../assets/sensors-styles.webp)
 
 ### Interactive Sensors
 
@@ -426,7 +426,7 @@ sensors:
 
 This is useful for compact layouts where you want visual indicators without text.
 
-![Sensor Icons](../assets/sensor-icons.png)
+![Sensor Icons](../assets/sensor-icons.webp)
 
 ### Legacy Sensor Configuration (Deprecated)
 
