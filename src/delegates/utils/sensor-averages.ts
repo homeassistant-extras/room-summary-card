@@ -3,6 +3,26 @@ import type { EntityState } from '@type/room';
 import type { AveragedSensor } from '@type/sensor';
 
 /**
+ * Device classes that add up across a room.
+ * Matches Home Assistant's area card (`SUM_DEVICE_CLASSES` in hui-area-card.ts).
+ * Other numeric classes (temperature, humidity, illuminance, and so on) stay an average.
+ */
+export const SUM_DEVICE_CLASSES = [
+  'power',
+  'apparent_power',
+  'reactive_power',
+  'energy',
+  'reactive_energy',
+  'current',
+  'gas',
+  'monetary',
+  'volume',
+  'water',
+] as const;
+
+const sumDeviceClasses = new Set<string>(SUM_DEVICE_CLASSES);
+
+/**
  * Filters entities by device class and ensures they are numeric
  */
 const getNumericEntitiesByClass = (
@@ -42,9 +62,10 @@ const groupEntitiesByUom = (
 };
 
 /**
- * Calculates average for a group of entities
+ * Aggregates one unit group. Sum classes store the total; everything else stores the mean.
+ * The result still uses the `average` field so display code does not need a second value.
  */
-const calculateGroupAverage = (
+const calculateGroupAggregate = (
   groupEntities: EntityState[],
   uom: string,
   deviceClass: string,
@@ -53,7 +74,9 @@ const calculateGroupAverage = (
     (total, entity) => total + Number(entity.state),
     0,
   );
-  const average = sum / groupEntities.length;
+  const average = sumDeviceClasses.has(deviceClass)
+    ? sum
+    : sum / groupEntities.length;
 
   return {
     states: groupEntities,
@@ -79,7 +102,7 @@ const processDeviceClass = (
 
   for (const [uom, groupEntities] of uomGroups) {
     if (groupEntities.length > 0) {
-      averages.push(calculateGroupAverage(groupEntities, uom, deviceClass));
+      averages.push(calculateGroupAggregate(groupEntities, uom, deviceClass));
     }
   }
 
@@ -87,7 +110,8 @@ const processDeviceClass = (
 };
 
 /**
- * Groups entities by their device class and calculates averages
+ * Groups entities by device class and unit, then aggregates each group.
+ * Most classes use a mean. Classes in {@link SUM_DEVICE_CLASSES} use a total.
  */
 export const calculateAverages = (
   entities: EntityState[],

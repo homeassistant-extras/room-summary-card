@@ -5,13 +5,13 @@ import type { EntityState } from './room';
  */
 
 export interface AveragedSensor {
-  /** Array of entity states that were averaged */
+  /** Array of entity states included in the aggregate */
   states: EntityState[];
 
   /** Unit of measurement */
   uom: string;
 
-  /** Averaged value */
+  /** Mean for most classes, or the total for power, energy, and similar classes */
   average: number;
 
   /** Device class (e.g., 'temperature', 'humidity') */

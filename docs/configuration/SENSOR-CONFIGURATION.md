@@ -270,6 +270,7 @@ sensor_classes:
   - temperature # Average of all temperature sensors
   - humidity # Average of all humidity sensors
   - pressure # Average of all pressure sensors
+  - power # Total of all power sensors
 ```
 
 ### Combined Configuration
@@ -291,8 +292,8 @@ The card automatically:
 
 1. Finds all sensors in the area with the specified device classes
 2. Groups them by unit of measurement (°F, °C, %, etc.)
-3. Calculates averages for each group
-4. Displays the averaged values
+3. Calculates an average for each group. Power, energy, current, gas, water, and similar classes are totaled instead
+4. Displays the aggregated values
 
 **Note**: If an area has default temperature or humidity sensors configured in Home Assistant's area settings, the card will use those specific sensors instead of collecting all sensors of that device class. This prevents duplicate sensors and ensures consistency with Home Assistant's area configuration.
 

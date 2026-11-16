@@ -90,6 +90,32 @@ describe('calculate-averages.ts', () => {
       expect(result[0]!.device_class).to.equal('pressure');
     });
 
+    it('should total power sensors and still average temperature', () => {
+      const entities = [
+        createSensorEntity('sensor.plug_a', '100', 'power', 'W'),
+        createSensorEntity('sensor.plug_b', '500', 'power', 'W'),
+        createSensorEntity('sensor.energy_a', '1.5', 'energy', 'kWh'),
+        createSensorEntity('sensor.energy_b', '2.5', 'energy', 'kWh'),
+        createSensorEntity('sensor.temp1', '20', 'temperature', '°C'),
+        createSensorEntity('sensor.temp2', '24', 'temperature', '°C'),
+      ];
+
+      const result = calculateAverages(entities, [
+        'power',
+        'energy',
+        'temperature',
+      ]);
+
+      const power = result.find((r) => r.device_class === 'power');
+      const energy = result.find((r) => r.device_class === 'energy');
+      const temperature = result.find((r) => r.device_class === 'temperature');
+
+      expect(power?.average).to.equal(600);
+      expect(power?.uom).to.equal('W');
+      expect(energy?.average).to.equal(4);
+      expect(temperature?.average).to.equal(22);
+    });
+
     it('should filter out entities with non-numeric states', () => {
       const entities = [
         createSensorEntity('sensor.temp1', '20', 'temperature', '°C'),

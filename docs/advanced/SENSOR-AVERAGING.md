@@ -1,6 +1,6 @@
 # Sensor Averaging
 
-The card can automatically calculate and display averaged sensor readings by device class, using the same logic as Home Assistant's area card.
+The card can automatically calculate and display sensor readings by device class, using the same logic as Home Assistant's area card. Most classes are averaged. Power, energy, and similar classes are totaled.
 
 By default these sensor classes will be averaged.
 
@@ -13,8 +13,8 @@ By default these sensor classes will be averaged.
 1. **Discovery**: Finds all sensors in the area with specified device classes
 2. **Filtering**: Only includes numeric sensors with valid states
 3. **Grouping**: Groups sensors by unit of measurement within each device class
-4. **Calculation**: Calculates simple average for each group
-5. **Display**: Shows averaged value with appropriate formatting
+4. **Calculation**: Averages each group, or totals it when the device class is additive (power, energy, and similar)
+5. **Display**: Shows the aggregated value with appropriate formatting
 
 ### Area Default Sensors
 
@@ -57,6 +57,26 @@ sensor_classes:
 # Displays: "72.5°F" (average of the three sensors)
 ```
 
+#### Power Sensors
+
+```yaml
+# Area has these power sensors:
+# sensor.plug_a: 100 W
+# sensor.plug_b: 500 W
+
+sensor_classes:
+  - power
+# Displays: "600 W" (total of the two sensors)
+```
+
+Watts and kilowatts stay in separate groups, the same way Celsius and Fahrenheit do. The card does not convert units before adding.
+
+These device classes are totaled instead of averaged:
+
+- `power`, `apparent_power`, `reactive_power`
+- `energy`, `reactive_energy`
+- `current`, `gas`, `monetary`, `volume`, `water`
+
 #### Mixed Units
 
 ```yaml
@@ -90,7 +110,7 @@ sensor_layout: bottom # Display location
 
 ### Numeric Device Classes
 
-The following device classes are supported for averaging (must be numeric sensors):
+The following device classes are supported (must be numeric sensors). Power, energy, current, gas, water, and the other additive classes listed above are totaled. The rest are averaged:
 
 - `temperature`, `humidity`, `pressure`, `illuminance`, `co2`, `pm25`, `pm10`, `aqi`, `battery`, `energy`, `power`, `voltage`, `current`, and more.
 

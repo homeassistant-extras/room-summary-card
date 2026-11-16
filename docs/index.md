@@ -52,6 +52,7 @@ Automatically calculates and displays averaged sensor readings by device class:
 
 - **Individual sensors**: Display specific sensors in your preferred order
 - **Averaged sensors**: Show area-wide averages for device classes (temperature, humidity, etc.)
+- **Room totals**: Power, energy, and similar sensors are added together
 - **Smart grouping**: Groups sensors by unit of measurement for accurate averaging
 
 ### Climate Information
